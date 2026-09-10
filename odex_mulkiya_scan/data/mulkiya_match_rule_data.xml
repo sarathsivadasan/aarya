@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Default matching rules. Every rule is ignored at runtime when its
+             target model is not installed, so the application stays standalone. -->
+
+        <record id="match_rule_make" model="odex.mulkiya.match.rule">
+            <field name="field_key">make</field>
+            <field name="model_name">fleet.vehicle.model.brand</field>
+            <field name="search_field">name</field>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="match_rule_model" model="odex.mulkiya.match.rule">
+            <field name="field_key">model</field>
+            <field name="model_name">fleet.vehicle.model</field>
+            <field name="search_field">name</field>
+            <field name="parent_field_key">make</field>
+            <field name="parent_relation_field">brand_id</field>
+            <field name="parent_required" eval="False"/>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="match_rule_color" model="odex.mulkiya.match.rule">
+            <field name="field_key">color</field>
+            <field name="model_name">vehicle.color</field>
+            <field name="search_field">name</field>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="match_rule_emirate" model="odex.mulkiya.match.rule">
+            <field name="field_key">registration_emirate</field>
+            <field name="model_name">fleet.emirates</field>
+            <field name="search_field">name</field>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="match_rule_plate_code" model="odex.mulkiya.match.rule">
+            <field name="field_key">plate_code</field>
+            <field name="model_name">fleet.characters</field>
+            <field name="search_field">name</field>
+            <field name="sequence">10</field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ==================== REPORT WIZARD VIEW ==================== -->
+
+    <record id="view_petty_cash_report_wizard_form" model="ir.ui.view">
+        <field name="name">petty.cash.report.wizard.form</field>
+        <field name="model">petty.cash.report.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Petty Cash Book Report">
+                <group>
+                    <group string="Report Parameters">
+                        <field name="date_from" required="1"/>
+                        <field name="date_to" required="1"/>
+                        <field name="account_id"/>
+                        <field name="journal_id"/>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                    </group>
+                    <group string="Summary">
+                        <field name="opening_balance" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
+                        <field name="total_received" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
+                        <field name="total_expenses" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
+                        <field name="closing_balance" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
+                        <field name="currency_id" invisible="1"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="action_print_pdf" string="Print PDF" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_petty_cash_report_wizard" model="ir.actions.act_window">
+        <field name="name">Petty Cash Book Report</field>
+        <field name="res_model">petty.cash.report.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

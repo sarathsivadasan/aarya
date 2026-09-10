@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="module_category_garage_technician" model="ir.module.category">
+        <field name="name">Garage Technician Portal</field>
+        <field name="sequence">25</field>
+    </record>
+
+    <record id="group_garage_technician" model="res.groups">
+        <field name="name">Garage Technician</field>
+        <field name="category_id" ref="module_category_garage_technician"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        <field name="comment">Technicians can only access their own inspections,
+            job cards, parts requests, QC checklists, logs and profile through
+            the Technician Portal.</field>
+    </record>
+
+    <record id="group_garage_technician_supervisor" model="res.groups">
+        <field name="name">Garage Technician Supervisor</field>
+        <field name="category_id" ref="module_category_garage_technician"/>
+        <field name="implied_ids" eval="[(4, ref('group_garage_technician'))]"/>
+        <field name="comment">Supervisors can see and approve every
+            technician's jobs, approve parts requisitions and view the full
+            performance dashboard.</field>
+    </record>
+</odoo>

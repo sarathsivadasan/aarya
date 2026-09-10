@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ── Account List ───────────────────────────────────────────────── -->
+    <record id="view_odex_pc_account_list" model="ir.ui.view">
+        <field name="name">odex.pc.account.list</field>
+        <field name="model">odex.petty.cash.account</field>
+        <field name="arch" type="xml">
+            <list string="Petty Cash Accounts" decoration-muted="not active">
+                <field name="employee_id"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="petty_cash_manager_id" string="Manager"/>
+                <field name="currency_id"/>
+                <field name="opening_balance"/>
+                <field name="total_received" string="Received"/>
+                <field name="total_posted_expenses" string="Spent"/>
+                <field name="total_pending_expenses" string="Pending"/>
+                <field name="total_returned" string="Returned"/>
+                <field name="available_balance" widget="monetary" string="Available Balance"/>
+                <field name="active" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ── Account Form ───────────────────────────────────────────────── -->
+    <record id="view_odex_pc_account_form" model="ir.ui.view">
+        <field name="name">odex.pc.account.form</field>
+        <field name="model">odex.petty.cash.account</field>
+        <field name="arch" type="xml">
+            <form string="Petty Cash Account">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" icon="fa-money" type="object"
+                                name="action_view_statement" string="Statement"/>
+                        <button class="oe_stat_button" icon="fa-arrow-down" type="object"
+                                name="action_view_allocations">
+                            <div class="o_stat_info">
+                                <field name="total_received" widget="monetary" class="o_stat_value"/>
+                                <span class="o_stat_text">Received</span>
+                            </div>
+                        </button>
+                        <button class="oe_stat_button" icon="fa-shopping-cart" type="object"
+                                name="action_view_expenses">
+                            <div class="o_stat_info">
+                                <field name="total_posted_expenses" widget="monetary" class="o_stat_value"/>
+                                <span class="o_stat_text">Spent</span>
+                            </div>
+                        </button>
+                        <button class="oe_stat_button" icon="fa-clock-o" type="object"
+                                name="action_view_expenses">
+                            <div class="o_stat_info">
+                                <field name="total_pending_expenses" widget="monetary" class="o_stat_value" style="color:#e65100;"/>
+                                <span class="o_stat_text">Pending</span>
+                            </div>
+                        </button>
+                        <button class="oe_stat_button" icon="fa-dollar" type="object"
+                                name="action_view_statement">
+                            <div class="o_stat_info">
+                                <field name="available_balance" widget="monetary" class="o_stat_value" style="color:#17a75a;"/>
+                                <span class="o_stat_text">Available</span>
+                            </div>
+                        </button>
+                        <button class="oe_stat_button" icon="fa-arrow-up" type="object"
+                                name="action_view_returns">
+                            <div class="o_stat_info">
+                                <field name="total_returned" widget="monetary" class="o_stat_value"/>
+                                <span class="o_stat_text">Returned</span>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group string="Employee">
+                            <field name="employee_id"/>
+                            <field name="user_id" readonly="1"/>
+                            <field name="petty_cash_manager_id" readonly="1" string="Petty Cash Manager"/>
+                            <field name="code"/>
+                            <field name="currency_id"/>
+                        </group>
+                        <group string="Limits">
+                            <field name="opening_balance"/>
+                            <field name="max_amount"/>
+                            <field name="active"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="GL Accounts" name="gl">
+                            <div class="alert alert-info" role="alert">
+                                Pre-filled from <b>Settings</b>. Override here only if this employee needs different GL accounts.
+                            </div>
+                            <group>
+                                <group string="Journal &amp; Petty Cash Asset GL">
+                                    <field name="journal_id" options="{'no_create': True}"/>
+                                    <field name="account_id" options="{'no_create': True}" string="Petty Cash GL Account"/>
+                                </group>
+                                <group string="Cash Received — Credit">
+                                    <field name="cash_receipt_account_id" options="{'no_create': True}"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group string="Expense — Debit Fallback">
+                                    <field name="default_expense_account_id" options="{'no_create': True}"/>
+                                </group>
+                                <group string="Cash Return — Debit">
+                                    <field name="cash_return_account_id" options="{'no_create': True}"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Notes"><field name="note"/></page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ── Category List (editable inline for quick GL mapping) ─────── -->
+    <record id="view_odex_pc_category_list" model="ir.ui.view">
+        <field name="name">odex.pc.category.list</field>
+        <field name="model">odex.petty.cash.category</field>
+        <field name="arch" type="xml">
+            <list string="Expense Categories" editable="bottom"
+                  decoration-warning="not account_mapped"
+                  decoration-success="account_mapped">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="account_code" string="A/C Code" readonly="1"/>
+                <field name="account_id" string="Expense GL Account" options="{'no_create': True}"/>
+                <field name="analytic_account_id" optional="hide"/>
+                <field name="account_mapped" widget="boolean_toggle" string="Mapped" readonly="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_odex_pc_category_form" model="ir.ui.view">
+        <field name="name">odex.pc.category.form</field>
+        <field name="model">odex.petty.cash.category</field>
+        <field name="arch" type="xml">
+            <form string="Expense Category">
+                <sheet>
+                    <widget name="web_ribbon" title="GL Not Mapped" bg_color="bg-warning" invisible="account_mapped"/>
+                    <widget name="web_ribbon" title="GL Mapped" bg_color="bg-success" invisible="not account_mapped"/>
+                    <div class="oe_title"><label for="name"/><h1><field name="name"/></h1></div>
+                    <group>
+                        <group><field name="sequence"/><field name="active"/><field name="analytic_account_id"/></group>
+                        <group string="Expense GL Account">
+                            <field name="account_id" options="{'no_create': True}" domain="[('deprecated','=',False)]"/>
+                            <field name="account_code" readonly="1"/>
+                        </group>
+                    </group>
+                    <div class="alert alert-info" role="alert">
+                        <b>Journal entry on expense:</b><br/>
+                        DR <b>this GL</b> (or Default from Settings) → CR <b>Petty Cash GL Account</b>
+                    </div>
+                    <field name="note" placeholder="Description..."/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ── HR Employee — Petty Cash tab ──────────────────────────────── -->
+    <record id="view_hr_employee_pc" model="ir.ui.view">
+        <field name="name">hr.employee.petty.cash</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <notebook position="inside">
+                <page string="Petty Cash" name="petty_cash">
+                    <group>
+                        <group string="Assignment">
+                            <field name="petty_cash_manager_id"
+                                   options="{'no_create': True}"
+                                   help="This employee's petty cash requests go to this manager for approval."/>
+                            <field name="petty_cash_account_id" readonly="1" string="Petty Cash Account"/>
+                        </group>
+                        <group string="Current Balance">
+                            <field name="petty_cash_balance" readonly="1" string="Available Balance"/>
+                        </group>
+                    </group>
+                </page>
+            </notebook>
+        </field>
+    </record>
+
+    <!-- ── Actions ───────────────────────────────────────────────────── -->
+    <record id="action_odex_pc_account" model="ir.actions.act_window">
+        <field name="name">Petty Cash Accounts</field>
+        <field name="res_model">odex.petty.cash.account</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <record id="action_odex_pc_category" model="ir.actions.act_window">
+        <field name="name">Expense Categories</field>
+        <field name="res_model">odex.petty.cash.category</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

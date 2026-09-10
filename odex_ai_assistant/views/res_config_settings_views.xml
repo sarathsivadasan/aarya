@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+    <record id="res_config_settings_view_form_ai" model="ir.ui.view">
+      <field name="name">res.config.settings.view.form.ai</field>
+      <field name="model">res.config.settings</field>
+      <field name="priority">100</field>
+      <field name="inherit_id" ref="base_setup.action_general_configuration"/>
+      <field name="arch" type="xml">
+        <xpath expr="//div[hasclass('settings')]" position="inside">
+          <div class="app_settings_block" data-string="AI Assistant"
+               data-key="odex_ai_assistant" string="AI Assistant"
+               data-module="odex_ai_assistant">
+
+            <!-- ═══════════════════════════════════════════════════════ -->
+            <!--  HEADER                                                 -->
+            <!-- ═══════════════════════════════════════════════════════ -->
+            <div style="background:linear-gradient(135deg,#875A7B,#6f4e7c);
+                        border-radius:10px;padding:20px 24px;margin-bottom:20px;
+                        color:#fff;display:flex;align-items:center;gap:16px;">
+              <i class="fa fa-robot fa-3x" style="opacity:0.9;"/>
+              <div>
+                <h2 style="margin:0;color:#fff;font-size:20px;">ODEX AI Assistant</h2>
+                <p style="margin:4px 0 0;opacity:0.85;font-size:13px;">
+                  Multi-provider AI: Groq · Claude · OpenAI · Gemini · Ollama
+                </p>
+              </div>
+            </div>
+
+            <!-- ═══════════════════════════════════════════════════════ -->
+            <!--  PROVIDER SELECTION                                      -->
+            <!-- ═══════════════════════════════════════════════════════ -->
+            <h2>AI Provider</h2>
+            <div class="row mt16 o_settings_container">
+              <div class="col-12 o_setting_box">
+                <div class="o_setting_left_pane"/>
+                <div class="o_setting_right_pane">
+                  <span class="o_form_label">Active Provider</span>
+                  <div class="text-muted">
+                    Select which AI service to use. Each requires its own API key.
+                  </div>
+                  <div class="content-group mt8">
+                    <field name="odex_ai_provider" widget="radio" class="o_field_radio"/>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ═══════════════════════════════════════════════════════ -->
+            <!--  GROQ API KEY                                           -->
+            <!-- ═══════════════════════════════════════════════════════ -->
+            <div invisible="odex_ai_provider != 'groq'">
+              <h2>Groq Configuration</h2>
+              <div class="row mt16 o_settings_container">
+                <div class="col-12 col-lg-6 o_setting_box">
+                  <div class="o_setting_left_pane"/>
+                  <div class="o_setting_right_pane">
+                    <span class="o_form_label">Groq API Key</span>
+                    <div class="text-muted">
+                      Free at <a href="https://console.groq.com" target="_blank">console.groq.com</a>
+                      — starts with <code>gsk_…</code>
+                    </div>
+                    <div class="content-group mt8">
+                      <field name="odex_ai_api_key" password="True"
+                             placeholder="gsk_xxxxxxxxxxxxxxxxxxxxxxxx"/>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-12 col-lg-6 o_setting_box">
+                  <div class="o_setting_left_pane"/>
+                  <div class="o_setting_right_pane">
+                    <span class="o_form_label">Groq Model</span>
+                    <div class="content-group mt8">
+                      <field name="odex_ai_model_groq"/>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ═══════════════════════════════════════════════════════ -->
+            <!--  CLAUDE (ANTHROPIC) API KEY                             -->
+            <!-- ═══════════════════════════════════════════════════════ -->
+            <div invisible="odex_ai_provider != 'claude'">
+              <h2>Claude (Anthropic) Configuration</h2>
+              <div class="row mt16 o_settings_container">
+                <div class="col-12 col-lg-6 o_setting_box">
+                  <div class="o_setting_left_pane"/>
+                  <div class="o_setting_right_pane">
+                    <span class="o_form_label">Anthropic API Key</span>
+                    <div class="text-muted">
+                      Get your key at
+                      <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a>
+                      — starts with <code>sk-ant-…</code>
+                    </div>
+                    <div class="content-group mt8">
+                      <field name="odex_ai_claude_api_key" password="True"
+                             placeholder="sk-ant-api03-xxxxxxxxxxxxxxxx"/>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-12 col-lg-6 o_setting_box">
+                  <div class="o_setting_left_pane"/>
+                  <div class="o_setting_right_pane">
+                    <span class="o_form_label">Claude Model</span>
+                    <div class="content-group mt8">
+                      <field name="odex_ai_model_claude"/>
+                    </div>
+                    <div class="text-muted mt4" style="font-size:12px;">
+                      ✦ Claude Sonnet 4.5 — best balance of speed and intelligence<br/>
+                      ✦ Claude 3.5 Haiku — fastest, great for high-volume tasks<br/>
+                      ✦ Claude 3 Opus — most capable for complex reasoning
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ═══════════════════════════════════════════════════════ -->
+            <!--  OPENAI API KEY                                          -->
+            <!-- ═══════════════════════════════════════════════════════ -->
+            <div invisible="odex_ai_provider != 'openai'">
+              <h2>OpenAI Configuration</h2>
+              <div class="row mt16 o_settings_container">
+                <div class="col-12 col-lg-6 o_setting_box">
+                  <div class="o_setting_left_pane"/>
+                  <div class="o_setting_right_pane">
+                    <span class="o_form_label">OpenAI API Key</span>
+                    <div class="text-muted">
+                      Get your key at
+                      <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com</a>
+                      — starts with <code>sk-…</code>
+                    </div>
+                    <div class="content-group mt8">
+                      <field name="odex_ai_openai_api_key" password="True"
+                             placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxx"/>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-12 col-lg-6 o_setting_box">
+                  <div class="o_setting_left_pane"/>
+                  <div class="o_setting_right_pane">
+                    <span class="o_form_label">OpenAI Model</span>
+                    <div class="content-group mt8">
+                      <field name="odex_ai_model_openai"/>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ═══════════════════════════════════════════════════════ -->
+            <!--  GEMINI API KEY                                          -->
+            <!-- ═══════════════════════════════════════════════════════ -->
+            <div invisible="odex_ai_provider != 'gemini'">
+              <h2>Google Gemini Configuration</h2>
+              <div class="row mt16 o_settings_container">
+                <div class="col-12 col-lg-6 o_setting_box">
+                  <div class="o_setting_left_pane"/>
+                  <div class="o_setting_right_pane">
+                    <span class="o_form_label">Gemini API Key</span>
+                    <div class="text-muted">
+                      Get your free key at
+                      <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com</a>
+                      — starts with <code>AIza…</code>
+                    </div>
+                    <div class="content-group mt8">
+                      <field name="odex_ai_gemini_api_key" password="True"
+                             placeholder="AIzaSyxxxxxxxxxxxxxxxxxxxxxxxx"/>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-12 col-lg-6 o_setting_box">
+                  <div class="o_setting_left_pane"/>
+                  <div class="o_setting_right_pane">
+                    <span class="o_form_label">Gemini Model</span>
+                    <div class="content-group mt8">
+                      <field name="odex_ai_model_gemini"/>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ═══════════════════════════════════════════════════════ -->
+            <!--  OLLAMA (LOCAL)                                          -->
+            <!-- ═══════════════════════════════════════════════════════ -->
+            <div invisible="odex_ai_provider != 'ollama'">
+              <h2>Ollama (Local) Configuration</h2>
+              <div class="row mt16 o_settings_container">
+                <div class="col-12 col-lg-6 o_setting_box">
+                  <div class="o_setting_left_pane"/>
+                  <div class="o_setting_right_pane">
+                    <span class="o_form_label">Ollama Base URL</span>
+                    <div class="text-muted">
+                      URL where Ollama is running.
+                      Start with: <code>ollama serve</code>
+                    </div>
+                    <div class="content-group mt8">
+                      <field name="odex_ai_ollama_base_url"
+                             placeholder="http://localhost:11434"/>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-12 col-lg-6 o_setting_box">
+                  <div class="o_setting_left_pane"/>
+                  <div class="o_setting_right_pane">
+                    <span class="o_form_label">Ollama Model Name</span>
+                    <div class="text-muted">
+                      Exact model name from <code>ollama list</code>
+                    </div>
+                    <div class="content-group mt8">
+                      <field name="odex_ai_model_ollama"
+                             placeholder="llama3.2"/>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ═══════════════════════════════════════════════════════ -->
+            <!--  GENERATION PARAMETERS                                   -->
+            <!-- ═══════════════════════════════════════════════════════ -->
+            <h2 class="mt16">Generation Parameters</h2>
+            <div class="row mt16 o_settings_container">
+              <div class="col-12 col-lg-4 o_setting_box">
+                <div class="o_setting_left_pane"/>
+                <div class="o_setting_right_pane">
+                  <span class="o_form_label">Temperature</span>
+                  <div class="text-muted">0.0 = focused · 1.0 = creative</div>
+                  <div class="content-group mt8">
+                    <field name="odex_ai_temperature" widget="float"/>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-lg-4 o_setting_box">
+                <div class="o_setting_left_pane"/>
+                <div class="o_setting_right_pane">
+                  <span class="o_form_label">Max Response Tokens</span>
+                  <div class="text-muted">Max length of AI replies</div>
+                  <div class="content-group mt8">
+                    <field name="odex_ai_max_tokens"/>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-lg-4 o_setting_box">
+                <div class="o_setting_left_pane"/>
+                <div class="o_setting_right_pane">
+                  <span class="o_form_label">Context Window</span>
+                  <div class="text-muted">Previous messages sent as context</div>
+                  <div class="content-group mt8">
+                    <field name="odex_ai_context_window"/>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ═══════════════════════════════════════════════════════ -->
+            <!--  FEATURES                                                -->
+            <!-- ═══════════════════════════════════════════════════════ -->
+            <h2 class="mt16">Features</h2>
+            <div class="row mt16 o_settings_container">
+              <div class="col-12 col-lg-4 o_setting_box">
+                <div class="o_setting_left_pane">
+                  <field name="odex_ai_streaming_enabled"/>
+                </div>
+                <div class="o_setting_right_pane">
+                  <label for="odex_ai_streaming_enabled" class="o_form_label">
+                    Streaming Responses
+                  </label>
+                  <div class="text-muted">Show AI tokens in real-time</div>
+                </div>
+              </div>
+              <div class="col-12 col-lg-4 o_setting_box">
+                <div class="o_setting_left_pane">
+                  <field name="odex_ai_enable_chatter"/>
+                </div>
+                <div class="o_setting_right_pane">
+                  <label for="odex_ai_enable_chatter" class="o_form_label">
+                    Chatter Integration
+                  </label>
+                  <div class="text-muted">AI button in record chatters</div>
+                </div>
+              </div>
+              <div class="col-12 col-lg-4 o_setting_box">
+                <div class="o_setting_left_pane">
+                  <field name="odex_ai_enable_discuss"/>
+                </div>
+                <div class="o_setting_right_pane">
+                  <label for="odex_ai_enable_discuss" class="o_form_label">
+                    Discuss Integration
+                  </label>
+                  <div class="text-muted">Sync with Discuss module</div>
+                </div>
+              </div>
+              <div class="col-12 col-lg-4 o_setting_box">
+                <div class="o_setting_left_pane">
+                  <field name="odex_ai_notification_sound"/>
+                </div>
+                <div class="o_setting_right_pane">
+                  <label for="odex_ai_notification_sound" class="o_form_label">
+                    Notification Sound
+                  </label>
+                  <div class="text-muted">Play a chime on AI response</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ═══════════════════════════════════════════════════════ -->
+            <!--  SYSTEM PROMPT                                           -->
+            <!-- ═══════════════════════════════════════════════════════ -->
+            <h2 class="mt16">AI Personality</h2>
+            <div class="row mt16 o_settings_container">
+              <div class="col-12 o_setting_box">
+                <div class="o_setting_left_pane"/>
+                <div class="o_setting_right_pane">
+                  <span class="o_form_label">System Prompt</span>
+                  <div class="text-muted">
+                    Defines the AI's behaviour and expertise. Applies to all providers.
+                  </div>
+                  <div class="content-group mt8">
+                    <field name="odex_ai_system_prompt"
+                           placeholder="You are ODEX AI Assistant, an intelligent assistant…"
+                           style="min-height:100px;" class="col-12"/>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ═══════════════════════════════════════════════════════ -->
+            <!--  UI                                                      -->
+            <!-- ═══════════════════════════════════════════════════════ -->
+            <h2 class="mt16">Appearance</h2>
+            <div class="row mt16 o_settings_container">
+              <div class="col-12 col-lg-4 o_setting_box">
+                <div class="o_setting_left_pane"/>
+                <div class="o_setting_right_pane">
+                  <span class="o_form_label">AI Icon</span>
+                  <div class="content-group mt8">
+                    <field name="odex_ai_icon"/>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-lg-4 o_setting_box">
+                <div class="o_setting_left_pane"/>
+                <div class="o_setting_right_pane">
+                  <span class="o_form_label">Panel Position</span>
+                  <div class="content-group mt8">
+                    <field name="odex_ai_panel_position"/>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-lg-4 o_setting_box">
+                <div class="o_setting_left_pane"/>
+                <div class="o_setting_right_pane">
+                  <span class="o_form_label">Log Retention (Days)</span>
+                  <div class="text-muted">Auto-delete old usage logs</div>
+                  <div class="content-group mt8">
+                    <field name="odex_ai_log_retention_days"/>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </xpath>
+      </field>
+    </record>
+  </data>
+</odoo>

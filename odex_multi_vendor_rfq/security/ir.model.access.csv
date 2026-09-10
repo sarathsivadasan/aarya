@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_purchase_multi_rfq_user,purchase.multi.rfq user,model_purchase_multi_rfq,purchase.group_purchase_user,1,1,1,0
+access_purchase_multi_rfq_manager,purchase.multi.rfq manager,model_purchase_multi_rfq,purchase.group_purchase_manager,1,1,1,1
+access_purchase_multi_rfq_line_user,purchase.multi.rfq.line user,model_purchase_multi_rfq_line,purchase.group_purchase_user,1,1,1,0
+access_purchase_multi_rfq_line_manager,purchase.multi.rfq.line manager,model_purchase_multi_rfq_line,purchase.group_purchase_manager,1,1,1,1
+access_award_rfq_wizard_user,award.rfq.wizard user,model_award_rfq_wizard,purchase.group_purchase_user,1,1,1,1
+access_award_rfq_wizard_line_user,award.rfq.wizard.line user,model_award_rfq_wizard_line,purchase.group_purchase_user,1,1,1,1

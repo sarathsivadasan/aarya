@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- ═══════════════════════════════════════════════════════════
+             PETTY CASH ACCOUNT
+        ════════════════════════════════════════════════════════════════ -->
+        <record id="rule_pc_account_own" model="ir.rule">
+            <field name="name">PC Account: Employee sees own</field>
+            <field name="model_id" ref="model_odex_petty_cash_account"/>
+            <field name="domain_force">[('user_id','=',user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_petty_cash_employee'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+        <record id="rule_pc_account_manager" model="ir.rule">
+            <field name="name">PC Account: Manager sees team</field>
+            <field name="model_id" ref="model_odex_petty_cash_account"/>
+            <field name="domain_force">[('petty_cash_manager_user_id','=',user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_petty_cash_manager'))]"/>
+        </record>
+        <record id="rule_pc_account_admin" model="ir.rule">
+            <field name="name">PC Account: Admin sees all</field>
+            <field name="model_id" ref="model_odex_petty_cash_account"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="groups" eval="[(4, ref('group_petty_cash_finance_admin'))]"/>
+        </record>
+
+        <!-- ═══════════════════════════════════════════════════════════
+             TRANSACTIONS
+        ════════════════════════════════════════════════════════════════ -->
+        <record id="rule_pc_txn_own" model="ir.rule">
+            <field name="name">PC Transaction: Employee sees own</field>
+            <field name="model_id" ref="model_odex_petty_cash_transaction"/>
+            <field name="domain_force">[('user_id','=',user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_petty_cash_employee'))]"/>
+        </record>
+        <record id="rule_pc_txn_manager" model="ir.rule">
+            <field name="name">PC Transaction: Manager sees team</field>
+            <field name="model_id" ref="model_odex_petty_cash_transaction"/>
+            <field name="domain_force">[('petty_cash_manager_user_id','=',user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_petty_cash_manager'))]"/>
+        </record>
+        <record id="rule_pc_txn_admin" model="ir.rule">
+            <field name="name">PC Transaction: Admin sees all</field>
+            <field name="model_id" ref="model_odex_petty_cash_transaction"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="groups" eval="[(4, ref('group_petty_cash_finance_admin'))]"/>
+        </record>
+
+        <!-- ═══════════════════════════════════════════════════════════
+             ALLOCATIONS
+        ════════════════════════════════════════════════════════════════ -->
+        <record id="rule_pc_alloc_own" model="ir.rule">
+            <field name="name">PC Allocation: Employee sees own</field>
+            <field name="model_id" ref="model_odex_petty_cash_allocation"/>
+            <field name="domain_force">[('user_id','=',user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_petty_cash_employee'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+        <record id="rule_pc_alloc_manager" model="ir.rule">
+            <field name="name">PC Allocation: Manager sees team</field>
+            <field name="model_id" ref="model_odex_petty_cash_allocation"/>
+            <field name="domain_force">[('petty_cash_manager_user_id','=',user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_petty_cash_manager'))]"/>
+        </record>
+        <record id="rule_pc_alloc_admin" model="ir.rule">
+            <field name="name">PC Allocation: Admin sees all</field>
+            <field name="model_id" ref="model_odex_petty_cash_allocation"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="groups" eval="[(4, ref('group_petty_cash_finance_admin'))]"/>
+        </record>
+
+        <!-- ═══════════════════════════════════════════════════════════
+             RETURNS
+        ════════════════════════════════════════════════════════════════ -->
+        <record id="rule_pc_return_own" model="ir.rule">
+            <field name="name">PC Return: Employee sees own</field>
+            <field name="model_id" ref="model_odex_petty_cash_return"/>
+            <field name="domain_force">[('user_id','=',user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_petty_cash_employee'))]"/>
+        </record>
+        <record id="rule_pc_return_manager" model="ir.rule">
+            <field name="name">PC Return: Manager sees team</field>
+            <field name="model_id" ref="model_odex_petty_cash_return"/>
+            <field name="domain_force">[('petty_cash_manager_user_id','=',user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_petty_cash_manager'))]"/>
+        </record>
+        <record id="rule_pc_return_admin" model="ir.rule">
+            <field name="name">PC Return: Admin sees all</field>
+            <field name="model_id" ref="model_odex_petty_cash_return"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="groups" eval="[(4, ref('group_petty_cash_finance_admin'))]"/>
+        </record>
+    </data>
+</odoo>

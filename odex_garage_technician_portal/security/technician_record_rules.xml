@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        v2.0.0: rewritten against the real schema. "Mine" for a technician
+        now means: I'm in the task's Assignees (user_ids, core project.task)
+        OR I have at least one of my own timesheet lines
+        (job_card_daily_report_ids.employees_id) on it - reflecting that a
+        job card / inspection can have multiple technicians.
+        is_technician_task never existed for real; replaced with the
+        genuine is_jobcard / is_vc booleans.
+    -->
+
+    <!-- ================= project.task (Job Cards / Inspections) ================= -->
+    <record id="rule_task_technician_own" model="ir.rule">
+        <field name="name">Technician: only own job cards / inspections</field>
+        <field name="model_id" ref="project.model_project_task"/>
+        <field name="domain_force">
+            ['|',
+                '&amp;', ('is_jobcard', '=', False), ('is_vc', '=', False),
+                '&amp;',
+                    '|', ('is_jobcard', '=', True), ('is_vc', '=', True),
+                    '|', ('user_ids', 'in', [user.id]),
+                         ('job_card_daily_report_ids.employees_id.user_id', '=', user.id)]
+        </field>
+        <field name="groups" eval="[(4, ref('group_garage_technician'))]"/>
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">0</field>
+        <field name="perm_unlink">0</field>
+    </record>
+
+    <record id="rule_task_supervisor_all_technician_tasks" model="ir.rule">
+        <field name="name">Supervisor: all job cards / inspections</field>
+        <field name="model_id" ref="project.model_project_task"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_garage_technician_supervisor'))]"/>
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">1</field>
+        <field name="perm_unlink">0</field>
+    </record>
+
+    <!-- ================= account.analytic.line (technician timesheets) ================= -->
+    <record id="rule_analytic_line_technician_own" model="ir.rule">
+        <field name="name">Technician: only own timesheet lines</field>
+        <field name="model_id" search="[('model','=','account.analytic.line')]"/>
+        <field name="domain_force">
+            ['|', ('employees_id.user_id', '=', user.id),
+                  ('task_id', '=', False)]
+        </field>
+        <field name="groups" eval="[(4, ref('group_garage_technician'))]"/>
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">1</field>
+        <field name="perm_unlink">0</field>
+    </record>
+
+    <!--
+        v4.0.0: the supervisor/administrator needs to SEE and CONTROL every
+        technician's work record, not just their own. Record rules attached
+        to groups are OR-ed together, but only across groups the user
+        actually belongs to - and since the supervisor group implies the
+        technician group, the "own lines only" rule above was applying to
+        supervisors too and hiding everyone else's work from them. This
+        permissive companion rule restores the full view for supervisors
+        while leaving the technician restriction exactly as it was.
+    -->
+    <record id="rule_analytic_line_supervisor_all" model="ir.rule">
+        <field name="name">Supervisor: all technician work records</field>
+        <field name="model_id" search="[('model','=','account.analytic.line')]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_garage_technician_supervisor'))]"/>
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">1</field>
+        <field name="perm_unlink">0</field>
+    </record>
+
+    <!-- Same reasoning for QC lines: a supervisor reviewing another
+         technician's inspection must be able to read its checklist. -->
+    <record id="rule_qc_supervisor_all" model="ir.rule">
+        <field name="name">Supervisor: all QC lines</field>
+        <field name="model_id" search="[('model','=','quality.checklist')]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_garage_technician_supervisor'))]"/>
+    </record>
+
+    <!-- ================= technician.log ================= -->
+    <record id="rule_log_technician_own" model="ir.rule">
+        <field name="name">Technician: only logs for my job cards / inspections</field>
+        <field name="model_id" ref="model_technician_log"/>
+        <field name="domain_force">
+            ['|', ('task_id.user_ids', 'in', [user.id]),
+                  ('task_id.job_card_daily_report_ids.employees_id.user_id', '=', user.id)]
+        </field>
+        <field name="groups" eval="[(4, ref('group_garage_technician'))]"/>
+        <field name="perm_read">1</field>
+        <field name="perm_write">0</field>
+        <field name="perm_create">1</field>
+        <field name="perm_unlink">0</field>
+    </record>
+
+    <record id="rule_log_supervisor_all" model="ir.rule">
+        <field name="name">Supervisor: all logs</field>
+        <field name="model_id" ref="model_technician_log"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_garage_technician_supervisor'))]"/>
+    </record>
+
+    <!-- ================= technician.note ================= -->
+    <record id="rule_note_technician_own" model="ir.rule">
+        <field name="name">Technician: only notes for my job cards / inspections</field>
+        <field name="model_id" ref="model_technician_note"/>
+        <field name="domain_force">
+            ['|', ('task_id.user_ids', 'in', [user.id]),
+                  ('task_id.job_card_daily_report_ids.employees_id.user_id', '=', user.id)]
+        </field>
+        <field name="groups" eval="[(4, ref('group_garage_technician'))]"/>
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">1</field>
+        <field name="perm_unlink">0</field>
+    </record>
+
+    <record id="rule_note_supervisor_all" model="ir.rule">
+        <field name="name">Supervisor: all notes</field>
+        <field name="model_id" ref="model_technician_note"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_garage_technician_supervisor'))]"/>
+    </record>
+
+    <!-- ================= technician.part.photo ================= -->
+    <record id="rule_part_photo_technician_own" model="ir.rule">
+        <field name="name">Technician: only part photos for my job cards / inspections</field>
+        <field name="model_id" ref="model_technician_part_photo"/>
+        <field name="domain_force">
+            ['|', ('task_id.user_ids', 'in', [user.id]),
+                  ('task_id.job_card_daily_report_ids.employees_id.user_id', '=', user.id)]
+        </field>
+        <field name="groups" eval="[(4, ref('group_garage_technician'))]"/>
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">1</field>
+        <field name="perm_unlink">1</field>
+    </record>
+
+    <record id="rule_part_photo_supervisor_all" model="ir.rule">
+        <field name="name">Supervisor: all part photos</field>
+        <field name="model_id" ref="model_technician_part_photo"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_garage_technician_supervisor'))]"/>
+    </record>
+
+    <!-- ================= quality.checklist ================= -->
+    <record id="rule_qc_technician_own" model="ir.rule">
+        <field name="name">Technician: only QC lines for my job cards / inspections</field>
+        <field name="model_id" search="[('model','=','quality.checklist')]"/>
+        <field name="domain_force">
+            ['|', ('job_card_id.user_ids', 'in', [user.id]),
+                  ('job_card_id.job_card_daily_report_ids.employees_id.user_id', '=', user.id)]
+        </field>
+        <field name="groups" eval="[(4, ref('group_garage_technician'))]"/>
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">1</field>
+        <field name="perm_unlink">0</field>
+    </record>
+
+    <!-- ================= jobcard.part.requisition ================= -->
+    <record id="rule_parts_technician_own" model="ir.rule">
+        <field name="name">Technician: only parts requests for my job cards / inspections</field>
+        <field name="model_id" search="[('model','=','jobcard.part.requisition')]"/>
+        <field name="domain_force">
+            ['|', ('job_id.user_ids', 'in', [user.id]),
+                  ('job_id.job_card_daily_report_ids.employees_id.user_id', '=', user.id)]
+        </field>
+        <field name="groups" eval="[(4, ref('group_garage_technician'))]"/>
+        <field name="perm_read">1</field>
+        <field name="perm_write">0</field>
+        <field name="perm_create">1</field>
+        <field name="perm_unlink">0</field>
+    </record>
+
+    <record id="rule_parts_supervisor_all" model="ir.rule">
+        <field name="name">Supervisor: all parts requests</field>
+        <field name="model_id" search="[('model','=','jobcard.part.requisition')]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_garage_technician_supervisor'))]"/>
+    </record>
+</odoo>

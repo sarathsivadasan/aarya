@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ai_mail_gt.ask_ai">
+        <Dropdown>
+            <button class="ai_nav_btn"
+                    name="ask_ai"
+                    title="Ask AI">
+
+        <img src="/ai_mail_gt/static/description/ask_ai_image.png"
+             alt="AI"
+             class="ai_nav_icon"/>
+
+    </button>
+            <!--            <button class="btn btn-sm btn-outline-primary" name="ask_ai" title="Ask AI">-->
+            <!--                Ask AI-->
+            <!--            </button>-->
+            <t t-set-slot="content">
+                <div class="container ask-ai-container">
+                    <div class="d-flex align-items-center">
+                        <span class="me-2">Choose an assistant</span>
+                        <div class="flex-grow-1">
+                            <select class="form-select form-select-sm" t-on-change="onChangeAssistant">
+                                <t t-foreach="state.assistants" t-as="assistant" t-key="assistant.id">
+                                    <option t-esc="assistant.name" t-att-value="assistant.id"
+                                            t-att-selected="state.assistant.id === assistant.id"/>
+                                </t>
+                            </select>
+                        </div>
+                    </div>
+                    <div t-if="state.templates.length" class="mt-2">
+                        <div class="d-flex flex-wrap gap-1 ai-template-chips">
+                            <button
+                                    t-foreach="state.templates"
+                                    t-as="template"
+                                    t-key="template.id"
+                                    class="btn btn-sm"
+                                    t-att-class="state.selectedTemplate &amp;&amp; state.selectedTemplate.id === template.id ? 'btn-primary' : 'btn-outline-secondary'"
+                                    t-att-title="template.preview"
+                                    t-on-click="() => this.onClickTemplate(template)"
+                            >
+                                <t t-esc="template.name"/>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <textarea class="form-control ai-textarea"
+                                  t-att-placeholder="state.selectedTemplate ? 'Add more details...' : 'Ask anything...'"
+                                  t-att-value="state.message"
+                                  t-on-input="onInputMessage" t-on-keydown="onKeyDownMessage"/>
+                    </div>
+                    <div class="mt-2 d-flex align-items-center gap-2">
+                        <button class="btn btn-primary" type="button" t-on-click="onSendMessage"
+                                t-att-disabled="!state.message &amp;&amp; !state.selectedTemplate">Send</button>
+                        <small class="text-muted">or Ctrl+Enter to send</small>
+                    </div>
+                </div>
+            </t>
+        </Dropdown>
+    </t>
+    <t t-inherit="web.NavBar" t-inherit-mode="extension">
+    <xpath expr="//div[contains(@class, 'o_menu_systray')]/t[1]"
+           position="before">
+
+        <NavbarAskAI/>
+
+    </xpath>
+</t>
+    <!--    <t t-inherit="web.NavBar" t-inherit-mode="extension">-->
+    <!--    <xpath expr="//div[contains(@class, 'o_menu_systray')]/t[1]"-->
+    <!--           position="before">-->
+
+    <!--        <button class="btn btn-sm btn-primary">-->
+    <!--            Ask AI-->
+    <!--        </button>-->
+
+    <!--    </xpath>-->
+    <!--</t>-->
+</templates>

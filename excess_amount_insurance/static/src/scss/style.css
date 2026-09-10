@@ -1,0 +1,99 @@
+
+.top-bar-trans {
+    height: 30px;
+    background-color: none; /* Set the desired background color */
+    margin-top: 0;
+}
+.top-bar {
+    height: 30px;
+    background-color: #00308F; /* Set the desired background color */
+    margin-left: -10%;
+    margin-right: -10%;
+    width: 130%
+    margin-top: 0%:
+}
+
+.content-wrapper {
+    display: flex;
+    max-height: 160px; /* Set the maximum height as per your requirement */
+}
+
+.image-container {
+    margin-left: 10px; /* Adjust the margin between the image and the rectangle */
+}
+
+.image {
+    width: 40%; /* Set the desired width for the image */
+    height: auto; /* Set the desired height for the image */
+}
+
+.overlap-rectangle {
+    position: relative;
+    top: -215px; /* Adjust the value to control the overlap */
+    height: 200px; /* Set the desired height of the rectangle */
+    width: 200px; /* Set the desired width of the rectangle */
+    background-color: #EDEFF0; /* Set the desired background color */
+    border-radius: 0 0 0 20%; /* Curve the bottom-left corner */
+    margin-left: 70%; /* To center the rectangle horizontally */
+}
+.overlap-rectangle-0 {
+    position: relative;
+    top: -10px; /* Adjust the value to control the overlap */
+    height: 30px; /* Set the desired height of the rectangle */
+    width: 200px; /* Set the desired width of the rectangle */
+    background-color: #EDEFF0; /* Set the desired background color */
+    border-radius: 0 0 0 0%; /* Curve the bottom-left corner */
+    margin-left: 70%; /* To center the rectangle horizontally */
+    margin-bottom: 0%:
+}
+
+.rectangle-content {
+    text-align: center; /* Align the text to the center horizontally */
+    margin-top: 30px; /* Adjust the value to position the text vertically within the rectangle */
+    color: #00308F; /* Set the desired color for the text */
+    font-weight: bold; /* Set the desired font weight for the text */
+    position: absolute;
+    width: 100%
+}
+.green-line {
+        background-color: green;
+        height: 40px;
+        margin-left: -20px;
+        margin-right: -20px;
+        width: 130%;
+}
+.blank-underline {
+  display: inline-block;
+  position: relative;
+}
+
+.blank-underline::after {
+  content: '';
+  position: absolute;
+  bottom: -2px; /* Adjust the position of the underline */
+  left: 0;
+  width: 400px;
+  height: 1px;
+  background-color: #000; /* Set the desired color for the underline */
+}
+.table-custom {
+    border-collapse: collapse;
+    width: 97.5%;
+    margin: 10px;
+  }
+
+.table-custom th {
+    background-color: lightgrey;
+    padding: 8px;
+    text-align: left;
+  }
+
+.table-custom td {
+    border: 1px solid black;
+    padding: 8px;
+    text-align: left;
+  }
+
+.table-custom tr:first-child th {
+    border: none;
+  }

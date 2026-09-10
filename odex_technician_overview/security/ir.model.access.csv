@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_overview_schedule_manager,overview.schedule.manager,model_odex_overview_report_schedule,group_overview_manager,1,1,1,1
+access_overview_schedule_user,overview.schedule.user,model_odex_overview_report_schedule,group_overview_technician,1,0,0,0

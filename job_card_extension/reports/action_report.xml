@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="action_jobcard_report" model="ir.actions.report">
+            <field name="name">Job Card</field>
+            <field name="model">project.task</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">job_card_extension.jobcard_report</field>
+            <field name="report_file">job_card_extension.jobcard_report</field>
+            <field name="binding_model_id" ref="project.model_project_task"/>
+            <field name="binding_type">report</field>
+            <field name="print_report_name">'Job Card -%s' % object.name</field>
+            <field name="paperformat_id" ref="job_card.paperformat_job_card_report_custom"/>
+        </record>
+
+        <record id="account.account_invoices" model="ir.actions.report">
+            <field name="name">Invoice</field>
+            <field name="model">account.move</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">job_card_extension.report_invoice_or_insurance_template</field>
+            <field name="report_file">job_card_extension.report_invoice_or_insurance_template</field>
+            <field name="print_report_name">(object._get_report_base_filename())</field>
+            <field name="attachment">(object.state == 'posted') and ((object.name or 'INV').replace('/','_')+'.pdf')</field>
+            <field name="binding_model_id" ref="model_account_move"/>
+            <field name="binding_type">report</field>
+            <field name="groups_id" eval="[(4,  ref('account.group_account_invoice')), (4, ref('account.group_account_readonly'))]"/>
+        </record>
+         <record id="proforma_account_invoices" model="ir.actions.report">
+            <field name="name">Proforma Invoice</field>
+            <field name="model">account.move</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">job_card_extension.report_proforma_invoice</field>
+            <field name="report_file">job_card_extension.report_proforma_invoice</field>
+            <field name="print_report_name">(object._get_report_base_filename())</field>
+            <field name="attachment">(object.state == 'posted') and ((object.name or 'INV').replace('/','_')+'.pdf')</field>
+            <field name="binding_model_id" ref="model_account_move"/>
+            <field name="binding_type">report</field>
+            <field name="groups_id" eval="[(4,  ref('account.group_account_invoice')), (4, ref('account.group_account_readonly'))]"/>
+        </record>
+    </data>
+</odoo>
+
+    
+
+    
+

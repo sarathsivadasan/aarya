@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Root -->
+    <menuitem id="menu_odex_petty_cash_root"
+              name="ODEX Petty Cash"
+              sequence="26"
+              groups="odex_petty_cash.group_petty_cash_employee"/>
+
+    <!-- ── MY PETTY CASH (Employee view) ────────────────────────────── -->
+    <menuitem id="menu_odex_pc_my"
+              name="My Petty Cash"
+              parent="menu_odex_petty_cash_root"
+              action="action_odex_pc_my_statement"
+              sequence="5"
+              groups="odex_petty_cash.group_petty_cash_employee"/>
+
+    <menuitem id="menu_odex_pc_my_expenses"
+              name="My Expenses"
+              parent="menu_odex_petty_cash_root"
+              action="action_odex_pc_my_expenses"
+              sequence="10"
+              groups="odex_petty_cash.group_petty_cash_employee"/>
+
+    <menuitem id="menu_odex_pc_my_returns"
+              name="My Returns"
+              parent="menu_odex_petty_cash_root"
+              action="action_odex_pc_return"
+              sequence="15"
+              groups="odex_petty_cash.group_petty_cash_employee"/>
+
+    <!-- ── APPROVALS (Manager) ──────────────────────────────────────── -->
+    <menuitem id="menu_odex_pc_approvals"
+              name="Approvals"
+              parent="menu_odex_petty_cash_root"
+              sequence="20"
+              groups="odex_petty_cash.group_petty_cash_manager"/>
+
+    <menuitem id="menu_odex_pc_pending_dashboard"
+              name="Pending Approvals"
+              parent="menu_odex_pc_approvals"
+              action="action_odex_pc_pending_kanban"
+              sequence="5"/>
+
+    <menuitem id="menu_odex_pc_txn_pending"
+              name="Pending Expenses (List)"
+              parent="menu_odex_pc_approvals"
+              action="action_odex_pc_txn_pending"
+              sequence="10"/>
+
+    <menuitem id="menu_odex_pc_alloc_pending"
+              name="Pending Allocations"
+              parent="menu_odex_pc_approvals"
+              action="action_odex_pc_alloc_pending"
+              sequence="20"/>
+
+    <menuitem id="menu_odex_pc_return_pending"
+              name="Pending Returns"
+              parent="menu_odex_pc_approvals"
+              action="action_odex_pc_return_pending"
+              sequence="30"/>
+
+    <!-- ── CASH MANAGEMENT (Manager) ────────────────────────────────── -->
+    <menuitem id="menu_odex_pc_cash_mgmt"
+              name="Cash Management"
+              parent="menu_odex_petty_cash_root"
+              sequence="30"
+              groups="odex_petty_cash.group_petty_cash_manager"/>
+
+    <menuitem id="menu_odex_pc_allocations"
+              name="Cash Allocations"
+              parent="menu_odex_pc_cash_mgmt"
+              action="action_odex_pc_allocation"
+              sequence="10"/>
+
+    <menuitem id="menu_odex_pc_all_txn"
+              name="All Transactions"
+              parent="menu_odex_pc_cash_mgmt"
+              action="action_odex_pc_txn_all"
+              sequence="20"/>
+
+    <!-- ── REPORTING (Manager) ───────────────────────────────────────── -->
+    <menuitem id="menu_odex_pc_reporting"
+              name="Reporting"
+              parent="menu_odex_petty_cash_root"
+              sequence="40"
+              groups="odex_petty_cash.group_petty_cash_manager"/>
+
+    <menuitem id="menu_odex_pc_team_balances"
+              name="Team Balances"
+              parent="menu_odex_pc_reporting"
+              action="action_odex_pc_team_balances"
+              sequence="10"/>
+
+    <!-- ── CONFIGURATION (Finance Admin only) ────────────────────────── -->
+    <menuitem id="menu_odex_pc_config"
+              name="Configuration"
+              parent="menu_odex_petty_cash_root"
+              sequence="90"
+              groups="odex_petty_cash.group_petty_cash_finance_admin"/>
+
+    <menuitem id="menu_odex_pc_settings"
+              name="Settings"
+              parent="menu_odex_pc_config"
+              action="action_odex_pc_settings"
+              sequence="5"/>
+
+    <menuitem id="menu_odex_pc_accounts"
+              name="Petty Cash Accounts"
+              parent="menu_odex_pc_config"
+              action="action_odex_pc_account"
+              sequence="10"/>
+
+    <menuitem id="menu_odex_pc_categories"
+              name="Expense Categories"
+              parent="menu_odex_pc_config"
+              action="action_odex_pc_category"
+              sequence="20"/>
+</odoo>

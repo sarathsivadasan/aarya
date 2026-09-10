@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+<!--     <record id="hr_timesheet.act_hr_timesheet_line" model="ir.actions.act_window">
+        <field name="view_mode">kanban,form,pivot,graph</field>
+        <field name="view_id" ref="hr_timesheet.view_kanban_account_analytic_line"/>
+    </record>
+    <record id="hr_timesheet.act_hr_timesheet_line_view_kanban" model="ir.actions.act_window.view">
+        <field name="sequence">4</field>
+    </record>
+
+    <record id="hr_timesheet.act_hr_timesheet_line_view_tree" model="ir.actions.act_window.view">
+        <field name="sequence" eval="6"/>
+    </record>
+
+    <record id="hr_timesheet_line_form_inherits" model="ir.ui.view">
+        <field name="name">account.analytic.line.form.inherit</field>
+        <field name="model">account.analytic.line</field>
+        <field name="inherit_id" ref="hr_timesheet.hr_timesheet_line_form"/>
+        <field name="arch" type="xml">
+            <field name="unit_amount" position="replace">
+                <field name="unit_amount" decoration-danger="unit_amount &gt; 24" string="Hours Spend"/>
+            </field>
+        </field>
+    </record> -->
+    <!-- <record id="timesheet_line_kanban_inherit" model="ir.ui.view">
+        <field name="name">account.analytic.line.kanban.inherit</field>
+        <field name="model">account.analytic.line</field>
+        <field name="inherit_id" ref="hr_timesheet.view_kanban_account_analytic_line"/>
+        <field name="arch" type="xml">
+            <xpath expr="//kanban" position="inside">
+                <field name="user_ids"/>
+                <field name="vehicle_id"/>
+                <field name="cc_stage_id"/>
+            </xpath>
+            <xpath expr="//div[hasclass('o_kanban_record_top')]" position="replace">
+                <div class="o_kanban_record_top px-2 h-80">
+                    <img t-att-src="kanban_image('hr.employee', 'avatar_128', record.employee_id.raw_value)"
+                         t-att-title="record.employee_id.value" t-att-alt="record.employee_id.value"
+                         class="o_image_40_cover float-left"/>
+                    <div class="o_kanban_record_headings pl-4 pr-2">
+                        <div class="text-truncate">
+                            <strong class="o_kanban_record_title">
+                                <span t-esc="record.project_id.value" t-att-title="record.project_id.value"/>
+                            </strong>
+                        </div>
+                        <div class="text-truncate" t-if="record.task_id.value">
+                            <i>
+                                <span t-esc="record.task_id.value" t-att-title="record.task_id.value"/>
+                            </i>
+                        </div>
+                        <div class="o_field_widget badge badge-primary text-truncate" t-if="record.cc_stage_id.value">
+                                <field  name="cc_stage_id"/>
+                        </div>
+                        <div class="text-truncate"  t-if="record.user_ids.value">
+                            <field name="user_ids" widget="many2many_tags"/>
+                        </div>
+                        <div class="text-truncate"  t-if="record.vehicle_id.value">
+                            <field name="vehicle_id" widget="many2one"/>
+                        </div>
+                        <div class="text-truncate">
+                            <span t-esc="record.name.value" t-att-title="record.name.value"/>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+            <xpath expr="//span[@name='duration']" position="replace">
+                <span class="pull-right" name="duration">
+                    <strong>Duration:</strong>
+                    <field name="unit_amount" decoration-danger="unit_amount &gt; 24"/>
+                </span>
+            </xpath>
+        </field>
+    </record> -->
+
+    <record id="timesheet_line_tree_inherit" model="ir.ui.view">
+        <field name="name">account.analytic.line.tree.inherit</field>
+        <field name="model">account.analytic.line</field>
+        <field name="inherit_id" ref="hr_timesheet.hr_timesheet_line_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list/field[@name='task_id']" position="after">
+                <field name="product_id" optional="show" string="Service Requested"/>
+            </xpath>
+            <xpath expr="//list/field[@name='task_id']" position="attributes">
+                <attribute name="string">Job Number</attribute>
+            </xpath>
+            <xpath expr="//list/field[@name='name']" position="attributes">
+                <attribute name="string">Instruction</attribute>
+            </xpath>
+            <xpath expr="//list/field[@name='name']" position="after">
+                <field name="user_id" optional="show"/>
+                <!-- <field name="job_card_payment_id" optional="show"/> -->
+                <field name="assign_hours"/>
+                <field name="departments_id" optional="show"/>
+                <field name="employees_id" optional="show"/>
+                <!-- <field name="employee_user_id" optional="hide"/> -->
+                <!-- <field name="vehicle_id" optional="show"/> -->
+                <!-- <field name="vehicle_model_id" optional="show"/> -->
+                <field name="start_time" optional="show"/>
+                <field name="pause_time" optional="show"/>
+                <field name="end_time" optional="show"/>
+                <field name="total_hours" optional="show"/>
+            </xpath>
+            <field name="unit_amount" position="replace">
+                <field name="unit_amount" decoration-danger="unit_amount &gt; 24" string="Hours Spend"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="hr_timesheet_line_search_inherit" model="ir.ui.view">
+        <field name="name">account.analytic.line.search.inherit</field>
+        <field name="model">account.analytic.line</field>
+        <field name="inherit_id" ref="hr_timesheet.hr_timesheet_line_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='employee_id']" position="attributes">
+                <attribute name="string">Technician</attribute>
+            </xpath>
+            <xpath expr="//field[@name='task_id']" position="before">
+                <field name="employees_id" string="Technician"/>
+                <field name="departments_id" string="Department"/>
+                <field name="product_id" string="Service Requested"/>
+            </xpath>
+            <xpath expr="//field[@name='task_id']" position="attributes">
+                <attribute name="string">Job Number</attribute>
+            </xpath>
+            <xpath expr="//group" position="after">
+                <searchpanel>
+                    <!-- <field name="job_card_payment_id" icon="fa-user"/> -->
+                    <field name="departments_id" icon="fa-users" enable_counters="1"/>
+                </searchpanel>
+            </xpath>
+            <xpath expr="//group" position="inside">
+                <!-- <filter string="Categories" name="groupby_categories" domain="[]"
+                        context="{'group_by': 'job_card_payment_id'}"/> -->
+                <filter string="Technician" name="groupby_employee" domain="[]" context="{'group_by': 'employees_id'}"/>
+                <filter string="Vehicle" name="groupby_vehicle" domain="[]" context="{'group_by': 'vehicle_id'}"/>
+                <filter string="Vehicle Model" name="groupby_vehicle_model" domain="[]"
+                        context="{'group_by': 'vehicle_model_id'}"/>
+            </xpath>
+            <field name="project_id" positiom="after">
+                <field name="vehicle_id"/>
+                <field name="vehicle_model_id"/>
+                <!--                <field name="employees_id" string="Technician" filter_domain="[('employees_id.name', 'like', self)]"/>-->
+            </field>
+        </field>
+    </record>
+
+</odoo>

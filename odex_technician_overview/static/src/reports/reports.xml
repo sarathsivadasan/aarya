@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="odex_technician_overview.Reports">
+    <div class="o_odex_overview o_odex_reports">
+
+        <div class="ov-header">
+            <div class="ov-title">
+                <span class="ov-title-icon">📈</span>
+                <h1>Reports &amp; Analytics</h1>
+            </div>
+            <div class="ov-header-right">
+                <button class="ov-btn" t-on-click="() => this.exportAs('xlsx')">⬇ Excel</button>
+                <button class="ov-btn" t-on-click="() => this.exportAs('csv')">⬇ CSV</button>
+                <button class="ov-btn" t-on-click="() => this.exportAs('pdf')">⬇ PDF</button>
+                <button class="ov-btn ov-btn-primary" t-on-click="printReport">🖨 Print</button>
+            </div>
+        </div>
+
+        <!-- Report selector -->
+        <div class="ov-report-tabs">
+            <t t-foreach="REPORTS" t-as="rep" t-key="rep.key">
+                <button t-att-class="'ov-tab ' + (state.filters.report_type === rep.key ? 'ov-tab-active' : '')"
+                        t-on-click="() => this.selectReport(rep.key)"
+                        t-esc="rep.label"/>
+            </t>
+        </div>
+
+        <!-- Filters -->
+        <div class="ov-filters">
+            <select t-model="state.filters.period" t-on-change="onFilterChange">
+                <option value="today">Today</option>
+                <option value="yesterday">Yesterday</option>
+                <option value="last_7">Last 7 Days</option>
+                <option value="week">This Week</option>
+                <option value="last_week">Last Week</option>
+                <option value="month">This Month</option>
+                <option value="last_month">Last Month</option>
+                <option value="quarter">This Quarter</option>
+                <option value="year">This Year</option>
+                <option value="custom">Custom Range</option>
+            </select>
+            <t t-if="state.filters.period === 'custom'">
+                <input type="date" t-model="state.filters.date_from"
+                       t-on-change="onFilterChange"/>
+                <input type="date" t-model="state.filters.date_to"
+                       t-on-change="onFilterChange"/>
+            </t>
+            <select t-model="state.filters.group_by" t-on-change="onFilterChange">
+                <option value="day">Day Wise</option>
+                <option value="week">Week Wise</option>
+                <option value="month">Month Wise</option>
+                <option value="quarter">Quarter Wise</option>
+                <option value="year">Year Wise</option>
+            </select>
+            <select t-model="state.filters.work_type" t-on-change="onFilterChange">
+                <option value="all">All Work Types</option>
+                <option value="job_card">Job Card</option>
+                <option value="inspection">Vehicle Inspection</option>
+            </select>
+            <select t-model="state.filters.status" t-on-change="onFilterChange">
+                <option value="all">All Statuses</option>
+                <option value="working">Working</option>
+                <option value="paused">Paused</option>
+                <option value="assigned">Assigned</option>
+                <option value="completed">Completed</option>
+                <option value="delayed">Delayed</option>
+                <option value="idle">Idle</option>
+            </select>
+            <select t-model="state.filters.technician_id" t-on-change="onFilterChange">
+                <option value="">All Technicians</option>
+                <t t-foreach="state.options.technicians" t-as="tech" t-key="tech.id">
+                    <option t-att-value="tech.id" t-esc="tech.name"/>
+                </t>
+            </select>
+            <select t-model="state.filters.department_id" t-on-change="onFilterChange">
+                <option value="">All Departments</option>
+                <t t-foreach="state.options.departments" t-as="dep" t-key="dep.id">
+                    <option t-att-value="dep.id" t-esc="dep.name"/>
+                </t>
+            </select>
+            <select t-model="state.filters.advisor_id" t-on-change="onFilterChange">
+                <option value="">All Advisors</option>
+                <t t-foreach="state.options.advisors" t-as="adv" t-key="adv.id">
+                    <option t-att-value="adv.id" t-esc="adv.name"/>
+                </t>
+            </select>
+            <input type="text" class="ov-search"
+                   placeholder="Search vehicle, reg. no., customer, document…"
+                   t-model="state.filters.search" t-on-input="onSearchInput"/>
+        </div>
+
+        <!-- Charts -->
+        <div class="ov-charts ov-charts-2">
+            <div class="ov-card ov-chart">
+                <h3>Trend — Jobs, Completed &amp; Productivity</h3>
+                <div class="ov-chart-canvas ov-chart-tall"><canvas t-ref="chartTrend"/></div>
+            </div>
+            <div class="ov-card ov-chart">
+                <h3>Standard vs Actual Time</h3>
+                <div class="ov-chart-canvas ov-chart-tall"><canvas t-ref="chartStd"/></div>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="ov-card ov-table-card">
+            <h3 class="ov-report-title" t-esc="state.data.title or ''"/>
+            <div class="ov-table-scroll">
+                <table class="ov-table">
+                    <thead>
+                        <tr>
+                            <t t-foreach="state.data.columns or []" t-as="col" t-key="col[0]">
+                                <th t-esc="col[1]"/>
+                            </t>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="state.data.rows or []" t-as="row" t-key="row_index">
+                            <tr>
+                                <t t-foreach="state.data.columns" t-as="col" t-key="col[0]">
+                                    <td t-esc="row[col[0]]"/>
+                                </t>
+                            </tr>
+                        </t>
+                        <tr t-if="!(state.data.rows or []).length and !state.loading">
+                            <td t-att-colspan="(state.data.columns or []).length or 1"
+                                class="ov-empty">No data for the selected filters.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="ov-loading" t-if="state.loading">
+            <div class="ov-spinner"/>
+        </div>
+    </div>
+</t>
+
+</templates>

@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="odex_vehicle_gate_pass.Flow">
+        <div class="o_gp_flow">
+            <t t-foreach="steps" t-as="step" t-key="step.key">
+                <div t-attf-class="o_gp_flow_step o_gp_flow_{{step.status}} {{step.clickable ? 'o_gp_flow_clickable' : ''}}"
+                     t-on-click="() => this.onStepClick(step)">
+                    <div class="o_gp_flow_icon">
+                        <i t-attf-class="fa {{step.status === 'done' ? 'fa-check' : step.icon}}"/>
+                    </div>
+                    <div class="o_gp_flow_label" t-esc="step.label"/>
+                </div>
+                <div class="o_gp_flow_arrow" t-if="!step_last">
+                    <i class="fa fa-long-arrow-right"/>
+                </div>
+            </t>
+        </div>
+    </t>
+
+    <t t-name="odex_vehicle_gate_pass.BookingStatus">
+        <div t-attf-class="o_gp_card o_gp_booking o_gp_booking_{{data.status}}">
+            <div class="o_gp_card_head">
+                <i class="fa fa-calendar me-2"/>
+                <span>Booking Status</span>
+                <span class="o_gp_pill" t-esc="data.label"/>
+            </div>
+            <div class="o_gp_card_body">
+                <div><span class="o_gp_muted">Booking No:</span> <strong t-esc="data.no or '-'"/></div>
+                <div><span class="o_gp_muted">Booking Date:</span> <strong t-esc="data.date or '-'"/></div>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="odex_vehicle_gate_pass.PaymentStatus">
+        <div t-attf-class="o_gp_card o_gp_payment o_gp_payment_{{data.status}}">
+            <div class="o_gp_card_head">
+                <i class="fa fa-credit-card me-2"/>
+                <span>Payment Status</span>
+                <span class="o_gp_pill" t-esc="data.label"/>
+            </div>
+            <div class="o_gp_card_body">
+                <div><span class="o_gp_muted">Invoice Amount:</span> <strong t-esc="data.invoice"/></div>
+                <div><span class="o_gp_muted">Paid Amount:</span> <strong t-esc="data.paid"/></div>
+                <div><span class="o_gp_muted">Due Amount:</span> <strong t-esc="data.due"/></div>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="odex_vehicle_gate_pass.FuelGauge">
+        <div class="o_gp_fuel_gauge">
+            <svg viewBox="0 0 220 190" class="o_gp_gauge_svg">
+                <defs>
+                    <radialGradient id="gpBezel" cx="50%" cy="40%" r="65%">
+                        <stop offset="0%" stop-color="#4b4b4b"/>
+                        <stop offset="70%" stop-color="#222"/>
+                        <stop offset="100%" stop-color="#0a0a0a"/>
+                    </radialGradient>
+                </defs>
+                <circle cx="110" cy="110" r="100" fill="url(#gpBezel)"/>
+                <circle cx="110" cy="110" r="86" fill="#0b0b0b" stroke="#333" stroke-width="2"/>
+                <t t-foreach="ticks" t-as="tick" t-key="tick_index">
+                    <line t-att-x1="tick.x1" t-att-y1="tick.y1"
+                          t-att-x2="tick.x2" t-att-y2="tick.y2"
+                          stroke="#e5e7eb" t-att-stroke-width="tick.major ? 3 : 1.5"/>
+                </t>
+                <text x="34" y="150" class="o_gp_gauge_end">E</text>
+                <text x="186" y="150" class="o_gp_gauge_end" text-anchor="end">F</text>
+                <!-- fuel pump glyph -->
+                <g class="o_gp_gauge_pump" transform="translate(101,52)">
+                    <rect x="0" y="2" width="12" height="16" rx="2" fill="#fff"/>
+                    <rect x="2.5" y="4.5" width="7" height="5" fill="#0b0b0b"/>
+                    <path d="M12 6 l4 2 v7 a2 2 0 0 0 2 2 a2 2 0 0 0 2 -2 v-6"
+                          fill="none" stroke="#fff" stroke-width="1.6"/>
+                </g>
+                <line x1="110" y1="110" t-att-x2="needle.x" t-att-y2="needle.y"
+                      stroke="#e11d1d" stroke-width="4" stroke-linecap="round"/>
+                <line x1="110" y1="110" t-att-x2="needleTail.x" t-att-y2="needleTail.y"
+                      stroke="#e11d1d" stroke-width="5" stroke-linecap="round"/>
+                <circle cx="110" cy="110" r="12" fill="#1a1a1a" stroke="#000" stroke-width="2"/>
+                <text x="110" y="176" class="o_gp_gauge_big" text-anchor="middle" t-esc="bigLabel"/>
+            </svg>
+            <div class="o_gp_gauge_pick">
+                <t t-foreach="levels" t-as="level" t-key="level.key">
+                    <button type="button"
+                            t-attf-class="o_gp_gauge_btn {{value === level.key ? 'active' : ''}}"
+                            t-on-click="() => this.onSelect(level.key)"
+                            t-esc="level.label"/>
+                </t>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="odex_vehicle_gate_pass.OcrScan">
+        <span class="o_gp_ocr">
+            <button type="button" class="btn btn-secondary btn-sm o_gp_ocr_btn"
+                    t-on-click="onScan" t-att-disabled="state.busy">
+                <i class="fa fa-camera me-1"/>
+                <t t-esc="label"/>
+            </button>
+            <div class="o_gp_ocr_dialog" t-if="state.preview">
+                <div class="o_gp_ocr_panel">
+                    <h5>Detected</h5>
+                    <div class="o_gp_ocr_value" t-esc="state.preview.headline or '(nothing)'"/>
+                    <div class="o_gp_muted" t-if="state.preview.matchName">
+                        Matches fleet vehicle: <strong t-esc="state.preview.matchName"/>
+                    </div>
+                    <div class="o_gp_muted" t-else="">No fleet vehicle matched yet.</div>
+                    <div class="o_gp_ocr_actions">
+                        <button class="btn btn-primary btn-sm" t-on-click="onConfirm"
+                                t-att-disabled="state.busy">Confirm</button>
+                        <button class="btn btn-secondary btn-sm" t-on-click="onRetry"
+                                t-att-disabled="state.busy">Retry</button>
+                        <button class="btn btn-link btn-sm" t-on-click="onCancel">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </span>
+    </t>
+
+    <t t-name="odex_vehicle_gate_pass.PhotoGallery">
+        <div class="o_gp_photos">
+            <div class="o_gp_photos_head">
+                <span class="o_gp_photos_count">
+                    <i class="fa fa-camera me-1"/>
+                    <t t-esc="filledCount"/> / <t t-esc="slots.length"/> captured
+                </span>
+            </div>
+            <div class="o_gp_slot_grid">
+                <t t-foreach="slots" t-as="slot" t-key="slot.type">
+                    <div class="o_gp_slot">
+                        <div class="o_gp_slot_title" t-esc="slot.label"/>
+                        <t t-if="state.byType[slot.type]">
+                            <div class="o_gp_slot_filled">
+                                <img t-att-src="state.byType[slot.type].src"
+                                     t-on-click="() => this.onZoom(state.byType[slot.type])"/>
+                            </div>
+                            <input class="o_gp_input o_gp_slot_desc" type="text"
+                                   placeholder="Description"
+                                   t-att-value="state.byType[slot.type].caption"
+                                   t-on-change="(ev) => this.onCaptionChange(slot, ev)"/>
+                            <div class="o_gp_slot_actions">
+                                <button class="btn btn-link btn-sm o_gp_slot_replace"
+                                        t-on-click="() => this.onCaptureSlot(slot)"
+                                        t-att-disabled="state.busy">
+                                    <i class="fa fa-upload me-1"/>Replace
+                                </button>
+                                <button class="btn btn-link btn-sm text-danger"
+                                        t-on-click="() => this.onDelete(slot)">
+                                    <i class="fa fa-trash"/>
+                                </button>
+                            </div>
+                        </t>
+                        <t t-else="">
+                            <button class="o_gp_slot_empty"
+                                    t-on-click="() => this.onCaptureSlot(slot)"
+                                    t-att-disabled="state.busy">
+                                <i class="fa fa-camera"/>
+                                <span>Tap to add photo</span>
+                            </button>
+                            <input class="o_gp_input o_gp_slot_desc" type="text"
+                                   placeholder="Description" disabled="1"/>
+                        </t>
+                    </div>
+                </t>
+            </div>
+            <div class="o_gp_zoom" t-if="state.zoom" t-on-click="onCloseZoom">
+                <img t-att-src="state.zoom"/>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="odex_vehicle_gate_pass.DamageMap">
+        <div class="o_gp_damage">
+            <div class="o_gp_damage_controls">
+                <div class="o_gp_legend_pick">
+                    <t t-foreach="legend" t-as="item" t-key="item.key">
+                        <button type="button"
+                                t-attf-class="o_gp_legend_btn {{state.damageType === item.key ? 'active' : ''}}"
+                                t-attf-style="--gp-c: {{item.color}};"
+                                t-on-click="() => (state.damageType = item.key)">
+                            <span class="o_gp_legend_dot" t-esc="item.code"/>
+                            <span t-esc="item.label"/>
+                        </button>
+                    </t>
+                </div>
+                <div class="o_gp_damage_sev">
+                    <label>Severity</label>
+                    <select class="o_gp_select" t-model="state.severity">
+                        <t t-foreach="severities" t-as="sev" t-key="sev.key">
+                            <option t-att-value="sev.key" t-esc="sev.label"/>
+                        </t>
+                    </select>
+                </div>
+            </div>
+
+            <div class="o_gp_damage_stage" t-ref="diagram" t-on-click="onDiagramClick">
+                <img class="o_gp_damage_img" t-att-src="imageSrc" draggable="false"/>
+                <t t-foreach="state.markers" t-as="marker" t-key="marker.id">
+                    <div t-attf-class="o_gp_marker {{marker.severity === 'major' ? 'o_gp_marker_major' : ''}} {{state.selectedId === marker.id ? 'o_gp_marker_sel' : ''}}"
+                         t-attf-style="left: {{marker.x}}%; top: {{marker.y}}%; background: {{meta(marker.damage_type).color}};"
+                         t-on-pointerdown="(ev) => this.onMarkerPointerDown(marker, ev)"
+                         t-esc="meta(marker.damage_type).code"/>
+                </t>
+            </div>
+
+            <div class="o_gp_damage_detail" t-if="selectedMarker">
+                <h6>Selected Marker</h6>
+                <div class="o_gp_damage_row">
+                    <label>Type</label>
+                    <select class="o_gp_select"
+                            t-on-change="(ev) => this.onTypeChange(selectedMarker, ev)">
+                        <t t-foreach="legend" t-as="item" t-key="item.key">
+                            <option t-att-value="item.key"
+                                    t-att-selected="selectedMarker.damage_type === item.key"
+                                    t-esc="item.code + ' - ' + item.label"/>
+                        </t>
+                    </select>
+                    <label>Severity</label>
+                    <select class="o_gp_select"
+                            t-on-change="(ev) => this.onSeverityChange(selectedMarker, ev)">
+                        <t t-foreach="severities" t-as="sev" t-key="sev.key">
+                            <option t-att-value="sev.key"
+                                    t-att-selected="selectedMarker.severity === sev.key"
+                                    t-esc="sev.label"/>
+                        </t>
+                    </select>
+                    <button class="btn btn-link btn-sm text-danger"
+                            t-on-click="() => this.onDelete(selectedMarker)">
+                        <i class="fa fa-trash me-1"/>Delete
+                    </button>
+                </div>
+                <input class="o_gp_input" type="text" placeholder="Add damage note..."
+                       t-att-value="selectedMarker.description"
+                       t-on-change="(ev) => this.onNoteChange(selectedMarker, ev)"/>
+            </div>
+            <div class="o_gp_muted o_gp_damage_hint" t-else="">
+                Pick a damage type, then tap the vehicle to place a marker. Drag a marker to move it.
+            </div>
+        </div>
+    </t>
+
+    <t t-name="odex_vehicle_gate_pass.Timeline">
+        <div class="o_gp_timeline">
+            <t t-foreach="rows" t-as="row" t-key="row.id">
+                <div t-attf-class="o_gp_timeline_row o_gp_timeline_{{row.status}}">
+                    <div class="o_gp_timeline_dot">
+                        <i t-attf-class="fa {{row.status === 'done' ? 'fa-check' : 'fa-circle-o'}}"/>
+                    </div>
+                    <div class="o_gp_timeline_body">
+                        <div class="o_gp_timeline_step" t-esc="row.step"/>
+                        <div class="o_gp_muted" t-esc="row.date_label"/>
+                        <div class="o_gp_muted" t-if="row.note" t-esc="row.note"/>
+                    </div>
+                </div>
+            </t>
+            <div class="o_gp_empty" t-if="!rows.length">
+                The timeline fills in automatically as the gate pass moves through each step.
+            </div>
+        </div>
+    </t>
+
+</templates>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_users_form_vendor_portal" model="ir.ui.view">
+        <field name="name">res.users.form.vendor.portal</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='login']" position="after">
+                <field name="portal_user_type" widget="radio"
+                       options="{'horizontal': True}"
+                       string="Portal User Type"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_users_tree_vendor_portal" model="ir.ui.view">
+        <field name="name">res.users.list.vendor.portal</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='login']" position="after">
+                <field name="portal_user_type" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_users_search_vendor_portal" model="ir.ui.view">
+        <field name="name">res.users.search.vendor.portal</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <filter name="filter_vendor_portal_users" string="Vendor Portal Users"
+                        domain="[('portal_user_type', '=', 'vendor'), ('share', '=', True)]"/>
+                <filter name="filter_customer_portal_users" string="Customer Portal Users"
+                        domain="[('portal_user_type', '=', 'customer'), ('share', '=', True)]"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

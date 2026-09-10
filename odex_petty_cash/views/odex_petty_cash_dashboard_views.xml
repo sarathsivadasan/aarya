@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ── Manager: Team Balance Summary ────────────────────────────── -->
+    <record id="view_odex_pc_team_balance_list" model="ir.ui.view">
+        <field name="name">odex.pc.team.balance.list</field>
+        <field name="model">odex.petty.cash.account</field>
+        <field name="arch" type="xml">
+            <list string="Team Petty Cash Balances" create="0" delete="0"
+                  decoration-danger="available_balance &lt; 0"
+                  decoration-warning="available_balance == 0">
+                <field name="employee_id" string="Employee"/>
+                <field name="petty_cash_manager_id" string="Manager" optional="hide"/>
+                <field name="opening_balance" string="Opening"/>
+                <field name="total_received" string="Total Received" sum="Total Received"/>
+                <field name="total_posted_expenses" string="Total Spent" sum="Total Spent"/>
+                <field name="total_pending_expenses" string="Pending" sum="Total Pending"/>
+                <field name="total_returned" string="Returned" sum="Total Returned"/>
+                <field name="available_balance" widget="monetary" sum="Total Available"
+                       string="Available Balance"/>
+                <field name="currency_id" column_invisible="True"/>
+                <button name="action_view_statement" string="Statement" type="object"
+                        icon="fa-bar-chart"/>
+                <button name="action_view_expenses" string="Expenses" type="object"
+                        icon="fa-list"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ── Pending Approvals Kanban (Manager Dashboard) ─────────────── -->
+    <record id="view_odex_pc_pending_kanban" model="ir.ui.view">
+        <field name="name">odex.pc.pending.kanban</field>
+        <field name="model">odex.petty.cash.transaction</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="employee_id" class="o_kanban_small_column">
+                <field name="name"/>
+                <field name="employee_id"/>
+                <field name="amount"/>
+                <field name="currency_id"/>
+                <field name="state"/>
+                <field name="date"/>
+                <field name="description"/>
+                <field name="category_id"/>
+                <field name="partner_id"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_global_click">
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                                <strong><field name="name"/></strong>
+                                <span style="background:#0d6efd;color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;">
+                                    Submitted
+                                </span>
+                            </div>
+                            <div style="font-size:12px;color:#555;margin-bottom:4px;">
+                                <field name="description"/>
+                            </div>
+                            <div style="font-size:11px;color:#888;margin-bottom:4px;">
+                                <field name="category_id"/> | <field name="date"/>
+                            </div>
+                            <div style="font-size:11px;color:#888;margin-bottom:8px;" t-if="record.partner_id.value">
+                                Vendor: <field name="partner_id"/>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                                <span style="font-size:11px;color:#888;">Amount</span>
+                                <strong style="color:#e0403e;font-size:14px;">
+                                    <field name="amount" widget="monetary"/>
+                                </strong>
+                            </div>
+                            <div style="display:flex;gap:6px;">
+                                <button name="action_approve" type="object"
+                                        class="btn btn-sm btn-success"
+                                        groups="odex_petty_cash.group_petty_cash_manager">✓ Approve</button>
+                                <button name="action_reject" type="object"
+                                        class="btn btn-sm btn-danger"
+                                        groups="odex_petty_cash.group_petty_cash_manager">✗ Reject</button>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ── Actions ──────────────────────────────────────────────────── -->
+    <record id="action_odex_pc_team_balances" model="ir.actions.act_window">
+        <field name="name">Team Petty Cash Balances</field>
+        <field name="res_model">odex.petty.cash.account</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_odex_pc_team_balance_list"/>
+    </record>
+
+    <record id="action_odex_pc_pending_kanban" model="ir.actions.act_window">
+        <field name="name">Pending Approvals</field>
+        <field name="res_model">odex.petty.cash.transaction</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="domain">[('state','=','submitted')]</field>
+        <field name="view_id" ref="view_odex_pc_pending_kanban"/>
+    </record>
+</odoo>

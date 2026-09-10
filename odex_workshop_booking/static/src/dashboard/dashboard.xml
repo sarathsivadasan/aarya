@@ -1,0 +1,489 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="odex_workshop_booking.Dashboard">
+    <div class="owbd h-100 d-flex flex-column">
+        <div t-if="state.loading and !state.data"
+             class="d-flex justify-content-center align-items-center flex-grow-1">
+            <div class="spinner-border text-primary"/>
+        </div>
+        <div t-else="" class="owbd-scroll flex-grow-1 p-3 p-lg-4">
+
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                <div>
+                    <h4 class="fw-bold mb-0">Booking Dashboard</h4>
+                    <span class="text-muted small">
+                        <t t-esc="state.data.kpis.month_total"/> bookings this month
+                    </span>
+                </div>
+                <div class="d-flex gap-2 align-items-center">
+                    <select class="form-select form-select-sm owbd-select"
+                            t-on-change="onCompanyChange">
+                        <t t-foreach="state.data.companies" t-as="company" t-key="company.id">
+                            <option t-att-value="company.id"
+                                    t-att-selected="company.id === state.companyId"
+                                    t-esc="company.name"/>
+                        </t>
+                    </select>
+
+                    <button class="btn btn-primary btn-sm" t-on-click="newBooking">
+                        <i class="fa fa-plus me-1"/>New Booking</button>
+                    <button class="btn btn-outline-primary btn-sm" t-on-click="openCalendar">
+                        <i class="fa fa-calendar me-1"/>View Calendar</button>
+                    <button class="btn btn-outline-secondary btn-sm" t-on-click="openSlotManagement">
+                        <i class="fa fa-th me-1"/>Slot Management</button>
+                    <button class="btn btn-light btn-sm" t-on-click="refreshAll">
+                        <i class="fa fa-refresh"/></button>
+                </div>
+            </div>
+
+            <!-- KPI cards -->
+            <div class="owbd-kpi-grid mb-3">
+                <t t-foreach="kpiCards" t-as="card" t-key="card.label">
+                    <div t-attf-class="owbd-card owbd-kpi p-3 {{ state.kpiFilter === card.kpi ? 'owbd-kpi-active' : '' }}"
+                         t-on-click="() => this.openKpi(card.kpi)"
+                         t-att-title="'Click to see these bookings'">
+                        <span t-attf-class="owbd-kpi-icon {{ card.cls }}">
+                            <i t-attf-class="fa {{ card.icon }}"/>
+                        </span>
+                        <div class="flex-grow-1">
+                            <div class="owbd-kpi-label" t-esc="card.label"/>
+                            <div class="d-flex align-items-baseline gap-2">
+                                <span class="owbd-kpi-value" t-esc="card.value"/>
+                                <span class="owbd-kpi-sub" t-esc="card.sub"/>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </div>
+
+            <div class="row g-3">
+                <!-- Calendar overview -->
+                <div class="col-12 col-xl-4">
+                    <div class="owbd-card p-3 h-100">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div class="fw-bold">Calendar Overview</div>
+                            <div class="owbd-scale">
+                                <button t-attf-class="btn btn-sm {{ state.calendarScale === 'month' ? 'btn-primary' : 'btn-light' }}"
+                                        t-on-click="() => this.setScale('month')">Month</button>
+                                <button t-attf-class="btn btn-sm {{ state.calendarScale === 'week' ? 'btn-primary' : 'btn-light' }}"
+                                        t-on-click="() => this.setScale('week')">Week</button>
+                                <button t-attf-class="btn btn-sm {{ state.calendarScale === 'day' ? 'btn-primary' : 'btn-light' }}"
+                                        t-on-click="() => this.setScale('day')">Day</button>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <button class="btn btn-sm btn-light" t-on-click="() => this.changeMonth(-1)">
+                                <i class="fa fa-chevron-left"/></button>
+                            <button class="btn btn-sm btn-light" t-on-click="() => this.changeMonth(1)">
+                                <i class="fa fa-chevron-right"/></button>
+                            <span class="fw-semibold ms-1" t-esc="monthLabel"/>
+                        </div>
+                        <div class="owbd-cal-grid owbd-cal-head">
+                            <t t-foreach="weekdays" t-as="day" t-key="day">
+                                <div t-esc="day"/>
+                            </t>
+                        </div>
+                        <div class="owbd-cal-grid">
+                            <t t-foreach="visibleCells" t-as="cell" t-key="cell.key">
+                                <div t-attf-class="owbd-cal-day {{ cell.muted ? 'owbd-cal-muted' : '' }} {{ cell.selected ? 'owbd-cal-selected' : '' }} {{ cell.today ? 'owbd-cal-today' : '' }}"
+                                     t-on-click="() => this.selectDay(cell)">
+                                    <span t-esc="cell.label"/>
+                                    <span t-if="!cell.muted"
+                                          t-attf-class="owbd-cal-dot owbd-s-{{ cell.status }}"/>
+                                </div>
+                            </t>
+                        </div>
+                        <div class="owbd-legend mt-3">
+                            <span class="owbd-cal-dot owbd-s-available"/> Available
+                            <span class="owbd-cal-dot owbd-s-limited ms-3"/> Limited
+                            <span class="owbd-cal-dot owbd-s-full ms-3"/> Fully Booked
+                            <span class="owbd-cal-dot owbd-s-closed ms-3"/> Closed
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slot management for selected day -->
+                <div class="col-12 col-xl-5">
+                    <div class="owbd-card p-3 h-100">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="fw-bold">Slot Management - <t t-esc="selectedDayLabel"/></div>
+                            <button class="btn btn-primary btn-sm" t-on-click="addSlot">
+                                <i class="fa fa-plus me-1"/>Add Slot</button>
+                        </div>
+                        <div class="table-responsive owbd-slot-table">
+                            <table class="table table-sm align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Time Slot</th>
+                                        <th class="text-center">Capacity</th>
+                                        <th class="text-center">Booked</th>
+                                        <th>Status</th>
+                                        <th class="text-end">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="daySlots" t-as="slot" t-key="slot.id">
+                                        <tr t-if="slot.is_break" class="owbd-break-row">
+                                            <td colspan="5" class="text-center">
+                                                <i class="fa fa-coffee me-2"/><t t-esc="slot.label"/>
+                                            </td>
+                                        </tr>
+                                        <tr t-else="">
+                                            <td t-esc="slot.label"/>
+                                            <td class="text-center" t-esc="slot.capacity"/>
+                                            <td class="text-center" t-esc="slot.booked"/>
+                                            <td>
+                                                <span t-attf-class="owbd-badge owbd-badge-{{ slot.state }}"
+                                                      t-esc="slot.state_label"/>
+                                            </td>
+                                            <td class="text-end owbd-menu-cell">
+                                                <button class="btn btn-sm btn-light"
+                                                        t-on-click="() => this.toggleMenu(slot.id)">
+                                                    <i class="fa fa-ellipsis-v"/></button>
+                                                <div t-if="state.openMenu === slot.id" class="owbd-menu">
+                                                    <div t-on-click="() => this.slotAction(slot, 'capacity')">Set Capacity</div>
+                                                    <div t-if="!slot.is_blocked"
+                                                         t-on-click="() => this.slotAction(slot, 'block')">Block Slot</div>
+                                                    <div t-if="slot.is_blocked"
+                                                         t-on-click="() => this.slotAction(slot, 'unblock')">Unblock Slot</div>
+                                                    <div t-on-click="() => this.slotAction(slot, 'closed')">Mark as Closed</div>
+                                                    <div class="text-danger"
+                                                         t-on-click="() => this.slotAction(slot, 'delete')">Delete Slot</div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                    <tr t-if="!daySlots.length">
+                                        <td colspan="5" class="text-center text-muted py-4">
+                                            No slots for this day. Generate them from Slot Management.
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="d-flex justify-content-between border-top pt-2 mt-2 fw-semibold">
+                            <span>Total Bookings</span>
+                            <span t-esc="dayTotals"/>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Status donut + quick actions -->
+                <div class="col-12 col-xl-3">
+                    <div class="owbd-card p-3 mb-3">
+                        <div class="fw-bold mb-2">Booking Status</div>
+                        <div class="d-flex align-items-center gap-3">
+                            <svg viewBox="0 0 140 140" class="owbd-donut">
+                                <circle cx="70" cy="70" r="54" fill="none"
+                                        stroke="#eef1f7" stroke-width="20"/>
+                                <t t-foreach="donutSegments" t-as="seg" t-key="seg.key">
+                                    <circle cx="70" cy="70" r="54" fill="none"
+                                            t-att-stroke="seg.color" stroke-width="20"
+                                            t-att-stroke-dasharray="seg.dash"
+                                            t-att-stroke-dashoffset="seg.offset"
+                                            transform="rotate(-90 70 70)"/>
+                                </t>
+                                <text x="70" y="76" text-anchor="middle"
+                                      class="owbd-donut-text" t-esc="donutTotal"/>
+                            </svg>
+                            <div class="flex-grow-1">
+                                <t t-foreach="state.data.status" t-as="item" t-key="item.state">
+                                    <div class="d-flex justify-content-between small mb-1 owbd-clickable"
+                                         t-on-click="() => this.filterByState(item.state)">
+                                        <span>
+                                            <span class="owbd-legend-dot"
+                                                  t-attf-style="background: {{ statusColor(item.state) }}"/>
+                                            <t t-esc="item.label"/>
+                                        </span>
+                                        <span class="text-muted">
+                                            <t t-esc="item.value"/> (<t t-esc="item.pct"/>%)
+                                        </span>
+                                    </div>
+                                </t>
+                                <div t-if="!state.data.status.length" class="text-muted small">
+                                    No bookings this month.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="owbd-card p-3">
+                        <div class="fw-bold mb-2">Quick Actions</div>
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-primary btn-sm" t-on-click="newBooking">
+                                <i class="fa fa-plus me-1"/>New Booking</button>
+                            <button class="btn btn-outline-primary btn-sm" t-on-click="blockTimeSlot">
+                                <i class="fa fa-ban me-1"/>Block Time Slot</button>
+                            <button class="btn btn-outline-secondary btn-sm" t-on-click="openCalendar">
+                                <i class="fa fa-calendar me-1"/>View Calendar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bookings table -->
+                <div t-attf-class="col-12 owbd-bookings-anchor {{ state.detail ? 'col-xl-9' : '' }}">
+                    <div class="owbd-card p-3">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                            <div class="fw-bold">
+                                <t t-if="state.kpiFilter">
+                                    <t t-esc="kpiTitle"/>
+                                    <span class="badge text-bg-light ms-1" t-esc="state.total"/>
+                                </t>
+                                <t t-else="">All Bookings</t>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="owbd-search">
+                                    <i class="fa fa-search"/>
+                                    <input type="text" class="form-control form-control-sm"
+                                           placeholder="Search..." t-att-value="state.search" t-on-input="onSearchInput"/>
+                                </div>
+                                <button t-if="state.kpiFilter" class="btn btn-sm btn-light"
+                                        t-on-click="() => this.openKpi(state.kpiFilter)">
+                                    <i class="fa fa-times me-1"/>Clear</button>
+                                <button t-if="state.kpiFilter" class="btn btn-sm btn-outline-primary"
+                                        t-on-click="() => this.openKpiList(state.kpiFilter)">
+                                    Open full list</button>
+                                <span t-if="state.stateFilter" class="badge text-bg-light">
+                                    <t t-esc="state.stateFilter"/>
+                                    <i class="fa fa-times ms-1 owbd-clickable"
+                                       t-on-click="() => this.filterByState(state.stateFilter)"/>
+                                </span>
+                                <span class="small text-muted" t-esc="pageLabel"/>
+                                <button class="btn btn-sm btn-light" t-on-click="() => this.changePage(-1)">
+                                    <i class="fa fa-chevron-left"/></button>
+                                <button class="btn btn-sm btn-light" t-on-click="() => this.changePage(1)">
+                                    <i class="fa fa-chevron-right"/></button>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle owbd-bookings">
+                                <thead>
+                                    <tr>
+                                        <th>Booking Ref</th>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                        <th>Customer</th>
+                                        <th>Vehicle</th>
+                                        <th>Service</th>
+                                        <th>Status</th>
+                                        <th>Service Status</th>
+                                        <th>Source</th>
+                                        <th>Advisor</th>
+                                        <th class="text-end">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="state.bookings" t-as="row" t-key="row.id">
+                                        <tr t-attf-class="{{ state.detail and state.detail.id === row.id ? 'owbd-row-active' : '' }}">
+                                            <td class="fw-semibold" t-esc="row.name"/>
+                                            <td t-esc="row.booking_date"/>
+                                            <td t-esc="row.time_label"/>
+                                            <td t-esc="row.partner_name"/>
+                                            <td>
+                                                <div t-esc="row.vehicle_name"/>
+                                                <div t-if="row.plate" class="small text-muted"
+                                                     t-esc="row.plate"/>
+                                            </td>
+                                            <td t-esc="row.service_name"/>
+                                            <td>
+                                                <span t-attf-class="owbd-badge owbd-badge-{{ row.state }}"
+                                                      t-esc="row.state_label"/>
+                                            </td>
+                                            <td class="small" t-esc="row.service_status_label"/>
+                                            <td class="small" t-esc="row.referral_label or row.source_label"/>
+                                            <td t-esc="row.advisor_name"/>
+                                            <td class="text-end">
+                                                <button class="btn btn-sm btn-outline-primary"
+                                                        t-on-click="() => this.openDetail(row.id)">View</button>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                    <tr t-if="!state.bookings.length">
+                                        <td colspan="11" class="text-center text-muted py-4">
+                                            No bookings found.
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Booking details panel -->
+                <div t-if="state.detail" class="col-12 col-xl-3">
+                    <div class="owbd-card p-3 h-100">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="fw-bold">Booking Details</div>
+                            <div class="d-flex gap-1">
+                                <button t-if="canReschedule"
+                                        class="btn btn-sm btn-outline-primary"
+                                        title="Reschedule" t-on-click="reschedule">
+                                    <i class="fa fa-calendar"/></button>
+                                <button class="btn btn-sm btn-light" t-on-click="closeDetail">
+                                    <i class="fa fa-times"/></button>
+                            </div>
+                        </div>
+                        <div class="owbd-detail">
+                            <div><span>Booking Ref</span><b t-esc="state.detail.name"/></div>
+                            <div><span>Status</span>
+                                <span t-attf-class="owbd-badge owbd-badge-{{ state.detail.state }}"
+                                      t-esc="state.detail.state_label"/></div>
+                            <div t-if="state.detail.service_status">
+                                <span>Service Status</span><b t-esc="state.detail.service_status"/></div>
+                        </div>
+
+                        <div class="owbd-detail-head">Customer</div>
+                        <div class="owbd-detail">
+                            <div><span>Name</span><b t-esc="state.detail.partner_name"/></div>
+                            <div t-if="state.detail.mobile">
+                                <span>Mobile</span><b t-esc="state.detail.mobile"/></div>
+                            <div t-if="state.detail.email">
+                                <span>Email</span><b t-esc="state.detail.email"/></div>
+                        </div>
+
+                        <div class="owbd-detail-head">Vehicle</div>
+                        <div class="owbd-detail">
+                            <div t-if="state.detail.emirate">
+                                <span>Emirate</span><b t-esc="state.detail.emirate"/></div>
+                            <div t-if="state.detail.plate_code">
+                                <span>Plate Code</span><b t-esc="state.detail.plate_code"/></div>
+                            <div t-if="state.detail.plate_number">
+                                <span>Plate Number</span><b t-esc="state.detail.plate_number"/></div>
+                            <div t-if="state.detail.vin">
+                                <span>VIN / Chassis</span><b t-esc="state.detail.vin"/></div>
+                            <div t-if="state.detail.make">
+                                <span>Make</span><b t-esc="state.detail.make"/></div>
+                            <div t-if="state.detail.model">
+                                <span>Model</span><b t-esc="state.detail.model"/></div>
+                            <div t-if="state.detail.year">
+                                <span>Year</span><b t-esc="state.detail.year"/></div>
+                            <div t-if="state.detail.color">
+                                <span>Color</span><b t-esc="state.detail.color"/></div>
+                        </div>
+
+                        <div class="owbd-detail-head">Appointment</div>
+                        <div class="owbd-detail">
+                            <div><span>Date</span><b t-esc="state.detail.booking_date"/></div>
+                            <div><span>Time</span><b t-esc="state.detail.time_label"/></div>
+                            <div><span>Service</span><b t-esc="state.detail.service"/></div>
+                            <div t-if="state.detail.complaint">
+                                <span>Issue / Description</span><b t-esc="state.detail.complaint"/></div>
+                            <div t-if="state.detail.note">
+                                <span>Customer Notes</span><b t-esc="state.detail.note"/></div>
+                            <div t-if="state.detail.pickup">
+                                <span>Pickup</span><b t-esc="state.detail.pickup"/></div>
+                            <div t-if="state.detail.drop">
+                                <span>Drop-off</span><b t-esc="state.detail.drop"/></div>
+                            <div><span>Advisor</span>
+                                <b t-esc="state.detail.advisor or 'Unassigned'"/></div>
+                            <div t-if="state.detail.referral">
+                                <span>Heard About Us</span><b t-esc="state.detail.referral"/></div>
+                            <div><span>Source</span><b t-esc="state.detail.source"/></div>
+                            <div><span>Company</span><b t-esc="state.detail.company"/></div>
+                            <div><span>Created On</span><b t-esc="state.detail.create_date"/></div>
+                        </div>
+                        <div class="d-grid gap-2 mt-3">
+                            <button t-if="canReschedule"
+                                    class="btn btn-sm btn-outline-primary"
+                                    t-on-click="reschedule">
+                                <i class="fa fa-calendar me-1"/>Reschedule (change date &amp; time)</button>
+                            <button t-if="state.detail.state === 'requested'"
+                                    class="btn btn-sm btn-success" t-on-click="() => this.runAction('confirm')">
+                                Confirm Booking</button>
+                            <button t-if="canArrive"
+                                    class="btn btn-sm btn-primary" t-on-click="() => this.runAction('arrived')">
+                                Mark as Arrived</button>
+                            <button t-if="state.detail.state === 'arrived'"
+                                    class="btn btn-sm btn-success" t-on-click="() => this.runAction('complete')">
+                                Complete</button>
+                            <button t-if="canCancel"
+                                    class="btn btn-sm btn-outline-danger" t-on-click="() => this.runAction('cancel')">
+                                Cancel Booking</button>
+                            <button class="btn btn-sm btn-link"
+                                    t-on-click="() => this.openBookingForm(state.detail.id)">
+                                Open full record</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Secondary analytics -->
+            <div class="row g-3 mt-1">
+                <div class="col-12 col-xl-6">
+                    <div class="owbd-card p-3 h-100">
+                        <div class="fw-bold mb-3">Daily Bookings
+                            <span class="text-muted small fw-normal">(last 14 days)</span></div>
+                        <div class="owbd-barchart">
+                            <t t-foreach="state.data.daily" t-as="day" t-key="day_index">
+                                <div class="owbd-bar-col" t-att-title="day.label + ': ' + day.value">
+                                    <div class="owbd-bar-track">
+                                        <div class="owbd-bar"
+                                             t-attf-style="height: {{ barPct(day, state.data.daily) }}%"/>
+                                    </div>
+                                    <div class="owbd-bar-label" t-esc="day.label"/>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="owbd-card p-3 h-100">
+                        <div class="fw-bold mb-3">Customer Acquisition Source</div>
+                        <div class="d-flex align-items-center gap-3 flex-wrap">
+                            <svg viewBox="0 0 140 140" class="owbd-donut">
+                                <circle cx="70" cy="70" r="54" fill="none"
+                                        stroke="#eef1f7" stroke-width="20"/>
+                                <t t-foreach="acquisitionSegments" t-as="seg" t-key="seg.key">
+                                    <circle cx="70" cy="70" r="54" fill="none"
+                                            t-att-stroke="seg.color" stroke-width="20"
+                                            t-att-stroke-dasharray="seg.dash"
+                                            t-att-stroke-dashoffset="seg.offset"
+                                            transform="rotate(-90 70 70)"/>
+                                </t>
+                                <text x="70" y="76" text-anchor="middle"
+                                      class="owbd-donut-text" t-esc="acquisitionTotal"/>
+                            </svg>
+                            <div class="flex-grow-1">
+                                <t t-foreach="state.data.acquisition" t-as="item" t-key="item.key">
+                                    <div class="d-flex justify-content-between small mb-1 owbd-clickable"
+                                         t-on-click="() => this.filterByReferral(item.key)">
+                                        <span>
+                                            <span class="owbd-legend-dot"
+                                                  t-attf-style="background: {{ item.color }}"/>
+                                            <t t-esc="item.label"/>
+                                        </span>
+                                        <span class="text-muted" t-esc="item.value"/>
+                                    </div>
+                                </t>
+                                <div t-if="!state.data.acquisition.length" class="text-muted small">
+                                    No acquisition data yet.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-3">
+                    <div class="owbd-card p-3 h-100">
+                        <div class="fw-bold mb-3">Most Requested Services</div>
+                        <t t-foreach="state.data.services" t-as="item" t-key="item_index">
+                            <div class="mb-2">
+                                <div class="d-flex justify-content-between small mb-1">
+                                    <span t-esc="item.label"/><span class="fw-semibold" t-esc="item.value"/>
+                                </div>
+                                <div class="owbd-hbar-track">
+                                    <div class="owbd-hbar owbd-hbar-purple"
+                                         t-attf-style="width: {{ barPct(item, state.data.services) }}%"/>
+                                </div>
+                            </div>
+                        </t>
+                        <div t-if="!state.data.services.length" class="text-muted small">No service data yet.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</t>
+
+</templates>

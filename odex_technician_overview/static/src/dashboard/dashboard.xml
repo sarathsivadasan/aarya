@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="odex_technician_overview.Dashboard">
+    <div class="o_odex_overview">
+
+        <!-- Header -->
+        <div class="ov-header">
+            <div class="ov-title">
+                <span class="ov-title-icon">🛠️</span>
+                <h1>Technician Overview — Live Tracking</h1>
+            </div>
+            <div class="ov-header-right">
+                <span class="ov-pill ov-pill-jobcard">🟨 Job Card:
+                    <t t-esc="state.kpis.job_cards_running or 0"/> running</span>
+                <span class="ov-pill ov-pill-inspection">🟦 Vehicle Inspection:
+                    <t t-esc="state.kpis.inspections_running or 0"/> running</span>
+                <span class="ov-sync" t-if="state.lastSync">
+                    ⟳ <t t-esc="state.lastSync"/></span>
+            </div>
+        </div>
+
+        <!-- Filter toolbar: single horizontal row -->
+        <div class="ov-toolbar">
+            <select t-model="state.filters.period" t-on-change="onFilterChange">
+                <option value="today">Today</option>
+                <option value="yesterday">Yesterday</option>
+                <option value="week">This Week</option>
+                <option value="month">This Month</option>
+            </select>
+            <select t-model="state.filters.work_type" t-on-change="onFilterChange">
+                <option value="all">All Work Types</option>
+                <option value="job_card">Job Card</option>
+                <option value="inspection">Vehicle Inspection</option>
+            </select>
+            <select t-model="state.filters.status" t-on-change="onFilterChange">
+                <option value="all">All Statuses</option>
+                <option value="working">Working</option>
+                <option value="paused">Paused</option>
+                <option value="assigned">Assigned</option>
+                <option value="completed">Completed</option>
+                <option value="delayed">Delayed</option>
+                <option value="idle">Idle</option>
+            </select>
+            <select t-model="state.filters.technician_id" t-on-change="onFilterChange">
+                <option value="">All Technicians</option>
+                <t t-foreach="visibleTechnicians" t-as="tech" t-key="tech.id">
+                    <option t-att-value="tech.id" t-esc="tech.name"/>
+                </t>
+            </select>
+            <select t-model="state.filters.advisor_id" t-on-change="onFilterChange">
+                <option value="">All Advisors</option>
+                <t t-foreach="state.options.advisors" t-as="adv" t-key="adv.id">
+                    <option t-att-value="adv.id" t-esc="adv.name"/>
+                </t>
+            </select>
+            <div class="ov-search-wrap">
+                <span class="ov-search-icon">🔍</span>
+                <input type="text" class="ov-search"
+                       placeholder="Search technician, vehicle, reg. no., customer, document…"
+                       t-model="state.filters.search" t-on-input="onSearchInput"/>
+            </div>
+        </div>
+
+        <!-- Department toggle bar -->
+        <div class="ov-dept-bar">
+            <span class="ov-dept-label">Departments</span>
+            <div class="ov-dept-chips">
+                <button t-att-class="'ov-dept-chip ' + (isActiveDept('') ? 'ov-dept-active' : '')"
+                        t-on-click="() => this.selectDepartment('')">All</button>
+                <t t-foreach="state.options.departments" t-as="dep" t-key="dep.id">
+                    <button t-att-class="'ov-dept-chip ' + (isActiveDept(dep.id) ? 'ov-dept-active' : '')"
+                            t-on-click="() => this.selectDepartment(dep.id)"
+                            t-esc="dep.name"/>
+                </t>
+            </div>
+        </div>
+
+        <!-- KPI cards -->
+        <div class="ov-kpis">
+            <div class="ov-kpi kpi-blue">
+                <div class="ov-kpi-icon">👥</div>
+                <div><div class="ov-kpi-label">Total Technicians</div>
+                    <div class="ov-kpi-value" t-esc="state.kpis.total_technicians or 0"/></div>
+            </div>
+            <div class="ov-kpi kpi-green">
+                <div class="ov-kpi-icon">▶️</div>
+                <div><div class="ov-kpi-label">Working Now</div>
+                    <div class="ov-kpi-value" t-esc="state.kpis.working_now or 0"/></div>
+            </div>
+            <div class="ov-kpi kpi-orange">
+                <div class="ov-kpi-icon">⏸️</div>
+                <div><div class="ov-kpi-label">Paused</div>
+                    <div class="ov-kpi-value" t-esc="state.kpis.paused or 0"/></div>
+            </div>
+            <div class="ov-kpi kpi-grey">
+                <div class="ov-kpi-icon">💤</div>
+                <div><div class="ov-kpi-label">Idle</div>
+                    <div class="ov-kpi-value" t-esc="state.kpis.idle or 0"/></div>
+            </div>
+            <div class="ov-kpi kpi-blue">
+                <div class="ov-kpi-icon">✅</div>
+                <div><div class="ov-kpi-label">Completed Today</div>
+                    <div class="ov-kpi-value" t-esc="state.kpis.completed_today or 0"/></div>
+            </div>
+            <div class="ov-kpi kpi-red">
+                <div class="ov-kpi-icon">⚠️</div>
+                <div><div class="ov-kpi-label">Delayed Jobs</div>
+                    <div class="ov-kpi-value" t-esc="state.kpis.delayed_jobs or 0"/></div>
+            </div>
+            <div class="ov-kpi kpi-purple">
+                <div class="ov-kpi-icon">📊</div>
+                <div><div class="ov-kpi-label">Avg. Productivity</div>
+                    <div class="ov-kpi-value"><t t-esc="state.kpis.avg_productivity or 0"/>%</div></div>
+            </div>
+            <div class="ov-kpi kpi-yellow">
+                <div class="ov-kpi-icon">🕐</div>
+                <div><div class="ov-kpi-label">Avg. Repair Time</div>
+                    <div class="ov-kpi-value" t-esc="fmtHours(state.kpis.avg_repair_hours)"/></div>
+            </div>
+            <div class="ov-kpi kpi-purple">
+                <div class="ov-kpi-icon">🚗</div>
+                <div><div class="ov-kpi-label">Avg. Inspection Time</div>
+                    <div class="ov-kpi-value" t-esc="fmtHours(state.kpis.avg_inspection_hours)"/></div>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="ov-card ov-table-card">
+            <div class="ov-table-scroll">
+                <table class="ov-table">
+                    <thead>
+                        <tr>
+                            <th>Technician</th>
+                            <th>Emp. ID</th>
+                            <th>Work Type</th>
+                            <th>Document</th>
+                            <th>Reg. No.</th>
+                            <th>Vehicle</th>
+                            <th>Customer</th>
+                            <th>Operation</th>
+                            <th>Status</th>
+                            <th>Start</th>
+                            <th>Pause</th>
+                            <th>Resume</th>
+                            <th>End</th>
+                            <th>Std Time</th>
+                            <th>Elapsed</th>
+                            <th>Remaining</th>
+                            <th>Variance</th>
+                            <th>Productivity</th>
+                            <th>Stage</th>
+                            <th>Remarks</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="state.rows" t-as="row" t-key="row.technician_id">
+                            <tr t-on-click="() => this.openDocument(row)"
+                                t-att-class="row.document_id ? 'ov-row-clickable' : ''">
+                                <td class="ov-tech-cell">
+                                    <img t-att-src="row.avatar" class="ov-avatar" alt=""/>
+                                    <span class="ov-tech-name" t-esc="row.technician"/>
+                                </td>
+                                <td t-esc="row.employee_code or '-'"/>
+                                <td>
+                                    <span t-if="row.work_type === 'job_card'"
+                                          class="ov-badge badge-jobcard">🔧 Job Card</span>
+                                    <span t-elif="row.work_type === 'inspection'"
+                                          class="ov-badge badge-inspection">🚙 Vehicle Inspection</span>
+                                    <span t-else="" class="ov-badge badge-none">—</span>
+                                </td>
+                                <td t-esc="row.document or '-'"/>
+                                <td t-esc="row.registration or '-'"/>
+                                <td t-esc="row.vehicle or '-'"/>
+                                <td t-esc="row.customer or '-'"/>
+                                <td t-esc="row.operation or '-'"/>
+                                <td>
+                                    <span t-att-class="'ov-status ' + statusMeta(row.status).cls">
+                                        <span class="ov-dot"/>
+                                        <t t-esc="statusMeta(row.status).label"/>
+                                    </span>
+                                </td>
+                                <td t-esc="row.start_time or '-'"/>
+                                <td t-esc="row.pause_time or '-'"/>
+                                <td t-esc="row.resume_time or '-'"/>
+                                <td t-esc="row.end_time or '-'"/>
+                                <td t-esc="fmtHours(row.standard_hours)"/>
+                                <td class="ov-timer">
+                                    <span t-att-class="isLive(row) ? 'ov-timer-live' : ''"
+                                          t-esc="elapsedHMS(row)"/>
+                                </td>
+                                <td class="ov-timer" t-esc="remainingHMS(row)"/>
+                                <td>
+                                    <t t-set="v" t-value="varianceOf(row)"/>
+                                    <span t-att-class="v.exceeded ? 'ov-variance-exceeded' : 'ov-variance-ok'"
+                                          t-esc="v.label"/>
+                                </td>
+                                <td class="ov-prod-cell">
+                                    <div class="ov-progress">
+                                        <div class="ov-progress-bar"
+                                             t-attf-style="width: {{ prodWidth(row) }}%"/>
+                                    </div>
+                                    <span class="ov-prod-pct"><t t-esc="row.productivity"/>%</span>
+                                </td>
+                                <td t-esc="row.stage or '-'"/>
+                                <td class="ov-remarks" t-esc="row.remarks or '-'"/>
+                            </tr>
+                        </t>
+                        <tr t-if="!state.rows.length and !state.loading">
+                            <td colspan="20" class="ov-empty">
+                                No technicians match the current filters.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="ov-charts">
+            <div class="ov-card ov-chart">
+                <h3>Technician Productivity</h3>
+                <div class="ov-chart-canvas"><canvas t-ref="chartProductivity"/></div>
+            </div>
+            <div class="ov-card ov-chart">
+                <h3>Technicians by Status</h3>
+                <div class="ov-chart-canvas"><canvas t-ref="chartStatus"/></div>
+            </div>
+            <div class="ov-card ov-chart">
+                <h3>Standard vs Actual Time</h3>
+                <div class="ov-chart-canvas"><canvas t-ref="chartStdActual"/></div>
+            </div>
+            <div class="ov-card ov-chart">
+                <h3>Delayed Jobs</h3>
+                <div class="ov-chart-canvas"><canvas t-ref="chartDelayed"/></div>
+            </div>
+            <div class="ov-card ov-chart">
+                <h3>Job Card vs Vehicle Inspection</h3>
+                <div class="ov-chart-canvas"><canvas t-ref="chartWorkType"/></div>
+            </div>
+        </div>
+
+        <div class="ov-loading" t-if="state.loading">
+            <div class="ov-spinner"/>
+        </div>
+    </div>
+</t>
+
+</templates>

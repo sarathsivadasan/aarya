@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="customer_declaration_form_view">
+            <field name="name">customer.declaration.form.view</field>
+            <field name="model">customer.declaration</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="include"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_customer_declaration_tree" model="ir.ui.view">
+            <field name="name">customer.declaration.tree</field>
+            <field name="model">customer.declaration</field>
+            <field name="arch" type="xml">
+                <tree string="Declaration">
+                    <field name="name"/>
+                    <field name="include"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_view_customer_declaration" model="ir.actions.act_window">
+            <field name="name">Customer Declaration</field>
+            <field name="res_model">customer.declaration</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p>
+                    Add customer declaration
+                </p>
+            </field>
+        </record>
+
+        <menuitem
+            action="action_view_customer_declaration"
+            id="menu_customer_declaration"
+            parent="job_card.menu_job_card_setting"
+            groups="project.group_project_manager"
+            sequence="5" />
+    </data>
+</odoo>

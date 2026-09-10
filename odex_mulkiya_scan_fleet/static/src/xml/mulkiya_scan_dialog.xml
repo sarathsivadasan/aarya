@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="odex_mulkiya_scan_fleet.ScanDialog">
+        <Dialog size="'xl'" title="props.title">
+            <div class="o_mulkiya_scan_dialog">
+
+                <div t-if="state.error" class="alert alert-danger" role="alert">
+                    <t t-esc="state.error"/>
+                </div>
+                <div t-if="state.simulated" class="alert alert-danger" role="alert">
+                    <i class="fa fa-exclamation-triangle me-1"/>
+                    <strong>Simulated result.</strong>
+                    No OCR provider is configured, so these values are sample data
+                    and have nothing to do with the images above. Ask your
+                    administrator to set an OCR provider in the Mulkiya settings.
+                </div>
+                <div t-if="state.warnings.quality" class="alert alert-warning" role="alert">
+                    <i class="fa fa-camera me-1"/>
+                    <t t-esc="state.warnings.quality"/>
+                </div>
+                <div t-if="state.warnings.vin" class="alert alert-warning" role="alert">
+                    <i class="fa fa-exclamation-triangle me-1"/>
+                    <t t-esc="state.warnings.vin"/>
+                </div>
+                <div t-if="state.warnings.duplicate" class="alert alert-warning" role="alert">
+                    <i class="fa fa-exclamation-triangle me-1"/>
+                    <t t-esc="state.warnings.duplicate"/>
+                </div>
+
+                <!-- 1 / 2. Documents -->
+                <div class="row align-items-center o_mulkiya_documents">
+                    <t t-foreach="[['front', '1. Front Side (Mulkiya)'], ['back', '2. Back Side (Mulkiya)']]"
+                       t-as="side" t-key="side[0]">
+                        <div t-if="side[0] === 'back'"
+                             class="col-lg-1 text-center d-none d-lg-block">
+                            <span class="o_mulkiya_scan_glyph"><i class="fa fa-crop"/></span>
+                        </div>
+                        <div t-att-class="side[0] === 'front' ? 'col-12 col-lg-6' : 'col-12 col-lg-5'">
+                            <h5 class="o_mulkiya_section">
+                                <t t-esc="side[1]"/>
+                                <i class="fa fa-check-circle text-success ms-1" t-if="state[side[0]]"/>
+                            </h5>
+                            <div class="o_mulkiya_image_field"
+                                 t-att-class="{ 'o_mulkiya_has_image': state[side[0]] }"
+                                 t-on-dragover.prevent="() => {}"
+                                 t-on-drop="(ev) => this.onDrop(side[0], ev)">
+                                <div class="o_mulkiya_drop_area" t-if="!state[side[0]]">
+                                    <div class="o_mulkiya_placeholder">
+                                        <i class="fa fa-id-card-o fa-3x mb-2"/>
+                                        <div class="fw-bold">No image yet</div>
+                                        <div class="small text-muted">
+                                            Drop a picture here, upload a file or use the camera.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="o_mulkiya_preview" t-else="">
+                                    <img t-att-src="state[side[0]]" alt="Mulkiya side"/>
+                                </div>
+                                <div class="o_mulkiya_image_actions">
+                                    <label class="btn btn-secondary btn-sm mb-0" t-if="!state[side[0]]">
+                                        <i class="fa fa-upload me-1"/>Upload Image
+                                        <input type="file" class="d-none"
+                                               accept="image/jpeg,image/png,image/webp"
+                                               t-on-change="(ev) => this.onPick(side[0], ev)"/>
+                                    </label>
+                                    <label class="btn btn-secondary btn-sm mb-0">
+                                        <i class="fa fa-camera me-1"/>
+                                        <t t-if="!state[side[0]]">Take Photo</t>
+                                        <t t-else="">Retake</t>
+                                        <input type="file" class="d-none" accept="image/*"
+                                               capture="environment"
+                                               t-on-change="(ev) => this.onPick(side[0], ev)"/>
+                                    </label>
+                                    <button type="button" class="btn btn-secondary btn-sm text-danger"
+                                            t-if="state[side[0]]" title="Remove"
+                                            t-on-click="() => this.onRemove(side[0])">
+                                        <i class="fa fa-trash-o"/>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+
+                <!-- Processing -->
+                <div t-if="state.step === 'scanning'"
+                     class="o_mulkiya_processing text-center py-4 mt-3">
+                    <i class="fa fa-circle-o-notch fa-spin fa-2x mb-3"/>
+                    <h5>Scanning Mulkiya...</h5>
+                    <div class="text-muted small">
+                        <div><i class="fa fa-check text-success me-1"/>Front side uploaded</div>
+                        <div><i class="fa fa-check text-success me-1"/>Back side uploaded</div>
+                        <div class="mt-2">Reading document, extracting vehicle information,</div>
+                        <div>processing Arabic and English text, matching your master data...</div>
+                    </div>
+                </div>
+
+                <!-- 3. Extracted information -->
+                <div t-if="state.step === 'result'" class="o_mulkiya_results mt-3">
+                    <h5 class="o_mulkiya_section">
+                        3. Extracted Information
+                        <span class="badge text-bg-success ms-2">Confidence Shown</span>
+                        <span class="text-muted small ms-2" t-esc="state.scanNumber"/>
+                        <button type="button" class="btn btn-secondary btn-sm ms-auto"
+                                t-on-click="onRescan">
+                            <i class="fa fa-refresh me-1"/>Rescan
+                        </button>
+                    </h5>
+                    <div class="row">
+                        <div class="col-12 col-lg-4" t-foreach="columns" t-as="column"
+                             t-key="column_index">
+                            <div class="o_mulkiya_field" t-foreach="column" t-as="field"
+                                 t-key="field.key">
+                                <label t-att-for="'mulkiya_' + field.key" t-esc="field.label"/>
+                                <div class="o_mulkiya_input">
+                                    <t t-set="choices" t-value="optionsFor(field)"/>
+                                    <select t-if="choices" class="form-select form-select-sm"
+                                            t-att-id="'mulkiya_' + field.key"
+                                            t-att-class="{ 'o_mulkiya_empty': !field.value }"
+                                            t-on-change="(ev) => this.onFieldSelect(field, ev)">
+                                        <option value="-1" t-att-selected="!field.value">
+                                            -- not detected, please select --
+                                        </option>
+                                        <option t-foreach="choices" t-as="choice"
+                                                t-key="choice_index"
+                                                t-att-value="choice_index"
+                                                t-att-selected="choice.name === field.value"
+                                                t-esc="choice.name"/>
+                                    </select>
+                                    <input t-else="" type="text" class="form-control form-control-sm"
+                                           t-att-id="'mulkiya_' + field.key"
+                                           t-att-value="field.value"
+                                           t-on-input="(ev) => this.onFieldInput(field, ev)"/>
+                                    <span class="o_mulkiya_confidence badge"
+                                          t-att-class="confidenceClass(field)"
+                                          t-att-title="field.match_name ? 'Matched: ' + field.match_name : ''">
+                                        <t t-if="field.confidence"><t t-esc="field.confidence"/>%</t>
+                                        <t t-else="">--</t>
+                                    </span>
+                                </div>
+                                <div class="small text-warning" t-if="isUnknown(field)">
+                                    <i class="fa fa-exclamation-circle me-1"/>Not in your master data yet
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <t t-set-slot="footer">
+                <div class="o_mulkiya_footer">
+                    <div class="alert alert-info mb-0 py-2 px-3 o_mulkiya_footer_note"
+                         t-if="state.step === 'result'" role="status">
+                        <i class="fa fa-info-circle me-2"/>
+                        <span>
+                            Please verify the extracted information before applying.<br/>
+                            You can edit any field if needed.
+                        </span>
+                    </div>
+                    <div class="o_mulkiya_footer_buttons">
+                        <button class="btn btn-secondary" t-on-click="onCancel">Cancel</button>
+                        <button class="btn btn-primary" t-if="state.step !== 'result'"
+                                t-att-disabled="!canScan" t-on-click="onScan">
+                            <i class="fa fa-qrcode me-1"/>Scan Mulkiya
+                        </button>
+                        <button class="btn btn-primary" t-if="state.step === 'result'"
+                                t-att-disabled="state.applying" t-on-click="onUpdate">
+                            Apply to Vehicle
+                        </button>
+                    </div>
+                </div>
+            </t>
+        </Dialog>
+    </t>
+
+</templates>

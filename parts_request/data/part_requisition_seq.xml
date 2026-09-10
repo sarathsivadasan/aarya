@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+    
+        <record id="jobcard_parts_requisition_seq" model="ir.sequence">
+            <field name="name">Jobcard Parts Requisition Sequence</field>
+            <field name="code">jobcard.parts.requisition.seq</field>
+            <field name="prefix">PR</field>
+            <field name="padding">5</field>
+        </record>
+        
+    </data>
+</odoo>

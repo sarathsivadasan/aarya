@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Reserved for server-side QWeb (PDF report / portal) templates.
+        Kept as a valid, empty data file so the manifest reference always resolves.
+    -->
+</odoo>

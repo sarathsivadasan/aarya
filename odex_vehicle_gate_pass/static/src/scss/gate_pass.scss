@@ -1,0 +1,244 @@
+// Vehicle Gate Pass styling
+$gp-primary: #14149c;
+$gp-primary-soft: #eef0ff;
+$gp-green: #16a34a;
+$gp-orange: #ea580c;
+$gp-red: #dc2626;
+$gp-muted: #6b7280;
+$gp-border: #e5e7eb;
+$gp-radius: 14px;
+
+.o_gate_pass_form {
+    .o_gp_muted { color: $gp-muted; }
+
+    // ---- Flow bar ----
+    .o_gp_flow_wrap { margin: 0 0 16px; }
+    .o_gp_flow {
+        display: flex;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 4px;
+        padding: 16px;
+        background: $gp-primary-soft;
+        border-radius: $gp-radius;
+    }
+    .o_gp_flow_step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-width: 72px;
+        text-align: center;
+        &.o_gp_flow_clickable { cursor: pointer; }
+    }
+    .o_gp_flow_icon {
+        width: 44px; height: 44px;
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        background: #fff;
+        border: 2px solid $gp-border;
+        color: $gp-muted;
+        font-size: 18px;
+    }
+    .o_gp_flow_done .o_gp_flow_icon { background: $gp-green; border-color: $gp-green; color: #fff; }
+    .o_gp_flow_current .o_gp_flow_icon { background: $gp-primary; border-color: $gp-primary; color: #fff; }
+    .o_gp_flow_label { margin-top: 6px; font-size: 12px; font-weight: 600; color: $gp-primary; }
+    .o_gp_flow_arrow { display: flex; align-items: center; height: 44px; color: $gp-primary; padding: 0 2px; }
+
+    // ---- Status cards ----
+    .o_gp_card {
+        border: 1px solid $gp-border;
+        border-radius: $gp-radius;
+        padding: 12px 14px;
+        margin-bottom: 10px;
+        background: #fff;
+    }
+    .o_gp_card_head {
+        display: flex; align-items: center; gap: 6px;
+        font-weight: 700; color: $gp-primary; margin-bottom: 8px;
+    }
+    .o_gp_pill {
+        margin-left: auto;
+        font-size: 11px; font-weight: 700;
+        padding: 2px 10px; border-radius: 999px;
+        background: $gp-primary-soft; color: $gp-primary;
+    }
+    .o_gp_card_body div { margin: 2px 0; }
+    .o_gp_booking_booked { border-color: rgba($gp-green, .4); }
+    .o_gp_booking_booked .o_gp_pill { background: rgba($gp-green, .12); color: $gp-green; }
+    .o_gp_payment_paid .o_gp_pill { background: rgba($gp-green, .12); color: $gp-green; }
+    .o_gp_payment_partial .o_gp_pill { background: rgba($gp-orange, .12); color: $gp-orange; }
+    .o_gp_payment_unpaid .o_gp_pill,
+    .o_gp_payment_not_invoiced .o_gp_pill { background: rgba($gp-red, .1); color: $gp-red; }
+
+    // ---- OCR button ----
+    .o_gp_ocr { position: relative; display: inline-block; margin-left: 6px; }
+    .o_gp_ocr_dialog {
+        position: absolute; z-index: 1050; top: 110%; right: 0;
+        min-width: 240px;
+    }
+    .o_gp_ocr_panel {
+        background: #fff; border: 1px solid $gp-border; border-radius: $gp-radius;
+        padding: 12px; box-shadow: 0 8px 24px rgba(0,0,0,.12);
+    }
+    .o_gp_ocr_value { font-size: 18px; font-weight: 700; color: $gp-primary; margin: 4px 0; }
+    .o_gp_ocr_actions { display: flex; gap: 6px; margin-top: 10px; }
+
+    // ---- Fuel gauge ----
+    .o_gp_fuel { display: inline-flex; gap: 4px; }
+    .o_gp_fuel_btn {
+        border: 1px solid $gp-border; background: #fff; color: $gp-muted;
+        border-radius: 8px; padding: 4px 10px; font-weight: 600; cursor: pointer;
+        &.active { background: $gp-primary; border-color: $gp-primary; color: #fff; }
+    }
+
+    // ---- Shared inputs ----
+    .o_gp_select, .o_gp_input {
+        border: 1px solid $gp-border; border-radius: 8px; padding: 4px 8px; background: #fff;
+    }
+    .o_gp_input { width: 100%; }
+    .o_gp_empty { color: $gp-muted; padding: 24px; text-align: center; }
+
+    // ---- Photos ----
+    .o_gp_photos_bar { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; }
+    .o_gp_photo_grid {
+        display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px;
+    }
+    .o_gp_photo_tile {
+        border: 1px solid $gp-border; border-radius: $gp-radius; overflow: hidden; background: #fff;
+        img { width: 100%; height: 120px; object-fit: cover; cursor: zoom-in; display: block; }
+    }
+    .o_gp_photo_meta {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 4px 8px; font-size: 12px; color: $gp-muted;
+    }
+    .o_gp_zoom {
+        position: fixed; inset: 0; z-index: 1060; background: rgba(0,0,0,.8);
+        display: flex; align-items: center; justify-content: center; cursor: zoom-out;
+        img { max-width: 92vw; max-height: 92vh; border-radius: 8px; }
+    }
+
+    // ---- Damage map ----
+    .o_gp_damage_controls {
+        display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
+        justify-content: space-between; margin-bottom: 12px;
+    }
+    .o_gp_seg { display: inline-flex; gap: 4px; flex-wrap: wrap; }
+    .o_gp_seg_btn {
+        border: 1px solid $gp-border; background: #fff; color: $gp-muted;
+        border-radius: 8px; padding: 4px 12px; font-weight: 600; cursor: pointer;
+        &.active { background: $gp-primary; border-color: $gp-primary; color: #fff; }
+    }
+    .o_gp_damage_pickers { display: inline-flex; gap: 6px; align-items: center;
+        label { font-size: 12px; color: $gp-muted; } }
+    .o_gp_damage_stage {
+        position: relative; max-width: 900px; margin: 14px auto 0; touch-action: none;
+        border: 1px solid $gp-border; border-radius: $gp-radius; background: #fff; padding: 8px;
+    }
+    .o_gp_damage_img { width: 100%; display: block; user-select: none; pointer-events: none; }
+    .o_gp_marker {
+        position: absolute; min-width: 22px; height: 22px; padding: 0 4px;
+        border-radius: 11px; transform: translate(-50%, -50%);
+        border: 2px solid #fff; cursor: grab; color: #fff;
+        font-size: 11px; font-weight: 800; line-height: 18px; text-align: center;
+        box-shadow: 0 1px 5px rgba(0, 0, 0, .5); touch-action: none;
+    }
+    .o_gp_marker_major { box-shadow: 0 0 0 3px rgba(220, 38, 38, .45), 0 1px 5px rgba(0,0,0,.5); }
+    .o_gp_marker_sel { outline: 3px solid #14149c; outline-offset: 1px; }
+
+    .o_gp_legend_pick { display: flex; flex-wrap: wrap; gap: 6px; }
+    .o_gp_legend_btn {
+        display: inline-flex; align-items: center; gap: 6px;
+        border: 1px solid #e5e7eb; background: #fff; border-radius: 999px;
+        padding: 4px 10px 4px 5px; font-size: 12px; font-weight: 600; color: #374151;
+        cursor: pointer;
+        &.active { border-color: var(--gp-c); box-shadow: 0 0 0 2px var(--gp-c) inset; }
+    }
+    .o_gp_legend_dot {
+        width: 22px; height: 22px; border-radius: 50%; background: var(--gp-c);
+        color: #fff; font-weight: 800; font-size: 11px;
+        display: inline-flex; align-items: center; justify-content: center;
+    }
+    .o_gp_damage_sev { display: inline-flex; gap: 6px; align-items: center;
+        label { font-size: 12px; color: #6b7280; } }
+    .o_gp_damage_detail {
+        margin-top: 12px; border: 1px solid $gp-border; border-radius: $gp-radius; padding: 12px;
+    }
+    .o_gp_damage_row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 8px;
+        label { font-size: 12px; color: $gp-muted; } }
+    .o_gp_damage_hint { text-align: center; margin-top: 10px; }
+
+    // ---- Timeline ----
+    .o_gp_timeline { max-width: 560px; }
+    .o_gp_timeline_row { display: flex; gap: 12px; padding: 8px 0; border-left: 2px solid $gp-border; margin-left: 14px; }
+    .o_gp_timeline_dot {
+        width: 28px; height: 28px; border-radius: 50%; margin-left: -15px;
+        background: #fff; border: 2px solid $gp-border; color: $gp-muted;
+        display: flex; align-items: center; justify-content: center; flex: none;
+    }
+    .o_gp_timeline_done .o_gp_timeline_dot { background: $gp-green; border-color: $gp-green; color: #fff; }
+    .o_gp_timeline_step { font-weight: 600; color: $gp-primary; text-transform: capitalize; }
+}
+
+// ---- Camera overlay (appended to body, so outside the form scope) ----
+.o_gp_camera_overlay {
+    position: fixed; inset: 0; z-index: 2000; background: rgba(0,0,0,.85);
+    display: flex; align-items: center; justify-content: center;
+}
+.o_gp_camera_box {
+    background: #111; border-radius: 14px; padding: 12px; max-width: 94vw;
+    display: flex; flex-direction: column; gap: 10px;
+}
+.o_gp_camera_video, .o_gp_camera_canvas { max-width: 86vw; max-height: 70vh; border-radius: 8px; background: #000; }
+.o_gp_camera_actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+
+// ---- Mobile ----
+@media (max-width: 768px) {
+    .o_gate_pass_form .o_gp_flow_step { min-width: 60px; }
+    .o_gate_pass_form .o_gp_flow_label { font-size: 10px; }
+    .o_gate_pass_form .o_gp_photo_tile img { height: 100px; }
+}
+
+// ---- Round fuel gauge ----
+.o_gp_fuel_gauge { text-align: center; padding: 6px 0; }
+.o_gp_gauge_svg { width: 210px; max-width: 100%; height: auto; }
+.o_gp_gauge_end { font-size: 20px; fill: #ffffff; font-weight: 700; }
+.o_gp_gauge_big { font-size: 20px; fill: #14149c; font-weight: 800; }
+.o_gp_gauge_pump { opacity: .9; }
+.o_gp_gauge_pick { display: inline-flex; gap: 4px; margin-top: 8px; flex-wrap: wrap; justify-content: center; }
+.o_gp_gauge_btn {
+    border: 1px solid #e5e7eb; background: #fff; color: #6b7280;
+    border-radius: 8px; padding: 3px 10px; font-weight: 600; cursor: pointer; font-size: 12px;
+    &.active { background: #14149c; border-color: #14149c; color: #fff; }
+}
+
+// ---- Photo capture slots ----
+.o_gp_photos_head {
+    display: flex; align-items: center; justify-content: space-between;
+    margin: 2px 0 12px; font-weight: 700; color: #14149c;
+}
+.o_gp_photos_count { font-size: 14px; }
+.o_gp_slot_grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px;
+}
+.o_gp_slot { display: flex; flex-direction: column; }
+.o_gp_slot_title { font-size: 13px; font-weight: 700; color: #374151; margin-bottom: 6px; }
+.o_gp_slot_empty {
+    height: 120px; width: 100%; border: 2px dashed #c7cbe8; border-radius: 12px;
+    background: #f6f7ff; color: #8890d8; cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+    font-size: 13px;
+    i { font-size: 24px; }
+    &:hover { border-color: #14149c; color: #14149c; }
+    &:disabled { opacity: .5; cursor: default; }
+}
+.o_gp_slot_filled {
+    height: 120px; border-radius: 12px; overflow: hidden; border: 1px solid #e5e7eb;
+    img { width: 100%; height: 100%; object-fit: cover; cursor: zoom-in; display: block; }
+}
+.o_gp_slot_desc { margin-top: 6px; font-size: 13px; }
+.o_gp_slot_actions { display: flex; align-items: center; justify-content: space-between; margin-top: 2px; }
+.o_gp_slot_replace { color: #14149c; padding-left: 0; }
+
+@media (max-width: 768px) {
+    .o_gp_slot_grid { grid-template-columns: repeat(auto-fill, minmax(46%, 1fr)); }
+}

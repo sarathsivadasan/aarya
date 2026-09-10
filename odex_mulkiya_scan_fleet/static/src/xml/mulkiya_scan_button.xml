@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="odex_mulkiya_scan_fleet.ScanButton">
+        <button type="button" class="btn btn-outline-primary o_mulkiya_scan_button"
+                t-on-click="onClick">
+            <i class="fa fa-id-card-o me-1"/>Scan Mulkiya (OCR)
+        </button>
+    </t>
+
+</templates>

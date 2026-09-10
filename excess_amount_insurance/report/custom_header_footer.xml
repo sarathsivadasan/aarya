@@ -1,0 +1,21 @@
+<odoo>
+    <template id="web.external_layout">
+<!--        <t t-foreach="docs" t-as="o">-->
+        <div class="header" style="margin-left: -35px;">
+<!--            <link rel="stylesheet" href="/prints_extend/static/src/scss/style.css" type="text/css"/>-->
+            <div style="position: absolute; min-height: 50px; max-height: 50px; background-color: red;">
+                <img src="/prints_extend/static/src/images/header.png" alt="Image" style="max-width:105%; max-height: 100%;"/>
+            </div>
+        </div>
+        <div class="article o_report_layout_standard">
+            <t t-out="0"/>
+        </div>
+        <div class="footer" style="margin-left: -45px;">
+            <link rel="stylesheet" href="/prints_extend/static/src/scss/style.css" type="text/css"/>
+            <div>
+                <img src="/prints_extend/static/src/images/footer.png" alt="Image" style="max-width:103%; max-height: auto;" class="image_footer"/>
+            </div>
+        </div>
+
+    </template>
+</odoo>

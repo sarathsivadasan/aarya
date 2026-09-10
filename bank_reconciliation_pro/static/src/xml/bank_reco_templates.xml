@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="bank_reconciliation_pro.BankRecoAction">
+    <div class="brc-root">
+
+        <!-- ══════════════════════════════════════════════════════════
+             TOP BAR
+        ══════════════════════════════════════════════════════════ -->
+        <div class="brc-topbar">
+            <div class="brc-topbar-left">
+                <span class="brc-title">
+                    <i class="fa fa-university brc-title-icon"/>
+                    Bank Reconciliation
+                </span>
+                <select class="brc-journal-select" t-on-change="onJournalChange">
+                    <option value="">— Select Bank Account —</option>
+                    <t t-foreach="state.journals" t-as="j" t-key="j.id">
+                        <option t-att-value="j.id"
+                                t-att-selected="state.selectedJournal == j.id">
+                            <t t-esc="j.name"/>
+                        </option>
+                    </t>
+                </select>
+                <div class="brc-date-wrap">
+                    <i class="fa fa-calendar-o"/>
+                    <input type="date" class="brc-date-input"
+                           t-att-value="state.recoDate"
+                           t-on-change="onRecoDateChange"/>
+                </div>
+            </div>
+            <div class="brc-topbar-right">
+                <button class="brc-btn brc-btn-secondary" t-on-click="onFetchTransactions">
+                    <i class="fa fa-download"/>
+                    Fetch Transactions
+                </button>
+                <button class="brc-btn brc-btn-primary" t-on-click="onReconcileSelected"
+                        t-att-disabled="state.selectedIds.length === 0 ? 'disabled' : false">
+                    <i class="fa fa-check-circle"/>
+                    Reconcile
+                </button>
+                <button class="brc-btn brc-btn-secondary" t-on-click="onCreateAdjustment">
+                    <i class="fa fa-plus-circle"/>
+                    Create Adjustment
+                </button>
+                <button class="brc-btn brc-btn-ghost" t-on-click="onReset">
+                    <i class="fa fa-refresh"/>
+                    Reset
+                </button>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════════
+             SUMMARY DASHBOARD
+        ══════════════════════════════════════════════════════════ -->
+        <div class="brc-summary-bar">
+            <div class="brc-summary-card">
+                <div class="brc-summary-label">Opening Balance (as on <t t-esc="state.openingDateLabel"/>)</div>
+                <div class="brc-summary-value">AED <t t-esc="formatAmt(state.summary.opening_balance)"/></div>
+            </div>
+            <div class="brc-summary-divider"/>
+            <div class="brc-summary-card">
+                <div class="brc-summary-label">Total Debit (AED)</div>
+                <div class="brc-summary-value brc-debit"><t t-esc="formatAmt(state.summary.total_debit)"/></div>
+            </div>
+            <div class="brc-summary-divider"/>
+            <div class="brc-summary-card">
+                <div class="brc-summary-label">Total Credit (AED)</div>
+                <div class="brc-summary-value brc-credit"><t t-esc="formatAmt(state.summary.total_credit)"/></div>
+            </div>
+            <div class="brc-summary-divider"/>
+            <div class="brc-summary-card">
+                <div class="brc-summary-label">Cleared Amount (AED)</div>
+                <div class="brc-summary-value brc-cleared"><t t-esc="formatAmt(state.summary.cleared_amount)"/></div>
+            </div>
+            <div class="brc-summary-divider"/>
+            <div class="brc-summary-card">
+                <div class="brc-summary-label">Pending Amount (AED)</div>
+                <div class="brc-summary-value brc-pending-amt"><t t-esc="formatAmt(state.summary.pending_amount)"/></div>
+            </div>
+            <div class="brc-summary-divider"/>
+            <div class="brc-summary-card brc-summary-card-diff"
+                 t-att-class="state.summary.is_mismatch ? 'brc-summary-card brc-mismatch-card' : 'brc-summary-card'">
+                <div class="brc-summary-label">Difference (AED)</div>
+                <div class="brc-summary-value"
+                     t-att-class="state.summary.is_mismatch ? 'brc-mismatch-val' : ''">
+                    <t t-esc="formatAmt(state.summary.difference)"/>
+                    <t t-if="state.summary.is_mismatch">
+                        <span class="brc-mismatch-badge">Mismatch</span>
+                    </t>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════════
+             MAIN CONTENT AREA (TABLE + RIGHT PANEL)
+        ══════════════════════════════════════════════════════════ -->
+        <div class="brc-content-area">
+
+            <!-- ── FILTER + SEARCH ROW ─────────────────────────── -->
+            <div class="brc-filter-row">
+                <div class="brc-filter-group">
+                    <label class="brc-filter-label">Filters</label>
+                    <select class="brc-filter-select" t-on-change="onShowReconciledChange">
+                        <option value="unreconciled">Unreconciled Only</option>
+                        <option value="all">All Entries</option>
+                        <option value="reconciled">Reconciled Only</option>
+                    </select>
+                    <select class="brc-filter-select" t-on-change="onJournalFilterChange">
+                        <option value="all">All Journals</option>
+                        <t t-foreach="state.journals" t-as="j" t-key="j.id">
+                            <option t-att-value="j.id"><t t-esc="j.name"/></option>
+                        </t>
+                    </select>
+                    <select class="brc-filter-select" t-on-change="onPartnerFilterChange">
+                        <option value="all">All Partners</option>
+                        <t t-foreach="state.partners" t-as="p" t-key="p.id">
+                            <option t-att-value="p.id"><t t-esc="p.name"/></option>
+                        </t>
+                    </select>
+                </div>
+                <div class="brc-search-wrap">
+                    <label class="brc-filter-label">Search</label>
+                    <div class="brc-search-box">
+                        <i class="fa fa-search brc-search-icon"/>
+                        <input type="text" class="brc-search-input"
+                               placeholder="Reference / Amount / Partner"
+                               t-att-value="state.searchTerm"
+                               t-on-input="onSearchInput"/>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── TABLE + PANEL WRAPPER ───────────────────────── -->
+            <div class="brc-table-panel-wrap">
+
+                <!-- TABLE -->
+                <div class="brc-table-wrap">
+                    <t t-if="state.loading">
+                        <div class="brc-loading">
+                            <i class="fa fa-spinner fa-spin fa-2x"/>
+                            <p>Loading transactions…</p>
+                        </div>
+                    </t>
+                    <t t-else="">
+                        <t t-if="!state.selectedJournal">
+                            <div class="brc-empty-state">
+                                <i class="fa fa-bank brc-empty-icon"/>
+                                <p>Please select a Bank Account to begin reconciliation.</p>
+                            </div>
+                        </t>
+                        <t t-else="">
+                            <table class="brc-table">
+                                <thead>
+                                    <tr>
+                                        <th class="brc-th-check">
+                                            <input type="checkbox"
+                                                   t-att-checked="allSelected"
+                                                   t-on-change="onSelectAll"/>
+                                        </th>
+                                        <th class="brc-sortable" t-on-click="() => this.onSort('date')">
+                                            Date
+                                            <i t-att-class="sortIcon('date')"/>
+                                        </th>
+                                        <th>Reference</th>
+                                        <th>Partner</th>
+                                        <th>Journal</th>
+                                        <th class="brc-th-num">Debit (AED)</th>
+                                        <th class="brc-th-num">Credit (AED)</th>
+                                        <th>Cleared Date</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-if="state.lines.length === 0">
+                                        <tr>
+                                            <td colspan="10" class="brc-no-records">
+                                                <i class="fa fa-check-circle brc-all-clear-icon"/>
+                                                No unreconciled entries found.
+                                            </td>
+                                        </tr>
+                                    </t>
+                                    <t t-foreach="state.lines" t-as="line" t-key="line.id">
+                                        <tr t-att-class="rowClass(line)"
+                                            t-on-click="() => this.onRowClick(line)">
+                                            <td class="brc-td-check" t-on-click.stop="">
+                                                <input type="checkbox"
+                                                       t-att-checked="isSelected(line.id)"
+                                                       t-on-change="() => this.onToggleSelect(line.id)"/>
+                                            </td>
+                                            <td><t t-esc="line.date"/></td>
+                                            <td class="brc-td-ref"><t t-esc="line.name"/></td>
+                                            <td><t t-esc="line.partner"/></td>
+                                            <td><span class="brc-journal-tag"><t t-esc="line.journal"/></span></td>
+                                            <td class="brc-td-num brc-debit-cell">
+                                                <t t-if="line.debit">
+                                                    <t t-esc="formatAmt(line.debit)"/>
+                                                </t>
+                                                <t t-else="">—</t>
+                                            </td>
+                                            <td class="brc-td-num brc-credit-cell">
+                                                <t t-if="line.credit">
+                                                    <t t-esc="formatAmt(line.credit)"/>
+                                                </t>
+                                                <t t-else="">—</t>
+                                            </td>
+                                            <td class="brc-td-date">
+                                                <t t-esc="line.cleared_date || '—'"/>
+                                            </td>
+                                            <td>
+                                                <span t-att-class="statusClass(line)">
+                                                    <span class="brc-status-dot"/>
+                                                    <t t-esc="line.status === 'reconciled' ? 'Reconciled' : 'Pending'"/>
+                                                </span>
+                                            </td>
+                                            <td t-on-click.stop="">
+                                                <button t-if="!line.is_reconciled"
+                                                        t-att-class="isSelected(line.id) ? 'brc-action-btn brc-action-btn-active' : 'brc-action-btn'"
+                                                        t-on-click="() => this.onQuickReconcile(line.id)">
+                                                    Reconcile
+                                                </button>
+                                                <button t-else=""
+                                                        class="brc-action-btn brc-action-btn-done"
+                                                        t-on-click="() => this.onUnreconcile(line.id)">
+                                                    Undo
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+
+                            <!-- TABLE FOOTER -->
+                            <div class="brc-table-footer">
+                                <span>Showing 1 to <t t-esc="state.lines.length"/>
+                                    of
+                                    <t t-esc="state.lines.length"/>
+                                    entries</span>
+                                <span class="brc-footer-selected" t-if="state.selectedIds.length > 0">
+                                    Total Selected: <strong><t t-esc="state.selectedIds.length"/>
+                                    entries</strong>
+                                    &amp;nbsp;&amp;nbsp;
+                                    Total Amount:
+                                    <strong>AED <t t-esc="formatAmt(selectedTotal)"/></strong>
+                                </span>
+                            </div>
+                        </t>
+                    </t>
+                </div>
+
+                <!-- RIGHT RECONCILIATION PANEL -->
+                <div class="brc-right-panel">
+                    <div class="brc-panel-header">
+                          <div>
+                             <button class="brc-btn brc-btn-primary brc-btn-full"
+                                     t-on-click="onReconcileSelected"
+                                     t-att-disabled="state.selectedIds.length === 0 ? 'disabled' : false">
+                            <i class="fa fa-check"/>
+                                 Reconcile
+                                 <t t-if="state.selectedIds.length > 0">
+                                (<t t-esc="state.selectedIds.length"/>)
+                            </t>
+                        </button>
+                              <button class="brc-btn brc-btn-ghost brc-btn-full"
+                                      t-on-click="onClearSelection"
+                                      t-att-disabled="state.selectedIds.length === 0 ? 'disabled' : false">
+                            <i class="fa fa-trash"/>
+                                  Clear Selection
+                        </button>
+                    </div>
+<!--                        <br/>-->
+                        <i class="fa fa-check-square-o"/>
+                        Reconcile Selected Entries
+                    </div>
+
+                    <div class="brc-panel-body">
+                        <!-- Bank Date -->
+                        <div class="brc-field-group brc-field-required">
+                            <label class="brc-field-label">Bank Date <span class="brc-required-star">*</span></label>
+                            <input type="date" class="brc-field-input"
+                                   t-att-value="state.bankDate"
+                                   t-on-change="onBankDateChange"/>
+                        </div>
+
+                        <!-- Bank Reference -->
+                        <div class="brc-field-group">
+                            <label class="brc-field-label">Bank Reference</label>
+                            <input type="text" class="brc-field-input"
+                                   placeholder="e.g. REF123456 (Optional)"
+                                   t-att-value="state.bankReference"
+                                   t-on-input="onBankRefChange"/>
+                        </div>
+
+                        <!-- Notes -->
+                        <div class="brc-field-group">
+                            <label class="brc-field-label">Notes</label>
+                            <textarea class="brc-field-textarea"
+                                      placeholder="Enter notes (Optional)"
+                                      t-on-input="onNotesChange"><t t-esc="state.notes"/></textarea>
+                        </div>
+
+                        <!-- Selection Info -->
+                        <t t-if="state.selectedIds.length > 0">
+                            <div class="brc-selection-info">
+                                <i class="fa fa-info-circle"/>
+                                You have selected
+                                <strong><t t-esc="state.selectedIds.length"/>
+                                    journal entries</strong>
+                                <div class="brc-selection-total">
+                                    Total Amount
+                                    <span class="brc-selection-amount">AED <t t-esc="formatAmt(selectedTotal)"/></span>
+                                </div>
+                            </div>
+                        </t>
+                        <t t-else="">
+                            <div class="brc-selection-empty">
+                                <i class="fa fa-mouse-pointer"/>
+                                Select entries from the table to reconcile them.
+                            </div>
+                        </t>
+
+                        <!-- What happens info -->
+                        <div class="brc-what-happens">
+                            <div class="brc-what-title">What happens on reconcile?</div>
+                            <div class="brc-what-item"><i class="fa fa-check brc-what-icon"/>
+                                Entries will be marked as Cleared</div>
+                            <div class="brc-what-item"><i class="fa fa-check brc-what-icon"/>
+                                Cleared Date will be set as Bank Date</div>
+                            <div class="brc-what-item"><i class="fa fa-check brc-what-icon"/>
+                                These entries will no longer appear in the list</div>
+                        </div>
+                    </div>
+
+                    <div class="brc-panel-footer">
+
+                    </div>
+                </div>
+                <!-- END RIGHT PANEL -->
+
+            </div>
+            <!-- END TABLE + PANEL WRAPPER -->
+
+            <!-- INFO FOOTER -->
+            <div class="brc-info-footer">
+                <i class="fa fa-info-circle"/>
+                This view shows only unreconciled journal entries. Once reconciled, the entries will be removed from
+                this list.
+                Use <strong>Reset</strong> to clear filters and fetch again.
+            </div>
+
+        </div>
+        <!-- END CONTENT AREA -->
+
+        <!-- TOAST NOTIFICATION -->
+        <t t-if="state.toast">
+            <div t-att-class="'brc-toast brc-toast-' + state.toast.type">
+                <i t-att-class="'fa ' + (state.toast.type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle')"/>
+                <t t-esc="state.toast.message"/>
+            </div>
+        </t>
+
+    </div>
+</t>
+
+</templates>

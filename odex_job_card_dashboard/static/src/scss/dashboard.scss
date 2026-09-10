@@ -1,0 +1,484 @@
+// ============================================================================
+// ODEX Job Card Dashboard
+// Palette is deliberately neutral: every status colour comes from the
+// database, so only the shell is styled here.
+// ============================================================================
+
+.o_jcd {
+    --jcd-bg: #f4f6fd;
+    --jcd-surface: #ffffff;
+    --jcd-ink: #1e2251;
+    --jcd-ink-soft: #6b7295;
+    --jcd-line: #e6e9f5;
+    --jcd-brand: #2f2a8f;
+    --jcd-brand-soft: #4f46e5;
+    --jcd-radius: 14px;
+    --jcd-shadow: 0 1px 2px rgba(30, 34, 81, .05), 0 8px 24px rgba(30, 34, 81, .06);
+
+    background: var(--jcd-bg);
+    color: var(--jcd-ink);
+    min-height: 100%;
+    padding: 0 0 24px;
+    overflow-x: hidden;
+    font-size: 13px;
+
+    * { box-sizing: border-box; }
+
+    // --------------------------------------------------------------- filters
+    // The dashboard starts straight at the period filter - there is no
+    // separate title bar, the breadcrumb already names the screen.
+    .o_jcd_filters {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        padding: 16px 20px 4px;
+    }
+
+    .o_jcd_full { margin: 16px 8px 0; }
+
+    .o_jcd_chips { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .o_jcd_chip_btn {
+        border: 1px solid var(--jcd-line);
+        background: var(--jcd-surface);
+        color: var(--jcd-ink);
+        border-radius: 10px;
+        padding: 7px 14px;
+        font-weight: 600;
+        transition: all .15s ease;
+
+        &:hover { border-color: var(--jcd-brand-soft); }
+        &.o_jcd_chip_active {
+            background: var(--jcd-brand-soft);
+            border-color: var(--jcd-brand-soft);
+            color: #fff;
+        }
+    }
+
+    .o_jcd_dates {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--jcd-ink-soft);
+    }
+
+    .o_jcd_input,
+    .o_jcd_select select {
+        border: 1px solid var(--jcd-line);
+        background: var(--jcd-surface);
+        border-radius: 10px;
+        padding: 7px 10px;
+        color: var(--jcd-ink);
+        outline: none;
+        max-width: 220px;
+    }
+
+    .o_jcd_selects { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .o_jcd_select {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--jcd-surface);
+        border: 1px solid var(--jcd-line);
+        border-radius: 10px;
+        padding-left: 10px;
+        color: var(--jcd-ink-soft);
+        margin: 0;
+
+        select { border: 0; padding-left: 4px; }
+    }
+
+    // ---------------------------------------------------------------- alerts
+    .o_jcd_alert {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        margin: 12px 20px 0;
+        padding: 10px 14px;
+        border-radius: 10px;
+        font-weight: 500;
+    }
+
+    .o_jcd_alert_error { background: #fee2e2; color: #991b1b; }
+    .o_jcd_alert_warn { background: #fef3c7; color: #92400e; }
+
+    // ---------------------------------------------------------- status cards
+    .o_jcd_status_grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+        gap: 14px;
+        padding: 14px 20px 0;
+        align-items: start;
+    }
+
+    .o_jcd_card {
+        border: 1px solid transparent;
+        border-radius: var(--jcd-radius);
+        padding: 14px;
+        cursor: pointer;
+        transition: transform .15s ease, box-shadow .15s ease;
+
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--jcd-shadow);
+        }
+    }
+
+    .o_jcd_card_head { display: flex; align-items: flex-start; gap: 12px; }
+
+    .o_jcd_card_icon {
+        width: 42px;
+        height: 42px;
+        flex: 0 0 42px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, .75);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+    }
+
+    .o_jcd_card_body { flex: 1 1 auto; min-width: 0; }
+
+    .o_jcd_card_title {
+        font-weight: 700;
+        font-size: 13px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .o_jcd_card_metrics { display: flex; align-items: baseline; gap: 8px; }
+    .o_jcd_card_count { font-size: 26px; font-weight: 800; line-height: 1.1; }
+    .o_jcd_card_share {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--jcd-ink-soft);
+    }
+    .o_jcd_card_trend { font-size: 12px; font-weight: 700; }
+    .o_jcd_trend_up { color: #15803d; }
+    .o_jcd_trend_down { color: #dc2626; }
+
+    .o_jcd_card_toggle { color: var(--jcd-ink-soft); }
+
+    .o_jcd_drill {
+        margin-top: 12px;
+        padding-top: 10px;
+        border-top: 1px dashed rgba(30, 34, 81, .18);
+    }
+
+    .o_jcd_drill_chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+
+    .o_jcd_chip_label {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: .4px;
+        color: var(--jcd-ink-soft);
+        width: 100%;
+    }
+
+    .o_jcd_chip {
+        border: 1px solid rgba(30, 34, 81, .15);
+        background: rgba(255, 255, 255, .7);
+        border-radius: 20px;
+        padding: 3px 10px;
+        font-size: 11.5px;
+        font-weight: 600;
+    }
+
+    .o_jcd_chip_count {
+        margin-left: 5px;
+        background: rgba(30, 34, 81, .1);
+        border-radius: 10px;
+        padding: 0 6px;
+    }
+
+    .o_jcd_drill_table {
+        width: 100%;
+        font-size: 12px;
+        td { padding: 4px 6px; border-bottom: 1px solid rgba(30, 34, 81, .08); }
+        tr { cursor: pointer; }
+        tr:hover { background: rgba(255, 255, 255, .6); }
+    }
+
+    .o_jcd_drill_all {
+        margin-top: 8px;
+        background: rgba(255, 255, 255, .8);
+        font-weight: 600;
+    }
+
+    // ---------------------------------------------------------------- panels
+    .o_jcd_row_block { margin: 16px 8px 0; }
+
+    .o_jcd_panel {
+        background: var(--jcd-surface);
+        border-radius: var(--jcd-radius);
+        box-shadow: var(--jcd-shadow);
+        padding: 14px 16px;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+    }
+
+    .o_jcd_panel_head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        gap: 8px;
+
+        h3 { font-size: 15px; font-weight: 700; margin: 0; }
+    }
+
+    .o_jcd_viewall {
+        border: 0;
+        background: transparent;
+        color: var(--jcd-brand-soft);
+        font-weight: 600;
+        font-size: 12px;
+        white-space: nowrap;
+    }
+
+    // ---------------------------------------------------------------- tables
+    .o_jcd_table_wrap { overflow-x: auto; }
+
+    .o_jcd_table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12.5px;
+
+        th {
+            text-align: left;
+            font-weight: 700;
+            color: var(--jcd-ink-soft);
+            background: #f7f8fd;
+            padding: 8px 10px;
+            white-space: nowrap;
+            position: sticky;
+            top: 0;
+        }
+
+        td {
+            padding: 8px 10px;
+            border-bottom: 1px solid var(--jcd-line);
+            white-space: nowrap;
+        }
+
+        tbody tr { cursor: pointer; transition: background .12s ease; }
+        tbody tr:hover { background: #f6f7ff; }
+    }
+
+    .o_jcd_link { color: var(--jcd-brand-soft); font-weight: 600; }
+
+    .o_jcd_badge {
+        display: inline-block;
+        border-radius: 20px;
+        padding: 2px 10px;
+        font-size: 11.5px;
+        font-weight: 700;
+    }
+
+    .o_jcd_empty { color: var(--jcd-ink-soft); padding: 14px 4px; }
+
+    .o_jcd_state {
+        font-weight: 700;
+        font-size: 11.5px;
+    }
+    .o_jcd_state_none { color: #16a34a; }
+    .o_jcd_state_warning { color: #d97706; }
+    .o_jcd_state_critical { color: #dc2626; }
+
+    .o_jcd_pill {
+        display: inline-block;
+        min-width: 20px;
+        text-align: center;
+        background: #eef0ff;
+        color: var(--jcd-brand);
+        border-radius: 20px;
+        padding: 1px 7px;
+        font-weight: 800;
+        font-size: 11px;
+        margin-right: 6px;
+    }
+
+    .o_jcd_banner {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        border-radius: 10px;
+        padding: 8px 12px;
+        margin-bottom: 10px;
+        color: #b91c1c;
+
+        .o_jcd_banner_count { font-size: 20px; font-weight: 800; }
+        .o_jcd_banner_text { display: flex; flex-direction: column; line-height: 1.2; }
+        small { color: #ef4444; }
+    }
+
+    .o_jcd_days { font-weight: 800; }
+    .o_jcd_days_warning { color: #f97316; }
+    .o_jcd_days_critical { color: #dc2626; }
+    .o_jcd_days_severe { color: #7f1d1d; }
+    .o_jcd_overdue_severe { background: #fff1f1; }
+
+    // ------------------------------------------------------------------ bays
+    .o_jcd_bays {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 10px;
+    }
+
+    .o_jcd_bay {
+        border-radius: 12px;
+        border: 1px solid var(--jcd-line);
+        background: #f8fafc;
+        padding: 10px 6px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3px;
+        transition: transform .15s ease;
+
+        &:hover { transform: translateY(-2px); }
+    }
+
+    .o_jcd_bay_name { font-size: 11.5px; font-weight: 700; color: var(--jcd-ink-soft); }
+    .o_jcd_bay_icon { font-size: 17px; }
+    .o_jcd_bay_state { font-weight: 700; font-size: 12px; }
+    .o_jcd_bay_kind {
+        font-size: 10.5px;
+        text-transform: uppercase;
+        letter-spacing: .3px;
+        color: var(--jcd-ink-soft);
+    }
+    .o_jcd_bay_job { font-size: 11.5px; font-weight: 700; color: var(--jcd-brand-soft); }
+
+    .o_jcd_bay_free { background: #f0fdf4; border-color: #bbf7d0; .o_jcd_bay_icon, .o_jcd_bay_state { color: #16a34a; } }
+    .o_jcd_bay_occupied { background: #fef2f2; border-color: #fecaca; .o_jcd_bay_icon, .o_jcd_bay_state { color: #dc2626; } }
+    .o_jcd_bay_inspection { background: #fffbeb; border-color: #fde68a; .o_jcd_bay_icon, .o_jcd_bay_state { color: #d97706; } }
+    .o_jcd_bay_road_test { background: #eff6ff; border-color: #bfdbfe; .o_jcd_bay_icon, .o_jcd_bay_state { color: #2563eb; } }
+    .o_jcd_bay_maintenance { background: #f5f3ff; border-color: #ddd6fe; .o_jcd_bay_icon, .o_jcd_bay_state { color: #7c3aed; } }
+
+    // --------------------------------------------------------- quick actions
+    .o_jcd_quick {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 10px;
+    }
+
+    .o_jcd_quick_tile {
+        border: 0;
+        border-radius: 12px;
+        padding: 16px 8px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        font-weight: 600;
+        font-size: 12px;
+        text-align: center;
+        transition: transform .15s ease, box-shadow .15s ease;
+
+        i { font-size: 20px; }
+        &:hover { transform: translateY(-2px); box-shadow: var(--jcd-shadow); }
+    }
+
+    // -------------------------------------------------------- priority tiles
+    .o_jcd_alerts {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 12px;
+        margin: 16px 20px 0;
+    }
+
+    .o_jcd_alert_tile {
+        background: var(--jcd-surface);
+        border: 1px solid var(--jcd-line);
+        border-radius: 12px;
+        padding: 12px 14px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: var(--jcd-shadow);
+
+        i { font-size: 17px; }
+        .o_jcd_alert_count { font-size: 20px; font-weight: 800; }
+        .o_jcd_alert_label { color: var(--jcd-ink-soft); font-weight: 600; }
+    }
+
+    // ------------------------------------------------------------- skeletons
+    .o_jcd_skeletons {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+        gap: 14px;
+        padding: 14px 20px;
+    }
+
+    .o_jcd_skeleton_card,
+    .o_jcd_skeleton_line {
+        border-radius: var(--jcd-radius);
+        background: linear-gradient(90deg, #eceffa 25%, #f6f7fd 37%, #eceffa 63%);
+        background-size: 400% 100%;
+        animation: o_jcd_shimmer 1.4s ease infinite;
+    }
+
+    .o_jcd_skeleton_card { height: 86px; }
+    .o_jcd_skeleton_line { height: 54px; margin-top: 6px; }
+
+    .o_jcd_footer {
+        text-align: right;
+        color: #a3a8c9;
+        font-size: 11px;
+        padding: 14px 22px 0;
+    }
+}
+
+@keyframes o_jcd_rotate {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes o_jcd_shimmer {
+    0% { background-position: 100% 50%; }
+    100% { background-position: 0 50%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .o_jcd * {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+// Tablet / mobile: keep everything in one column, never scroll sideways.
+@media (max-width: 767.98px) {
+    .o_jcd {
+        .o_jcd_status_grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+        .o_jcd_full { margin: 12px 4px 0; }
+        .o_jcd_row_block { margin: 12px 4px 0; }
+        .o_jcd_card_count { font-size: 22px; }
+    }
+}
+
+
+// ============================================================================
+// Backend navbar - the workshop menu entries must stay readable on the dark
+// brand bar. Colour only; the existing navbar layout is untouched.
+// ============================================================================
+.o_main_navbar {
+    .o_menu_brand,
+    .o_menu_sections > *,
+    .o_menu_sections .o_nav_entry,
+    .o_menu_sections .dropdown-toggle,
+    .o_menu_sections .btn {
+        color: #ffffff !important;
+    }
+
+    .o_menu_sections .dropdown-menu .dropdown-item {
+        color: inherit !important; // dropdown panels keep their own contrast
+    }
+}

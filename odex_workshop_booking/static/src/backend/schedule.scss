@@ -1,0 +1,235 @@
+// Slot Management — modern ERP scheduling layout
+$owbs-purple: #6c4bd8;
+$owbs-green: #16a34a;
+$owbs-orange: #f59e0b;
+$owbs-red: #dc2626;
+$owbs-grey: #94a3b8;
+$owbs-border: #e4e9f2;
+
+.owbs-form {
+    .o_form_sheet {
+        max-width: 100%;
+        background: #fff;
+    }
+
+    .owbs-eyebrow {
+        font-size: 12px;
+        color: $owbs-purple;
+        font-weight: 600;
+        margin-bottom: 2px;
+    }
+    .oe_title h1 .o_field_widget input,
+    .oe_title h1 .o_field_widget span { font-weight: 700; }
+
+    // Status badge ----------------------------------------------------
+    .owbs-status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border: 1px solid $owbs-border;
+        border-radius: 100px;
+        padding: 5px 14px;
+        font-size: 13px;
+        font-weight: 600;
+        color: $owbs-green;
+        background: #fff;
+        &.owbs-status-off { color: #64748b; }
+    }
+
+    // KPI cards -------------------------------------------------------
+    .owbs-kpis {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 12px;
+        margin-bottom: 18px;
+        @media (max-width: 1399px) { grid-template-columns: repeat(3, 1fr); }
+        @media (max-width: 767px) { grid-template-columns: 1fr; }
+    }
+    .owbs-kpi {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: #fff;
+        border: 1px solid $owbs-border;
+        border-radius: 12px;
+        padding: 14px;
+        box-shadow: 0 1px 4px rgba(20, 40, 90, .05);
+        transition: box-shadow .15s;
+        &:hover { box-shadow: 0 4px 14px rgba(20, 40, 90, .09); }
+    }
+    .owbs-kpi-label { font-size: 12px; color: #7a8aa3; line-height: 1.2; }
+    .owbs-kpi-value {
+        font-size: 22px;
+        font-weight: 700;
+        line-height: 1.15;
+        .o_field_widget { display: inline; }
+        input { border: none; padding: 0; background: transparent; font: inherit; }
+    }
+    .owbs-kpi-icon {
+        width: 38px; height: 38px;
+        border-radius: 11px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 15px;
+        flex-shrink: 0;
+        &.owbs-i-purple { background: rgba($owbs-purple, .12); color: $owbs-purple; }
+        &.owbs-i-green { background: rgba($owbs-green, .12); color: $owbs-green; }
+        &.owbs-i-orange { background: rgba($owbs-orange, .14); color: darken($owbs-orange, 8%); }
+        &.owbs-i-red { background: rgba($owbs-red, .1); color: $owbs-red; }
+        &.owbs-i-grey { background: rgba($owbs-grey, .16); color: #64748b; }
+    }
+
+    .owbs-dot {
+        display: inline-block;
+        width: 9px; height: 9px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        &.owbs-d-green { background: $owbs-green; }
+        &.owbs-d-orange { background: $owbs-orange; }
+        &.owbs-d-red { background: $owbs-red; }
+        &.owbs-d-grey { background: $owbs-grey; }
+    }
+
+    // Configuration ---------------------------------------------------
+    .owbs-panel {
+        border: 1px solid $owbs-border;
+        border-radius: 14px;
+        padding: 18px;
+        margin-bottom: 18px;
+        background: #fff;
+    }
+    .owbs-field {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 12px;
+        > label {
+            flex: 0 0 150px;
+            margin: 0;
+            font-size: 13px;
+            color: #55637a;
+            font-weight: 500;
+        }
+        > .o_field_widget,
+        > .owbs-days,
+        > .owbs-range { flex: 1 1 auto; min-width: 0; }
+
+        input.o_input,
+        select.o_input,
+        .o_field_widget input {
+            border: 1px solid $owbs-border !important;
+            border-radius: 8px;
+            padding: 6px 10px;
+            background: #fff;
+        }
+        .o_field_many2one input { width: 100%; }
+        @media (max-width: 575px) {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 4px;
+            > label { flex: none; }
+        }
+    }
+    .owbs-range {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        .o_field_widget { flex: 1 1 0; }
+        .owbs-dash { color: #98a5ba; }
+    }
+
+    // Working day pills ------------------------------------------------
+    .owbs-days {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+    .owbs-day {
+        position: relative;
+        margin: 0;
+        cursor: pointer;
+        .o_field_widget, input {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            top: 0; left: 0;
+            margin: 0;
+            cursor: pointer;
+        }
+        > span {
+            display: inline-block;
+            padding: 5px 14px;
+            border-radius: 100px;
+            border: 1px solid $owbs-border;
+            background: #fff;
+            font-size: 13px;
+            font-weight: 600;
+            color: #98a5ba;
+            transition: all .12s;
+            pointer-events: none;
+        }
+        &:hover > span { border-color: $owbs-purple; }
+        &:has(input:checked) > span {
+            background: rgba($owbs-purple, .12);
+            border-color: rgba($owbs-purple, .35);
+            color: $owbs-purple;
+        }
+    }
+
+    // Time slots -------------------------------------------------------
+    .owbs-section-title {
+        background: #f5f7fb;
+        border: 1px solid $owbs-border;
+        border-bottom: none;
+        border-radius: 12px 12px 0 0;
+        padding: 10px 16px;
+        font-weight: 700;
+        font-size: 14px;
+    }
+    // NOTE: no custom overflow/width rules on x2many tables. Earlier
+    // attempts (overflow:hidden, then overflow-x:auto + min-width) both
+    // clipped the first column because the wrapper scrolls independently of
+    // the sticky first cell. Odoo's own list styling handles this correctly,
+    // so we only restyle the header colours and leave layout alone.
+    .o_field_x2many_list table.o_list_table {
+        thead th {
+            background: #f6f8fc;
+            font-size: 12px;
+            font-weight: 600;
+            color: #55637a;
+            text-transform: none;
+        }
+        tbody tr:hover { background: #f9fbff; }
+        tbody tr.text-info,
+        tbody tr.text-info:hover {
+            background: #fff8e6;
+            color: #92702a !important;
+            font-weight: 600;
+        }
+    }
+
+    .owbs-footer {
+        .btn { border-radius: 8px; }
+    }
+    .owbs-legend {
+        font-size: 12px;
+        color: #55637a;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        flex-wrap: wrap;
+    }
+
+    // Slot summary + shortcuts, in place of a 750-row embedded list
+    .owbs-slots-cta {
+        border: 1px solid $owbs-border;
+        border-radius: 12px;
+        padding: 14px 16px;
+        margin-top: 18px;
+        background: #fbfcfe;
+        .btn { border-radius: 8px; }
+        .o_field_widget { display: inline; }
+    }
+}

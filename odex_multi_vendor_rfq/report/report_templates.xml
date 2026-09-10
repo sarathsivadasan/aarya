@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_multi_rfq_comparison_doc">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="rfq">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <!-- Title -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h2 style="color:#7c3aed">
+                                    Multi Vendor RFQ Comparison
+                                </h2>
+                                <h4 class="text-muted">
+                                    <t t-esc="rfq.name"/>
+                                    <t t-if="rfq.request_for">
+                                        — <t t-esc="rfq.request_for"/>
+                                    </t>
+                                </h4>
+                            </div>
+                        </div>
+
+                        <!-- RFQ Summary -->
+                        <div class="row mb-4">
+                            <div class="col-6">
+                                <table class="table table-sm table-borderless">
+                                    <tr>
+                                        <td><strong>Company:</strong></td>
+                                        <td><t t-esc="rfq.company_id.name"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Representative:</strong></td>
+                                        <td>
+                                            <t t-esc="rfq.purchase_user_id.name"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Deadline:</strong></td>
+                                        <td>
+                                            <t t-esc="rfq.rfq_deadline"
+                                               t-options='{"widget":"datetime"}'/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-6">
+                                <table class="table table-sm table-borderless">
+                                    <tr>
+                                        <td><strong>Status:</strong></td>
+                                        <td>
+                                            <t t-esc="dict(rfq._fields['state'].selection).get(rfq.state)"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Vendors Invited:</strong></td>
+                                        <td><t t-esc="rfq.vendor_count"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Quotations Received:</strong></td>
+                                        <td><t t-esc="rfq.quotation_count"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Product Lines -->
+                        <h5 class="mb-2">Products Requested</h5>
+                        <table class="table table-sm table-bordered mb-4">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Product</th>
+                                    <th>Description</th>
+                                    <th class="text-end">Quantity</th>
+                                    <th>UoM</th>
+                                    <th>Expected Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="rfq.line_ids" t-as="line">
+                                    <tr>
+                                        <td><t t-esc="line_index + 1"/></td>
+                                        <td><t t-esc="line.product_id.name"/></td>
+                                        <td>
+                                            <t t-esc="line.description or ''"/>
+                                        </td>
+                                        <td class="text-end">
+                                            <t t-esc="line.quantity"/>
+                                        </td>
+                                        <td><t t-esc="line.uom_id.name"/></td>
+                                        <td>
+                                            <t t-esc="line.expected_date"
+                                               t-options='{"widget":"date"}'/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+
+                        <!-- Vendor Quotation Summary -->
+                        <t t-if="rfq.generated_rfq_ids">
+                            <h5 class="mb-2">Vendor Quotation Summary</h5>
+                            <table class="table table-sm table-bordered mb-4">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Vendor</th>
+                                        <th class="text-end">Total Amount</th>
+                                        <th>Currency</th>
+                                        <th>Status</th>
+                                        <th>Payment Terms</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="rfq.generated_rfq_ids" t-as="po">
+                                        <tr t-att-style="'background:#d1fae5;' if rfq.best_vendor_id == po.partner_id else ''">
+                                            <td>
+                                                <t t-esc="po.partner_id.name"/>
+                                                <t t-if="rfq.best_vendor_id == po.partner_id">
+                                                    <span class="badge text-bg-success ms-1">Best Price</span>
+                                                </t>
+                                            </td>
+                                            <td class="text-end">
+                                                <t t-esc="po.amount_total"
+                                                   t-options='{"widget":"monetary","display_currency":po.currency_id}'/>
+                                            </td>
+                                            <td>
+                                                <t t-esc="po.currency_id.name"/>
+                                            </td>
+                                            <td>
+                                                <t t-esc="dict(po._fields['state'].selection).get(po.state)"/>
+                                            </td>
+                                            <td>
+                                                <t t-esc="po.payment_term_id.name or '—'"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+
+                            <!-- Detailed Comparison Matrix -->
+                            <h5 class="mb-2">Price Comparison Matrix</h5>
+                            <t t-set="active_pos" t-value="rfq.generated_rfq_ids.filtered(lambda r: r.state not in ('cancel',))"/>
+                            <t t-if="active_pos">
+                                <table class="table table-sm table-bordered"
+                                       style="font-size:11px">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Product</th>
+                                            <th class="text-center">Qty</th>
+                                            <t t-foreach="active_pos" t-as="hpo">
+                                                <th class="text-end">
+                                                    <t t-esc="hpo.partner_id.name"/>
+                                                </th>
+                                            </t>
+                                            <th class="text-end"
+                                                style="color:#059669">Best Price</th>
+                                            <th>Best Vendor</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="rfq.line_ids" t-as="rfq_line">
+                                            <tr>
+                                                <td>
+                                                    <t t-esc="rfq_line.product_id.name"/>
+                                                </td>
+                                                <td class="text-center">
+                                                    <t t-esc="rfq_line.quantity"/>
+                                                </td>
+                                                <t t-set="line_prices" t-value="[]"/>
+                                                <t t-foreach="active_pos" t-as="cpo">
+                                                    <t t-set="cpo_line"
+                                                       t-value="cpo.order_line.filtered(lambda l: l.product_id == rfq_line.product_id)"/>
+                                                    <td class="text-end">
+                                                        <t t-if="cpo_line">
+                                                            <t t-esc="cpo_line[0].price_unit"
+                                                               t-options='{"widget":"float","precision":2}'/>
+                                                        </t>
+                                                        <t t-else="">—</t>
+                                                    </td>
+                                                </t>
+                                                <!-- Best price column -->
+                                                <td class="text-end"
+                                                    style="color:#059669;font-weight:bold">
+                                                    <t t-esc="min([po.order_line.filtered(lambda l: l.product_id == rfq_line.product_id)[0].price_unit for po in active_pos if po.order_line.filtered(lambda l: l.product_id == rfq_line.product_id)], default=0)"
+                                                       t-options='{"widget":"float","precision":2}'/>
+                                                </td>
+                                                <td style="color:#059669">
+                                                    <!-- Best vendor for this line -->
+                                                    <t t-set="best_for_line"
+                                                       t-value="sorted([(po, po.order_line.filtered(lambda l: l.product_id == rfq_line.product_id)) for po in active_pos if po.order_line.filtered(lambda l: l.product_id == rfq_line.product_id)], key=lambda x: x[1][0].price_unit)"/>
+                                                    <t t-if="best_for_line">
+                                                        <t t-esc="best_for_line[0][0].partner_id.name"/>
+                                                    </t>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                    <tfoot class="table-light">
+                                        <tr>
+                                            <td colspan="2"><strong>Total</strong></td>
+                                            <t t-foreach="active_pos" t-as="tpo">
+                                                <td class="text-end">
+                                                    <strong>
+                                                        <t t-esc="tpo.amount_total"
+                                                           t-options='{"widget":"monetary","display_currency":tpo.currency_id}'/>
+                                                    </strong>
+                                                </td>
+                                            </t>
+                                            <td colspan="2"></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </t>
+                        </t>
+
+                        <!-- Award Summary -->
+                        <t t-if="rfq.state == 'awarded'">
+                            <div class="alert alert-success mt-4">
+                                <h5><i class="fa fa-trophy"/> Award Summary</h5>
+                                <p class="mb-0">
+                                    Awarded to:
+                                    <strong>
+                                        <t t-esc="rfq.best_vendor_id.name or '—'"/>
+                                    </strong>
+                                    — Best Total:
+                                    <strong>
+                                        <t t-esc="rfq.best_total_amount"
+                                           t-options='{"widget":"monetary","display_currency":rfq.currency_id}'/>
+                                    </strong>
+                                </p>
+                            </div>
+                        </t>
+
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

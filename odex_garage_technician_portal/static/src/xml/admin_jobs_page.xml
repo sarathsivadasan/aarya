@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="odex_garage_technician_portal.AdminJobsPage">
+        <div class="o_tp_admin_page">
+
+            <!-- workshop-wide counters -->
+            <div class="o_tp_cards_row">
+                <div class="o_tp_card">
+                    <div class="o_tp_card_icon bg-blue"><i class="fa fa-list"/></div>
+                    <div>
+                        <div class="o_tp_card_label">Assigned</div>
+                        <div class="o_tp_card_value" t-esc="state.counters.assigned"/>
+                    </div>
+                </div>
+                <div class="o_tp_card">
+                    <div class="o_tp_card_icon bg-green"><i class="fa fa-play"/></div>
+                    <div>
+                        <div class="o_tp_card_label">Running</div>
+                        <div class="o_tp_card_value" t-esc="state.counters.in_progress"/>
+                    </div>
+                </div>
+                <div class="o_tp_card">
+                    <div class="o_tp_card_icon bg-yellow"><i class="fa fa-pause"/></div>
+                    <div>
+                        <div class="o_tp_card_label">Paused</div>
+                        <div class="o_tp_card_value" t-esc="state.counters.paused"/>
+                    </div>
+                </div>
+                <div class="o_tp_card">
+                    <div class="o_tp_card_icon bg-purple"><i class="fa fa-check"/></div>
+                    <div>
+                        <div class="o_tp_card_label">Completed Today</div>
+                        <div class="o_tp_card_value" t-esc="state.counters.completed_today"/>
+                    </div>
+                </div>
+                <div class="o_tp_card">
+                    <div class="o_tp_card_icon bg-orange"><i class="fa fa-users"/></div>
+                    <div>
+                        <div class="o_tp_card_label">Technicians Working</div>
+                        <div class="o_tp_card_value" t-esc="state.counters.technicians_active"/>
+                    </div>
+                </div>
+            </div>
+
+            <!-- filters -->
+            <div class="o_tp_admin_filters">
+                <input type="text" class="o_tp_admin_search" placeholder="Search job, vehicle, service or technician..."
+                       t-att-value="state.filters.search" t-on-input="onSearchInput"/>
+                <select t-model="state.filters.task_type" t-on-change="onFilterChange">
+                    <option value="">All origins</option>
+                    <option value="is_jobcard">Job Card</option>
+                    <option value="is_vc">Vehicle Inspection</option>
+                </select>
+                <select t-model="state.filters.status" t-on-change="onFilterChange">
+                    <option value="">All statuses</option>
+                    <option value="not_started">Not Started</option>
+                    <option value="running">Running</option>
+                    <option value="paused">Paused</option>
+                    <option value="completed">Completed</option>
+                </select>
+                <select t-model="state.filters.technician_id" t-on-change="onFilterChange">
+                    <option value="">All technicians</option>
+                    <option t-foreach="state.technicians" t-as="tech" t-key="tech.id"
+                            t-att-value="tech.id" t-esc="tech.name"/>
+                </select>
+                <button class="btn btn-outline-secondary btn-sm" t-on-click="clearFilters">
+                    <i class="fa fa-times"/> Clear</button>
+            </div>
+
+            <!-- all assigned jobs, whatever their origin -->
+            <div class="o_tp_admin_table_wrap">
+                <table class="table table-sm o_tp_admin_table">
+                    <thead>
+                        <tr>
+                            <th>Job Reference</th>
+                            <th>Origin</th>
+                            <th>Technician</th>
+                            <th>Vehicle</th>
+                            <th>Service</th>
+                            <th>Status</th>
+                            <th>Started</th>
+                            <th>Paused (h)</th>
+                            <th>Net (h)</th>
+                            <th>Controls</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="state.jobs" t-as="job" t-key="job.id"
+                            t-att-class="state.selectedJobId === job.id ? 'o_tp_my_line' : ''"
+                            t-on-click="() => this.selectJob(job)">
+                            <td><strong t-esc="job.task_name"/></td>
+                            <td t-esc="job.record_type_label"/>
+                            <td t-esc="job.technician"/>
+                            <td t-esc="job.vehicle || '-'"/>
+                            <td t-esc="job.service || '-'"/>
+                            <td>
+                                <span t-attf-class="badge o_tp_status_#{job.status}"
+                                      t-esc="statusLabel(job.status)"/>
+                            </td>
+                            <td t-esc="job.start_display || '-'"/>
+                            <td t-esc="job.total_pause_hours.toFixed(2)"/>
+                            <td t-esc="job.net_hours.toFixed(2)"/>
+                            <td>
+                                <div class="o_tp_admin_actions" t-on-click.stop="() => {}">
+                                    <button class="btn btn-primary btn-sm"
+                                            t-if="job.status === 'not_started'"
+                                            t-att-disabled="state.busy[job.id] ? 'disabled' : undefined"
+                                            t-on-click="() => this.startJob(job)"
+                                            title="Start this job on the technician's behalf">
+                                        <i class="fa fa-play"/></button>
+                                    <button class="btn btn-warning btn-sm"
+                                            t-if="job.status === 'running'"
+                                            t-att-disabled="state.busy[job.id] ? 'disabled' : undefined"
+                                            t-on-click="() => this.pauseJob(job)"
+                                            title="Pause this running job">
+                                        <i class="fa fa-pause"/></button>
+                                    <button class="btn btn-success btn-sm"
+                                            t-if="job.status === 'paused'"
+                                            t-att-disabled="state.busy[job.id] ? 'disabled' : undefined"
+                                            t-on-click="() => this.resumeJob(job)"
+                                            title="Resume this paused job">
+                                        <i class="fa fa-play"/></button>
+                                    <button class="btn btn-danger btn-sm"
+                                            t-if="job.status === 'running' or job.status === 'paused'"
+                                            t-att-disabled="state.busy[job.id] ? 'disabled' : undefined"
+                                            t-on-click="() => this.stopJob(job)"
+                                            title="Stop and close this job">
+                                        <i class="fa fa-stop"/></button>
+                                    <span t-if="job.status === 'completed'" class="text-muted">-</span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr t-if="!state.jobs.length and !state.loading">
+                            <td colspan="10" class="o_tp_admin_empty">
+                                No assigned jobs match these filters.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- activity log -->
+            <div class="o_tp_chart_block">
+                <div class="o_tp_list_header">
+                    <h3>
+                        Activity Log
+                        <small class="text-muted" t-if="state.selectedJobId">
+                            - <t t-esc="selectedJobLabel"/>
+                        </small>
+                    </h3>
+                    <a href="#" t-if="state.selectedJobId"
+                       t-on-click.prevent="() => this.selectJob({id: state.selectedJobId})">Show all</a>
+                </div>
+                <div class="o_tp_admin_log">
+                    <div class="o_tp_admin_log_row text-muted">
+                        <span>Date / Time</span><span>Job Reference</span>
+                        <span>Action</span><span>Details</span><span>Performed By</span>
+                    </div>
+                    <div class="o_tp_admin_log_row" t-foreach="state.logs" t-as="log" t-key="log.id">
+                        <span t-esc="logDisplay(log.date)"/>
+                        <span t-esc="log.job_reference || '-'"/>
+                        <span>
+                            <t t-esc="log.action_label"/>
+                            <i t-if="log.is_admin_action" class="fa fa-shield o_tp_admin_flag"
+                               title="Performed by an administrator"/>
+                        </span>
+                        <span>
+                            <t t-esc="log.description"/>
+                            <t t-if="log.technician"> (<t t-esc="log.technician"/>)</t>
+                        </span>
+                        <span t-esc="log.user"/>
+                    </div>
+                    <div t-if="!state.logs.length" class="o_tp_admin_empty">
+                        No activity recorded yet.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

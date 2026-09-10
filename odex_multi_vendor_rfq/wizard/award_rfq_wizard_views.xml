@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_award_rfq_wizard_form" model="ir.ui.view">
+        <field name="name">award.rfq.wizard.form</field>
+        <field name="model">award.rfq.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Award RFQ">
+                <sheet>
+                    <field name="multi_rfq_id" invisible="1"/>
+                    <field name="award_mode" invisible="1"/>
+                    <field name="available_vendor_ids" invisible="1"/>
+
+                    <div class="oe_title">
+                        <h2 invisible="award_mode != 'complete'">Award Complete RFQ</h2>
+                        <h2 invisible="award_mode != 'line'">Award Line Wise</h2>
+                    </div>
+
+                    <!-- Complete award: pick one vendor -->
+                    <group invisible="award_mode != 'complete'">
+                        <group string="Select Winning Vendor">
+                            <field name="vendor_id"
+                                   domain="[('id', 'in', available_vendor_ids)]"
+                                   options="{'no_create': True, 'no_create_edit': True}"
+                                   invisible="award_mode != 'complete'"/>
+                        </group>
+                    </group>
+                    <div class="text-muted mb-2" invisible="award_mode != 'complete' or not win_summary">
+                        <i class="fa fa-info-circle me-1"/>
+                        Pre-selected based on lowest-price wins per product:
+                        <field name="win_summary" nolabel="1" readonly="1" class="d-inline"/>
+                    </div>
+
+                    <div class="alert alert-warning" role="alert"
+                         invisible="award_mode != 'complete'">
+                        <i class="fa fa-exclamation-triangle me-1"/>
+                        Awarding will <strong>confirm</strong> the selected vendor's RFQ
+                        as a Purchase Order and <strong>cancel</strong> all other RFQs.
+                    </div>
+
+                    <!-- Line-wise: pick vendor per product -->
+                    <div invisible="award_mode != 'line'">
+                        <separator string="Assign a Vendor to Each Product Line"/>
+                        <field name="line_award_ids"
+                               invisible="award_mode != 'line'">
+                            <list editable="bottom" string="Line Awards">
+                                <field name="rfq_line_id" column_invisible="1" force_save="1"/>
+                                <field name="product_id" readonly="1" force_save="1"/>
+                                <field name="quantity" readonly="1" force_save="1"/>
+                                <field name="uom_id" readonly="1" force_save="1"
+                                       groups="uom.group_uom"/>
+                                <field name="vendor_id"
+                                       domain="[('id', 'in', parent.available_vendor_ids)]"
+                                       options="{'no_create': True, 'no_create_edit': True}"
+                                       required="1"/>
+                                <field name="vendor_price" readonly="1"/>
+                                <field name="vendor_subtotal" readonly="1"/>
+                            </list>
+                        </field>
+                    </div>
+
+                    <div class="alert alert-warning" role="alert"
+                         invisible="award_mode != 'line'">
+                        <i class="fa fa-exclamation-triangle me-1"/>
+                        Separate Purchase Orders will be created per vendor.
+                        Unselected vendor RFQs will be cancelled.
+                    </div>
+                </sheet>
+
+                <footer>
+                    <button name="action_award"
+                            string="Confirm Award"
+                            type="object"
+                            class="btn-primary"
+                            data-hotkey="q"/>
+                    <button string="Cancel"
+                            class="btn-secondary"
+                            special="cancel"
+                            data-hotkey="z"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Totals table restricted to the lines confirmed by the customer.
+         Kept as its own template so the portal page and the AJAX refresh
+         render strictly the same markup. -->
+    <template id="confirmed_totals_table" name="Confirmed Lines Totals">
+        <table class="table table-sm" name="sale_order_totals_table">
+            <t t-call="#{sale_order._get_name_tax_totals_view()}">
+                <t t-set="tax_totals" t-value="sale_order.tus_get_confirmed_tax_totals()"/>
+                <t t-set="currency" t-value="sale_order.currency_id"/>
+                <t t-set="doc" t-value="sale_order"/>
+            </t>
+        </table>
+    </template>
+
+    <template id="sale_order_portal_quotation_edit_inherit"
+              inherit_id="sale.sale_order_portal_content"
+              name="Extend SO Portal Edit">
+        <!-- Parts Type / Part No. columns, in front of the Products column.
+             Portal-only (report_type == 'html'), so the quotation PDF layout
+             is untouched. -->
+        <xpath expr="//th[@id='product_name_header']" position="before">
+            <th class="text-start" name="tus_parts_type_header">Parts Type</th>
+            <th class="text-start" name="tus_part_no_header">Part No.</th>
+        </xpath>
+
+        <xpath expr="//t[@name='product_line_row']/td[@id='product_name']" position="before">
+            <td class="text-start" name="tus_parts_type">
+                <span t-field="line.parts_type"/>
+            </td>
+            <td class="text-start" name="tus_part_no">
+                <span t-field="line.part_no"/>
+            </td>
+        </xpath>
+
+        <!-- The printed quotation lists only the lines confirmed by the
+             customer; the portal page keeps showing all of them. -->
+        <xpath expr="//t[@t-set='lines_to_report']" position="attributes">
+            <attribute name="t-value">sale_order.tus_get_lines_to_report(report_type)</attribute>
+        </xpath>
+
+        <!-- Replace quantity cell with input box for normal product lines -->
+        <xpath expr="//t[@name='product_line_row']/td[@id='quote_qty_td']"
+               position="replace">
+            <td class="text-end">
+                <div id="quote_qty">
+                    <t t-if="sale_order.state in ('draft', 'sent')">
+                        <div class="input-group input-group-sm" style="width: 120px; margin-left: auto;">
+                            <input type="number"
+                                   class="form-control text-end js_portal_so_qty"
+                                   t-att-data-line-id="line.id"
+                                   t-att-value="line.product_uom_qty"
+                                   min="0"
+                                   step="1"/>
+                            <span class="input-group-text" t-field="line.product_uom"/>
+                        </div>
+                    </t>
+                    <t t-else="">
+                        <span t-field="line.product_uom_qty"/>
+                        <span t-field="line.product_uom"/>
+                    </t>
+                </div>
+            </td>
+        </xpath>
+
+        <!-- Subtle highlight on confirmed rows (core section/note classes preserved) -->
+        <xpath expr="//t[@name='product_line_row']/.." position="attributes">
+            <attribute name="t-att-class">('fw-bold o_line_section' if (
+                        line.display_type == 'line_section'
+                        or line.product_type == 'combo'
+                    )
+                    else 'fst-italic o_line_note' if line.display_type == 'line_note'
+                    else '') + (' tus_line_confirmed' if (
+                        report_type == 'html'
+                        and not line.display_type
+                        and line.product_type != 'combo'
+                        and line.portal_confirmed
+                    ) else '')</attribute>
+        </xpath>
+
+        <!-- Customer approval button, in place of the former delete button -->
+        <xpath expr="//t[@name='product_line_row']/td[@id='subtotal']"
+               position="after">
+            <td class="text-center" t-if="report_type == 'html'">
+                <button type="button"
+                        t-attf-class="btn btn-sm btn-outline-secondary tus_portal_confirm_btn js_portal_so_confirm #{'tus_confirmed' if line.portal_confirmed else ''}"
+                        t-att-data-line-id="line.id"
+                        t-att-data-confirmed="'1' if line.portal_confirmed else '0'"
+                        t-att-aria-pressed="'true' if line.portal_confirmed else 'false'"
+                        t-att-disabled="None if sale_order.state in ('draft', 'sent') else 'disabled'"
+                        t-att-title="'Line confirmed by you' if line.portal_confirmed else 'Click to confirm this line'">
+                    <i class="fa fa-check me-1" aria-hidden="true"/>
+                    <span class="js_portal_confirm_label"
+                          t-out="'Confirmed' if line.portal_confirmed else 'Confirm'"/>
+                </button>
+            </td>
+        </xpath>
+
+        <!-- Estimated Hours, read live from the linked Vehicle Inspection.
+             Rendered beside the totals; hidden entirely when no inspection is
+             linked or when it carries no estimated hours. -->
+        <xpath expr="//div[@id='total']" position="attributes">
+            <attribute name="class">row</attribute>
+        </xpath>
+
+        <!-- Summary reads confirmed lines only, on the portal page and in the print. -->
+        <xpath expr="//div[@id='total']/div" position="replace">
+            <div class="col-xs-7 col-md-5 ms-auto" id="tus_totals_wrapper">
+                <t t-call="portal_quotation_customize.confirmed_totals_table"/>
+            </div>
+        </xpath>
+
+        <xpath expr="//div[@id='total']/div[@id='tus_totals_wrapper']" position="before">
+            <t t-set="tus_estimated_hours" t-value="sale_order.sudo().tus_get_estimated_hours()"/>
+            <div t-if="report_type == 'html' and tus_estimated_hours"
+                 class="col-12 col-md-7 mb-4 tus_estimated_hours_block">
+                <h5 class="mb-2">Estimated Hours</h5>
+                <table class="table table-sm mb-0" name="tus_estimated_hours_table">
+                    <thead>
+                        <tr>
+                            <th class="text-start">Department</th>
+                            <th class="text-end">Estimated Hours</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="tus_estimated_hours" t-as="tus_eh">
+                            <td class="text-start">
+                                <span t-field="tus_eh.department_id"/>
+                            </td>
+                            <td class="text-end">
+                                <span t-field="tus_eh.assign_hours"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr class="tus_estimated_hours_total">
+                            <td class="text-start">
+                                <strong>Total Estimated Hours</strong>
+                            </td>
+                            <td class="text-end">
+                                <strong t-out="sale_order.sudo().tus_get_total_estimated_hours()"
+                                        t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </xpath>
+    </template>
+</odoo>

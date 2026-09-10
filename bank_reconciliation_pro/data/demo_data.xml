@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- Demo Partners -->
+    <record id="partner_al_noor_garage" model="res.partner">
+        <field name="name">Al Noor Garage</field>
+        <field name="company_type">company</field>
+    </record>
+    <record id="partner_ahmed_motors" model="res.partner">
+        <field name="name">Ahmed Motors</field>
+        <field name="company_type">company</field>
+    </record>
+    <record id="partner_spare_parts_co" model="res.partner">
+        <field name="name">Spare Parts Co.</field>
+        <field name="company_type">company</field>
+    </record>
+    <record id="partner_workshop_expenses" model="res.partner">
+        <field name="name">Workshop Expenses</field>
+        <field name="company_type">company</field>
+    </record>
+    <record id="partner_mohammed_car_care" model="res.partner">
+        <field name="name">Mohammed Car Care</field>
+        <field name="company_type">company</field>
+    </record>
+    <record id="partner_quick_fix_auto" model="res.partner">
+        <field name="name">Quick Fix Auto</field>
+        <field name="company_type">company</field>
+    </record>
+
+    <!-- Demo Bank Reco Lines (linked to default bank journal) -->
+    <record id="reco_line_001" model="bank.reco.line">
+        <field name="name">INV/2026/001</field>
+        <field name="date">2026-04-01</field>
+        <field name="partner_id" ref="partner_al_noor_garage"/>
+        <field name="journal_id" ref="account.1_bank"/>
+        <field name="debit">5000.00</field>
+        <field name="credit">0.00</field>
+    </record>
+
+   <!--  <record id="reco_line_002" model="bank.reco.line">
+        <field name="name">PAY/2026/010</field>
+        <field name="date">2026-04-02</field>
+        <field name="partner_id" ref="base.res_partner_1"/>
+        <field name="journal_id" ref="account.1_bank"/>
+        <field name="debit">0.00</field>
+        <field name="credit">3000.00</field>
+    </record> -->
+
+    <record id="reco_line_003" model="bank.reco.line">
+        <field name="name">INV/2026/002</field>
+        <field name="date">2026-04-03</field>
+        <field name="partner_id" ref="partner_ahmed_motors"/>
+        <field name="journal_id" ref="account.1_bank"/>
+        <field name="debit">2500.00</field>
+        <field name="credit">0.00</field>
+    </record>
+
+    <record id="reco_line_004" model="bank.reco.line">
+        <field name="name">PAY/2026/011</field>
+        <field name="date">2026-04-04</field>
+        <field name="partner_id" ref="partner_spare_parts_co"/>
+        <field name="journal_id" ref="account.1_bank"/>
+        <field name="debit">0.00</field>
+        <field name="credit">1800.00</field>
+    </record>
+
+    <record id="reco_line_005" model="bank.reco.line">
+        <field name="name">EXP/2026/005</field>
+        <field name="date">2026-04-05</field>
+        <field name="partner_id" ref="partner_workshop_expenses"/>
+        <field name="journal_id" ref="account.1_bank"/>
+        <field name="debit">1200.00</field>
+        <field name="credit">0.00</field>
+    </record>
+
+    <record id="reco_line_006" model="bank.reco.line">
+        <field name="name">INV/2026/003</field>
+        <field name="date">2026-04-06</field>
+        <field name="partner_id" ref="partner_mohammed_car_care"/>
+        <field name="journal_id" ref="account.1_bank"/>
+        <field name="debit">4000.00</field>
+        <field name="credit">0.00</field>
+    </record>
+
+    <!-- <record id="reco_line_007" model="bank.reco.line">
+        <field name="name">PAY/2026/012</field>
+        <field name="date">2026-04-07</field>
+        <field name="partner_id" ref="base.res_partner_1"/>
+        <field name="journal_id" ref="account.1_bank"/>
+        <field name="debit">0.00</field>
+        <field name="credit">2700.00</field>
+    </record> -->
+
+    <record id="reco_line_008" model="bank.reco.line">
+        <field name="name">INV/2026/004</field>
+        <field name="date">2026-04-08</field>
+        <field name="partner_id" ref="partner_quick_fix_auto"/>
+        <field name="journal_id" ref="account.1_bank"/>
+        <field name="debit">3600.00</field>
+        <field name="credit">0.00</field>
+    </record>
+</odoo>

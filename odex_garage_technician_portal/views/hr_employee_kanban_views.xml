@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        REPLACES Odoo's presence indicator (hr_icon_display /
+        hr_presence_status widget - the coloured dot plus its "Idle"
+        presence text) on the Employees kanban with our work-status
+        label, for EVERY employee in every department/position:
+          working -> green bold "Working"   (a job started and running)
+          paused  -> yellow bold "Idle"     (has jobs, all paused)
+          idle    -> red bold "Not working" (no started job at all)
+        Driven by technician_work_status, computed live from the same
+        account.analytic.line rows the portal timer writes.
+
+        Targets the presence field by name (hr_icon_display) rather than
+        a CSS class/div structure, since a named core field is the most
+        version-stable anchor available. If your instance's kanban view
+        doesn't contain that field, this xpath will fail to locate on
+        install - if so, tell me and I'll adjust against your actual view.
+    -->
+    <record id="hr_kanban_view_employees_technician_status" model="ir.ui.view">
+        <field name="name">hr.kanban.view.employees.technician.status</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.hr_kanban_view_employees"/>
+        <field name="arch" type="xml">
+            <field name="hr_icon_display" position="replace">
+                <field name="technician_work_status"/>
+                <field name="technician_current_vehicle"/>
+                <span t-attf-class="o_tp_work_status o_tp_work_status_#{record.technician_work_status.raw_value or 'idle'}">
+                    <t t-if="record.technician_work_status.raw_value === 'working'">Working</t>
+                    <t t-elif="record.technician_work_status.raw_value === 'paused'">Idle</t>
+                    <t t-else="">Not working</t>
+                </span>
+                <div t-if="record.technician_current_vehicle.raw_value" class="o_tp_current_vehicle">
+                    <i class="fa fa-car" title="Current vehicle"/>
+                    <t t-esc="record.technician_current_vehicle.raw_value"/>
+                </div>
+            </field>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Scheduled action to check expired coupons -->
+    <record id="ir_cron_check_coupon_expiry" model="ir.cron">
+        <field name="name">Check Coupon Expiry</field>
+        <field name="model_id" ref="model_customer_coupon"/>
+        <field name="state">code</field>
+        <field name="code">model.check_expiry()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+<!--        <field name="numbercall">-1</field>-->
+        <field name="active">True</field>
+    </record>
+</odoo>

@@ -1,0 +1,16 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ai_conversation_user,ai.conversation.user,model_odex_ai_conversation,group_ai_user,1,1,1,1
+access_ai_conversation_manager,ai.conversation.manager,model_odex_ai_conversation,group_ai_manager,1,1,1,1
+access_ai_message_user,ai.message.user,model_odex_ai_message,group_ai_user,1,1,1,1
+access_ai_message_manager,ai.message.manager,model_odex_ai_message,group_ai_manager,1,1,1,1
+access_ai_prompt_template_user,ai.prompt.template.user,model_odex_ai_prompt_template,group_ai_user,1,0,0,0
+access_ai_prompt_template_manager,ai.prompt.template.manager,model_odex_ai_prompt_template,group_ai_manager,1,1,1,1
+access_ai_usage_log_user,ai.usage.log.user,model_odex_ai_usage_log,group_ai_user,1,0,1,0
+access_ai_usage_log_manager,ai.usage.log.manager,model_odex_ai_usage_log,group_ai_manager,1,1,1,1
+access_ai_feedback_user,ai.feedback.user,model_odex_ai_feedback,group_ai_user,1,1,1,1
+access_ai_feedback_manager,ai.feedback.manager,model_odex_ai_feedback,group_ai_manager,1,1,1,1
+access_ai_smart_action_user,ai.smart.action.user,model_odex_ai_smart_action,group_ai_user,1,0,0,0
+access_ai_smart_action_manager,ai.smart.action.manager,model_odex_ai_smart_action,group_ai_manager,1,1,1,1
+access_ai_conversation_tag_user,ai.conversation.tag.user,model_odex_ai_conversation_tag,group_ai_user,1,1,1,1
+access_ai_conversation_tag_manager,ai.conversation.tag.manager,model_odex_ai_conversation_tag,group_ai_manager,1,1,1,1
+access_ai_chatter_wizard_user,ai.chatter.wizard.user,model_odex_ai_chatter_wizard,group_ai_user,1,1,1,1

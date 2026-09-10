@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="view_partner_form_fleet_inherit" model="ir.ui.view">
+        <field name="name">res.partner.form.inherit</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <field name="function" position="after">
+                <field name="is_insurance" invisible="company_type != 'company'"/>
+            </field>
+            <xpath expr="//notebook/page[@name='contact_addresses']" position="attributes">
+                <attribute name="autofocus">False</attribute>
+            </xpath>
+            <xpath expr="//page[@name='sales_purchases']//group[@name='container_row_2']" position="inside">
+                <group string="Pricing Markups" name="pricing_markups">
+                    <field name="markup_spare_parts" widget="percentage"/>
+                    <field name="markup_labor" widget="percentage"/>
+                    <field name="markup_sublet" widget="percentage"/>
+                </group>
+            </xpath>
+            <xpath expr="//notebook/page[@name='contact_addresses']" position="before">
+                <page name="vehicles" string="Vehicles">
+                    <field name="vehicle_ids">
+                        <list string="Vehicle Details" editable="bottom">
+                            <field name="fleet_emirate_id"/>
+                            <field name="fleet_code_id"/>
+                            <field name="license_plate"/>
+                            <field name="model_id"/>
+                            <field name="vehicle_make_id"/>
+                            <field name="vin_sn" string="Chassis No."/>
+                            <field name="engin_no"/>
+                            <field name="color"/>
+                            <field name="model_year"/>
+                            <field name="fuel_type"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+            <!-- <field name="vat" position="after">
+                <field name="trn_no" required="1"/>
+            </field> -->
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,386 @@
+/* =============================================
+   Petty Cash Book - Dashboard Styles
+   Odoo 18 Community
+   ============================================= */
+
+/* ---- General Dashboard ---- */
+.petty_cash_dashboard .o_form_sheet {
+    max-width: 100% !important;
+    padding: 16px 24px;
+}
+
+/* ---- Header ---- */
+.pcb_header {
+    border-bottom: 2px solid #e8eaf6;
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+}
+
+.pcb_title {
+    color: #3f51b5;
+    font-size: 1.4rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+/* ---- Buttons ---- */
+.pcb_btn_received {
+    background-color: #3f51b5 !important;
+    border-color: #3f51b5 !important;
+    font-weight: 600;
+}
+
+.pcb_btn_received:hover {
+    background-color: #303f9f !important;
+}
+
+.pcb_btn_expense {
+    background-color: #f44336 !important;
+    border-color: #f44336 !important;
+    font-weight: 600;
+}
+
+.pcb_btn_expense:hover {
+    background-color: #d32f2f !important;
+}
+
+/* ---- Filter Bar ---- */
+.pcb_filter_bar {
+    background: #f8f9ff;
+    border: 1px solid #e8eaf6 !important;
+    border-radius: 8px !important;
+}
+
+.pcb_quick_filters .pcb_date_btn {
+    border-radius: 20px;
+    font-size: 0.8rem;
+    padding: 3px 14px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.pcb_quick_filters .pcb_date_btn.active,
+.pcb_quick_filters .pcb_date_btn:hover {
+    background-color: #3f51b5;
+    color: #fff;
+    border-color: #3f51b5;
+}
+
+.pcb_date_info {
+    font-size: 0.78rem;
+    color: #5c6bc0;
+}
+
+/* ---- Summary Cards ---- */
+.pcb_summary_cards .pcb_card {
+    background: #fff;
+    border: 1px solid #e8eaf6;
+    border-radius: 10px;
+    padding: 16px 20px;
+    height: 100%;
+    transition: box-shadow 0.2s;
+    box-shadow: 0 1px 4px rgba(63,81,181,0.06);
+}
+
+.pcb_summary_cards .pcb_card:hover {
+    box-shadow: 0 4px 16px rgba(63,81,181,0.12);
+}
+
+.pcb_card_label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #7986cb;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+}
+
+.pcb_card_sub {
+    font-size: 0.72rem;
+    color: #9fa8da;
+    min-height: 1.1em;
+    margin-bottom: 6px;
+}
+
+.pcb_card_value {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #37474f;
+    line-height: 1.2;
+}
+
+.pcb_card_opening {
+    border-left: 4px solid #7986cb;
+}
+
+.pcb_card_received {
+    border-left: 4px solid #4caf50;
+}
+
+.pcb_card_expenses {
+    border-left: 4px solid #f44336;
+}
+
+.pcb_card_closing {
+    border-left: 4px solid #2196f3;
+}
+
+.pcb_card_cash {
+    border-left: 4px solid #4caf50;
+    background: linear-gradient(135deg, #e8f5e9 0%, #fff 100%);
+}
+
+/* ---- Two column layout ---- */
+.pcb_main_content {
+    display: flex;
+    gap: 20px;
+}
+
+.pcb_tables_area {
+    flex: 1;
+    min-width: 0;
+}
+
+.pcb_sidebar {
+    width: 280px;
+    flex-shrink: 0;
+}
+
+/* ---- Section Headers ---- */
+.pcb_section_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid currentColor;
+}
+
+.pcb_section_title {
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.pcb_section_total {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.pcb_received_section .pcb_section_title { color: #2e7d32; }
+.pcb_received_section .pcb_section_header { border-bottom-color: #a5d6a7; }
+.pcb_received_section .pcb_section_total { color: #2e7d32; }
+
+.pcb_expense_section .pcb_section_title { color: #c62828; }
+.pcb_expense_section .pcb_section_header { border-bottom-color: #ffcdd2; }
+.pcb_expense_section .pcb_section_total { color: #c62828; }
+
+/* ---- Tables ---- */
+.pcb_table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    margin-bottom: 24px;
+}
+
+.pcb_table thead th {
+    background: #f5f5f5;
+    color: #455a64;
+    font-weight: 600;
+    padding: 9px 12px;
+    text-align: left;
+    border-bottom: 2px solid #e0e0e0;
+    white-space: nowrap;
+}
+
+.pcb_table tbody tr {
+    border-bottom: 1px solid #f0f0f0;
+    transition: background 0.15s;
+}
+
+.pcb_table tbody tr:hover {
+    background: #f8f9ff;
+}
+
+.pcb_table tbody td {
+    padding: 8px 12px;
+    color: #37474f;
+    vertical-align: middle;
+}
+
+.pcb_table tbody td.pcb_amount {
+    font-weight: 600;
+    text-align: right;
+}
+
+.pcb_table .pcb_received_amount { color: #2e7d32; }
+.pcb_table .pcb_expense_amount { color: #c62828; }
+
+.pcb_action_btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 4px;
+    transition: background 0.15s;
+    font-size: 0.85rem;
+}
+
+.pcb_action_btn:hover {
+    background: #e8eaf6;
+}
+
+.pcb_action_btn.pcb_btn_edit { color: #3f51b5; }
+.pcb_action_btn.pcb_btn_delete { color: #f44336; }
+
+/* ---- Sidebar ---- */
+.pcb_sidebar_card {
+    background: #fff;
+    border: 1px solid #e8eaf6;
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+
+.pcb_sidebar_title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #3f51b5;
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e8eaf6;
+}
+
+.pcb_summary_row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    font-size: 0.85rem;
+    border-bottom: 1px solid #f5f5f5;
+}
+
+.pcb_summary_row:last-child {
+    border-bottom: none;
+}
+
+.pcb_summary_row .pcb_sum_label {
+    color: #546e7a;
+}
+
+.pcb_summary_row .pcb_sum_value {
+    font-weight: 600;
+    color: #37474f;
+}
+
+.pcb_summary_row.pcb_sum_received .pcb_sum_value { color: #2e7d32; }
+.pcb_summary_row.pcb_sum_expenses .pcb_sum_value { color: #c62828; }
+
+.pcb_closing_row {
+    background: #f3f4ff;
+    border-radius: 6px;
+    padding: 8px 10px !important;
+    margin: 4px 0;
+    font-size: 0.9rem;
+}
+
+.pcb_closing_row .pcb_sum_label,
+.pcb_closing_row .pcb_sum_value {
+    font-weight: 700;
+    color: #3f51b5;
+}
+
+.pcb_cash_row {
+    background: #e8f5e9;
+    border-radius: 6px;
+    padding: 10px !important;
+    margin-top: 8px;
+}
+
+.pcb_cash_row .pcb_sum_label { color: #2e7d32; font-weight: 700; }
+.pcb_cash_row .pcb_sum_value { color: #2e7d32; font-size: 1rem; font-weight: 700; }
+
+/* ---- Quick Actions Sidebar ---- */
+.pcb_quick_action_btn {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    background: #f8f9ff;
+    border: 1px solid #e8eaf6;
+    border-radius: 6px;
+    padding: 9px 12px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #3f51b5;
+    transition: all 0.15s;
+    text-decoration: none;
+}
+
+.pcb_quick_action_btn:hover {
+    background: #e8eaf6;
+    border-color: #3f51b5;
+    color: #1a237e;
+}
+
+.pcb_quick_action_btn i {
+    width: 20px;
+    margin-right: 8px;
+    font-size: 0.9rem;
+}
+
+/* ---- How to use box ---- */
+.pcb_howto_box {
+    background: #fffde7;
+    border: 1px solid #fff176;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 0.78rem;
+    color: #f57f17;
+}
+
+.pcb_howto_box .pcb_howto_title {
+    font-weight: 700;
+    font-size: 0.82rem;
+    margin-bottom: 6px;
+    color: #e65100;
+}
+
+.pcb_howto_box ul {
+    margin: 0;
+    padding-left: 16px;
+    color: #795548;
+}
+
+.pcb_howto_box ul li {
+    margin-bottom: 3px;
+    line-height: 1.5;
+}
+
+/* ---- Footer ---- */
+.pcb_footer {
+    text-align: center;
+    padding: 12px;
+    color: #9e9e9e;
+    font-size: 0.75rem;
+    border-top: 1px solid #f0f0f0;
+    margin-top: 24px;
+}
+
+/* ---- Loading state ---- */
+.pcb_loading {
+    text-align: center;
+    padding: 40px;
+    color: #9e9e9e;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 992px) {
+    .pcb_main_content {
+        flex-direction: column;
+    }
+    .pcb_sidebar {
+        width: 100%;
+    }
+}

@@ -1,0 +1,67 @@
+// Part of Odoo. See COPYRIGHT & LICENSE files for full copyright and licensing details.
+// Presentation layer for the portal quotation line confirmation button.
+// The button reuses Bootstrap's `.btn .btn-sm .btn-outline-secondary`; only the
+// confirmed state and the row highlight need custom rules.
+
+#sales_order_table {
+
+    .tus_portal_confirm_btn {
+        min-width: 120px;
+        white-space: nowrap;
+        border-color: #ced4da;
+        color: #6c757d;
+        background-color: #fff;
+        cursor: pointer;
+        transition: color .15s ease-in-out,
+                    background-color .15s ease-in-out,
+                    border-color .15s ease-in-out,
+                    box-shadow .15s ease-in-out;
+
+        // Confirmed: light green, never a solid fill.
+        &.tus_confirmed {
+            background-color: #e8f5e9;
+            border-color: #4caf50;
+            color: #2e7d32;
+
+            &:hover:not(:disabled) {
+                background-color: #dcefdd;
+                border-color: #43a047;
+                color: #1b5e20;
+            }
+
+            &:focus-visible {
+                box-shadow: 0 0 0 .2rem rgba(76, 175, 80, .25);
+            }
+        }
+
+        &:disabled {
+            opacity: .65;
+            cursor: default;
+        }
+
+        &.tus_pending {
+            pointer-events: none;
+            opacity: .65;
+        }
+    }
+
+    // Subtle highlight for confirmed rows. Bootstrap 5 tables paint cells through
+    // CSS variables, so drive those rather than fighting them with !important.
+    tr.tus_line_confirmed {
+        --bs-table-bg: #f3fff4;
+        --bs-table-accent-bg: #f3fff4;
+
+        > td {
+            background-color: #f3fff4;
+        }
+    }
+}
+
+// Estimated Hours block rendered next to the quotation totals.
+.tus_estimated_hours_block {
+
+    table tfoot tr.tus_estimated_hours_total > td {
+        border-top: 1px solid #dee2e6;
+        background-color: #f8f7fb;
+    }
+}

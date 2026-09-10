@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ═══════════════════════════════════════════════
+         DASHBOARD ACTION (redirects to Customer Coupons with dashboard context)
+    ═══════════════════════════════════════════════ -->
+    <record id="action_coupon_dashboard" model="ir.actions.act_window">
+        <field name="name">Coupon Dashboard</field>
+        <field name="res_model">customer.coupon</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{
+            'search_default_filter_posted': 1,
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Welcome to Coupon Management
+            </p>
+            <p>
+                Manage customer coupons and service packages for your automotive workshop.
+            </p>
+        </field>
+    </record>
+
+    <!-- ═══════════════════════════════════════════════
+         COUPON SUMMARY REPORT ACTION
+    ═══════════════════════════════════════════════ -->
+    <record id="action_coupon_report_summary" model="ir.actions.act_window">
+        <field name="name">Coupon Summary Report</field>
+        <field name="res_model">customer.coupon</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{}</field>
+        <field name="domain">[]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No coupons found
+            </p>
+        </field>
+    </record>
+
+</odoo>

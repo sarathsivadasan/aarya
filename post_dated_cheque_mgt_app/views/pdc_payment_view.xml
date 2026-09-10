@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_pdc_account_payment_invoice_form" model="ir.ui.view">
+            <field name="name">pdc.account.payment.invoice.form</field>
+            <field name="model">pdc.account.payment</field>
+            <field name="arch" type="xml">
+                <form name="Payment Detail">
+                    <h2>PDC Payment</h2>
+                    <group>
+                        <group name="left_column">
+                            <field name="partner_id" readonly="True"/>
+                            <label for="amount"/>
+                            <div name="amount_div" class="o_row">
+                                <field name="amount"/>
+                                <field name="currency_id" options="{'no_create': True, 'no_open': True}" groups="base.group_multi_currency"/>
+                            </div>
+                            <field name="journal_id"/>
+                            <field name="payment_date" />
+                            <field name="bank" required="1"/>
+                        </group>
+                        <group>
+                            <field name="due_date"/>
+                            <field name="communication"/>
+                            <field name="cheque_reference" required="1"/>
+                            <field name="agent"  />
+                            <field name="company_id" invisible="1"/>
+                            <field name="state" invisible="1"/>
+                            <field name="payment_method_id" invisible="1" />
+                            <field name="move_id" invisible="1" />
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="validate_pdc_payment" string="Validate" type="object" class="btn-primary" icon="fa-check"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <!-- PDC Payment Form -->
+        <record id="pdc_payment_form_view" model="ir.ui.view">
+            <field name="name">PDC Payment History</field>
+            <field name="model">pdc.account.payment</field>
+            <field name="arch" type="xml">
+                <form name="PDC Payment">
+                    <header>
+                        <button name="cash_deposit_button" string="Deposited" invisible="state not in ['collect_cash', 'returned', 'bounced']" type="object" class="oe_highlight" />
+                        <button name="cash_bounced_button" string="Bounced" invisible="state != 'deposited'" type="object" class="oe_highlight" />
+<!--                        <button name="cash_pdc_done_button" string="Done" invisible="state != 'deposited'" type="object" class="oe_highlight" />-->
+<!--                        <button name="cash_returned_button" string="Returned" invisible="state != 'collect_cash'" type="object" class="oe_highlight" />-->
+                        <button name="action_invoice_cancel" type="object" invisible="state not in ['collect_cash', 'returned', 'bounced']" string="Cancel Payment" class="oe_highlight" />
+<!--                        <button name="action_set_to_pdc_post" type="object" invisible="state != 'cancelled'" string="Set To Draft Payment" class="oe_highlight" />-->
+                        <field name="state" widget="statusbar" statusbar_visible="draft,collect_cash,deposited,bounced"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button class="oe_stat_button" type="object" name="action_get_attachment_view" icon="fa-paperclip">
+                                <div class="o_form_field o_stat_info">
+                                    <span class="o_stat_value">
+                                        <field name="attachment_number"/>
+                                    </span>
+                                    <span class="o_stat_text">Attachments</span>
+                                </div>
+                            </button>
+                            <button name="button_journal_items"
+                                class="oe_stat_button" 
+                                string="Journal Items" type="object"
+                                icon="fa-bars"/>
+                            <button name="button_journal_entries"
+                                class="oe_stat_button" 
+                                string="Journal Entry" type="object"
+                                icon="fa-bars"/>
+                        </div>
+                        <label for="name" string="PDC Payment Number"/>
+                        <div class="oe_title" readonly="1">
+                            <h1><field name="name" readonly="1"/></h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="payment_type" readonly="1"/>
+                                <field name="partner_type" readonly="1"/>
+                                <field name="partner_id" readonly="1"/>
+                                <label for="amount"/>
+                                <div name="amount_div" class="o_row">
+                                    <field name="amount"/>
+                                    <field name="currency_id" options="{'no_create': True, 'no_open': True}" groups="base.group_multi_currency"/>
+                                </div>
+                                <field name="journal_id" readonly="1"/>
+                                <field name="payment_date" readonly="1"/>
+                                <field name="agent" readonly="1"/>
+                            </group>
+                            <group>
+                                <field name="due_date" readonly="1"/>
+                                <field name="cheque_reference" readonly="1"/>
+                                <field name="bank" readonly="1"/>
+                                <field name="communication"  string="Invoice Reference" readonly="1"/>
+                                <field name="pdc_account_id" readonly="1" invisible="payment_type == 'outbound'"/>
+                                <field name="pdc_account_creditors_id" readonly="1" invisible="payment_type == 'inbound'"/>
+                                <field name="account_move_id" readonly="1"/>
+                                <field name="company_id" invisible="1"/>
+                            </group>
+                        </group>
+                    </sheet>
+                      <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <record id="pdc_payment_tree_view" model="ir.ui.view">
+            <field name="name">PDC Payment List</field>
+            <field name="model">pdc.account.payment</field>
+            <field name="arch" type="xml">
+                <list name="pdc_payment_tree">
+                    <field name="name"/>
+                    <field name="payment_date"/>
+                    <field name="due_date"/>
+                    <field name="journal_id"/>
+                    <field name="partner_id"/>
+                    <field name="amount" widget='monetary'/>
+                    <field name="cheque_reference"/>
+                    <field name="agent"/>
+                    <field name="bank"/>
+                    <field name="state"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="action_pdc_payment_filter" model="ir.ui.view">
+          <field name="name">pdc.payment.search</field>
+          <field name="model">pdc.account.payment</field>
+          <field name="arch" type="xml">
+            <search string="PDC Payments">
+                <field name="name" />
+                <filter string="Posted" name="posted" domain="[('state','=','posted')]" help = "Posted PDC Payment"/>
+                <separator/>
+                <filter string="Cash Collected" name="collected_cash" domain="[('state','=','collect_cash')]"/>
+                <group>
+                    <filter string="Customers" name="customer" context="{'group_by':'partner_id'}"/>
+                    <separator/>
+                    <filter string="Status" name="status" context="{'group_by':'state'}"/>
+                    <separator/>
+                    <filter string="Customer Payments" name="inbound_filter" domain="[('partner_type', '=', 'customer')]"/>
+                    <filter string="Vendor Payments" name="outbound_filter" domain="[('partner_type', '=', 'supplier')]"/>
+                </group>
+
+            </search>
+          </field>
+        </record>
+
+        <record id="action_pdc_payment" model="ir.actions.act_window">
+            <field name="name">PDC Payments</field>
+            <field name="res_model">pdc.account.payment</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="action_pdc_payment_filter"/>
+            <field name="context">{
+                'default_payment_type': 'inbound',
+                'default_partner_type': 'customer',
+                'search_default_inbound_filter': 1,
+                'res_partner_search_mode': 'customer',
+            }</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="action_pdc_payment_tree">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">list</field>
+            <field name="view_id" ref="pdc_payment_tree_view"/>
+            <field name="act_window_id" ref="action_pdc_payment"/>
+        </record>
+        <record model="ir.actions.act_window.view" id="action_pdc_payment_form">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="pdc_payment_form_view"/>
+            <field name="act_window_id" ref="action_pdc_payment"/>
+        </record>
+
+        <menuitem id="menu_pdc_payment_pdc" name="PDC Payments" 
+            action="post_dated_cheque_mgt_app.action_pdc_payment" 
+            parent="account.menu_finance_receivables"
+            groups="post_dated_cheque_mgt_app.group_pdc_payment"
+            sequence="21" />
+
+        <record id="action_pdc_payment_vendor" model="ir.actions.act_window">
+            <field name="name">PDC Payments</field>
+            <field name="res_model">pdc.account.payment</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="action_pdc_payment_filter"/>
+            <field name="context">{
+                'default_payment_type': 'outbound',
+                'default_partner_type': 'supplier',
+                'search_default_outbound_filter': 1,
+                'res_partner_search_mode': 'supplier',
+            }</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="action_pdc_payment_vendor_tree">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">list</field>
+            <field name="view_id" ref="pdc_payment_tree_view"/>
+            <field name="act_window_id" ref="action_pdc_payment_vendor"/>
+        </record>
+        <record model="ir.actions.act_window.view" id="action_pdc_payment_vendor_form">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="pdc_payment_form_view"/>
+            <field name="act_window_id" ref="action_pdc_payment_vendor"/>
+        </record>
+
+        <menuitem id="menu_pdc_vendor_payment_pdc" name="PDC Payments" 
+            action="post_dated_cheque_mgt_app.action_pdc_payment_vendor" 
+            parent="account.menu_finance_payables" 
+            groups="post_dated_cheque_mgt_app.group_pdc_payment"
+            sequence="21"
+            />
+
+    </data>
+</odoo>

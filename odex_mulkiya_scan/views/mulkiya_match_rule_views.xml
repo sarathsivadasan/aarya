@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_mulkiya_match_rule_list" model="ir.ui.view">
+        <field name="name">odex.mulkiya.match.rule.list</field>
+        <field name="model">odex.mulkiya.match.rule</field>
+        <field name="arch" type="xml">
+            <list string="Matching Rules" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="field_key"/>
+                <field name="model_name"/>
+                <field name="search_field"/>
+                <field name="parent_field_key" optional="show"/>
+                <field name="parent_relation_field" optional="show"/>
+                <field name="parent_required" optional="hide"/>
+                <field name="extra_domain" optional="hide"/>
+                <field name="model_available" string="Installed" widget="boolean_toggle" readonly="1"/>
+                <field name="active" widget="boolean_toggle" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_mulkiya_match_rule_search" model="ir.ui.view">
+        <field name="name">odex.mulkiya.match.rule.search</field>
+        <field name="model">odex.mulkiya.match.rule</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="field_key"/>
+                <field name="model_name"/>
+                <filter name="filter_archived" string="Archived" domain="[('active', '=', False)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_field" string="OCR Field" context="{'group_by': 'field_key'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_mulkiya_match_rule" model="ir.actions.act_window">
+        <field name="name">Matching Rules</field>
+        <field name="res_model">odex.mulkiya.match.rule</field>
+        <field name="view_mode">list</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Define how OCR values map to master data</p>
+            <p>Each rule links one extracted field to an Odoo model. Rules whose target
+               model is not installed are ignored, so the application keeps working
+               on its own.</p>
+        </field>
+    </record>
+
+</odoo>

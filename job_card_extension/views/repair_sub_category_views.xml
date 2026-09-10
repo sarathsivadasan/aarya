@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<odoo>
+    <record model="ir.ui.view" id="repair_category_form_view_custom_inherit">
+        <field name="name">repair.category.form.view.custom.inherit</field>
+        <field name="model">repair.category.custom</field>
+        <field name="inherit_id" ref="garage_management_odoo.repair_category_form_view_custom"/>
+        <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field name="repair_sub_category_ids">
+                    <list editable="top">
+                        <field name="name"/>
+                    </list>
+                </field>
+            </field>
+        </field>
+    </record>
+</odoo>

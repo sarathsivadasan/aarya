@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_odex_multi_vendor_rfq_root" 
+              name="MVRFQ"
+              web_icon="odex_multi_vendor_rfq,static/description/icon.png" 
+              sequence="5"/>
+    <menuitem id="menu_odex_multi_vendor_rfq_main" 
+              name="MVRFQ" 
+              parent="menu_odex_multi_vendor_rfq_root"/>
+    <menuitem id="menu_odex_multi_vendor_rfq"
+              name="Multi Vendor RFQ"
+              parent="menu_odex_multi_vendor_rfq_main"
+              action="action_purchase_multi_rfq"
+              sequence="1"/>
+
+</odoo>

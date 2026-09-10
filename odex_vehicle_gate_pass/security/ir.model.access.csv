@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_gate_pass_user,gate.pass.user,model_odex_gate_pass,group_gate_pass_user,1,1,1,0
+access_gate_pass_manager,gate.pass.manager,model_odex_gate_pass,group_gate_pass_manager,1,1,1,1
+access_gate_pass_photo_user,gate.pass.photo.user,model_odex_gate_pass_photo,group_gate_pass_user,1,1,1,1
+access_gate_pass_photo_manager,gate.pass.photo.manager,model_odex_gate_pass_photo,group_gate_pass_manager,1,1,1,1
+access_gate_pass_damage_user,gate.pass.damage.user,model_odex_gate_pass_damage,group_gate_pass_user,1,1,1,1
+access_gate_pass_damage_manager,gate.pass.damage.manager,model_odex_gate_pass_damage,group_gate_pass_manager,1,1,1,1
+access_gate_pass_timeline_user,gate.pass.timeline.user,model_odex_gate_pass_timeline,group_gate_pass_user,1,1,1,1
+access_gate_pass_timeline_manager,gate.pass.timeline.manager,model_odex_gate_pass_timeline,group_gate_pass_manager,1,1,1,1

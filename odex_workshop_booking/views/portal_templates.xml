@@ -1,0 +1,560 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="portal_breadcrumbs_booking" inherit_id="portal.portal_breadcrumbs"
+              name="Portal Breadcrumbs: Bookings">
+        <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+            <li t-if="page_name == 'booking'" class="breadcrumb-item">
+                <a href="/my/bookings">Bookings</a>
+            </li>
+            <li t-if="page_name == 'vehicle'" class="breadcrumb-item">
+                <a href="/my/vehicles">My Vehicles</a>
+            </li>
+            <li t-if="page_name == 'workshop_home'" class="breadcrumb-item">
+                <a href="/my/workshop">Workshop</a>
+            </li>
+            <li t-if="page_name == 'service_history'" class="breadcrumb-item">
+                <a href="/my/service-history">Service History</a>
+            </li>
+            <li t-if="page_name == 'support'" class="breadcrumb-item">
+                <a href="/my/workshop/support">Support</a>
+            </li>
+            <li t-if="page_name == 'documents'" class="breadcrumb-item">
+                <a href="/my/workshop/documents">Documents</a>
+            </li>
+            <li t-if="page_name == 'quotation'" class="breadcrumb-item">
+                <a href="/my/quotations">Quotations</a>
+            </li>
+        </xpath>
+    </template>
+
+    <template id="portal_my_bookings" name="My Workshop Bookings">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">My Bookings</t>
+            </t>
+            <div class="owp">
+                <a href="/my" class="btn btn-sm btn-outline-secondary mb-3">
+                    <i class="fa fa-arrow-left me-1"/>Back to Dashboard</a>
+                <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                    <div class="d-flex gap-2 flex-wrap">
+                        <a t-attf-href="/my/bookings?filterby=upcoming"
+                           t-attf-class="btn btn-sm #{'btn-primary' if filterby == 'upcoming' else 'btn-outline-secondary'}">Upcoming</a>
+                        <a t-attf-href="/my/bookings?filterby=history"
+                           t-attf-class="btn btn-sm #{'btn-primary' if filterby == 'history' else 'btn-outline-secondary'}">History</a>
+                        <a t-attf-href="/my/bookings?filterby=all"
+                           t-attf-class="btn btn-sm #{'btn-primary' if filterby == 'all' else 'btn-outline-secondary'}">All</a>
+                    </div>
+                    <a href="/book-service" class="btn btn-sm btn-primary">
+                        <i class="fa fa-plus me-1"/>New Booking</a>
+                </div>
+
+                <t t-if="not bookings">
+                    <div class="owp-card p-5 text-center text-muted">
+                        <i class="fa fa-calendar-o fs-1 d-block mb-3"/>
+                        No bookings here yet.
+                        <a href="/book-service">Book a service</a> to get started.
+                    </div>
+                </t>
+                <t t-else="">
+                    <!-- desktop table -->
+                    <div class="owp-card p-0 d-none d-lg-block">
+                        <div class="table-responsive">
+                            <table class="table owp-table align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Booking Ref</th>
+                                        <th>Date</th>
+                                        <th>Time Slot</th>
+                                        <th>Vehicle</th>
+                                        <th>Service</th>
+                                        <th>Booking Status</th>
+                                        <th>Service Status</th>
+                                        <th>Payment</th>
+                                        <th>Source</th>
+                                        <th class="text-end">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="bookings" t-as="booking">
+                                        <tr>
+                                            <td class="fw-semibold" t-out="booking.name"/>
+                                            <td t-out="booking.booking_date"
+                                                t-options="{'widget': 'date'}"/>
+                                            <td t-out="booking.time_label"/>
+                                            <td t-out="booking.vehicle_id.display_name"/>
+                                            <td t-out="booking.service_type_id.name"/>
+                                            <td>
+                                                <span t-attf-class="owb-status-badge owb-st-#{booking.state}"
+                                                      t-out="dict(booking._fields['state'].selection).get(booking.state)"/>
+                                            </td>
+                                            <td class="small" t-out="dict(booking._fields['service_status'].selection).get(booking.service_status) or '-'"/>
+                                            <td class="small" t-out="dict(booking._fields['payment_status'].selection).get(booking.payment_status) or '-'"/>
+                                            <td class="small" t-out="dict(booking._fields['referral_source'].selection).get(booking.referral_source) or '-'"/>
+                                            <td class="text-end">
+                                                <a t-attf-href="/my/bookings/#{booking.id}"
+                                                   class="btn btn-sm btn-outline-primary">View</a>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- mobile / tablet cards -->
+                    <div class="d-lg-none d-flex flex-column gap-3">
+                        <t t-foreach="bookings" t-as="booking">
+                            <a t-attf-href="/my/bookings/#{booking.id}"
+                               class="owp-card p-3 text-decoration-none text-reset">
+                                <div class="d-flex justify-content-between align-items-start gap-2">
+                                    <div class="min-w-0">
+                                        <div class="fw-bold" t-out="booking.name"/>
+                                        <div class="small text-muted text-truncate">
+                                            <i class="fa fa-car me-1"/>
+                                            <t t-out="booking.vehicle_id.display_name"/>
+                                        </div>
+                                        <div class="small text-muted">
+                                            <i class="fa fa-calendar me-1"/>
+                                            <t t-out="booking.booking_date"
+                                               t-options="{'widget': 'date'}"/>
+                                            · <t t-out="booking.time_label"/>
+                                        </div>
+                                        <div class="small text-muted"
+                                             t-out="booking.service_type_id.name"/>
+                                    </div>
+                                    <span t-attf-class="owb-status-badge owb-st-#{booking.state}"
+                                          t-out="dict(booking._fields['state'].selection).get(booking.state)"/>
+                                </div>
+                            </a>
+                        </t>
+                    </div>
+                </t>
+                <div t-if="pager" class="o_portal_pager mt-3">
+                    <t t-call="portal.pager"/>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="portal_booking_detail" name="Booking Detail">
+        <t t-call="portal.portal_layout">
+            <div class="owb-page p-0 bg-transparent"
+                 id="owb_portal_detail"
+                 t-att-data-booking-id="booking.id"
+                 t-att-data-company-id="booking.company_id.id">
+                <div class="owb-card p-4 mb-3">
+                    <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                        <div>
+                            <h3 class="fw-bold mb-1" t-out="booking.name"/>
+                            <span t-attf-class="owb-status-badge owb-st-#{booking.state}">
+                                <t t-out="dict(booking._fields['state'].selection).get(booking.state)"/>
+                            </span>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button t-if="can_reschedule" type="button"
+                                    class="btn owb-btn-secondary btn-sm"
+                                    data-bs-toggle="modal" data-bs-target="#owbRescheduleModal">
+                                <i class="fa fa-refresh me-1"/>Reschedule
+                            </button>
+                            <button t-if="can_cancel" type="button"
+                                    class="btn btn-outline-danger btn-sm"
+                                    data-bs-toggle="modal" data-bs-target="#owbCancelModal">
+                                Cancel Booking
+                            </button>
+                        </div>
+                    </div>
+                    <hr/>
+                    <div class="row g-4">
+                        <div class="col-12 col-md-6">
+                            <div class="small text-muted">Date &amp; Time</div>
+                            <div class="fw-semibold">
+                                <span t-out="booking.booking_date" t-options="{'widget': 'date'}"/>
+                                · <t t-out="booking.time_label"/>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="small text-muted">Workshop</div>
+                            <div class="fw-semibold" t-out="booking.company_id.name"/>
+                            <div class="small text-muted" t-out="booking.company_id.phone or ''"/>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="small text-muted">Vehicle</div>
+                            <div class="fw-semibold" t-out="booking.vehicle_id.display_name"/>
+                            <div class="small text-muted" t-out="booking.vehicle_plate_label or ''"/>
+                            <div class="small text-muted" t-if="booking.vehicle_vin">
+                                VIN: <t t-out="booking.vehicle_vin"/></div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="small text-muted">Service</div>
+                            <div class="fw-semibold" t-out="booking.service_type_id.name"/>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="small text-muted">Service Status</div>
+                            <div class="fw-semibold"
+                                 t-out="dict(booking._fields['service_status'].selection).get(booking.service_status) or '-'"/>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="small text-muted">Advisor</div>
+                            <div class="fw-semibold" t-out="booking.advisor_id.name or 'To be assigned'"/>
+                        </div>
+                        <div class="col-12 col-md-6" t-if="booking.pickup_location_id">
+                            <div class="small text-muted">Pickup Location</div>
+                            <div class="fw-semibold" t-out="booking.pickup_location_id.display_name"/>
+                            <div class="small text-muted" t-out="booking.pickup_location_id.full_address or ''"/>
+                        </div>
+                        <div class="col-12 col-md-6" t-if="booking.drop_location_id">
+                            <div class="small text-muted">Drop-off Location</div>
+                            <div class="fw-semibold" t-out="booking.drop_location_id.display_name"/>
+                            <div class="small text-muted" t-out="booking.drop_location_id.full_address or ''"/>
+                        </div>
+                        <div class="col-12 col-md-6" t-if="booking.referral_source">
+                            <div class="small text-muted">How you heard about us</div>
+                            <div class="fw-semibold"
+                                 t-out="dict(booking._fields['referral_source'].selection).get(booking.referral_source)"/>
+                        </div>
+                        <div class="col-12" t-if="booking.complaint">
+                            <div class="small text-muted">Issue / Description</div>
+                            <div t-out="booking.complaint"/>
+                        </div>
+                    </div>
+                </div>
+                <div t-if="job_card or quotation or invoice" class="owb-card p-4 mb-3">
+                    <div class="fw-bold mb-3">Related Documents</div>
+                    <div class="d-flex flex-wrap gap-2">
+                        <span t-if="job_card" class="btn btn-sm btn-outline-secondary disabled">
+                            <i class="fa fa-wrench me-1"/>Job Card:
+                            <t t-out="job_card.display_name"/></span>
+                        <a t-if="quotation" t-attf-href="/my/quotations/#{quotation.id}"
+                           class="btn btn-sm btn-outline-primary">
+                            <i class="fa fa-file-text-o me-1"/>View Quotation</a>
+                        <a t-if="invoice" t-attf-href="/my/invoices/#{invoice.id}"
+                           class="btn btn-sm btn-outline-primary">
+                            <i class="fa fa-file-o me-1"/>View Invoice</a>
+                    </div>
+                </div>
+
+                <a href="/my/bookings" class="btn btn-outline-secondary btn-sm">
+                    <i class="fa fa-arrow-left me-1"/>Back to Bookings</a>
+
+                <!-- Cancel modal -->
+                <div class="modal fade" id="owbCancelModal" tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <form class="modal-content" method="post"
+                              t-attf-action="/my/bookings/#{booking.id}/cancel">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <div class="modal-header">
+                                <h5 class="modal-title">Cancel Booking</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"/>
+                            </div>
+                            <div class="modal-body">
+                                <p>Are you sure you want to cancel booking <strong t-out="booking.name"/>?</p>
+                                <label class="form-label small fw-semibold">Reason (optional)</label>
+                                <textarea name="reason" class="form-control" rows="2"/>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn owb-btn-secondary" data-bs-dismiss="modal">Keep Booking</button>
+                                <button type="submit" class="btn btn-danger">Cancel Booking</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Reschedule modal -->
+                <div class="modal fade" id="owbRescheduleModal" tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Reschedule Booking</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"/>
+                            </div>
+                            <div class="modal-body">
+                                <div class="owb-info-strip mb-3">
+                                    <i class="fa fa-calendar me-2"/>
+                                    Currently
+                                    <b><t t-out="booking.booking_date"
+                                          t-options="{'widget': 'date'}"/></b>
+                                    at <b t-out="booking.time_label"/>.
+                                    Pick a new date and time below.
+                                </div>
+                                <label class="form-label small fw-semibold">New Date</label>
+                                <input type="date" id="owb_rs_date" class="form-control owb-input mb-3"
+                                       t-att-value="booking.booking_date"
+                                       t-att-min="datetime.date.today().isoformat()"/>
+                                <label class="form-label small fw-semibold">Available Slots</label>
+                                <div id="owb_rs_slots" class="owb-slot-grid">
+                                    <div class="text-muted small">Pick a date to see available slots.</div>
+                                </div>
+                                <div id="owb_rs_error" class="alert alert-danger d-none mt-3 mb-0"/>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn owb-btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" id="owb_rs_confirm" disabled="disabled">
+                                    Confirm New Slot</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="portal_my_vehicles" name="My Vehicles">
+        <t t-call="portal.portal_layout">
+            <div class="owp">
+                <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                    <div>
+                        <a href="/my" class="owp-link d-inline-flex mb-1">
+                            <i class="fa fa-arrow-left me-1"/>Dashboard</a>
+                        <h4 class="fw-bold mb-0">My Vehicles</h4>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <a href="/book-service" class="btn btn-sm btn-outline-primary">
+                            <i class="fa fa-calendar-plus-o me-1"/>Book Service</a>
+                        <button class="btn btn-sm btn-primary" data-bs-toggle="modal"
+                                data-bs-target="#owbAddVehicleModal">
+                            <i class="fa fa-plus me-1"/>Add Vehicle</button>
+                    </div>
+                </div>
+
+                <t t-if="not vehicles">
+                    <div class="owp-card p-5 text-center text-muted">
+                        <i class="fa fa-car fs-1 d-block mb-3"/>No vehicles yet.
+                    </div>
+                </t>
+                <t t-else="">
+                    <div class="owp-card p-0 d-none d-md-block">
+                        <div class="table-responsive">
+                            <table class="table owp-table align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Vehicle</th>
+                                        <th>Plate Number</th>
+                                        <th>Make</th>
+                                        <th>Model</th>
+                                        <th>Year</th>
+                                        <th>Color</th>
+                                        <th>Odometer</th>
+                                        <th>Status</th>
+                                        <th class="text-end">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="vehicle_rows" t-as="row">
+                                        <t t-set="vehicle" t-value="row['vehicle']"/>
+                                        <tr>
+                                            <td>
+                                                <div class="fw-semibold" t-out="vehicle.display_name"/>
+                                                <div class="small text-muted" t-if="vehicle.vin_sn">
+                                                    VIN: <t t-out="vehicle.vin_sn"/></div>
+                                            </td>
+                                            <td t-out="vehicle.plate_label()"/>
+                                            <td t-out="vehicle.model_id.brand_id.name or '-'"/>
+                                            <td t-out="vehicle.model_id.name or '-'"/>
+                                            <td t-out="vehicle.model_year or '-'"/>
+                                            <td t-out="vehicle.color or '-'"/>
+                                            <td>
+                                                <t t-if="vehicle.odometer"><t t-out="vehicle.odometer"/> km</t>
+                                                <t t-else="">-</t>
+                                            </td>
+                                            <td>
+                                                <t t-if="row['status']">
+                                                    <span t-attf-class="owp-badge owp-b-#{row['status']['tone']}"
+                                                          t-out="row['status']['label']"/>
+                                                </t>
+                                                <span t-else="" class="owp-badge owp-b-grey">Not in service</span>
+                                            </td>
+                                            <td class="text-end">
+                                                <a t-attf-href="/my/vehicles/#{vehicle.id}"
+                                                   class="btn btn-sm btn-outline-primary">View Details</a>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="d-md-none d-flex flex-column gap-3">
+                        <t t-foreach="vehicles" t-as="vehicle">
+                            <a t-attf-href="/my/vehicles/#{vehicle.id}"
+                               class="owp-card p-3 text-decoration-none text-reset">
+                                <div class="fw-bold" t-out="vehicle.display_name"/>
+                                <div class="small text-muted">
+                                    <t t-out="vehicle.license_plate or 'No plate'"/>
+                                    <t t-if="vehicle.model_year"> · <t t-out="vehicle.model_year"/></t>
+                                    <t t-if="vehicle.color"> · <t t-out="vehicle.color"/></t>
+                                </div>
+                            </a>
+                        </t>
+                    </div>
+                </t>
+
+                <div class="modal fade" id="owbAddVehicleModal" tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <form class="modal-content" method="post" action="/my/vehicles/add">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <div class="modal-header">
+                                <h5 class="modal-title">Add Vehicle</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"/>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row g-3">
+                                    <div class="col-12 col-sm-6">
+                                        <label class="form-label small fw-semibold">Make</label>
+                                        <select name="brand_id" id="owb_pv_make"
+                                                class="form-select" required="required">
+                                            <option value="">Select Make</option>
+                                            <t t-foreach="makes" t-as="make">
+                                                <option t-att-value="make.id" t-out="make.name"/>
+                                            </t>
+                                        </select>
+                                    </div>
+                                    <div class="col-12 col-sm-6">
+                                        <label class="form-label small fw-semibold">Model</label>
+                                        <select name="model_id" id="owb_pv_model"
+                                                class="form-select" required="required"
+                                                disabled="disabled">
+                                            <option value="">Select Model</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-6 col-sm-4" t-if="emirates">
+                                        <label class="form-label small fw-semibold">Emirates</label>
+                                        <select name="emirate_id" class="form-select">
+                                            <option value="">Select</option>
+                                            <t t-foreach="emirates" t-as="em">
+                                                <option t-att-value="em.id" t-out="em.display_name"/>
+                                            </t>
+                                        </select>
+                                    </div>
+                                    <div class="col-6 col-sm-4" t-if="plate_codes">
+                                        <label class="form-label small fw-semibold">Code</label>
+                                        <select name="code_id" class="form-select">
+                                            <option value="">Select</option>
+                                            <t t-foreach="plate_codes" t-as="pc">
+                                                <option t-att-value="pc.id" t-out="pc.display_name"/>
+                                            </t>
+                                        </select>
+                                    </div>
+                                    <div class="col-12 col-sm-4">
+                                        <label class="form-label small fw-semibold">Plate Number</label>
+                                        <input type="text" name="plate" class="form-control" required="required"/>
+                                    </div>
+                                    <div class="col-6 col-sm-3">
+                                        <label class="form-label small fw-semibold">Year</label>
+                                        <input type="number" name="year" class="form-control"/>
+                                    </div>
+                                    <div class="col-6 col-sm-3">
+                                        <label class="form-label small fw-semibold">Color</label>
+                                        <input type="text" name="color" class="form-control"/>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label small fw-semibold">VIN / Chassis</label>
+                                        <input type="text" name="vin" class="form-control"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-outline-secondary"
+                                        data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Add Vehicle</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="portal_quotations" name="My Quotations">
+        <t t-call="portal.portal_layout">
+            <div class="owp">
+                <a href="/my" class="btn btn-sm btn-outline-secondary mb-3">
+                    <i class="fa fa-arrow-left me-1"/>Back to Dashboard</a>
+                <h4 class="fw-bold mb-3">Quotations</h4>
+                <t t-if="not quotations">
+                    <div class="owp-card p-5 text-center text-muted">No quotations yet.</div>
+                </t>
+                <t t-else="">
+                    <div class="owp-card p-0 d-none d-md-block">
+                        <div class="table-responsive">
+                            <table class="table owp-table align-middle mb-0">
+                                <thead>
+                                    <tr><th>Quotation</th><th>Date</th><th>Amount</th>
+                                        <th>Status</th><th class="text-end">Action</th></tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="quotations" t-as="quote">
+                                        <tr>
+                                            <td><a t-attf-href="/my/quotations/#{quote.id}" class="fw-semibold" t-out="quote.name"/></td>
+                                            <td t-out="quote.date_order"
+                                                t-options="{'widget': 'date'}"/>
+                                            <td t-out="quote.amount_total"
+                                                t-options="{'widget': 'monetary', 'display_currency': quote.currency_id}"/>
+                                            <td>
+                                                <span t-attf-class="owb-status-badge owb-st-#{'confirmed' if quote.state == 'sale' else 'requested'}"
+                                                      t-out="dict(quote._fields['state'].selection).get(quote.state)"/>
+                                            </td>
+                                            <td class="text-end">
+                                                <a t-attf-href="/my/quotations/#{quote.id}"
+                                                   class="btn btn-sm btn-outline-primary">View</a>
+                                                <a t-attf-href="/my/orders/#{quote.id}?report_type=pdf&amp;download=true"
+                                                   class="btn btn-sm btn-outline-secondary">PDF</a>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="d-md-none d-flex flex-column gap-3">
+                        <t t-foreach="quotations" t-as="quote">
+                            <a t-attf-href="/my/quotations/#{quote.id}"
+                               class="owp-card p-3 text-decoration-none text-reset">
+                                <div class="fw-bold" t-out="quote.name"/>
+                                <div class="small text-muted">
+                                    <t t-out="quote.date_order" t-options="{'widget': 'date'}"/>
+                                    · <t t-out="quote.amount_total"
+                                         t-options="{'widget': 'monetary', 'display_currency': quote.currency_id}"/>
+                                </div>
+                            </a>
+                        </t>
+                    </div>
+                </t>
+            </div>
+        </t>
+    </template>
+    <!-- ODEX booking context added to Odoo's own quotation page, rather
+         than maintaining a parallel implementation of it. -->
+    <template id="portal_sale_order_booking" inherit_id="sale.sale_order_portal_content"
+              name="Quotation: ODEX booking details">
+        <xpath expr="//table[@id='sales_order_table']" position="before">
+            <t t-set="odex_booking"
+               t-value="request.env['odex.workshop.booking'].sudo().search([
+                   ('partner_id', '=', sale_order.partner_id.commercial_partner_id.id)],
+                   order='booking_date desc', limit=1)"/>
+            <div t-if="odex_booking" class="owp-quote-booking mb-3 p-3">
+                <div class="fw-bold mb-2">
+                    <i class="fa fa-wrench me-1"/>Workshop Booking</div>
+                <div class="row g-3 small">
+                    <div class="col-6 col-md-3">
+                        <div class="text-muted">Booking</div>
+                        <a t-attf-href="/my/bookings/#{odex_booking.id}"
+                           class="fw-semibold" t-out="odex_booking.name"/>
+                    </div>
+                    <div class="col-6 col-md-3" t-if="odex_booking.vehicle_id">
+                        <div class="text-muted">Vehicle</div>
+                        <div class="fw-semibold" t-out="odex_booking.vehicle_id.display_name"/>
+                    </div>
+                    <div class="col-6 col-md-3" t-if="odex_booking.vehicle_plate_label">
+                        <div class="text-muted">Plate</div>
+                        <div class="fw-semibold" t-out="odex_booking.vehicle_plate_label"/>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="text-muted">Service</div>
+                        <div class="fw-semibold" t-out="odex_booking.service_type_id.name"/>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+    </template>
+</odoo>

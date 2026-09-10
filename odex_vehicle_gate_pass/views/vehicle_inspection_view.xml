@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+	<record id="view_form_v_gatepass_extension" model="ir.ui.view">
+        <field name="name">Project Task Form Inherit VC</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="vehicle_inspection_report.view_form_v_job_card_extension"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_create_mv_rfq']" position="after">
+                <button name="action_inspection_finished"
+                    type="object" string="Out" invisible="inspection_state == 'inspection_finished'" class="oe_stat_button">
+                </button>
+            </xpath>
+        	<field name="repair_category" position="before">
+        		<field name="gate_pass_id" readonly="1"/>
+        	</field>
+        </field>
+    </record>
+
+</odoo>

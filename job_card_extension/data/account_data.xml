@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Auto account setup -->
+        <record id="account_account_job" model="account.account">
+            <field name="name">Job- Demo Account</field>
+            <field name="code">0</field>
+            <field name="account_type">asset_current</field>
+        </record>
+        <record id="account_journal_job" model="account.journal">
+            <field name="name">Demo Journal</field>
+            <field name="code">DJ</field>
+            <field name="type">general</field>
+        </record>
+
+        <record id="account_setup_job_card" model="account.setup">
+            <field name="name">Job Card</field>
+            <field name="credit_account" ref="job_card_extension.account_account_job"/>
+            <field name="debit_account" ref="job_card_extension.account_account_job"/>
+            <field name="journal_id" ref="job_card_extension.account_journal_job"/>
+        </record>
+
+        <!-- Payment methods -->
+        <!-- <record id="account_payment_method_bank_in" model="account.payment.method">
+            <field name="name">Bank</field>
+            <field name="code">bank</field>
+            <field name="payment_type">inbound</field>
+        </record>
+        <record id="account_payment_method_bank_out" model="account.payment.method">
+            <field name="name">Bank</field>
+            <field name="code">bank</field>
+            <field name="payment_type">outbound</field>
+        </record>
+
+        <record id="account_payment_method_cash_in" model="account.payment.method">
+            <field name="name">Cash</field>
+            <field name="code">cash</field>
+            <field name="payment_type">inbound</field>
+        </record>
+        <record id="account_payment_method_cash_out" model="account.payment.method">
+            <field name="name">Cash</field>
+            <field name="code">cash</field>
+            <field name="payment_type">outbound</field>
+        </record>
+
+        <record id="account_payment_method_card_in" model="account.payment.method">
+            <field name="name">Card</field>
+            <field name="code">card</field>
+            <field name="payment_type">inbound</field>
+        </record>
+        <record id="account_payment_method_card_out" model="account.payment.method">
+            <field name="name">Card</field>
+            <field name="code">card</field>
+            <field name="payment_type">outbound</field>
+        </record>
+
+        <record id="account_payment_method_contract_in" model="account.payment.method">
+            <field name="name">Contract</field>
+            <field name="code">contract</field>
+            <field name="payment_type">inbound</field>
+        </record>
+        <record id="account_payment_method_contract_out" model="account.payment.method">
+            <field name="name">Contract</field>
+            <field name="code">contract</field>
+            <field name="payment_type">outbound</field>
+        </record> -->
+    </data>
+</odoo>

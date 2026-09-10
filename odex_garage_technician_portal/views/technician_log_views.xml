@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_technician_log_list" model="ir.ui.view">
+        <field name="name">technician.log.list</field>
+        <field name="model">technician.log</field>
+        <field name="arch" type="xml">
+            <list string="Technician Logs" create="0" edit="0" delete="0">
+                <field name="log_date"/>
+                <field name="job_reference"/>
+                <field name="task_id" optional="hide"/>
+                <field name="record_type"/>
+                <field name="technician_id"/>
+                <field name="action"/>
+                <field name="description"/>
+                <field name="user_id"/>
+                <field name="is_admin_action" widget="boolean_toggle" readonly="1"/>
+                <field name="analytic_line_id" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_technician_log_search" model="ir.ui.view">
+        <field name="name">technician.log.search</field>
+        <field name="model">technician.log</field>
+        <field name="arch" type="xml">
+            <search string="Technician Logs">
+                <field name="job_reference"/>
+                <field name="technician_id"/>
+                <field name="user_id"/>
+                <field name="task_id"/>
+                <filter name="filter_timer" string="Timer Actions"
+                        domain="[('action', 'in', ['started', 'paused', 'resumed', 'completed'])]"/>
+                <filter name="filter_admin" string="Administrator Actions"
+                        domain="[('is_admin_action', '=', True)]"/>
+                <separator/>
+                <filter name="filter_today" string="Today"
+                        domain="[('log_date', '&gt;=', context_today().strftime('%Y-%m-%d 00:00:00'))]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_technician" string="Technician"
+                            context="{'group_by': 'technician_id'}"/>
+                    <filter name="group_job" string="Job"
+                            context="{'group_by': 'task_id'}"/>
+                    <filter name="group_action" string="Action"
+                            context="{'group_by': 'action'}"/>
+                    <filter name="group_user" string="User"
+                            context="{'group_by': 'user_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_technician_log" model="ir.actions.act_window">
+        <field name="name">Technician Logs</field>
+        <field name="res_model">technician.log</field>
+        <field name="view_mode">list</field>
+        <field name="search_view_id" ref="view_technician_log_search"/>
+    </record>
+
+    <menuitem id="menu_technician_log" name="Logs"
+              parent="menu_technician_portal_root"
+              action="action_technician_log" sequence="50"
+              groups="group_garage_technician_supervisor"/>
+</odoo>

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_order_form_inherit" model="ir.ui.view">
+        <field name="name">sale.order.form.inherit</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <!-- <xpath expr="//field[@name='tasks_count']" position="attributes">
+                <attribute name="string">Job Card</attribute>
+            </xpath> -->
+
+            <!-- <field name="tag_ids" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </field> -->
+            <field name="validity_date" position="before">
+                <field name="job_id" readonly="1"/>
+            </field>
+            <xpath expr="//header" position="inside">
+                <!-- <field name="is_job_card_created" invisible="1"/> -->
+                <button name="create_job_card" string="Create Job Card" type="object" class="btn-primary" invisible="tasks_count >= 1 or job_id"/>
+            </xpath>
+            <!-- <field name="partner_id" position="before">
+                <field name="title"/>
+                <field name="is_insurance"/>
+                <field name="insurance_company_id" attrs="{'invisible': [('is_insurance', '!=', True)]}"/>
+            </field> -->
+            <!-- <field name="partner_id" position="after">
+                <field name="partner_id" string="Vehicle Owner"/>
+                <field name="project_id"/>
+                <field name="policy_no"/>
+                <field name="lpo_no" invisible="1"/>
+                <field name="lpo_date"/>
+                <field name="claim_no"/>
+                <field name="tag_ids"/>
+                <field name="next_service_date"/>
+                <field name="service_due_km"/>
+            </field> -->
+           <!--  <field name="partner_id" position="before">
+                <field name="job_id"/>
+            </field> -->
+            <xpath expr="//group[@name='order_details']" position="after">
+                <group name="vehicle_details" string="VEHICLE DETAILS">
+                    <field name="vehicle_id"/>
+                    <field name="vehicle_make_id"/>
+                    <field name="vehicle_model_id"/>
+                    <field name="vin"/>
+                    <field name="vehicle_color_id"/>
+                    <field name="engin_no"/>
+                    <field name="year"/>
+                    <field name="odometer"/>
+                </group>   
+            </xpath>
+            <xpath expr="//field[@name='order_line']//list//field[@name='product_id']" position="before">
+                <field name="cost_type"/>
+                <field name="parts_type"/>
+                <field name="part_no"/>
+            </xpath>
+
+            <!-- 1. Hide the standard price_unit field on the order line tree view -->
+            <xpath expr="//field[@name='order_line']/list/field[@name='price_unit']" position="attributes">
+                <attribute name="string">Sale Price</attribute>
+            </xpath>
+
+            <!-- 3. Insert custom_price, markup factor, and readonly Sale Price -->
+            <xpath expr="//field[@name='order_line']/list/field[@name='price_unit']" position="before">
+                <field name="custom_price" string="Price" invisible="1"/>
+                <field name="price_factor" widget="percentage" string="Mark Up" invisible="1"/>
+                <!-- <field name="price_after_markup" string="Sale Price" readonly="1"/> -->
+            </xpath>
+            <!-- <xpath expr="//field[@name='order_line']//tree//field[@name='price_unit']" position="before">
+                <field name="cc_sale_price"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']//tree//field[@name='price_unit']" position="attributes">
+                <attribute name="string">Sales Price</attribute>
+            </xpath> -->
+            <!--            <xpath expr="//field[@name='order_line']//tree//field[@name='price_unit']" position="after">-->
+            <!--                <button name="action_increase_price" type="object" icon="fa-arrow-up" string="10%" class="btn-link"/>-->
+            <!--            </xpath>-->
+            <!-- <xpath expr="//field[@name='order_line']//tree//field[@name='price_subtotal']" position="attributes">
+                <attribute name="string">Amount</attribute>
+            </xpath>
+            <xpath expr="//field[@name='order_line']//tree//field[@name='discount']" position="attributes">
+                <attribute name="string">Discount</attribute>
+            </xpath>
+            <xpath expr="//field[@name='note']" position="before">
+                <group>
+                    <field name="remarks" nolabel="1" placeholder="Define your Remarks ..."/>
+                </group>
+            </xpath> -->
+        </field>
+    </record>
+
+    <record id="view_order_form_inherit_jobcard_button" model="ir.ui.view">
+        <field name="name">sale.order.form.sale.project.inherit</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale_project.view_order_form_inherit_sale_project"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_view_task']/div/span" position="replace">
+                <span class="o_stat_text">Job Card</span>
+            </xpath>
+        </field>
+    </record>
+
+   <record id="view_quotation_tree_inherit" model="ir.ui.view">
+        <field name="name">sale.order.list</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_quotation_tree"/>
+        <field name="arch" type="xml">
+            <!-- <field name="partner_id" position="before">
+                <field name="insurance_company_id" optional="show"/>
+            </field> -->
+            <field name="partner_id" position="after">
+                <field name="vehicle_id" optional="show"/>
+                <field name="vehicle_make_id" optional="show"/>
+                <field name="vehicle_model_id" optional="show"/>
+                <field name="vehicle_color_id" optional="show"/>
+                <field name="year" optional="show"/>
+            </field>
+           <!--  <field name="state" position="before">
+                <field name="tag_ids" optional="show"/>
+            </field> -->
+        </field>
+    </record>
+
+    <!-- <record id="view_sales_order_filter_inherit" model="ir.ui.view">
+        <field name="name">sale.order.search.inherit.quotation</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_sales_order_filter"/>
+        <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field name="insurance_company_id"/>
+            </field>
+        </field>
+    </record> -->
+
+    <!-- <record id="sale.action_quotations_with_onboarding" model="ir.actions.act_window">
+        <field name="name">Estimate</field>
+    </record> -->
+
+    <record model="ir.ui.menu" id="sale.sale_menu_root">
+        <field name="sequence">6</field>
+    </record>
+
+</odoo>

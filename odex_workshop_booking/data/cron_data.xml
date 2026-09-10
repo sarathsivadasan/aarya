@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="cron_booking_reminders" model="ir.cron">
+        <field name="name">Booking: Send Reminder Emails</field>
+        <field name="model_id" ref="model_odex_workshop_booking"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_send_reminders()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">hours</field>
+        <field name="active" eval="True"/>
+    </record>
+    <record id="cron_booking_no_show" model="ir.cron">
+        <field name="name">Booking: Auto Mark No-Shows</field>
+        <field name="model_id" ref="model_odex_workshop_booking"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_mark_no_show()</field>
+        <field name="interval_number">6</field>
+        <field name="interval_type">hours</field>
+        <field name="active" eval="True"/>
+    </record>
+
+    <function model="odex.booking.slot" name="repair_missing_datetimes"/>
+</odoo>

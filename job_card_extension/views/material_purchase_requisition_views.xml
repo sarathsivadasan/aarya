@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="material_purchase_requisition_form_view_inherit" model="ir.ui.view">
+        <field name="name">material.purchase.requisition.form</field>
+        <field name="model">material.purchase.requisition</field>
+        <field name="inherit_id" ref="material_purchase_requisitions.material_purchase_requisition_form_view"/>
+        <field name="arch" type="xml">
+            <field name="analytic_account_id" position="after">
+                <button name="redirect_vin" string="Product Search" type="object" class="oe_highlight"/>
+            </field>
+            <xpath expr="//field[@name='requisition_line_ids']/tree/field[@name='description']" position="after">
+                <field name="cost_price" />
+                <field name="sale_price" />
+                <field name="stock" string="Stock"/>
+                <field name="location_id"/>
+            </xpath>
+            <xpath expr="//field[@name='requisition_line_ids']/tree/field[@name='product_id']" position="before">
+                <field name="barcode" string="Part Number"/>
+            </xpath>
+            <xpath expr="//field[@name='requisition_line_ids']/tree/field[@name='uom']" position="after">
+                <field name="total_price"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

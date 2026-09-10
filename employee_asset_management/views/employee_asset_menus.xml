@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_employee_asset_root"
+              name="Assets"
+              parent="hr.menu_hr_root"
+              sequence="45"
+              groups="hr.group_hr_user"/>
+
+    <menuitem id="menu_employee_asset_assignment"
+              name="Employee Assets"
+              parent="menu_employee_asset_root"
+              action="action_employee_asset_assignment"
+              sequence="10"
+              groups="hr.group_hr_user"/>
+
+</odoo>

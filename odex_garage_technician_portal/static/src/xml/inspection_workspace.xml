@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="odex_garage_technician_portal.InspectionWorkspace">
+        <div class="o_tp_workspace" t-att-class="isSmall ? 'o_tp_workspace_mobile' : ''">
+            <!-- LEFT: my work records (account.analytic.line) -->
+            <div class="o_tp_list_pane" t-if="!isSmall or !state.mobileShowDetail">
+                <div class="o_tp_list_header">
+                    <h3>My Work</h3>
+                    <a href="#" t-on-click.prevent="clearAll">View All</a>
+                </div>
+                <input type="text" class="o_tp_search" placeholder="Search..."
+                       t-on-input="onSearchInput"/>
+                <div class="o_tp_inspection_list">
+                    <div t-foreach="state.list" t-as="item" t-key="item.id"
+                         t-attf-class="o_tp_inspection_row #{state.detail and state.detail.id === item.id ? 'active' : ''}"
+                         t-on-click="() => this.selectLine(item.id)">
+                        <div class="o_tp_row_left">
+                            <span class="o_tp_row_code" t-esc="item.task_name"/>
+                            <span t-attf-class="badge o_tp_priority_#{item.priority_label}"
+                                  t-esc="item.priority_label"/>
+                        </div>
+                        <div class="o_tp_row_vehicle" t-esc="item.vehicle"/>
+                        <div class="o_tp_row_service text-muted" t-if="item.service" t-esc="item.service"/>
+                        <div class="o_tp_row_bottom">
+                            <span t-esc="item.customer"/>
+                            <span t-attf-class="badge o_tp_status_#{item.status}" t-esc="item.status"/>
+                        </div>
+                    </div>
+                    <div t-if="!state.list.length" class="text-muted p-2">No work assigned to you yet.</div>
+                </div>
+            </div>
+
+            <!-- RIGHT: work record detail -->
+            <div class="o_tp_detail_pane" t-if="state.detail and (!isSmall or state.mobileShowDetail)">
+                <div class="o_tp_detail_header">
+                    <div class="o_tp_detail_title">
+                        <i t-if="isSmall" class="fa fa-arrow-left o_tp_back_btn" t-on-click="backToList"/>
+                        <strong t-esc="state.detail.task_name"/>
+                        <span class="badge o_tp_record_type"
+                              t-esc="state.detail.is_jobcard ? 'Job Card' : (state.detail.is_vc ? 'Vehicle Inspection' : '')"/>
+                        <span t-attf-class="badge o_tp_status_#{state.detail.status}"
+                              t-esc="state.detail.status"/>
+                    </div>
+                    <div class="o_tp_detail_actions">
+                        <button class="btn btn-primary" t-if="state.detail.status === 'not_started'"
+                                t-on-click="start"><i class="fa fa-play"/> Start</button>
+                        <button class="btn btn-secondary" t-if="state.detail.status === 'running'"
+                                t-on-click="pause"><i class="fa fa-pause"/> Pause</button>
+                        <button class="btn btn-secondary" t-if="state.detail.status === 'paused'"
+                                t-on-click="resume"><i class="fa fa-play"/> Resume</button>
+                        <button class="btn btn-success"
+                                t-if="state.detail.status === 'running' or state.detail.status === 'paused'"
+                                t-on-click="complete"><i class="fa fa-check"/> End</button>
+                        <button class="btn btn-outline-primary" t-on-click="() => this.setTab('parts')">
+                            <i class="fa fa-shopping-cart"/> Submit Parts Request</button>
+                        <button class="btn btn-outline-secondary" t-on-click="print">
+                            <i class="fa fa-print"/> Print</button>
+                    </div>
+                </div>
+
+                <div class="o_tp_detail_body">
+                    <div class="o_tp_vehicle_row">
+                        <img t-if="state.detail.vehicle.image_url" t-att-src="state.detail.vehicle.image_url"
+                             class="o_tp_vehicle_image"/>
+                        <div class="o_tp_vehicle_facts">
+                            <div><label>Vehicle</label><span t-esc="state.detail.vehicle.name || '-'"/></div>
+                            <div><label>Vehicle Year</label><span t-esc="state.detail.vehicle.year || '-'"/></div>
+                            <div><label>License Plate</label><span t-esc="state.detail.vehicle.license_plate || '-'"/></div>
+                            <div><label>Chassis No.</label><span t-esc="state.detail.vehicle.vin || '-'"/></div>
+                            <div><label>Cylinder Count</label><span t-esc="state.detail.vehicle.cylinder_count || '-'"/></div>
+                            <div><label>Customer</label><span t-esc="state.detail.customer || '-'"/></div>
+                        </div>
+                        <div class="o_tp_job_facts">
+                            <div><label>Service</label><span t-esc="state.detail.service || '-'"/></div>
+                            <div t-if="state.detail.is_vc"><label>Inspection State</label><span t-esc="state.detail.inspection_state || '-'"/></div>
+                            <div t-if="state.detail.is_jobcard"><label>Job Type</label><span t-esc="state.detail.job_type || '-'"/></div>
+                            <div><label>Stage</label><span t-esc="state.detail.cc_stage || '-'"/></div>
+                            <div><label>Promise Date</label><span t-esc="state.detail.promise_date || '-'"/></div>
+                            <div><label>Priority</label><span t-esc="state.detail.priority_label || '-'"/></div>
+                            <div><label>Allocated Hours</label><span t-esc="state.detail.allocated_hours.toFixed(2)"/></div>
+                        </div>
+                    </div>
+
+                    <!-- Bay: pure UI over the existing backend. Assignment
+                         writes project.task.bay_id (triggering the existing
+                         occupancy validation + Bay In/Out logging); release
+                         calls the existing action_release_bay(). -->
+                    <div class="o_tp_bay_row" t-if="state.baySupported">
+                        <div class="o_tp_bay_current">
+                            <label>Assigned Bay</label>
+                            <span t-if="state.detail.bay_name" class="o_tp_bay_name"
+                                  t-esc="state.detail.bay_name"/>
+                            <span t-else="" class="text-muted">None</span>
+                        </div>
+                        <div class="o_tp_bay_actions">
+                            <select class="form-select form-select-sm"
+                                    t-on-change="onBaySelected">
+                                <option value="">Select bay...</option>
+                                <t t-foreach="state.bays" t-as="bay" t-key="bay.id">
+                                    <option t-att-value="bay.id"
+                                            t-att-selected="bay.is_current ? 'selected' : undefined"
+                                            t-att-disabled="bay.is_occupied ? 'disabled' : undefined">
+                                        <t t-esc="bay.name"/><t t-if="bay.is_occupied"> (occupied)</t>
+                                    </option>
+                                </t>
+                            </select>
+                            <button t-if="state.detail.bay_id"
+                                    class="btn btn-outline-danger btn-sm"
+                                    t-on-click="releaseBay">
+                                <i class="fa fa-sign-out"/> Bay Out</button>
+                        </div>
+                    </div>
+
+                    <!-- live running clock -->
+                    <div class="o_tp_timer_row">
+                        <div class="o_tp_timer_box">
+                            <div class="o_tp_timer_label">Time Elapsed</div>
+                            <div class="o_tp_timer_value" t-esc="elapsedHoursDisplay"/>
+                        </div>
+                        <div class="o_tp_timer_box">
+                            <div class="o_tp_timer_label">Time Remaining</div>
+                            <div class="o_tp_timer_value text-success" t-esc="remainingDisplay"/>
+                        </div>
+
+                        <!-- live timer: ticks from Start, freezes on Pause,
+                             resumes on Resume, stops for good on End -->
+                        <div t-attf-class="o_tp_timer_box o_tp_live_timer o_tp_live_#{state.detail.status}">
+                            <div class="o_tp_timer_label">
+                                <span class="o_tp_live_dot"/>
+                                <t t-if="state.detail.status === 'running'">Timer Running</t>
+                                <t t-elif="state.detail.status === 'paused'">Timer Paused</t>
+                                <t t-elif="state.detail.status === 'completed'">Timer Stopped</t>
+                                <t t-else="">Timer</t>
+                            </div>
+                            <div class="o_tp_timer_clock" t-esc="elapsedDisplay"/>
+                        </div>
+
+                        <div class="o_tp_timer_exceeded" t-if="isExceeded">
+                            <div>
+                                <div class="text-danger">If Time Exceeded</div>
+                                <div class="text-danger">Exceeded by <t t-esc="exceededDisplay"/> Hours</div>
+                            </div>
+                            <button class="btn btn-outline-primary btn-sm" t-on-click="requestMoreTime">
+                                <i class="fa fa-clock-o"/> Request More Time</button>
+                        </div>
+                    </div>
+
+                    <!-- my own start/pause/resume/end stamps, in my timezone -->
+                    <div class="o_tp_stamps_row">
+                        <div><label>Start</label><span t-esc="state.detail.start_display || '-'"/></div>
+                        <div><label>Pause</label><span t-esc="state.detail.pause_display || '-'"/></div>
+                        <div><label>Resume</label><span t-esc="state.detail.resume_display || '-'"/></div>
+                        <div><label>End</label><span t-esc="state.detail.end_display || '-'"/></div>
+                        <div><label>Paused (h)</label><span t-esc="state.detail.total_pause_hours.toFixed(2)"/></div>
+                        <div><label>Net Worked (h)</label><span t-esc="state.detail.net_hours.toFixed(2)"/></div>
+                        <div class="o_tp_tz_note">Times shown in <t t-esc="state.detail.timezone"/></div>
+                    </div>
+
+                    <div class="o_tp_technicians_block" t-if="state.detail.technicians and state.detail.technicians.length > 1">
+                        <div class="o_tp_technicians_label">Everyone on this job</div>
+                        <table class="table table-sm o_tp_technicians_table">
+                            <thead>
+                                <tr>
+                                    <th>Employee</th><th>Service</th><th>Start</th>
+                                    <th>End</th><th>Paused (h)</th><th>Total Hours</th><th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="state.detail.technicians" t-as="tech" t-key="tech_index"
+                                    t-att-class="tech.is_me ? 'o_tp_my_line' : ''">
+                                    <td>
+                                        <span t-esc="tech.employee"/>
+                                        <span t-if="tech.is_me" class="badge o_tp_me_badge">You</span>
+                                    </td>
+                                    <td t-esc="tech.service || '-'"/>
+                                    <td t-esc="tech.start_display || '-'"/>
+                                    <td t-esc="tech.end_display || '-'"/>
+                                    <td t-esc="tech.total_pause_hours.toFixed(2)"/>
+                                    <td t-esc="tech.total_hours.toFixed(2)"/>
+                                    <td><span t-attf-class="badge o_tp_status_#{tech.status}" t-esc="tech.status"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="o_tp_tabs">
+                        <span t-att-class="state.activeTab === 'complaints' ? 'active' : ''"
+                              t-on-click="() => this.setTab('complaints')">Complaints</span>
+                        <span t-att-class="state.activeTab === 'photos' ? 'active' : ''"
+                              t-on-click="() => this.setTab('photos')">Vehicle Photos</span>
+                        <span t-att-class="state.activeTab === 'qc' ? 'active' : ''"
+                              t-on-click="() => this.setTab('qc')">QC</span>
+                        <span t-att-class="state.activeTab === 'parts' ? 'active' : ''"
+                              t-on-click="() => this.setTab('parts')">Parts</span>
+                        <span t-att-class="state.activeTab === 'parts_photos' ? 'active' : ''"
+                              t-on-click="() => this.setTab('parts_photos')">Parts Photos</span>
+                        <span t-att-class="state.activeTab === 'log' ? 'active' : ''"
+                              t-on-click="() => this.setTab('log')">Log</span>
+                        <span t-att-class="state.activeTab === 'notes' ? 'active' : ''"
+                              t-on-click="() => this.setTab('notes')">Notes</span>
+                    </div>
+
+                    <!-- every tab reads its data through task_id -->
+                    <div class="o_tp_tab_content">
+                        <ComplaintsTab t-if="state.activeTab === 'complaints'" taskId="state.detail.task_id"/>
+                        <VehiclePhotosTab t-if="state.activeTab === 'photos'" taskId="state.detail.task_id"/>
+                        <QcTab t-if="state.activeTab === 'qc'" taskId="state.detail.task_id"/>
+                        <PartsTab t-if="state.activeTab === 'parts'" taskId="state.detail.task_id" isVc="state.detail.is_vc"/>
+                        <PartsPhotosTab t-if="state.activeTab === 'parts_photos'" taskId="state.detail.task_id"/>
+                        <LogTab t-if="state.activeTab === 'log'" taskId="state.detail.task_id"/>
+                        <NotesTab t-if="state.activeTab === 'notes'" taskId="state.detail.task_id"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="o_tp_detail_pane o_tp_empty" t-if="!state.detail and (!isSmall or state.mobileShowDetail)">
+                <p>Select a work record from the list to see details.</p>
+            </div>
+        </div>
+    </t>
+</templates>

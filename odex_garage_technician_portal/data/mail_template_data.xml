@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- v2.0.0: object.technician_id and object.exceeded_hours never
+         existed for real; a job card / inspection can have several
+         technicians (job_card_daily_report_ids), so this now lists all
+         of them instead of assuming one. -->
+    <record id="mail_template_technician_time_exceeded" model="mail.template">
+        <field name="name">Technician Portal: Time Exceeded</field>
+        <field name="model_id" ref="project.model_project_task"/>
+        <field name="subject">Job {{ object.name }} has exceeded its allocated time</field>
+        <field name="email_from">{{ (object.company_id.email or user.email) }}</field>
+        <field name="body_html" type="html">
+            <div style="font-family: Arial, sans-serif; font-size: 14px;">
+                <p>Hi,</p>
+                <p>
+                    Job <strong t-out="object.name"/> has logged
+                    <strong t-out="'%.2f' % object.total_working_hours"/> hour(s) against
+                    <strong t-out="'%.2f' % object.allocated_hours"/> allocated.
+                </p>
+                <p>Technicians on this job:</p>
+                <ul>
+                    <li t-foreach="object.job_card_daily_report_ids" t-as="line">
+                        <span t-out="line.employees_id.name"/> -
+                        <span t-out="'%.2f' % line.total_hours"/>h
+                    </li>
+                </ul>
+                <p>Please review and approve additional time if required.</p>
+            </div>
+        </field>
+        <field name="auto_delete" eval="True"/>
+    </record>
+</odoo>

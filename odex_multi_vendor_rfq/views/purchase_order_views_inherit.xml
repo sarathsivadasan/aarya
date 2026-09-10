@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Add multi_rfq_id field + portal share button to Purchase Order form -->
+    <record id="view_purchase_order_form_inherit_odex_multi_rfq" model="ir.ui.view">
+        <field name="name">purchase.order.form.inherit.odex.multi.rfq</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <!-- Show parent Multi RFQ reference -->
+            <xpath expr="//field[@name='partner_ref']" position="after">
+                <field name="multi_rfq_id"
+                       readonly="1"
+                       invisible="not multi_rfq_id"
+                       options="{'no_open': False}"/>
+            </xpath>
+            <!-- Mulkiya Copy — read-only related copy of the one stored on
+                 the parent Multi Vendor RFQ; available on every Vendor RFQ
+                 and every Purchase Order created from it. -->
+            <xpath expr="//field[@name='multi_rfq_id']" position="after">
+                <field name="mulkiya_filename" invisible="1"/>
+                <field name="mulkiya_attachment"
+                       filename="mulkiya_filename"
+                       widget="binary"
+                       string="Mulkiya Copy"
+                       readonly="1"
+                       invisible="not multi_rfq_id or not mulkiya_attachment"/>
+            </xpath>
+            <!-- Add Share Portal Link button to header -->
+            <xpath expr="//header" position="inside">
+                <button name="action_send_rfq_via_email"
+                        string="Send Portal Link"
+                        type="object"
+                        class="btn-secondary"
+                        icon="fa-share-alt"
+                        invisible="not multi_rfq_id or state in ['purchase','done','cancel']"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Vendors smart button — one row per invited vendor with their
+         quotation/award status. Opens purchase.order (the vendor's RFQ),
+         from which the vendor contact is one click away via the internal
+         link icon on the Vendor field. -->
+    <record id="view_purchase_order_vendor_status_list" model="ir.ui.view">
+        <field name="name">purchase.order.vendor.status.list</field>
+        <field name="model">purchase.order</field>
+        <field name="arch" type="xml">
+            <list string="Invited Vendors" create="0" delete="0">
+                <field name="partner_id" string="Vendor Name"/>
+                <field name="partner_email" string="Email"/>
+                <field name="partner_phone" string="Phone"/>
+                <field name="state"
+                       string="RFQ Status"
+                       widget="badge"
+                       decoration-success="state=='purchase'"
+                       decoration-warning="state=='sent'"
+                       decoration-muted="state=='cancel'"/>
+                <field name="quotation_status"
+                       widget="badge"
+                       decoration-success="quotation_status=='submitted'"
+                       decoration-muted="quotation_status=='pending'"/>
+                <field name="award_status"
+                       widget="badge"
+                       decoration-success="award_status=='awarded'"
+                       decoration-muted="award_status=='not_awarded'"
+                       decoration-warning="award_status=='pending'"/>
+                <field name="quoted_amount" string="Total Quoted Amount" sum="Total"/>
+            </list>
+        </field>
+    </record>
+
+</odoo>

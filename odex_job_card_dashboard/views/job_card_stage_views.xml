@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Drag the handle to reorder the status cards on the dashboard. -->
+    <record id="view_job_card_stage_dashboard_list" model="ir.ui.view">
+        <field name="name">job.card.stage.dashboard.list</field>
+        <field name="model">job.card.stage</field>
+        <field name="arch" type="xml">
+            <list string="Status Cards" editable="bottom">
+                <field name="dashboard_sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="dashboard_color" string="Colour"/>
+                <field name="dashboard_icon" string="Icon"/>
+                <field name="show_on_dashboard" string="On Dashboard"/>
+                <button name="action_apply_default_style" type="object"
+                        string="Suggest style" icon="fa-magic"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_job_card_stage_dashboard_form" model="ir.ui.view">
+        <field name="name">job.card.stage.dashboard.form</field>
+        <field name="model">job.card.stage</field>
+        <field name="arch" type="xml">
+            <form string="Status">
+                <sheet>
+                    <group>
+                        <group string="Status">
+                            <field name="name"/>
+                            <field name="dashboard_sequence"/>
+                        </group>
+                        <group string="Dashboard">
+                            <field name="dashboard_color"
+                                   placeholder="#3B82F6"/>
+                            <field name="dashboard_icon"
+                                   placeholder="fa-car"/>
+                            <field name="show_on_dashboard"/>
+                        </group>
+                    </group>
+                    <div class="text-muted">
+                        Icons use Font Awesome 4 class names, for example
+                        <code>fa-car</code>, <code>fa-wrench</code>,
+                        <code>fa-tint</code>, <code>fa-truck</code>.
+                        Leave a field empty to use the automatic suggestion.
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_job_card_stage_dashboard" model="ir.actions.act_window">
+        <field name="name">Status Cards</field>
+        <field name="res_model">job.card.stage</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_job_card_stage_dashboard_list"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Configure your status cards</p>
+            <p>Colour, icon and order of every status card come from this list.
+               Drag a row to change the order shown on the dashboard.</p>
+        </field>
+    </record>
+
+</odoo>

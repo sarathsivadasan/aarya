@@ -1,0 +1,345 @@
+/* ==========================================================================
+   Odex Garage Technician Portal - macOS / Safari layout corrections
+   --------------------------------------------------------------------------
+   EVERY rule in this file is scoped under `.o_tp_mac` or `.o_tp_safari`,
+   which static/src/js/platform.js only ever adds on Apple platforms. A
+   Windows, Linux or Android browser never matches a single selector here,
+   so the existing layouts on those platforms are untouched by design
+   rather than by careful editing.
+
+   Load order matters: this file is listed AFTER technician_portal.css in
+   the manifest, so these overrides win without needing !important.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. FLEXBOX `gap` FALLBACK
+   Safari gained flex-gap support only in 14.1. On an older Mac every
+   `gap` in the base stylesheet is dropped, so cards, buttons, tabs, menu
+   icons and form controls render with no spacing at all - the "squashed
+   Mac view". @supports keeps this fallback inert on Safari 14.1+ and on
+   every other browser.
+   -------------------------------------------------------------------------- */
+@supports not (gap: 1px) {
+    .o_tp_mac .o_tp_cards_row,
+    .o_tp_mac .o_tp_workspace,
+    .o_tp_mac .o_tp_vehicle_row,
+    .o_tp_mac .o_tp_timer_row,
+    .o_tp_mac .o_tp_detail_actions,
+    .o_tp_mac .o_tp_detail_header,
+    .o_tp_mac .o_tp_add_line,
+    .o_tp_mac .o_tp_bay_actions,
+    .o_tp_mac .o_tp_topbar_icons,
+    .o_tp_mac .o_tp_parts_footer,
+    .o_tp_mac .o_tp_tabs {
+        /* negative outer margin cancels the per-child margin below, so
+           the block keeps its original outer dimensions */
+        margin-left: -8px;
+        margin-right: -8px;
+    }
+    .o_tp_mac .o_tp_cards_row > *,
+    .o_tp_mac .o_tp_workspace > *,
+    .o_tp_mac .o_tp_vehicle_row > *,
+    .o_tp_mac .o_tp_timer_row > *,
+    .o_tp_mac .o_tp_detail_actions > *,
+    .o_tp_mac .o_tp_detail_header > *,
+    .o_tp_mac .o_tp_add_line > *,
+    .o_tp_mac .o_tp_bay_actions > *,
+    .o_tp_mac .o_tp_topbar_icons > *,
+    .o_tp_mac .o_tp_parts_footer > *,
+    .o_tp_mac .o_tp_tabs > * {
+        margin-left: 8px;
+        margin-right: 8px;
+    }
+    .o_tp_mac .o_tp_cards_row > *,
+    .o_tp_mac .o_tp_vehicle_row > *,
+    .o_tp_mac .o_tp_timer_row > * {
+        margin-bottom: 8px;
+    }
+    .o_tp_mac .o_tp_menu li > i {
+        margin-right: 10px;
+    }
+    .o_tp_mac .o_tp_card > * + * {
+        margin-left: 12px;
+    }
+    .o_tp_mac .o_tp_bay_current > * + *,
+    .o_tp_mac .o_tp_live_timer .o_tp_timer_label > * + *,
+    .o_tp_mac .o_tp_assignee_chip > * + *,
+    .o_tp_mac .o_tp_current_vehicle > * + * {
+        margin-left: 6px;
+    }
+    .o_tp_mac .o_tp_photo_slot > * + *,
+    .o_tp_mac .o_tp_note_composer > * + * {
+        margin-top: 6px;
+    }
+    /* CSS grid gap has the same Safari history */
+    .o_tp_mac .o_tp_photo_slot_grid,
+    .o_tp_mac .o_tp_photo_grid {
+        display: block;
+    }
+    .o_tp_mac .o_tp_photo_slot_grid > *,
+    .o_tp_mac .o_tp_photo_grid > * {
+        display: inline-block;
+        vertical-align: top;
+        width: calc(33.333% - 16px);
+        margin: 0 8px 14px;
+    }
+    .o_tp_mac .o_tp_log_row {
+        display: block;
+    }
+    .o_tp_mac .o_tp_log_row > * {
+        display: inline-block;
+        vertical-align: top;
+        margin-right: 8px;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   2. FLEX CHILDREN THAT MUST SCROLL, NOT GROW
+   WebKit will not let `overflow: auto` take effect on a flex child until
+   its min-height / min-width is explicitly zeroed. Without this the
+   sidebar, content area and job list push past the viewport on Mac and
+   the page scrolls as a whole instead of the pane scrolling internally.
+   -------------------------------------------------------------------------- */
+.o_tp_mac .o_technician_portal,
+.o_tp_mac.o_technician_portal {
+    min-height: 0;
+    /* height:100% needs a resolvable parent height in WebKit; the action
+       container is a flex item, so fill it that way instead. */
+    -webkit-box-flex: 1;
+    flex: 1 1 auto;
+    align-items: stretch;
+}
+.o_tp_mac .o_tp_main {
+    min-width: 0;
+    min-height: 0;
+}
+.o_tp_mac .o_tp_content {
+    min-height: 0;
+    flex: 1 1 0%;
+    -webkit-overflow-scrolling: touch;
+}
+.o_tp_mac .o_tp_inspection_list {
+    min-height: 0;
+}
+.o_tp_mac .o_tp_sidebar {
+    min-height: 0;
+    flex: 0 0 220px;
+}
+
+/* --------------------------------------------------------------------------
+   3. `flex: 1` NEXT TO A FIXED-WIDTH SIBLING
+   Safari resolves the unitless basis in `flex: 1` inconsistently, which
+   collapses the detail pane sitting beside the 340px list pane - the
+   report of "the right-hand side is empty / squashed on Mac". Spelling
+   the basis out fixes it and is a no-op semantically everywhere else.
+   -------------------------------------------------------------------------- */
+.o_tp_mac .o_tp_detail_pane,
+.o_tp_mac .o_tp_vehicle_facts,
+.o_tp_mac .o_tp_job_facts,
+.o_tp_mac .o_tp_timer_box,
+.o_tp_mac .o_tp_card,
+.o_tp_mac .o_tp_bar_col,
+.o_tp_mac .o_tp_timer_exceeded {
+    flex: 1 1 0%;
+    min-width: 0;
+}
+.o_tp_mac .o_tp_list_pane {
+    flex: 0 0 340px;
+    max-width: 340px;
+}
+.o_tp_mac .o_tp_workspace_mobile .o_tp_list_pane {
+    flex: 1 1 auto;
+    max-width: 100%;
+}
+.o_tp_mac .o_tp_card {
+    flex-basis: 180px;
+}
+
+/* --------------------------------------------------------------------------
+   4. macOS OVERLAY SCROLLBARS
+   macOS hides scrollbars until the user scrolls, so a scrollable pane
+   reads as truncated content. Force a slim, always-visible scrollbar
+   inside the portal only - the rest of the Odoo backend keeps the native
+   behaviour.
+   -------------------------------------------------------------------------- */
+.o_tp_mac .o_tp_content,
+.o_tp_mac .o_tp_inspection_list,
+.o_tp_mac .o_tp_tab_content,
+.o_tp_mac .o_tp_tabs,
+.o_tp_mac .o_tp_admin_table_wrap {
+    scrollbar-width: thin;
+    scrollbar-color: #c4c4d4 transparent;
+}
+.o_tp_mac .o_tp_content::-webkit-scrollbar,
+.o_tp_mac .o_tp_inspection_list::-webkit-scrollbar,
+.o_tp_mac .o_tp_tab_content::-webkit-scrollbar,
+.o_tp_mac .o_tp_tabs::-webkit-scrollbar,
+.o_tp_mac .o_tp_admin_table_wrap::-webkit-scrollbar {
+    width: 9px;
+    height: 9px;
+    -webkit-appearance: none;
+}
+.o_tp_mac .o_tp_content::-webkit-scrollbar-thumb,
+.o_tp_mac .o_tp_inspection_list::-webkit-scrollbar-thumb,
+.o_tp_mac .o_tp_tab_content::-webkit-scrollbar-thumb,
+.o_tp_mac .o_tp_tabs::-webkit-scrollbar-thumb,
+.o_tp_mac .o_tp_admin_table_wrap::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background: #c4c4d4;
+    border: 2px solid transparent;
+    background-clip: content-box;
+}
+.o_tp_mac .o_tp_content::-webkit-scrollbar-track,
+.o_tp_mac .o_tp_inspection_list::-webkit-scrollbar-track,
+.o_tp_mac .o_tp_tab_content::-webkit-scrollbar-track,
+.o_tp_mac .o_tp_tabs::-webkit-scrollbar-track,
+.o_tp_mac .o_tp_admin_table_wrap::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* --------------------------------------------------------------------------
+   5. NATIVE FORM CONTROLS
+   Safari on macOS ignores height and padding on <select> and applies its
+   own chrome to <button> and <input>, so controls that should line up in
+   one row end up at three different heights. Neutralise the native
+   appearance and draw our own chevron.
+   -------------------------------------------------------------------------- */
+.o_tp_safari .o_tp_add_line select,
+.o_tp_safari .o_tp_bay_actions select,
+.o_tp_safari .o_tp_admin_filters select {
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: #fff;
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='%238a8a99' d='M4 6l4 4 4-4z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 14px 14px;
+    padding-right: 28px;
+    line-height: 1.4;
+    height: 34px;
+}
+.o_tp_safari .o_tp_add_line input,
+.o_tp_safari .o_tp_admin_filters input,
+.o_tp_safari .o_tp_search,
+.o_tp_safari .o_tp_part_input {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 34px;
+    line-height: 1.4;
+    border-radius: 6px;
+}
+.o_tp_safari .o_tp_add_line button,
+.o_tp_safari .o_tp_detail_actions .btn,
+.o_tp_safari .o_tp_admin_actions .btn {
+    -webkit-appearance: none;
+    appearance: none;
+    /* Safari refuses to shrink a button below its text; without this the
+       action row overflows the detail header instead of wrapping. */
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+/* Safari zooms the page when a focused input is under 16px on iPadOS,
+   which shifts the whole layout. */
+.o_tp_safari input,
+.o_tp_safari select,
+.o_tp_safari textarea {
+    font-size: 16px;
+}
+@media (min-width: 1025px) {
+    .o_tp_safari input,
+    .o_tp_safari select,
+    .o_tp_safari textarea {
+        font-size: 14px;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   6. DRAWER + FIXED POSITIONING
+   `inset` is Safari 14.1+, and a transformed fixed element needs the
+   -webkit- prefixed transform on older WebKit or the drawer never slides
+   back into view.
+   -------------------------------------------------------------------------- */
+.o_tp_mac .o_tp_sidebar_backdrop {
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+.o_tp_mac.o_tp_is_mobile .o_tp_sidebar {
+    -webkit-transform: translateX(-100%);
+    transform: translateX(-100%);
+    -webkit-transition: -webkit-transform 0.2s ease;
+    transition: transform 0.2s ease;
+    /* keeps the slide from flickering on retina displays */
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+}
+.o_tp_mac.o_tp_is_mobile .o_tp_sidebar.o_tp_sidebar_open {
+    -webkit-transform: translateX(0);
+    transform: translateX(0);
+}
+
+/* --------------------------------------------------------------------------
+   7. TABLES IN THE NARROW LAYOUT
+   The base stylesheet makes tables `display: block` under 1024px to get
+   horizontal scrolling. WebKit mis-measures a block-level <table> whose
+   rows are still `display: table`, producing overlapping columns on Mac.
+   Scroll the wrapper instead and leave the table as a real table.
+   -------------------------------------------------------------------------- */
+@media (max-width: 1024px) {
+    .o_tp_mac .o_tp_tab_content {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    .o_tp_mac .o_tp_tab_content table.table {
+        display: table;
+        width: 100%;
+        min-width: 640px;
+        white-space: nowrap;
+    }
+    .o_tp_mac .o_tp_tab_content table.table thead {
+        display: table-header-group;
+    }
+    .o_tp_mac .o_tp_tab_content table.table tbody {
+        display: table-row-group;
+    }
+    .o_tp_mac .o_tp_tab_content table.table tr {
+        display: table-row;
+        width: auto;
+        table-layout: auto;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   8. SMALL WEBKIT RENDERING DETAILS
+   -------------------------------------------------------------------------- */
+.o_tp_mac {
+    /* macOS renders the default stack noticeably heavier than Windows;
+       these two properties bring the weight back in line. */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+.o_tp_mac .o_tp_vehicle_image,
+.o_tp_mac .o_tp_photo_slot_image img,
+.o_tp_mac .o_tp_photo_item img,
+.o_tp_mac .o_tp_profile_image {
+    /* Safari needs an explicit position for object-fit to apply inside a
+       flex/grid item; without it images stretch out of proportion. */
+    object-position: center;
+}
+.o_tp_mac .o_tp_timer_clock {
+    /* tabular-nums is honoured, but the monospace fallback stack differs
+       on macOS - pin the ones that actually ship with it */
+    font-family: "SF Mono", ui-monospace, Menlo, Monaco, monospace;
+}
+.o_tp_mac .o_tp_menu li.active {
+    /* rounded corner + margin on a flex item renders 1px clipped in
+       WebKit; the transform-free version below is stable */
+    background-clip: padding-box;
+}
+.o_tp_mac .o_tp_tabs {
+    /* prevents the elastic overscroll from detaching the underline */
+    overscroll-behavior-x: contain;
+}

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Petty Cash Security Category -->
+        <record id="module_category_petty_cash" model="ir.module.category">
+            <field name="name">Petty Cash</field>
+            <field name="description">Petty Cash Management</field>
+            <field name="sequence">100</field>
+        </record>
+
+        <!-- Petty Cash User Group -->
+        <record id="group_petty_cash_user" model="res.groups">
+            <field name="name">User</field>
+            <field name="category_id" ref="module_category_petty_cash"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="comment">Can view and create petty cash records.</field>
+        </record>
+
+        <!-- Petty Cash Manager Group -->
+        <record id="group_petty_cash_manager" model="res.groups">
+            <field name="name">Manager</field>
+            <field name="category_id" ref="module_category_petty_cash"/>
+            <field name="implied_ids" eval="[(4, ref('group_petty_cash_user'))]"/>
+            <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+            <field name="comment">Full access to petty cash, including configuration and deletion.</field>
+        </record>
+
+        <!-- Record Rules -->
+        <!-- Multi-company record rule for petty cash received -->
+        <record id="petty_cash_received_company_rule" model="ir.rule">
+            <field name="name">Petty Cash Received: Multi-Company</field>
+            <field name="model_id" ref="petty_cash_book.model_petty_cash_received"/>
+            <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+            <field name="groups" eval="[(4, ref('group_petty_cash_user'))]"/>
+        </record>
+
+        <!-- Multi-company record rule for petty cash expense -->
+        <record id="petty_cash_expense_company_rule" model="ir.rule">
+            <field name="name">Petty Cash Expense: Multi-Company</field>
+            <field name="model_id" ref="petty_cash_book.model_petty_cash_expense"/>
+            <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+            <field name="groups" eval="[(4, ref('group_petty_cash_user'))]"/>
+        </record>
+    </data>
+</odoo>

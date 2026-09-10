@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-inherit="mail.Thread" t-inherit-mode="extension">
+        <xpath expr="//*[@name='empty-message']" position="replace">
+            <t name="empty-message">
+                <t t-if="props.thread.channel_type === 'ai_chat'">
+                    <AiPromptTemplateCards thread="props.thread"/>
+                </t>
+                <t t-else="">
+                    <span class="fs-1" style="filter: grayscale(1);">😶</span>
+                    <span>The conversation is empty.</span>
+                </t>
+            </t>
+        </xpath>
+    </t>
+</templates>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Demo record: only creates the header; lines added manually -->
+        <record id="demo_odex_multi_rfq_01" model="purchase.multi.rfq">
+            <field name="name">MRFQ/2026/00001</field>
+            <field name="request_for">Office Furniture</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="purchase_user_id" ref="base.user_admin"/>
+            <field name="state">draft</field>
+            <field name="notes">Please provide your best quotation.</field>
+        </record>
+    </data>
+</odoo>

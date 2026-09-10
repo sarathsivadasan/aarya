@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_workshop_booking_list" model="ir.ui.view">
+        <field name="name">odex.workshop.booking.list</field>
+        <field name="model">odex.workshop.booking</field>
+        <field name="arch" type="xml">
+            <list decoration-success="state == 'confirmed'"
+                  decoration-info="state == 'arrived'"
+                  decoration-warning="state in ('draft', 'requested')"
+                  decoration-muted="state in ('cancelled', 'no_show')"
+                  sample="1" multi_edit="1">
+                <field name="name" string="Booking Ref"/>
+                <field name="booking_date"/>
+                <field name="time_label" string="Time"/>
+                <field name="partner_id"/>
+                <field name="vehicle_id"/>
+                <field name="service_type_id"/>
+                <field name="company_id" optional="show"/>
+                <field name="advisor_id" optional="show" widget="many2one_avatar_user"/>
+                <field name="source" optional="hide"/>
+                <field name="referral_source" optional="show"/>
+                <field name="service_status" optional="show"/>
+                <field name="payment_status" optional="hide"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'confirmed'"
+                       decoration-info="state == 'arrived'"
+                       decoration-warning="state in ('draft', 'requested')"
+                       decoration-danger="state in ('cancelled', 'no_show')"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_workshop_booking_kanban" model="ir.ui.view">
+        <field name="name">odex.workshop.booking.kanban</field>
+        <field name="model">odex.workshop.booking</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_kanban_small_column" sample="1"
+                    quick_create="false">
+                <field name="color"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="d-flex flex-column p-2">
+                            <div class="d-flex justify-content-between mb-1">
+                                <strong><field name="name"/></strong>
+                                <field name="advisor_id" widget="many2one_avatar_user"/>
+                            </div>
+                            <div class="fw-bold"><field name="partner_id"/></div>
+                            <div class="text-muted small">
+                                <i class="fa fa-car me-1"/><field name="vehicle_id"/>
+                            </div>
+                            <div class="text-muted small">
+                                <i class="fa fa-wrench me-1"/><field name="service_type_id"/>
+                            </div>
+                            <div class="d-flex justify-content-between mt-1 small">
+                                <span><i class="fa fa-calendar me-1"/><field name="booking_date"/></span>
+                                <span><i class="fa fa-clock-o me-1"/><field name="time_label"/></span>
+                            </div>
+                            <div class="mt-1"><field name="company_id" widget="badge"/></div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_workshop_booking_calendar" model="ir.ui.view">
+        <field name="name">odex.workshop.booking.calendar</field>
+        <field name="model">odex.workshop.booking</field>
+        <field name="arch" type="xml">
+            <calendar date_start="start_datetime" date_stop="stop_datetime"
+                      color="advisor_id" mode="week" quick_create="0"
+                      event_open_popup="1">
+                <field name="partner_id"/>
+                <field name="vehicle_id"/>
+                <field name="service_type_id"/>
+                <field name="company_id" filters="1"/>
+                <field name="advisor_id" filters="1"/>
+                <field name="state"/>
+            </calendar>
+        </field>
+    </record>
+
+    <record id="view_workshop_booking_graph" model="ir.ui.view">
+        <field name="name">odex.workshop.booking.graph</field>
+        <field name="model">odex.workshop.booking</field>
+        <field name="arch" type="xml">
+            <graph sample="1">
+                <field name="booking_date" interval="day"/>
+                <field name="state"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_workshop_booking_pivot" model="ir.ui.view">
+        <field name="name">odex.workshop.booking.pivot</field>
+        <field name="model">odex.workshop.booking</field>
+        <field name="arch" type="xml">
+            <pivot sample="1">
+                <field name="company_id" type="row"/>
+                <field name="service_type_id" type="row"/>
+                <field name="booking_date" interval="week" type="col"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_workshop_booking_activity" model="ir.ui.view">
+        <field name="name">odex.workshop.booking.activity</field>
+        <field name="model">odex.workshop.booking</field>
+        <field name="arch" type="xml">
+            <activity string="Bookings">
+                <templates>
+                    <div t-name="activity-box">
+                        <div><field name="name" display="full"/></div>
+                        <div class="text-muted"><field name="partner_id"/></div>
+                    </div>
+                </templates>
+            </activity>
+        </field>
+    </record>
+
+    <record id="view_workshop_booking_form" model="ir.ui.view">
+        <field name="name">odex.workshop.booking.form</field>
+        <field name="model">odex.workshop.booking</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_confirm" string="Confirm" type="object"
+                            class="btn-primary"
+                            invisible="state not in ('draft', 'requested')"/>
+                    <button name="action_mark_arrived" string="Mark Arrived" type="object"
+                            class="btn-primary" invisible="state != 'confirmed'"/>
+                    <button name="action_complete" string="Complete" type="object"
+                            class="btn-success" invisible="state != 'arrived'"/>
+                    <button name="action_open_reschedule" string="Reschedule" type="object"
+                            invisible="state not in ('draft', 'requested', 'confirmed', 'arrived')"/>
+                    <button name="action_cancel" string="Cancel" type="object"
+                            invisible="state in ('done', 'cancelled', 'no_show')"/>
+                    <button name="action_no_show" string="No Show" type="object"
+                            invisible="state != 'confirmed'"/>
+                    <button name="action_reset_draft" string="Reset to Draft" type="object"
+                            invisible="state not in ('cancelled', 'no_show')"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,requested,confirmed,arrived,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_calendar_event" type="object"
+                                class="oe_stat_button" icon="fa-calendar"
+                                invisible="not calendar_event_id">
+                            <span class="o_stat_text">Calendar<br/>Event</span>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Booking Information">
+                            <field name="company_id" options="{'no_create': True}"
+                                   readonly="state not in ('draft', 'requested')"/>
+                            <field name="slot_id"
+                                   domain="[('company_id', '=', company_id),
+                                            ('state', 'in', ('available', 'limited'))]"
+                                   options="{'no_create': True}"
+                                   readonly="state not in ('draft', 'requested')"/>
+                            <field name="pick_date" string="Date"
+                                   readonly="state in ('done', 'cancelled', 'no_show')"/>
+                            <label for="pick_hour" string="Time"/>
+                            <div class="d-flex align-items-center gap-2">
+                                <field name="pick_hour" nolabel="1" widget="float_time"
+                                       readonly="state in ('done', 'cancelled', 'no_show')"/>
+                                <button name="action_open_reschedule" type="object"
+                                        class="btn btn-link btn-sm p-0"
+                                        string="Pick from free times"
+                                        invisible="state in ('done', 'cancelled', 'no_show')"/>
+                            </div>
+                            <field name="source"/>
+                            <field name="referral_source"/>
+                            <field name="service_status"/>
+                            <field name="payment_status"/>
+                            <field name="pickup_location_id" options="{'no_create': True}"/>
+                            <field name="drop_location_id" options="{'no_create': True}"/>
+                            <field name="advisor_id" widget="many2one_avatar_user"/>
+                            <field name="calendar_event_id" invisible="1"/>
+                        </group>
+                        <group string="Customer Information">
+                            <field name="partner_id"
+                                   readonly="state not in ('draft', 'requested')"/>
+                            <field name="mobile" widget="phone"/>
+                            <field name="phone" widget="phone"/>
+                            <field name="email" widget="email"/>
+                            <field name="country_id" options="{'no_create': True}"/>
+                        </group>
+                        <group string="Vehicle Information">
+                            <field name="vehicle_id"
+                                   context="{'default_driver_id': partner_id}"
+                                   readonly="state not in ('draft', 'requested')"/>
+                            <field name="vehicle_plate_label" string="Plate (Emirate / Code / No.)"/>
+                            <field name="vehicle_plate" string="Plate Number"/>
+                            <field name="vehicle_vin"/>
+                        </group>
+                        <group string="Service Information">
+                            <field name="service_type_id" options="{'no_create': True}"/>
+                            <field name="complaint" placeholder="e.g. Brake noise, AC not cooling..."/>
+                            <field name="customer_note"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Internal Notes" name="notes">
+                            <field name="note" placeholder="Internal notes visible to workshop staff only..."/>
+                        </page>
+                        <page string="Cancellation" name="cancel"
+                              invisible="state != 'cancelled'">
+                            <group><field name="cancel_reason"/></group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_workshop_booking_search" model="ir.ui.view">
+        <field name="name">odex.workshop.booking.search</field>
+        <field name="model">odex.workshop.booking</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" string="Booking"
+                       filter_domain="['|', '|', ('name', 'ilike', self), ('partner_id', 'ilike', self), ('vehicle_plate', 'ilike', self)]"/>
+                <field name="partner_id"/>
+                <field name="vehicle_id"/>
+                <field name="advisor_id"/>
+                <field name="company_id"/>
+                <field name="service_type_id"/>
+                <filter string="Today" name="today"
+                        domain="[('booking_date', '=', context_today())]"/>
+                <filter string="Upcoming" name="upcoming"
+                        domain="[('booking_date', '&gt;', context_today())]"/>
+                <separator/>
+                <filter string="Requested" name="requested" domain="[('state', '=', 'requested')]"/>
+                <filter string="Confirmed" name="confirmed" domain="[('state', '=', 'confirmed')]"/>
+                <filter string="Arrived" name="arrived" domain="[('state', '=', 'arrived')]"/>
+                <filter string="Completed" name="done" domain="[('state', '=', 'done')]"/>
+                <filter string="Cancelled" name="cancelled" domain="[('state', '=', 'cancelled')]"/>
+                <filter string="No Show" name="no_show" domain="[('state', '=', 'no_show')]"/>
+                <separator/>
+                <filter string="Website" name="src_website" domain="[('source', '=', 'website')]"/>
+                <filter string="My Bookings" name="my" domain="[('advisor_id', '=', uid)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Company" name="group_company" context="{'group_by': 'company_id'}"/>
+                    <filter string="Acquisition Source" name="group_referral"
+                            context="{'group_by': 'referral_source'}"/>
+                    <filter string="Service Status" name="group_service_status"
+                            context="{'group_by': 'service_status'}"/>
+                    <filter string="Advisor" name="group_advisor" context="{'group_by': 'advisor_id'}"/>
+                    <filter string="Service Type" name="group_service" context="{'group_by': 'service_type_id'}"/>
+                    <filter string="Date" name="group_date" context="{'group_by': 'booking_date'}"/>
+                    <filter string="Source" name="group_source" context="{'group_by': 'source'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_workshop_booking" model="ir.actions.act_window">
+        <field name="name">Bookings</field>
+        <field name="res_model">odex.workshop.booking</field>
+        <field name="view_mode">list,kanban,calendar,graph,pivot,activity,form</field>
+        <field name="search_view_id" ref="view_workshop_booking_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create your first booking</p>
+            <p>Bookings from the website, portal, phone and walk-ins all appear here.</p>
+        </field>
+    </record>
+
+    <record id="action_workshop_booking_today" model="ir.actions.act_window">
+        <field name="name">Today's Bookings</field>
+        <field name="res_model">odex.workshop.booking</field>
+        <field name="view_mode">list,kanban,calendar,form</field>
+        <field name="domain">[('booking_date', '=', context_today())]</field>
+    </record>
+
+    <record id="action_workshop_booking_calendar" model="ir.actions.act_window">
+        <field name="name">Booking Calendar</field>
+        <field name="res_model">odex.workshop.booking</field>
+        <field name="view_mode">calendar,list,form</field>
+        <field name="domain">[('state', 'not in', ('cancelled', 'no_show'))]</field>
+    </record>
+
+    <record id="action_booking_report" model="ir.actions.act_window">
+        <field name="name">Booking Analysis</field>
+        <field name="res_model">odex.workshop.booking</field>
+        <field name="view_mode">graph,pivot,list</field>
+        <field name="context">{'search_default_group_company': 1}</field>
+    </record>
+
+    <record id="view_booking_acquisition_graph" model="ir.ui.view">
+        <field name="name">odex.workshop.booking.acquisition.graph</field>
+        <field name="model">odex.workshop.booking</field>
+        <field name="arch" type="xml">
+            <graph string="Customer Acquisition" type="pie">
+                <field name="referral_source"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="action_booking_acquisition" model="ir.actions.act_window">
+        <field name="name">Customer Acquisition</field>
+        <field name="res_model">odex.workshop.booking</field>
+        <field name="view_mode">graph,pivot,list</field>
+        <field name="view_id" ref="view_booking_acquisition_graph"/>
+        <field name="context">{'search_default_group_referral': 1}</field>
+    </record>
+</odoo>

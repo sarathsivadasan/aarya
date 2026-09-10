@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Demo Expense Categories (extras beyond data/) -->
+        <record id="demo_category_water" model="petty.cash.expense.category">
+            <field name="name">Water &amp; Utilities</field>
+            <field name="code">UTIL</field>
+        </record>
+    </data>
+</odoo>

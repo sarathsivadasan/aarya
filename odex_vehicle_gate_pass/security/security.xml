@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="module_category_vehicle_gate_pass" model="ir.module.category">
+        <field name="name">Vehicle Gate Pass</field>
+        <field name="description">Vehicle gate pass access levels</field>
+        <field name="sequence">20</field>
+    </record>
+
+    <record id="group_gate_pass_user" model="res.groups">
+        <field name="name">User</field>
+        <field name="category_id" ref="module_category_vehicle_gate_pass"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <record id="group_gate_pass_manager" model="res.groups">
+        <field name="name">Manager</field>
+        <field name="category_id" ref="module_category_vehicle_gate_pass"/>
+        <field name="implied_ids" eval="[(4, ref('group_gate_pass_user'))]"/>
+        <field name="users" eval="[(4, ref('base.user_admin'))]"/>
+    </record>
+</odoo>

@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- <record id="view_task_form2_qc_inherit_job" model="ir.ui.view">
+        <field name="name">Project Task From Inherit Job Card Extension</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="job_card.view_task_form2_inherit_job"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='job_cost_sheet']" position="before">
+                <page name="quality_checklist" string="QC"
+                      invisible="is_jobcard">
+                    <field name="is_close" invisible="1"/>
+                    <field name="quality_checklist_ids" nolabel="1" readonly="is_close"/>
+                </page>
+            </xpath>
+        </field>
+    </record> -->
+
+    <record id="view_task_form2_inherit" model="ir.ui.view">
+        <field name="name">Project Task form Inherit Job Card Extension</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_form2"/>
+        <field name="priority" eval="101"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <field name="po_count" invisible="1"/>
+                <button name="action_open_advance_payment" string="Advance Payment" type="object" class="oe_highlight"/>
+                <button name="action_release_bay" 
+                        type="object" 
+                        string="Bay Out" 
+                        class="btn-secondary"
+                        invisible="not bay_id"/>
+                <button name="action_redojob" string="Redo Job" type="object" class="oe_highlight" invisible="job_type == 'redo'"/>
+                 <button name="action_create_mv_rfq" type="object" string="Confirm Parts" invisible="mv_rfq_count > 0" class="oe_stat_button"/>
+                <button name="create_purchase_order" string="Request PO" type="object" class="oe_highlight"/>
+            </xpath>
+            <xpath expr="//button[@name='action_view_so']" position="replace">
+            </xpath>
+            <xpath expr="//div[@name = 'button_box']" position="inside">
+                <!-- <button name="action_view_purchase_orders"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-credit-card">
+                        <field name="po_count" widget="statinfo" string="Purchase Orders"/>
+                </button> -->
+                <button class="oe_stat_button" type="object" string="Quick Search" name="show_invoice_bills_lines"
+                        icon="fa-search" invisible="not is_jobcard"/>
+                <button class="oe_stat_button" type="object" string="Expenses" name="show_hr_expense" icon="fa-search" invisible="not is_jobcard"/>
+                <button class="oe_stat_button" type="object" string="Bills" name="show_bills"
+                        icon="fa-pencil-square-o" invisible="not is_jobcard" context="{'move_type': 'in_invoice'}"/>
+                <button name="open_payments" class="oe_stat_button" icon="fa-bars" type="object"
+                        invisible="not is_jobcard or advance_payment_count == 0">
+                    <field name="advance_payment_count" string="Advance Payments" widget="statinfo"/>
+                </button>
+                <button class="oe_stat_button" name="view_project_dashbord" type="object"
+                        groups="project.group_project_user" string="Profitability" context="{'active_id': project_id}">
+                    <field name="last_update_color" invisible="1"/>
+                    <div class="o_stat_info">
+                        <!-- <field name="update_count" invisible="1"/> -->
+                        <field name="last_update_status" readonly="1" widget="status_with_color"
+                               status_label="Profitability" hideStatusName="True"/>
+                    </div>
+                </button>
+            </xpath>
+            <xpath expr="//form/sheet/group" position="attributes">
+                <attribute name="invisible">is_jobcard</attribute>
+            </xpath>
+            <xpath expr="//field[@name='name']" position="attributes">
+                <attribute name="readonly">1</attribute>
+                <attribute name="required">0</attribute>
+            </xpath>
+            <field name="personal_stage_type_id" position="attributes">
+                <attribute name="invisible">is_jobcard</attribute>
+            </field>
+            <field name="personal_stage_type_id" position="after">
+                <field name="cc_stage_id" widget="statusbar" options="{'clickable': '1'}" invisible="not is_jobcard"/>
+            </field>
+            <xpath expr="//form/sheet/group" position="before">
+                <group invisible="not is_jobcard">
+                    <group name="customer_info" string="Customer Details">
+                        <field name="partner_id" string="Customer Name" readonly="1"/>
+                        <field name="cc_partner_phone"/>
+                        <field name="cc_partner_mobile"/>
+                        <field name="tag_ids" widget="many2many_tags"
+                               options="{'color_field': 'color', 'no_create_edit': True}"
+                               context="{'project_id': project_id}"/>
+                        <field name="customer_waiting" widget="boolean_toggle"/>
+                    </group>
+                    <group name="vehicle_info" string="Vehicle Details">
+                        <!-- <field name="cc_vehicle"/> -->
+                        <field name="vehicle_id" string="License Plate" default_focus="1"/>
+                        <field name="brand"/>
+                        <field name="model_id" string="Model"/>
+                        <field name="vin" string="Chassis No."/>
+                        <field name="cylinder_count"/>
+                        <field name="vehicle_color" string="Colour"/>
+                    </group>
+                </group>
+                <group invisible="not is_jobcard">
+                    <group name="extra_info" string="Extra Info">
+                        <field name="repair_category" string="Business"/>
+                        <field name="repair_sub_category_ids" string="Type" widget="many2many_tags"
+                               domain="[('repair_category_id', '=', repair_category)]" readonly="is_close"/>
+                        <field name="job_type" readonly="is_close"/>
+                        <field name="bay_id"/>
+                    </group>
+                    <group>
+                        <field name="engine"/>
+                        <field name="year" string="Year"/>
+                        <field name="odometer"/>
+                        <field name="fuel_level"/>
+                        <field name="warranty" readonly="is_close"/>
+                    </group>
+                </group>
+                <group invisible="not is_jobcard" readonly="is_close">
+                    <group name="insurance_detail" string="Insurance">
+                        <field name="insurance_company_id"/>
+                        <field name="lpo_no"/>
+                        <field name="claim_no"/>
+                        <field name="policy_no"/>
+                    </group>
+                    <group string="_">
+                        <field name="lpo_date"/>
+                    </group>
+                </group>
+               <group invisible="not is_jobcard" readonly="is_close">
+                    <group string="COUPON / PACKAGE">
+
+                        <field name="customer_coupon_id"/>
+                        <field name="coupon_type"
+                               readonly="1"/>
+                        <field name="coupon_master_id"
+                               readonly="1"/>
+                        <field name="allowed_service_ids"
+                               widget="many2many_tags"
+                               readonly="1"/>
+                    <field name="used_service_count" readonly="1"/>
+<field name="remaining_service_count" readonly="1"/>
+                    </group>
+                    <group string="_">
+                        <field name="remaining_amount"
+                               readonly="1"/>
+                        <field name="utilized_amount"
+                               readonly="1"/>
+                        <field name="expiry_date"
+                               readonly="1"/>
+                        <field name="validity_days"
+                               readonly="1"/>
+                        <field name="coupon_status"
+                               readonly="1"/>
+                        <field name="use_coupon"/>
+                    </group>
+
+                </group>
+
+                <group invisible="not is_jobcard" readonly="is_close">
+                    <group name="other_info" string="Other Info">
+                        <label for="project_id"/>
+                        <div name="project" class="d-inline-flex w-100">
+                            <field name="project_id"
+                                   domain="[('active', '=', True), '|', ('company_id', '=', False), ('company_id', '=?', company_id)]"
+                                   widget="project"/>
+                            <field name="display_in_project" string="Display the sub-task in your pipeline"
+                                   widget="boolean_icon" options="{'icon': 'fa-eye-slash'}" class="ms-0"
+                                   style="width: fit-content;" force_save="1"
+                                   invisible="display_in_project or not show_display_in_project"/>
+                            <field name="display_in_project" string="Hide the sub-task in your pipeline"
+                                   widget="boolean_icon" options="{'icon': 'fa-eye'}" class="ms-0"
+                                   style="width: fit-content;" force_save="1"
+                                   invisible="not display_in_project or not show_display_in_project"/>
+                        </div>
+                        <field name="analytic_account_id"/>
+                        <field name="sale_order_id" string="Estimate"/>
+                        <!-- <field name="po_id"/> -->
+                        <field name="cc_stage_value" invisible="1"/>
+                        <!-- <field name="gate_pass_id"  /> -->
+                        <field name="cc_stage_id" option="{'no_quick_create': True, 'no_create_edit': True}"/>
+                    </group>
+                    <group string="_">
+                        <field name="user_ids" class="o_task_user_field"
+                               options="{'no_open': True, 'no_quick_create': True}" widget="many2many_avatar_user"/>
+                        <field name="create_date" string="Jobcard Date"/>
+                        <field name="date_assign" groups="base.group_no_one"/>
+                        <field name="promise_date" widget="date"/>
+                        <field name="date_end" string="Out Date"/>
+                        <field name="next_service_date"/>
+                        <field name="final_inspection" widget="boolean_toggle"/>
+                    </group>
+                </group>
+            </xpath>
+            <xpath expr="//page[@name='sub_tasks_page']" position="attributes">
+                <attribute name="invisible">not project_id or is_jobcard</attribute>
+            </xpath>
+            <xpath expr="//field[@name='job_cost_sheet_ids']/list/field[@name='cost_type']" position="before">
+                <field name="invoice_checkbox"/>
+            </xpath>
+            <xpath expr="//field[@name='job_cost_sheet_ids']/list/field[@name='cost_type']" position="after">
+                <field name="parts_type"/>
+                <field name="part_no"/>
+            </xpath>
+            <xpath expr="//field[@name='job_cost_sheet_ids']/list/field[@name='price_unit']" position="before">
+                <field name="custom_price" string="Price"/>
+                <field name="price_factor" widget="percentage" string="Mark Up"/>
+            </xpath>
+            <xpath expr="//field[@name='job_cost_sheet_ids']/list/field[@name='price_unit']" position="attributes">
+                <attribute name="readonly">1</attribute>
+                <attribute name="force_save">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='job_cost_sheet_ids']/list" position="inside">
+                <field name="vendor_id" readonly="1" optional="hide"/>
+                <field name="is_po_created" readonly="1" widget="boolean_toggle" optional="hide"/>
+            </xpath>
+            <xpath expr="//page[@name='description_page']" position="attributes">
+                <attribute name="string">Complaints</attribute>
+            </xpath>
+            <xpath expr="//page[@name='description_page']/field[@name='description']" position="before">
+                <field name="is_close" invisible="1"/>
+                <field name="requested_services_ids" readonly="is_close">
+                    <list editable="bottom">
+                        <field name="product_id"/>
+                        <field name="remark"/>
+                        <field name="assign_hours" widget="Timesheet_uom"/>
+                        <field name="is_added_in_timesheet" invisible="1"/>
+
+                        <button name="add_service_to_timesheet_ext"
+                                type="object" invisible="is_added_in_timesheet"
+                                string="Add To Timesheet" class="oe_link"/>
+                    </list>
+                </field>
+            </xpath>
+            <xpath expr="//page[@name='description_page']/field[@name='description']" position="replace"/>
+
+            <xpath expr="//page[@name='description_page']" position="after">
+                <page name="quality_checklist" string="QC"
+                      invisible="not is_jobcard">
+                    <field name="is_close" invisible="1"/>
+                    <field name="quality_checklist_ids" widget="section_and_note_one2many" mode="list">
+                        <list editable="bottom" default_order="serial_no" limit="100">
+                            <control>
+                                <create name="add_product_control" string="Add a product"/>
+                                <create name="add_section_control" string="Add a section"
+                                        context="{'default_display_type': 'line_section'}"/>
+                                <create name="add_note_control" string="Add a note"
+                                        context="{'default_display_type': 'line_note'}"/>
+                            </control>
+
+                            <field name="serial_no" column_invisible="1"/>
+                            <field name="name" widget="section_and_note_text" optional="show" string="Checklist"
+                                   readonly="1" force_save="1"/>
+                            <field name="display_type" column_invisible="1"/>
+                            <field name="checklist_name_ids" column_invisible="1"/>
+                            <field name="description"/>
+                            <field name="check_mark"
+                                   options='{"bg_color": "red: check_mark == False; green: check_mark == True", "fg_color": "red: check_mark == False"}'/>
+                        </list>
+                    </field>
+                </page>
+                <page string="Parts">
+                    <field name="inspection_part_ids">
+                        <list editable="bottom">
+                            <field name="is_confirm"/>
+                            <field name="parts_type"/>
+                            <field name="part_no" readonly="1"/>
+                            <field name="part"/>
+                            <field name="product_id"/>
+                            <field name="quantity"/>
+                            <field name="from_inspection"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+            <xpath expr="//page[@name='daily_report']/field[@name='job_card_daily_report_ids']/list" position="replace">
+                <list string="Timesheet" editable="bottom">
+                    <field name="task_id" string="Job Number"/>
+                    <field name="product_id" string="Service Requested"/>
+                    <field name="name" string="Instruction"/>
+                    <field name="user_id"/>
+                    <!-- <field name="job_card_payment_id"/> -->
+                    <field name="assign_hours"/>
+                    <field name="departments_id" readonly="0"/>
+                    <field name="employees_id"/>
+                    <field name="start_time" optional="show"/>
+                    <field name="pause_time" optional="show"/>
+                    <field name="total_pause_time" widget="float_time" optional="show"/>
+                    <field name="end_time" optional="show"/>
+
+                    <button name="action_start_time" class="oe_highlight"
+                            invisible="is_start_time"
+                            string="Start" icon="fa-play" type="object"/>
+
+                    <button name="action_pause_time" class="oe_highlight"
+                            invisible="not is_start_time or is_pause_time or is_end_time" string="Pause" icon="fa-pause"
+                            type="object"/>
+                    <!-- attrs="{'invisible': ['|', '|', ('is_start_time', '=', False), ('is_pause_time', '!=', False), ('is_end_time', '!=', False)]}" -->
+
+
+                    <button name="action_resume_time" class="oe_highlight"
+                            invisible="not is_start_time or not is_pause_time or is_resume_time or is_end_time"
+                            string="Resume" icon="fa-play" type="object"/>
+
+                    <!-- invisible="" -->
+                    <!-- attrs="{'invisible': ['|', '|',('is_start_time', '=', False), ('is_resume_time', '!=', False), ('is_end_time', '!=', False)]}" -->
+
+
+                    <button name="action_end_time" class="oe_highlight"
+                            invisible="is_end_time"
+                            string="End" type="object" icon="fa-stop"/>
+
+                    <field name="total_hours" string="Working Hours" widget="float_time"/>
+                    <field name="date"/>
+                    <field name="company_id" invisible="1"/>
+                </list>
+            </xpath>
+            <xpath expr="//page[@name='daily_report']" position="after">
+                <page string="Bay History" name="bay_history">
+                    <field name="bay_log_ids">
+                        <list create="false" edit="false" delete="false">
+                            <field name="bay_id"/>
+                            <field name="bay_in"/>
+                            <field name="bay_out"/>
+                            <field name="duration" widget="float_time"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+            <!-- <xpath expr="//page[@name='daily_report']//list//field[@name='unit_amount']" position="before">
+                <field name="total_hours" string="Working Hours"/>
+                <field name="is_start_time" invisible="1"/>
+                <field name="is_pause_time" invisible="1"/>
+                <field name="is_resume_time" invisible="1"/>
+                <field name="is_end_time" invisible="1"/>
+                <field name="start_time" optional="show"/>
+                <field name="pause_time" optional="show"
+                       attrs="{'invisible': ['|', ('is_pause_time', '=', False), ('is_resume_time', '=', True)]}"/>
+                <field name="end_time" optional="show"/>
+
+                <button name="action_start_time" class="oe_highlight"
+                        attrs="{'invisible': [('is_start_time', '!=', False)]}"
+                        string="Start" icon="fa-play" type="object"/>
+
+                <button name="action_pause_time" class="oe_highlight"
+                        attrs="{'invisible': ['|', '|', ('is_start_time', '=', False), ('is_pause_time', '!=', False), ('is_end_time', '!=', False)]}"
+                        string="Pause" icon="fa-pause" type="object"/>
+
+                <button name="action_resume_time" class="oe_highlight"
+                        attrs="{'invisible': ['|', '|',('is_start_time', '=', False), ('is_resume_time', '!=', False), ('is_end_time', '!=', False)]}"
+                        string="Resume" icon="fa-play" type="object"/>
+
+
+                <button name="action_end_time" class="oe_highlight"
+                        attrs="{'invisible': [('is_end_time', '!=', False)]}"
+                        string="End" type="object" icon="fa-stop"/>
+            </xpath>
+            <xpath expr="//field[@name='job_card_daily_report_ids']/list/field[@name='unit_amount']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='job_card_daily_report_ids']/list/field[@name='leader_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='job_card_daily_report_ids']/list/field[@name='description']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='job_card_daily_report_ids']/list/field[@name='instruction_job_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='job_card_daily_report_ids']/list/field[@name='name']" position="before">
+                <field name="task_id" string="Job Number"/>
+                <field name="product_id" string="Service Requested"/>
+            </xpath>
+            <xpath expr="//field[@name='job_card_daily_report_ids']/list/field[@name='note']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='job_card_daily_report_ids']/list/field[@name='workers_ids']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath> -->
+        </field>
+    </record>
+
+    <record id="view_task_tree2_inherit" model="ir.ui.view">
+        <field name="name">project.task.list</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_tree2"/>
+        <field name="mode">primary</field>
+        <field name="priority">1</field>
+        <field name="arch" type="xml">
+            <list position="attributes">
+                <attribute name="js_class">project_task_list</attribute>
+                <attribute name="default_group_by"></attribute>
+            </list>
+            <field name="stage_id" position="attributes">
+                <attribute name="optional">hide</attribute>
+            </field>
+            <field name="tag_ids" position="attributes">
+                <attribute name="optional">hide</attribute>
+            </field>
+            <field name="activity_ids" position="attributes">
+                <attribute name="optional">hide</attribute>
+            </field>
+            <field name="name" position="attributes">
+                <attribute name="string">Number</attribute>
+            </field>
+            <field name="partner_id" position="attributes">
+                <attribute name="optional">show</attribute>
+                <attribute name="invisible">0</attribute>
+            </field>
+            <field name="name" position="before">
+                <field name="cc_color" invisible="1" optional="hide"/>
+                <field name="cc_stage_id"
+                       options='{"bg_color": "
+                 #6F4B75:cc_color == 1;
+                 #43A047:cc_color == 2;
+                 #ECA83E:cc_color == 3;
+                 #7E57C2:cc_color == 4;
+                 #42A5F5:cc_color == 5;
+                 #A13F34:cc_color == 6;
+                 #52B87E:cc_color == 7;
+                 #B45575:cc_color == 8;
+                 #5CA2C4:cc_color == 9;
+                 #757575:cc_color == 10;
+                 #9A9B9F:cc_color == 11;
+                 #BFA10D:cc_color == 12", "fg_color": "white:cc_color > 0"}'/>
+            </field>
+            <field name="partner_id" position="before">
+                <field name="create_date" string="Jobcard Date"/>
+            </field>
+            <field name="partner_id" position="after">
+                <field name="vehicle_id" string="License Plate"/>
+                <field name="engine"/>
+                <field name="vin" string="Chassis No."/>
+                <field name="promise_date"/>
+                <field name="used_service_count" readonly="1"/>
+<field name="remaining_service_count" readonly="1"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_task_form2_inherited_timesheet" model="ir.ui.view">
+        <field name="name">Project Task form Inherit Job Card - Timesheet Extension</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="hr_timesheet.view_task_form2_inherited"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='page_timesheets']" position="attributes">
+                <attribute name="invisible">not allow_timesheets or is_jobcard</attribute>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

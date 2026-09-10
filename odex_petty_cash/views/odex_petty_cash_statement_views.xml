@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ── Statement / My Petty Cash Dashboard ──────────────────────── -->
+    <record id="view_odex_pc_statement_form" model="ir.ui.view">
+        <field name="name">odex.pc.statement.form</field>
+        <field name="model">odex.petty.cash.statement</field>
+        <field name="arch" type="xml">
+            <form string="My Petty Cash">
+                <sheet>
+                    <!-- Action Buttons -->
+                    <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+                        <button name="action_new_expense" type="object"
+                                string="+ New Expense" class="btn btn-primary"/>
+                        <button name="action_print_report" type="object"
+                                string="🖨 Print Statement" class="btn btn-secondary"/>
+                    </div>
+
+                    <!-- Filter Row -->
+                    <div style="background:#fff;border:1px solid #e0ddd8;border-radius:6px;padding:12px 16px;margin-bottom:12px;">
+                        <group col="4">
+                            <field name="petty_cash_account_id" options="{'no_create': True}"/>
+                            <field name="period_type"/>
+                            <field name="date_from" widget="date"/>
+                            <field name="date_to" widget="date"/>
+                        </group>
+                    </div>
+
+                    <!-- Summary Cards -->
+                    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:0;background:#fff;border:1px solid #e0ddd8;border-radius:6px;overflow:hidden;margin-bottom:16px;">
+                        <div style="padding:14px 14px;border-right:1px solid #e0ddd8;">
+                            <div style="font-size:10px;color:#888;text-transform:uppercase;margin-bottom:4px;">Opening</div>
+                            <field name="opening_balance" widget="monetary" options="{'currency_field':'currency_id'}" style="font-size:16px;font-weight:600;color:#333;"/>
+                        </div>
+                        <div style="padding:14px 14px;border-right:1px solid #e0ddd8;">
+                            <div style="font-size:10px;color:#888;text-transform:uppercase;margin-bottom:4px;">Total Received</div>
+                            <field name="total_received" widget="monetary" options="{'currency_field':'currency_id'}" style="font-size:16px;font-weight:600;color:#17a75a;"/>
+                        </div>
+                        <div style="padding:14px 14px;border-right:1px solid #e0ddd8;">
+                            <div style="font-size:10px;color:#888;text-transform:uppercase;margin-bottom:4px;">Total Spent</div>
+                            <field name="total_spent" widget="monetary" options="{'currency_field':'currency_id'}" style="font-size:16px;font-weight:600;color:#e0403e;"/>
+                        </div>
+                        <div style="padding:14px 14px;border-right:1px solid #e0ddd8;">
+                            <div style="font-size:10px;color:#888;text-transform:uppercase;margin-bottom:4px;">⏳ Pending</div>
+                            <field name="total_pending" widget="monetary" options="{'currency_field':'currency_id'}" style="font-size:16px;font-weight:600;color:#e65100;"/>
+                        </div>
+                        <div style="padding:14px 14px;border-right:1px solid #e0ddd8;">
+                            <div style="font-size:10px;color:#888;text-transform:uppercase;margin-bottom:4px;">Returned</div>
+                            <field name="total_returned" widget="monetary" options="{'currency_field':'currency_id'}" style="font-size:16px;font-weight:600;color:#666;"/>
+                        </div>
+                        <div style="padding:14px 14px;background:#f0faf5;">
+                            <div style="font-size:10px;color:#888;text-transform:uppercase;margin-bottom:4px;">💵 Available</div>
+                            <field name="available_balance" widget="monetary" options="{'currency_field':'currency_id'}" style="font-size:16px;font-weight:600;color:#17a75a;"/>
+                        </div>
+                    </div>
+
+                    <!-- Balance formula note -->
+                    <div style="background:#e8f4fd;border:1px solid #b5d4f4;border-radius:6px;padding:10px 14px;font-size:12px;color:#185fa5;margin-bottom:16px;">
+                        <strong>Balance Formula:</strong>
+                        Available = Opening + Received − Spent (posted only) − Returned<br/>
+                        <em>Pending/Submitted expenses do NOT reduce available balance until posted.</em>
+                    </div>
+
+                    <field name="currency_id" invisible="1"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_odex_pc_my_statement" model="ir.actions.act_window">
+        <field name="name">My Petty Cash</field>
+        <field name="res_model">odex.petty.cash.statement</field>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+    </record>
+</odoo>

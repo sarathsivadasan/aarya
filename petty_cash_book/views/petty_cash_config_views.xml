@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ==================== CONFIGURATION VIEWS ==================== -->
+
+    <!-- Res Config Settings Inherited View -->
+    <record id="view_res_config_settings_petty_cash" model="ir.ui.view">
+        <field name="name">res.config.settings.petty.cash</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base_setup.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <div class="app_settings_block" data-string="Petty Cash" string="Petty Cash" data-key="petty_cash_book">
+                    <h2>Petty Cash Book</h2>
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <label for="petty_cash_journal_id" string="Default Petty Cash Journal"/>
+                                <div class="text-muted">
+                                    Journal used for petty cash transactions by default.
+                                </div>
+                                <div class="content-group">
+                                    <div class="mt8">
+                                        <field name="petty_cash_journal_id" class="o_light_label" widget="many2one"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <label for="petty_cash_account_id" string="Default Cash Account"/>
+                                <div class="text-muted">
+                                    Default account used for petty cash transactions.
+                                </div>
+                                <div class="content-group">
+                                    <div class="mt8">
+                                        <field name="petty_cash_account_id" class="o_light_label" widget="many2one"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <field name="petty_cash_allow_negative"/>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label for="petty_cash_allow_negative" string="Allow Negative Balance"/>
+                                <div class="text-muted">
+                                    Allow expenses even when petty cash balance is insufficient.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="ai_mail_gt.AiTypingIndicator">
+        <t t-if="isTyping">
+            <div class="o-discuss-Typing-icon d-flex align-items-center me-2">
+                <span class="o-discuss-Typing-dot o-sizeMedium d-flex flex-shrink-0 rounded-pill bg-500"/>
+                <span class="flex-grow-1 flex-shrink-0" style="width:3px"/>
+                <span class="o-discuss-Typing-dot o-discuss-Typing-dot2 o-sizeMedium d-flex flex-shrink-0 rounded-pill bg-500"/>
+                <span class="flex-grow-1 flex-shrink-0" style="width:3px"/>
+                <span class="o-discuss-Typing-dot o-discuss-Typing-dot3 o-sizeMedium d-flex flex-shrink-0 rounded-pill bg-500"/>
+            </div>
+            <span class="text-muted small text-truncate" t-out="statusText"/>
+        </t>
+    </t>
+
+    <!-- Full Discuss view: indicator inside Composer, above input -->
+    <t t-inherit="mail.Composer" t-inherit-mode="extension">
+        <xpath expr="//AttachmentList" position="after">
+            <t t-if="thread and thread.channel_type === 'ai_chat' and !compact">
+                <div class="o-discuss-Typing d-flex align-items-center">
+                    <AiTypingIndicator thread="thread"/>
+                </div>
+            </t>
+        </xpath>
+    </t>
+
+    <!-- Chat window popup: indicator between Thread and Composer (compact mode) -->
+    <t t-inherit="mail.ChatWindow" t-inherit-mode="extension">
+        <xpath expr="//Composer[@mode]" position="before">
+            <div t-if="thread and thread.channel_type === 'ai_chat'" class="d-flex position-relative">
+                <div class="o-mail-ChatWindow-typing d-flex px-2 position-absolute bottom-0 start-0 w-100 align-items-center">
+                    <AiTypingIndicator thread="thread"/>
+                </div>
+            </div>
+        </xpath>
+    </t>
+
+</templates>

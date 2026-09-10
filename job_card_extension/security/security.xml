@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+     <record id="account_invoice_user_own_record" model="ir.rule">
+        <field name="name">users can only access their own invoices</field>
+        <field name="model_id" ref="model_account_move"/>
+         <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        <field name="domain_force">['|', ('create_uid', '=', user.id), ('invoice_user_id', '=', user.id)]</field>
+    </record>
+
+    <record id="account_invoice_admin_all_record" model="ir.rule">
+        <field name="name">Invoices: system group granted all</field>
+        <field name="model_id" ref="model_account_move"/>
+        <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+
+</odoo>

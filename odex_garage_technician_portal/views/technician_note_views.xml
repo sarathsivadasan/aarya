@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_technician_note_list" model="ir.ui.view">
+        <field name="name">technician.note.list</field>
+        <field name="model">technician.note</field>
+        <field name="arch" type="xml">
+            <list string="Notes" editable="bottom">
+                <field name="note_date"/>
+                <field name="task_id"/>
+                <field name="user_id"/>
+                <field name="content"/>
+            </list>
+        </field>
+    </record>
+</odoo>

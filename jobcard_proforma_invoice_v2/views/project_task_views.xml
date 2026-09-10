@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_task_form_proforma" model="ir.ui.view">
+        <field name="name">project.task.proforma.form</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_form2"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_create_proforma"
+                        string="Create Proforma"
+                        type="object"
+                        class="btn-primary"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_move_form_proforma_hide_post" model="ir.ui.view">
+        <field name="name">account.move.form.proforma.hide.post</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_post']" position="after">
+                <field name="is_proforma" invisible="1"/>
+            </xpath>
+            <xpath expr="//button[@name='action_post'][2]" position="replace">
+                <button name="action_post" string="Confirm" class="oe_highlight" type="object"
+                        groups="account.group_account_invoice" data-hotkey="q"
+                        context="{'validate_analytic': True, 'disable_abnormal_invoice_detection': False}"
+                        invisible="hide_post_button or move_type == 'entry' or display_inactive_currency_warning or is_proforma"/>
+            </xpath>
+
+        </field>
+    </record>
+</odoo>

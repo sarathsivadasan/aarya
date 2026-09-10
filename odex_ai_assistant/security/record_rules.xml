@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Users can only see their own conversations -->
+        <record id="rule_ai_conversation_user" model="ir.rule">
+            <field name="name">AI Conversation: User sees own conversations</field>
+            <field name="model_id" ref="model_odex_ai_conversation"/>
+            <field name="domain_force">[('user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_ai_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- Managers can see all conversations -->
+        <record id="rule_ai_conversation_manager" model="ir.rule">
+            <field name="name">AI Conversation: Manager sees all</field>
+            <field name="model_id" ref="model_odex_ai_conversation"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_ai_manager'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- Users can only see their own messages -->
+        <record id="rule_ai_message_user" model="ir.rule">
+            <field name="name">AI Message: User sees own messages</field>
+            <field name="model_id" ref="model_odex_ai_message"/>
+            <field name="domain_force">[('user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_ai_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- Usage logs: users see only their own -->
+        <record id="rule_ai_usage_log_user" model="ir.rule">
+            <field name="name">AI Usage Log: User sees own logs</field>
+            <field name="model_id" ref="model_odex_ai_usage_log"/>
+            <field name="domain_force">[('user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_ai_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+    </data>
+</odoo>

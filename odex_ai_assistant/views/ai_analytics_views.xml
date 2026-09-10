@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Usage Log List View -->
+        <record id="view_ai_usage_log_list" model="ir.ui.view">
+            <field name="name">odex.ai.usage.log.list</field>
+            <field name="model">odex.ai.usage.log</field>
+            <field name="arch" type="xml">
+                <list string="AI Usage Logs" default_order="create_date desc">
+                    <field name="create_date" string="Date"/>
+                    <field name="user_id"/>
+                    <field name="model_used" string="AI Model"/>
+                    <field name="request_type" string="Type"/>
+                    <field name="total_tokens" string="Tokens"/>
+                    <field name="processing_time" string="Time (s)"/>
+                    <field name="status"
+                           decoration-success="status == 'success'"
+                           decoration-danger="status in ['error', 'timeout']"
+                           decoration-warning="status == 'rate_limited'"/>
+                    <field name="res_model" optional="show"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Usage Log Graph View -->
+        <record id="view_ai_usage_log_graph" model="ir.ui.view">
+            <field name="name">odex.ai.usage.log.graph</field>
+            <field name="model">odex.ai.usage.log</field>
+            <field name="arch" type="xml">
+                <graph string="AI Usage Analytics" type="bar">
+                    <field name="create_date" interval="day" type="row"/>
+                    <field name="total_tokens" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <!-- Usage Log Pivot View -->
+        <record id="view_ai_usage_log_pivot" model="ir.ui.view">
+            <field name="name">odex.ai.usage.log.pivot</field>
+            <field name="model">odex.ai.usage.log</field>
+            <field name="arch" type="xml">
+                <pivot string="AI Usage Pivot">
+                    <field name="user_id" type="row"/>
+                    <field name="model_used" type="col"/>
+                    <field name="total_tokens" type="measure"/>
+                    <field name="processing_time" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <!-- Usage Log Search -->
+        <record id="view_ai_usage_log_search" model="ir.ui.view">
+            <field name="name">odex.ai.usage.log.search</field>
+            <field name="model">odex.ai.usage.log</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="user_id"/>
+                    <field name="model_used"/>
+                    <filter string="Today" name="today"
+                            domain="[('create_date', '>=', datetime.datetime.combine(context_today(), datetime.time(0,0,0)))]"/>
+                    <filter string="This Week" name="this_week"
+                            domain="[('create_date', '>=', (context_today() - datetime.timedelta(days=7)).strftime('%Y-%m-%d'))]"/>
+                    <filter string="This Month" name="this_month"
+                            domain="[('create_date', '>=', context_today().strftime('%Y-%m-01'))]"/>
+                    <filter string="Success" name="success" domain="[('status', '=', 'success')]"/>
+                    <filter string="Errors" name="errors" domain="[('status', 'in', ['error', 'timeout'])]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="User" name="group_user" context="{'group_by': 'user_id'}"/>
+                        <filter string="Model" name="group_model" context="{'group_by': 'model_used'}"/>
+                        <filter string="Status" name="group_status" context="{'group_by': 'status'}"/>
+                        <filter string="Date" name="group_date" context="{'group_by': 'create_date:day'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_ai_usage_logs" model="ir.actions.act_window">
+            <field name="name">AI Usage Analytics</field>
+            <field name="res_model">odex.ai.usage.log</field>
+            <field name="view_mode">graph,pivot,list</field>
+            <field name="search_view_id" ref="view_ai_usage_log_search"/>
+            <field name="context">{'search_default_this_month': 1}</field>
+        </record>
+
+        <!-- Feedback Views -->
+        <record id="view_ai_feedback_list" model="ir.ui.view">
+            <field name="name">odex.ai.feedback.list</field>
+            <field name="model">odex.ai.feedback</field>
+            <field name="arch" type="xml">
+                <list string="AI Feedback" default_order="create_date desc">
+                    <field name="create_date" string="Date"/>
+                    <field name="user_id"/>
+                    <field name="feedback_type"
+                           decoration-success="feedback_type == 'positive'"
+                           decoration-danger="feedback_type in ['negative', 'incorrect']"/>
+                    <field name="rating"/>
+                    <field name="comment" optional="show"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="action_ai_feedback" model="ir.actions.act_window">
+            <field name="name">AI Feedback</field>
+            <field name="res_model">odex.ai.feedback</field>
+            <field name="view_mode">list</field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,921 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================ -->
+    <!-- Breadcrumbs: reuse the standard portal breadcrumb bar        -->
+    <!-- ============================================================ -->
+    <template id="vendor_portal_breadcrumbs" name="Vendor Portal Breadcrumbs"
+              inherit_id="portal.portal_breadcrumbs" priority="30">
+        <xpath expr="//ol" position="inside">
+            <t t-set="vendor_pages"
+               t-value="['vendor_home', 'vendor_rfq', 'vendor_orders', 'vendor_payments', 'vendor_activity']"/>
+            <li t-if="page_name in vendor_pages"
+                t-attf-class="breadcrumb-item #{'active' if page_name == 'vendor_home' else ''}">
+                <a t-if="page_name != 'vendor_home'" href="/my/vendor">Vendor Portal</a>
+                <t t-else="">Vendor Portal</t>
+            </li>
+            <li t-if="page_name == 'vendor_rfq'" class="breadcrumb-item active">RFQs</li>
+            <li t-if="page_name == 'vendor_orders'" class="breadcrumb-item active">Purchase Orders</li>
+            <li t-if="page_name == 'vendor_payments'" class="breadcrumb-item active">Pending Payments</li>
+            <li t-if="page_name == 'vendor_activity'" class="breadcrumb-item active">Recent Activity</li>
+        </xpath>
+    </template>
+
+    <!-- ============================================================ -->
+    <!-- Small reusable bits                                          -->
+    <!-- ============================================================ -->
+    <template id="vendor_status_badge" name="Vendor Portal Status Badge">
+        <span t-attf-class="o_vendor_badge o_vendor_badge--#{badge_key}" t-out="badge_label"/>
+    </template>
+
+    <template id="vendor_portal_toolbar" name="Vendor Portal Toolbar">
+        <div class="o_vendor_toolbar d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+            <div class="d-flex flex-wrap gap-2">
+                <t t-if="filters">
+                    <t t-foreach="filters" t-as="fkey">
+                        <a t-attf-href="#{default_url}?filterby=#{fkey}&amp;sortby=#{sortby}"
+                           t-attf-class="o_vendor_pill #{'o_vendor_pill--active' if fkey == filterby else ''}"
+                           t-out="filters[fkey]['label']"/>
+                    </t>
+                </t>
+            </div>
+            <div class="dropdown o_vendor_sort">
+                <button class="btn btn-sm o_vendor_sort_btn dropdown-toggle" type="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fa fa-sort-amount-desc me-1"/>
+                    <span t-out="sortings[sortby]['label']"/>
+                </button>
+                <div class="dropdown-menu dropdown-menu-end">
+                    <t t-foreach="sortings" t-as="skey">
+                        <a t-attf-href="#{default_url}?sortby=#{skey}#{'&amp;filterby=' + filterby if filterby else ''}"
+                           class="dropdown-item" t-out="sortings[skey]['label']"/>
+                    </t>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="vendor_portal_empty" name="Vendor Portal Empty State">
+        <div class="o_vendor_empty text-center py-5">
+            <div class="o_vendor_empty_icon mx-auto mb-3">
+                <i t-attf-class="fa #{empty_icon or 'fa-file-text-o'}"/>
+            </div>
+            <div class="o_vendor_empty_title" t-out="empty_title"/>
+            <div class="o_vendor_empty_sub" t-if="empty_subtitle" t-out="empty_subtitle"/>
+        </div>
+    </template>
+
+    <!-- ============================================================ -->
+    <!-- Dashboard                                                    -->
+    <!-- ============================================================ -->
+    <template id="vendor_portal_home" name="Vendor Portal">
+        <t t-call="portal.portal_layout">
+            <t t-set="page_name" t-value="'vendor_home'"/>
+            <div class="o_vendor_portal">
+                <div class="row g-4">
+
+                    <div class="col-12 col-lg-4 col-xl-3">
+                        <!-- Vendor details -->
+                        <div class="o_vendor_card p-4 mb-4">
+                            <div class="o_vendor_card_head mb-3">
+                                <i class="fa fa-user o_vendor_head_icon"/>
+                                <span class="o_vendor_card_title">Vendor Details</span>
+                            </div>
+                            <div class="d-flex align-items-center mb-3">
+                                <span class="o_vendor_avatar" t-out="vendor_initials"/>
+                                <div class="ms-3 min-w-0">
+                                    <div class="o_vendor_name text-truncate" t-out="partner.name"/>
+                                    <div class="o_vendor_muted text-truncate" t-if="partner.email"
+                                         t-out="partner.email"/>
+                                </div>
+                            </div>
+                            <hr class="o_vendor_sep"/>
+                            <t t-set="business_name"
+                               t-value="partner.commercial_company_name or partner.parent_id.name or partner.name"/>
+                            <div class="mb-3" t-if="business_name">
+                                <div class="o_vendor_label">Business Name</div>
+                                <div class="o_vendor_value" t-out="business_name"/>
+                            </div>
+                            <t t-set="address_lines" t-value="partner.vendor_portal_address_lines()"/>
+                            <div class="mb-3" t-if="address_lines">
+                                <div class="o_vendor_label">Address</div>
+                                <div class="o_vendor_value">
+                                    <div t-foreach="address_lines" t-as="line" t-out="line"/>
+                                </div>
+                            </div>
+                            <div class="mb-3" t-if="partner.phone or partner.mobile">
+                                <div class="o_vendor_label">Phone</div>
+                                <div class="o_vendor_value" t-out="partner.phone or partner.mobile"/>
+                            </div>
+                            <div class="mb-3" t-if="partner.email">
+                                <div class="o_vendor_label">Email</div>
+                                <div class="o_vendor_value text-break" t-out="partner.email"/>
+                            </div>
+                            <div class="mb-3" t-if="partner.vat">
+                                <div class="o_vendor_label">Tax ID</div>
+                                <div class="o_vendor_value" t-out="partner.vat"/>
+                            </div>
+                            <a href="/my/account" class="o_vendor_link">Edit Profile <i class="fa fa-angle-right"/></a>
+                        </div>
+
+                        <!-- Quick links -->
+                        <div class="o_vendor_card p-4">
+                            <div class="o_vendor_card_head mb-3">
+                                <i class="fa fa-link o_vendor_head_icon"/>
+                                <span class="o_vendor_card_title">Quick Links</span>
+                            </div>
+                            <a href="/my/vendor/rfqs" class="o_vendor_quicklink">
+                                <span><i class="fa fa-file-text-o me-2"/>RFQs</span>
+                                <i class="fa fa-angle-right"/>
+                            </a>
+                            <a href="/my/vendor/orders" class="o_vendor_quicklink">
+                                <span><i class="fa fa-shopping-cart me-2"/>Purchase Orders</span>
+                                <i class="fa fa-angle-right"/>
+                            </a>
+                            <a href="/my/vendor/payments" class="o_vendor_quicklink">
+                                <span><i class="fa fa-calendar me-2"/>Pending Payments</span>
+                                <i class="fa fa-angle-right"/>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-lg-8 col-xl-9">
+                        <div class="row g-4">
+                            <div class="col-12 col-md-4">
+                                <a href="/my/vendor/rfqs" class="o_vendor_card o_vendor_tile p-4 h-100">
+                                    <div class="o_vendor_tile_icon o_vendor_tile_icon--blue">
+                                        <i class="fa fa-file-text-o"/>
+                                    </div>
+                                    <div class="o_vendor_tile_body">
+                                        <div class="o_vendor_tile_title">RFQs</div>
+                                        <div class="o_vendor_tile_sub">
+                                            View and respond to purchase requests (RFQs).
+                                        </div>
+                                        <div class="o_vendor_tile_count" t-if="rfq_count">
+                                            <t t-out="rfq_count"/> open
+                                        </div>
+                                    </div>
+                                    <i class="fa fa-angle-right o_vendor_tile_arrow"/>
+                                </a>
+                            </div>
+                            <div class="col-12 col-md-4">
+                                <a href="/my/vendor/orders" class="o_vendor_card o_vendor_tile p-4 h-100">
+                                    <div class="o_vendor_tile_icon o_vendor_tile_icon--green">
+                                        <i class="fa fa-shopping-cart"/>
+                                    </div>
+                                    <div class="o_vendor_tile_body">
+                                        <div class="o_vendor_tile_title">Purchase Orders</div>
+                                        <div class="o_vendor_tile_sub">
+                                            View your purchase orders and their details.
+                                        </div>
+                                        <div class="o_vendor_tile_count" t-if="order_count">
+                                            <t t-out="order_count"/> orders
+                                        </div>
+                                    </div>
+                                    <i class="fa fa-angle-right o_vendor_tile_arrow"/>
+                                </a>
+                            </div>
+                            <div class="col-12 col-md-4">
+                                <a href="/my/vendor/payments" class="o_vendor_card o_vendor_tile p-4 h-100">
+                                    <div class="o_vendor_tile_icon o_vendor_tile_icon--red">
+                                        <i class="fa fa-calendar"/>
+                                    </div>
+                                    <div class="o_vendor_tile_body">
+                                        <div class="o_vendor_tile_title">Pending Payments</div>
+                                        <div class="o_vendor_tile_sub">
+                                            Check your pending payments and due amounts.
+                                        </div>
+                                        <div class="o_vendor_tile_count" t-if="payment_count">
+                                            <span t-out="payment_amount"
+                                                  t-options='{"widget": "monetary", "display_currency": vendor_currency}'/>
+                                            due
+                                        </div>
+                                    </div>
+                                    <i class="fa fa-angle-right o_vendor_tile_arrow"/>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent activity -->
+                <div class="row g-4 mt-1">
+                    <div class="col-12">
+                        <div class="o_vendor_card p-4">
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                <div class="o_vendor_card_head">
+                                    <i class="fa fa-truck o_vendor_head_icon"/>
+                                    <span class="o_vendor_card_title">Your Recent Activity</span>
+                                </div>
+                                <a href="/my/vendor/activity" class="o_vendor_link">View All <i class="fa fa-angle-right"/></a>
+                            </div>
+                            <t t-call="odex_vendor_portal.vendor_portal_activity_list"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="vendor_portal_activity_list" name="Vendor Portal Activity List">
+        <t t-if="activities">
+            <div class="o_vendor_activity">
+                <a t-foreach="activities" t-as="activity" t-att-href="activity['url']"
+                   class="o_vendor_activity_item">
+                    <span t-attf-class="o_vendor_activity_icon o_vendor_activity_icon--#{activity['tone']}">
+                        <i t-attf-class="fa #{activity['icon']}"/>
+                    </span>
+                    <span class="o_vendor_activity_body">
+                        <span class="o_vendor_activity_title" t-out="activity['title']"/>
+                        <span class="o_vendor_activity_sub" t-out="activity['subtitle']"/>
+                    </span>
+                    <span class="o_vendor_activity_date" t-out="activity['date']"
+                          t-options='{"widget": "datetime"}'/>
+                </a>
+            </div>
+        </t>
+        <t t-else="">
+            <t t-call="odex_vendor_portal.vendor_portal_empty">
+                <t t-set="empty_icon" t-value="'fa-file-text-o'"/>
+                <t t-set="empty_title" t-value="'No recent activity available.'"/>
+                <t t-set="empty_subtitle"
+                   t-value="'Your RFQs, purchase orders and payments will appear here once available.'"/>
+            </t>
+        </t>
+    </template>
+
+    <template id="vendor_portal_activity" name="Vendor Portal Recent Activity">
+        <t t-call="portal.portal_layout">
+            <t t-set="page_name" t-value="'vendor_activity'"/>
+            <div class="o_vendor_portal">
+                <div class="o_vendor_card p-4">
+                    <div class="o_vendor_card_head mb-3">
+                        <i class="fa fa-truck o_vendor_head_icon"/>
+                        <span class="o_vendor_card_title">Your Recent Activity</span>
+                    </div>
+                    <t t-call="odex_vendor_portal.vendor_portal_activity_list"/>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- ============================================================ -->
+    <!-- RFQ list                                                     -->
+    <!-- ============================================================ -->
+    <template id="vendor_portal_rfqs" name="Vendor Portal RFQs">
+        <t t-call="portal.portal_layout">
+            <t t-set="page_name" t-value="'vendor_rfq'"/>
+            <div class="o_vendor_portal">
+                <div class="o_vendor_card p-4">
+                    <div class="o_vendor_card_head mb-3">
+                        <i class="fa fa-file-text-o o_vendor_head_icon"/>
+                        <span class="o_vendor_card_title">Requests for Quotation</span>
+                    </div>
+                    <t t-set="filters" t-value="False"/>
+                    <t t-set="filterby" t-value="False"/>
+                    <t t-call="odex_vendor_portal.vendor_portal_toolbar"/>
+                    <t t-if="orders">
+                        <div class="table-responsive">
+                            <table class="table o_vendor_table align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>RFQ Number</th>
+                                        <th>RFQ Date</th>
+                                        <th>Requesting Company</th>
+                                        <th>Expected Date</th>
+                                        <th class="text-end">Total Amount</th>
+                                        <th>Status</th>
+                                        <th class="text-end">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="orders" t-as="order">
+                                        <td data-label="RFQ Number">
+                                            <a t-attf-href="/my/vendor/rfq/#{order.id}"
+                                               class="o_vendor_ref" t-out="order.name"/>
+                                        </td>
+                                        <td data-label="RFQ Date">
+                                            <span t-field="order.date_order" t-options='{"widget": "date"}'/>
+                                        </td>
+                                        <td data-label="Requesting Company" t-out="order.company_id.name"/>
+                                        <td data-label="Expected Date">
+                                            <span t-if="order.date_planned" t-field="order.date_planned"
+                                                  t-options='{"widget": "date"}'/>
+                                            <span t-else="" class="o_vendor_muted">-</span>
+                                        </td>
+                                        <td data-label="Total Amount" class="text-end">
+                                            <span t-field="order.amount_total"
+                                                  t-options='{"widget": "monetary", "display_currency": order.currency_id}'/>
+                                        </td>
+                                        <td data-label="Status">
+                                            <t t-set="st" t-value="order.vendor_portal_status()"/>
+                                            <t t-call="odex_vendor_portal.vendor_status_badge">
+                                                <t t-set="badge_key" t-value="st[0]"/>
+                                                <t t-set="badge_label" t-value="st[1]"/>
+                                            </t>
+                                        </td>
+                                        <td data-label="Action" class="text-end text-nowrap">
+                                            <a t-attf-href="/my/vendor/rfq/#{order.id}"
+                                               class="o_vendor_action" title="View">
+                                                <i class="fa fa-eye"/>
+                                            </a>
+                                            <a t-attf-href="/my/vendor/rfq/#{order.id}?report_type=pdf&amp;download=true"
+                                               class="o_vendor_action" title="Download PDF">
+                                                <i class="fa fa-download"/>
+                                            </a>
+                                            <a t-attf-href="/my/vendor/rfq/#{order.id}#respond"
+                                               class="o_vendor_action o_vendor_action--primary" title="Respond">
+                                                <i class="fa fa-reply"/>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="d-flex justify-content-center mt-3">
+                            <t t-call="portal.pager"/>
+                        </div>
+                    </t>
+                    <t t-else="">
+                        <t t-call="odex_vendor_portal.vendor_portal_empty">
+                            <t t-set="empty_icon" t-value="'fa-file-text-o'"/>
+                            <t t-set="empty_title" t-value="'No requests for quotation yet.'"/>
+                            <t t-set="empty_subtitle"
+                               t-value="'New purchase requests sent to you will appear here.'"/>
+                        </t>
+                    </t>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- ============================================================ -->
+    <!-- RFQ detail + response form                                   -->
+    <!-- ============================================================ -->
+    <template id="vendor_portal_rfq_detail" name="Vendor Portal RFQ">
+        <t t-call="portal.portal_layout">
+            <t t-set="page_name" t-value="'vendor_rfq'"/>
+            <div class="o_vendor_portal">
+                <div class="o_vendor_card p-4 mb-4">
+                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+                        <div class="o_vendor_card_head">
+                            <i class="fa fa-file-text-o o_vendor_head_icon"/>
+                            <span class="o_vendor_card_title">RFQ <t t-out="order.name"/></span>
+                        </div>
+                        <div class="text-nowrap">
+                            <a t-attf-href="/my/vendor/rfq/#{order.id}?report_type=pdf&amp;download=true"
+                               class="btn btn-sm o_vendor_btn_light">
+                                <i class="fa fa-download me-1"/>Download PDF
+                            </a>
+                            <a href="/my/vendor/rfqs" class="btn btn-sm o_vendor_btn_light">
+                                <i class="fa fa-arrow-left me-1"/>Back
+                            </a>
+                        </div>
+                    </div>
+
+                    <div t-if="submitted" class="alert o_vendor_alert_success" role="status">
+                        <i class="fa fa-check-circle me-1"/>Your quotation has been submitted.
+                    </div>
+                    <div t-if="error == 'invalid_price'" class="alert o_vendor_alert_error" role="alert">
+                        <i class="fa fa-exclamation-circle me-1"/>Please enter a valid positive price for every line.
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-6 col-md-3">
+                            <div class="o_vendor_label">RFQ Date</div>
+                            <div class="o_vendor_value">
+                                <span t-field="order.date_order" t-options='{"widget": "date"}'/>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="o_vendor_label">Requesting Company</div>
+                            <div class="o_vendor_value" t-out="order.company_id.name"/>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="o_vendor_label">Expected Date</div>
+                            <div class="o_vendor_value">
+                                <span t-if="order.date_planned" t-field="order.date_planned"
+                                      t-options='{"widget": "date"}'/>
+                                <span t-else="" class="o_vendor_muted">-</span>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="o_vendor_label">Status</div>
+                            <div class="o_vendor_value">
+                                <t t-set="st" t-value="order.vendor_portal_status()"/>
+                                <t t-call="odex_vendor_portal.vendor_status_badge">
+                                    <t t-set="badge_key" t-value="st[0]"/>
+                                    <t t-set="badge_label" t-value="st[1]"/>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form t-if="can_respond" method="post" t-attf-action="/my/vendor/rfq/#{order.id}/respond"
+                          id="respond">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <div class="table-responsive">
+                            <table class="table o_vendor_table align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Description</th>
+                                        <th>Part No.</th>
+                                        <th>Parts Type</th>
+                                        <th class="text-end">Quantity</th>
+                                        <th>Unit</th>
+                                        <th class="text-end">Unit Price</th>
+                                        <th>Taxes</th>
+                                        <th class="text-end">Subtotal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="order.order_line" t-as="line">
+                                        <tr t-if="not line.display_type">
+                                            <td data-label="Description" t-out="line.name"/>
+                                            <td data-label="Part No.">
+                                                <input type="text" step="1234ASD" 
+                                                       class="form-control form-control-sm o_vendor_price_input"
+                                                       t-attf-name="part_no_#{line.id}"
+                                                       t-att-value="line.part_no"/>
+                                            </td>
+                                            <td data-label="PartsType" t-out="line.parts_type"/>
+                                            <td data-label="Quantity" class="text-end"><span t-field="line.product_qty"/></td>
+                                            <td data-label="Unit" t-out="line.vendor_portal_uom_name()"/>
+                                            <td data-label="Unit Price" class="text-end">
+                                                <input type="number" step="0.0001" min="0"
+                                                       class="form-control form-control-sm o_vendor_price_input"
+                                                       t-attf-name="price_#{line.id}"
+                                                       t-att-value="line.price_unit"/>
+                                            </td>
+                                            <td data-label="Taxes"><span t-field="line.taxes_id.name"/></td>
+                                            <td data-label="Subtotal" class="text-end">
+                                                <span t-field="line.price_subtotal"
+                                                      t-options='{"widget": "monetary", "display_currency": order.currency_id}'/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="row g-3 mt-2">
+                            <div class="col-12 col-md-4">
+                                <label class="o_vendor_label" for="expected_date">Expected Delivery Date</label>
+                                <input type="date" id="expected_date" name="expected_date"
+                                       class="form-control form-control-sm"/>
+                            </div>
+                            <div class="col-12 col-md-8">
+                                <label class="o_vendor_label" for="note">Note</label>
+                                <textarea id="note" name="note" rows="2" class="form-control form-control-sm"
+                                          placeholder="Lead time, validity, remarks..."/>
+                            </div>
+                        </div>
+                        <div class="text-end mt-3">
+                            <button type="submit" class="btn o_vendor_btn_primary">
+                                <i class="fa fa-paper-plane me-1"/>Submit Quotation
+                            </button>
+                        </div>
+                    </form>
+
+                    <div t-else="" class="table-responsive">
+                        <table class="table o_vendor_table align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Description</th>
+                                    <th class="text-end">Quantity</th>
+                                    <th>Unit</th>
+                                    <th class="text-end">Unit Price</th>
+                                    <th class="text-end">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="order.order_line" t-as="line">
+                                    <tr t-if="not line.display_type">
+                                        <td data-label="Description" t-out="line.name"/>
+                                        <td data-label="Quantity" class="text-end"><span t-field="line.product_qty"/></td>
+                                        <td data-label="Unit" t-out="line.vendor_portal_uom_name()"/>
+                                        <td data-label="Unit Price" class="text-end">
+                                            <span t-field="line.price_unit"
+                                                  t-options='{"widget": "monetary", "display_currency": order.currency_id}'/>
+                                        </td>
+                                        <td data-label="Subtotal" class="text-end">
+                                            <span t-field="line.price_subtotal"
+                                                  t-options='{"widget": "monetary", "display_currency": order.currency_id}'/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="o_vendor_totals mt-3">
+                        <div class="d-flex justify-content-between">
+                            <span>Untaxed Amount</span>
+                            <span t-field="order.amount_untaxed"
+                                  t-options='{"widget": "monetary", "display_currency": order.currency_id}'/>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span>Taxes</span>
+                            <span t-field="order.amount_tax"
+                                  t-options='{"widget": "monetary", "display_currency": order.currency_id}'/>
+                        </div>
+                        <div class="d-flex justify-content-between o_vendor_total_line">
+                            <span>Total</span>
+                            <span t-field="order.amount_total"
+                                  t-options='{"widget": "monetary", "display_currency": order.currency_id}'/>
+                        </div>
+                    </div>
+
+                    <div t-if="order.vendor_response_note" class="o_vendor_note mt-3">
+                        <div class="o_vendor_label">Your note</div>
+                        <div class="o_vendor_value" t-out="order.vendor_response_note"/>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- ============================================================ -->
+    <!-- Purchase order list                                          -->
+    <!-- ============================================================ -->
+    <template id="vendor_portal_orders" name="Vendor Portal Purchase Orders">
+        <t t-call="portal.portal_layout">
+            <t t-set="page_name" t-value="'vendor_orders'"/>
+            <div class="o_vendor_portal">
+                <div class="o_vendor_card p-4">
+                    <div class="o_vendor_card_head mb-3">
+                        <i class="fa fa-shopping-cart o_vendor_head_icon"/>
+                        <span class="o_vendor_card_title">Purchase Orders</span>
+                    </div>
+                    <t t-set="filters" t-value="False"/>
+                    <t t-set="filterby" t-value="False"/>
+                    <t t-call="odex_vendor_portal.vendor_portal_toolbar"/>
+                    <t t-if="orders">
+                        <div class="table-responsive">
+                            <table class="table o_vendor_table align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>PO Number</th>
+                                        <th>Order Date</th>
+                                        <th>Vendor</th>
+                                        <th>Expected Date</th>
+                                        <th class="text-end">Total Amount</th>
+                                        <th>Status</th>
+                                        <th>Payment</th>
+                                        <th class="text-end">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="orders" t-as="order">
+                                        <td data-label="PO Number">
+                                            <a t-attf-href="/my/vendor/order/#{order.id}"
+                                               class="o_vendor_ref" t-out="order.name"/>
+                                        </td>
+                                        <td data-label="Order Date">
+                                            <span t-field="order.date_order" t-options='{"widget": "date"}'/>
+                                        </td>
+                                        <td data-label="Vendor" t-out="order.partner_id.name"/>
+                                        <td data-label="Expected Date">
+                                            <span t-if="order.date_planned" t-field="order.date_planned"
+                                                  t-options='{"widget": "date"}'/>
+                                            <span t-else="" class="o_vendor_muted">-</span>
+                                        </td>
+                                        <td data-label="Total Amount" class="text-end">
+                                            <span t-field="order.amount_total"
+                                                  t-options='{"widget": "monetary", "display_currency": order.currency_id}'/>
+                                        </td>
+                                        <td data-label="Status">
+                                            <t t-set="st" t-value="order.vendor_portal_status()"/>
+                                            <t t-call="odex_vendor_portal.vendor_status_badge">
+                                                <t t-set="badge_key" t-value="st[0]"/>
+                                                <t t-set="badge_label" t-value="st[1]"/>
+                                            </t>
+                                        </td>
+                                        <td data-label="Payment">
+                                            <t t-set="pst" t-value="order.vendor_portal_payment_status()"/>
+                                            <t t-call="odex_vendor_portal.vendor_status_badge">
+                                                <t t-set="badge_key" t-value="pst[0]"/>
+                                                <t t-set="badge_label" t-value="pst[1]"/>
+                                            </t>
+                                        </td>
+                                        <td data-label="Action" class="text-end text-nowrap">
+                                            <a t-attf-href="/my/vendor/order/#{order.id}"
+                                               class="o_vendor_action" title="View">
+                                                <i class="fa fa-eye"/>
+                                            </a>
+                                            <a t-attf-href="/my/vendor/order/#{order.id}?report_type=pdf&amp;download=true"
+                                               class="o_vendor_action" title="Download PDF">
+                                                <i class="fa fa-download"/>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="d-flex justify-content-center mt-3">
+                            <t t-call="portal.pager"/>
+                        </div>
+                    </t>
+                    <t t-else="">
+                        <t t-call="odex_vendor_portal.vendor_portal_empty">
+                            <t t-set="empty_icon" t-value="'fa-shopping-cart'"/>
+                            <t t-set="empty_title" t-value="'No purchase orders yet.'"/>
+                            <t t-set="empty_subtitle"
+                               t-value="'Confirmed purchase orders will appear here.'"/>
+                        </t>
+                    </t>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="vendor_portal_order_detail" name="Vendor Portal Purchase Order">
+        <t t-call="portal.portal_layout">
+            <t t-set="page_name" t-value="'vendor_orders'"/>
+            <div class="o_vendor_portal">
+                <div class="o_vendor_card p-4">
+                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+                        <div class="o_vendor_card_head">
+                            <i class="fa fa-shopping-cart o_vendor_head_icon"/>
+                            <span class="o_vendor_card_title">Purchase Order <t t-out="order.name"/></span>
+                        </div>
+                        <div class="text-nowrap">
+                            <a t-attf-href="/my/vendor/order/#{order.id}?report_type=pdf&amp;download=true"
+                               class="btn btn-sm o_vendor_btn_light">
+                                <i class="fa fa-download me-1"/>Download PDF
+                            </a>
+                            <a href="/my/vendor/orders" class="btn btn-sm o_vendor_btn_light">
+                                <i class="fa fa-arrow-left me-1"/>Back
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-6 col-md-3">
+                            <div class="o_vendor_label">Order Date</div>
+                            <div class="o_vendor_value">
+                                <span t-field="order.date_order" t-options='{"widget": "date"}'/>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="o_vendor_label">Expected Date</div>
+                            <div class="o_vendor_value">
+                                <span t-if="order.date_planned" t-field="order.date_planned"
+                                      t-options='{"widget": "date"}'/>
+                                <span t-else="" class="o_vendor_muted">-</span>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="o_vendor_label">Status</div>
+                            <div class="o_vendor_value">
+                                <t t-set="st" t-value="order.vendor_portal_status()"/>
+                                <t t-call="odex_vendor_portal.vendor_status_badge">
+                                    <t t-set="badge_key" t-value="st[0]"/>
+                                    <t t-set="badge_label" t-value="st[1]"/>
+                                </t>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="o_vendor_label">Payment</div>
+                            <div class="o_vendor_value">
+                                <t t-set="pst" t-value="order.vendor_portal_payment_status()"/>
+                                <t t-call="odex_vendor_portal.vendor_status_badge">
+                                    <t t-set="badge_key" t-value="pst[0]"/>
+                                    <t t-set="badge_label" t-value="pst[1]"/>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table o_vendor_table align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Description</th>
+                                    <th>Part No</th>
+                                    <th>Part Type</th>
+                                    <th class="text-end">Quantity</th>
+                                    <th class="text-end">Received</th>
+                                    <th class="text-end">Billed</th>
+                                    <th class="text-end">Unit Price</th>
+                                    <th>Taxes</th>
+                                    <th class="text-end">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="order.order_line" t-as="line">
+                                    <tr t-if="not line.display_type">
+                                        <td data-label="Description" t-out="line.name"/>
+                                        <td data-label="Part No" t-out="line.part_no"/>
+                                        <td data-label="Parts Type" t-out="line.parts_type"/>
+                                        <td data-label="Quantity" class="text-end"><span t-field="line.product_qty"/></td>
+                                        <td data-label="Received" class="text-end"><span t-field="line.qty_received"/></td>
+                                        <td data-label="Billed" class="text-end"><span t-field="line.qty_invoiced"/></td>
+                                        <td data-label="Unit Price" class="text-end">
+                                            <span t-field="line.price_unit"
+                                                  t-options='{"widget": "monetary", "display_currency": order.currency_id}'/>
+                                        </td>
+                                        <td data-label="Taxes" t-out="line.taxes_id.name"/>
+                                        <td data-label="Subtotal" class="text-end">
+                                            <span t-field="line.price_subtotal"
+                                                  t-options='{"widget": "monetary", "display_currency": order.currency_id}'/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="o_vendor_totals mt-3">
+                        <div class="d-flex justify-content-between">
+                            <span>Untaxed Amount</span>
+                            <span t-field="order.amount_untaxed"
+                                  t-options='{"widget": "monetary", "display_currency": order.currency_id}'/>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span>Taxes</span>
+                            <span t-field="order.amount_tax"
+                                  t-options='{"widget": "monetary", "display_currency": order.currency_id}'/>
+                        </div>
+                        <div class="d-flex justify-content-between o_vendor_total_line">
+                            <span>Total</span>
+                            <span t-field="order.amount_total"
+                                  t-options='{"widget": "monetary", "display_currency": order.currency_id}'/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- ============================================================ -->
+    <!-- Pending payments                                             -->
+    <!-- ============================================================ -->
+    <template id="vendor_portal_payments" name="Vendor Portal Pending Payments">
+        <t t-call="portal.portal_layout">
+            <t t-set="page_name" t-value="'vendor_payments'"/>
+            <div class="o_vendor_portal">
+                <div class="o_vendor_card p-4">
+                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+                        <div class="o_vendor_card_head">
+                            <i class="fa fa-calendar o_vendor_head_icon"/>
+                            <span class="o_vendor_card_title">Pending Payments</span>
+                        </div>
+                        <div class="o_vendor_due" t-if="total_due">
+                            Outstanding on this page:
+                            <b><span t-out="total_due"
+                                     t-options='{"widget": "monetary", "display_currency": vendor_currency or request.env.company.currency_id}'/></b>
+                        </div>
+                    </div>
+                    <t t-call="odex_vendor_portal.vendor_portal_toolbar"/>
+                    <t t-if="bills">
+                        <div class="table-responsive">
+                            <table class="table o_vendor_table align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Bill Number</th>
+                                        <th>Invoice Date</th>
+                                        <th>Due Date</th>
+                                        <th class="text-end">Total</th>
+                                        <th class="text-end">Paid</th>
+                                        <th class="text-end">Pending</th>
+                                        <th>Status</th>
+                                        <th class="text-end">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="bills" t-as="bill">
+                                        <td data-label="Bill Number">
+                                            <a t-attf-href="/my/vendor/payment/#{bill.id}"
+                                               class="o_vendor_ref" t-out="bill.name"/>
+                                        </td>
+                                        <td data-label="Invoice Date">
+                                            <span t-if="bill.invoice_date" t-field="bill.invoice_date"
+                                                  t-options='{"widget": "date"}'/>
+                                            <span t-else="" class="o_vendor_muted">-</span>
+                                        </td>
+                                        <td data-label="Due Date">
+                                            <span t-if="bill.invoice_date_due" t-field="bill.invoice_date_due"
+                                                  t-options='{"widget": "date"}'/>
+                                            <span t-else="" class="o_vendor_muted">-</span>
+                                        </td>
+                                        <td data-label="Total" class="text-end">
+                                            <span t-field="bill.amount_total"
+                                                  t-options='{"widget": "monetary", "display_currency": bill.currency_id}'/>
+                                        </td>
+                                        <td data-label="Paid" class="text-end">
+                                            <span t-out="bill.vendor_portal_paid_amount()"
+                                                  t-options='{"widget": "monetary", "display_currency": bill.currency_id}'/>
+                                        </td>
+                                        <td data-label="Pending" class="text-end">
+                                            <span t-field="bill.amount_residual"
+                                                  t-options='{"widget": "monetary", "display_currency": bill.currency_id}'/>
+                                        </td>
+                                        <td data-label="Status">
+                                            <t t-set="pst" t-value="bill.vendor_portal_payment_status()"/>
+                                            <t t-call="odex_vendor_portal.vendor_status_badge">
+                                                <t t-set="badge_key" t-value="pst[0]"/>
+                                                <t t-set="badge_label" t-value="pst[1]"/>
+                                            </t>
+                                        </td>
+                                        <td data-label="Action" class="text-end text-nowrap">
+                                            <a t-attf-href="/my/vendor/payment/#{bill.id}"
+                                               class="o_vendor_action" title="View">
+                                                <i class="fa fa-eye"/>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="d-flex justify-content-center mt-3">
+                            <t t-call="portal.pager"/>
+                        </div>
+                    </t>
+                    <t t-else="">
+                        <t t-call="odex_vendor_portal.vendor_portal_empty">
+                            <t t-set="empty_icon" t-value="'fa-calendar'"/>
+                            <t t-set="empty_title" t-value="'Nothing to show here.'"/>
+                            <t t-set="empty_subtitle"
+                               t-value="'Your bills and their payment status will appear here.'"/>
+                        </t>
+                    </t>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="vendor_portal_payment_detail" name="Vendor Portal Bill">
+        <t t-call="portal.portal_layout">
+            <t t-set="page_name" t-value="'vendor_payments'"/>
+            <div class="o_vendor_portal">
+                <div class="o_vendor_card p-4">
+                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+                        <div class="o_vendor_card_head">
+                            <i class="fa fa-calendar o_vendor_head_icon"/>
+                            <span class="o_vendor_card_title"><t t-out="bill.name"/></span>
+                        </div>
+                        <a href="/my/vendor/payments" class="btn btn-sm o_vendor_btn_light">
+                            <i class="fa fa-arrow-left me-1"/>Back
+                        </a>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-6 col-md-3">
+                            <div class="o_vendor_label">Invoice Date</div>
+                            <div class="o_vendor_value">
+                                <span t-if="bill.invoice_date" t-field="bill.invoice_date"
+                                      t-options='{"widget": "date"}'/>
+                                <span t-else="" class="o_vendor_muted">-</span>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="o_vendor_label">Due Date</div>
+                            <div class="o_vendor_value">
+                                <span t-if="bill.invoice_date_due" t-field="bill.invoice_date_due"
+                                      t-options='{"widget": "date"}'/>
+                                <span t-else="" class="o_vendor_muted">-</span>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="o_vendor_label">Your Reference</div>
+                            <div class="o_vendor_value">
+                                <span t-if="bill.ref" t-out="bill.ref"/>
+                                <span t-else="" class="o_vendor_muted">-</span>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="o_vendor_label">Status</div>
+                            <div class="o_vendor_value">
+                                <t t-set="pst" t-value="bill.vendor_portal_payment_status()"/>
+                                <t t-call="odex_vendor_portal.vendor_status_badge">
+                                    <t t-set="badge_key" t-value="pst[0]"/>
+                                    <t t-set="badge_label" t-value="pst[1]"/>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="o_vendor_totals mt-4">
+                        <div class="d-flex justify-content-between">
+                            <span>Total Amount</span>
+                            <span t-field="bill.amount_total"
+                                  t-options='{"widget": "monetary", "display_currency": bill.currency_id}'/>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span>Paid Amount</span>
+                            <span t-out="bill.vendor_portal_paid_amount()"
+                                  t-options='{"widget": "monetary", "display_currency": bill.currency_id}'/>
+                        </div>
+                        <div class="d-flex justify-content-between o_vendor_total_line">
+                            <span>Pending Amount</span>
+                            <span t-field="bill.amount_residual"
+                                  t-options='{"widget": "monetary", "display_currency": bill.currency_id}'/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>

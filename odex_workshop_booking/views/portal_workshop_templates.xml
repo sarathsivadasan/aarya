@@ -1,0 +1,542 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================= Dashboard ===================== -->
+    <template id="portal_workshop_home" name="Workshop Portal">
+        <t t-call="portal.portal_layout">
+            <div class="owp">
+                <div class="row g-3">
+
+                    <!-- Left column -->
+                    <div class="col-12 col-lg-4 col-xl-3">
+                        <div class="owp-card p-3 p-lg-4 mb-3">
+                            <div class="owp-section-head">
+                                <i class="fa fa-user-circle-o"/> Customer Details
+                            </div>
+                            <div class="d-flex align-items-center gap-3 mt-3">
+                                <div class="owp-avatar" t-out="(partner.name or '?')[:2].upper()"/>
+                                <div class="min-w-0">
+                                    <div class="fw-bold text-truncate" t-out="partner.name"/>
+                                    <div class="small text-muted text-truncate"
+                                         t-out="partner.email or ''"/>
+                                    <div class="small text-muted" t-if="partner.mobile or partner.phone">
+                                        <i class="fa fa-phone me-1"/>
+                                        <t t-out="partner.mobile or partner.phone"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <t t-if="partner.ref">
+                                <div class="owp-kv mt-3">
+                                    <span>Customer Code</span><b t-out="partner.ref"/>
+                                </div>
+                            </t>
+                            <hr class="my-3"/>
+                            <div class="small fw-semibold text-muted mb-1">Address</div>
+                            <div class="small">
+                                <div t-if="partner.street" t-out="partner.street"/>
+                                <div t-if="partner.street2" t-out="partner.street2"/>
+                                <div>
+                                    <t t-if="partner.city"><t t-out="partner.city"/></t>
+                                    <t t-if="partner.state_id">, <t t-out="partner.state_id.name"/></t>
+                                </div>
+                                <div t-if="partner.country_id" t-out="partner.country_id.name"/>
+                                <div t-if="partner.zip">P.O. Box <t t-out="partner.zip"/></div>
+                            </div>
+                            <a href="/my/account" class="owp-link mt-3 d-inline-flex">
+                                Edit Profile <i class="fa fa-angle-right ms-1"/></a>
+                        </div>
+
+                        <div class="owp-card p-3 p-lg-4">
+                            <div class="owp-section-head">
+                                <i class="fa fa-map-marker"/> Pickup &amp; Drop-off
+                            </div>
+                            <p class="small text-muted mt-2 mb-3">
+                                Choose where you would like to hand over and
+                                collect your vehicle.
+                            </p>
+                            <form method="post" action="/my/workshop/locations">
+                                <input type="hidden" name="csrf_token"
+                                       t-att-value="request.csrf_token()"/>
+                                <label class="form-label small fw-semibold">Pickup Location</label>
+                                <select name="pickup_location_id"
+                                        class="form-select form-select-sm mb-3">
+                                    <option value="">Not required</option>
+                                    <t t-foreach="pickup_locations" t-as="loc">
+                                        <option t-att-value="loc.id"
+                                                t-att-selected="loc == pickup_location"
+                                                t-out="loc.display_name"/>
+                                    </t>
+                                </select>
+                                <label class="form-label small fw-semibold">Drop-off Location</label>
+                                <select name="drop_location_id"
+                                        class="form-select form-select-sm mb-3">
+                                    <option value="">Not required</option>
+                                    <t t-foreach="drop_locations" t-as="loc">
+                                        <option t-att-value="loc.id"
+                                                t-att-selected="loc == drop_location"
+                                                t-out="loc.display_name"/>
+                                    </t>
+                                </select>
+                                <button type="submit" class="btn btn-sm btn-primary w-100">
+                                    Save Locations</button>
+                            </form>
+                            <t t-if="drop_location">
+                                <hr class="my-3"/>
+                                <div class="small">
+                                    <div class="fw-semibold" t-out="drop_location.name"/>
+                                    <div class="text-muted" t-out="drop_location.full_address or ''"/>
+                                    <div class="text-muted" t-if="drop_location.phone">
+                                        <i class="fa fa-phone me-1"/><t t-out="drop_location.phone"/></div>
+                                    <a t-if="drop_location.map_url" t-att-href="drop_location.map_url"
+                                       target="_blank" class="owp-link mt-1 d-inline-flex">
+                                        View on Map <i class="fa fa-external-link ms-1"/></a>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+
+                    <!-- Cards -->
+                    <div class="col-12 col-lg-8 col-xl-9">
+                        <div class="owp-grid">
+                            <t t-call="odex_workshop_booking.portal_tile">
+                                <t t-set="tile_url" t-value="'/my/vehicles'"/>
+                                <t t-set="tile_icon" t-value="'fa-car'"/>
+                                <t t-set="tile_tone" t-value="'green'"/>
+                                <t t-set="tile_title">My Vehicles</t>
+                                <t t-set="tile_text">View and manage your registered vehicles</t>
+                                <t t-set="tile_count" t-value="vehicle_count"/>
+                            </t>
+                            <t t-call="odex_workshop_booking.portal_tile">
+                                <t t-set="tile_url" t-value="'/my/bookings'"/>
+                                <t t-set="tile_icon" t-value="'fa-calendar'"/>
+                                <t t-set="tile_tone" t-value="'indigo'"/>
+                                <t t-set="tile_title">My Bookings</t>
+                                <t t-set="tile_text">View, create and track your service bookings</t>
+                                <t t-set="tile_count" t-value="booking_count"/>
+                            </t>
+                            <t t-if="job_card_count is not None" t-call="odex_workshop_booking.portal_tile">
+                                <t t-set="tile_url" t-value="'/my/jobcards'"/>
+                                <t t-set="tile_icon" t-value="'fa-wrench'"/>
+                                <t t-set="tile_tone" t-value="'orange'"/>
+                                <t t-set="tile_title">Job Cards</t>
+                                <t t-set="tile_text">View your job cards and repair status</t>
+                                <t t-set="tile_count" t-value="job_card_count"/>
+                            </t>
+                            <t t-if="quotation_count is not None" t-call="odex_workshop_booking.portal_tile">
+                                <t t-set="tile_url" t-value="'/my/quotations'"/>
+                                <t t-set="tile_icon" t-value="'fa-file-text-o'"/>
+                                <t t-set="tile_tone" t-value="'blue'"/>
+                                <t t-set="tile_title">Quotations</t>
+                                <t t-set="tile_text">View your quotations and approve online</t>
+                                <t t-set="tile_count" t-value="quotation_count"/>
+                            </t>
+                            <t t-call="odex_workshop_booking.portal_tile">
+                                <t t-set="tile_url" t-value="'/my/service-history'"/>
+                                <t t-set="tile_icon" t-value="'fa-history'"/>
+                                <t t-set="tile_tone" t-value="'amber'"/>
+                                <t t-set="tile_title">Service History</t>
+                                <t t-set="tile_text">View your vehicle service history and records</t>
+                            </t>
+                            <t t-call="odex_workshop_booking.portal_tile">
+                                <t t-set="tile_url" t-value="'/my/invoices'"/>
+                                <t t-set="tile_icon" t-value="'fa-file-o'"/>
+                                <t t-set="tile_tone" t-value="'pink'"/>
+                                <t t-set="tile_title">Your Invoices</t>
+                                <t t-set="tile_text">Follow, download or pay your invoices</t>
+                                <t t-set="tile_count" t-value="invoice_count"/>
+                            </t>
+                            <t t-call="odex_workshop_booking.portal_tile">
+                                <t t-set="tile_url" t-value="'/my/account'"/>
+                                <t t-set="tile_icon" t-value="'fa-user'"/>
+                                <t t-set="tile_tone" t-value="'teal'"/>
+                                <t t-set="tile_title">Profile</t>
+                                <t t-set="tile_text">Update your contact details and password</t>
+                            </t>
+                            <t t-call="odex_workshop_booking.portal_tile">
+                                <t t-set="tile_url" t-value="'/my/workshop/support'"/>
+                                <t t-set="tile_icon" t-value="'fa-headphones'"/>
+                                <t t-set="tile_tone" t-value="'blue'"/>
+                                <t t-set="tile_title">Support</t>
+                                <t t-set="tile_text">Raise a ticket or chat with our support team</t>
+                            </t>
+                            <t t-call="odex_workshop_booking.portal_tile">
+                                <t t-set="tile_url" t-value="'/my/workshop/documents'"/>
+                                <t t-set="tile_icon" t-value="'fa-folder-open-o'"/>
+                                <t t-set="tile_tone" t-value="'green'"/>
+                                <t t-set="tile_title">Documents</t>
+                                <t t-set="tile_text">View important documents and files</t>
+                            </t>
+                        </div>
+                    </div>
+
+                    <!-- Vehicles at a glance -->
+                    <div class="col-12">
+                        <div class="owp-card p-3 p-lg-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div class="owp-section-head mb-0">
+                                    <i class="fa fa-car"/> My Vehicles at a Glance
+                                </div>
+                                <a href="/my/vehicles" class="owp-link">
+                                    View All Vehicles <i class="fa fa-angle-right ms-1"/></a>
+                            </div>
+                            <t t-if="not vehicle_rows">
+                                <div class="text-center text-muted py-4">
+                                    No vehicles registered yet.
+                                    <a href="/my/vehicles">Add your first vehicle</a>.
+                                </div>
+                            </t>
+                            <div t-else="" class="table-responsive d-none d-md-block">
+                                <table class="table align-middle owp-table mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Vehicle</th>
+                                            <th>Plate No.</th>
+                                            <th>Model</th>
+                                            <th>Year</th>
+                                            <th>Odometer</th>
+                                            <th class="text-end">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="vehicle_rows" t-as="row">
+                                            <tr>
+                                                <td>
+                                                    <div class="fw-semibold" t-out="row['vehicle'].display_name"/>
+                                                    <div class="small text-muted" t-if="row['vehicle'].vin_sn">
+                                                        VIN: <t t-out="row['vehicle'].vin_sn"/></div>
+                                                </td>
+                                                <td t-out="row['vehicle'].license_plate or '-'"/>
+                                                <td t-out="row['vehicle'].model_id.name or '-'"/>
+                                                <td t-out="row['vehicle'].model_year or '-'"/>
+                                                <td>
+                                                    <t t-if="row['extra'].get('odometer')">
+                                                        <t t-out="row['extra']['odometer']"/> km
+                                                    </t>
+                                                    <t t-else="">-</t>
+                                                </td>
+                                                <td class="text-end">
+                                                    <a t-attf-href="/my/vehicles/#{row['vehicle'].id}"
+                                                       class="btn btn-sm btn-outline-primary">View Details</a>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- mobile cards -->
+                            <div class="d-md-none d-flex flex-column gap-2">
+                                <t t-foreach="vehicle_rows" t-as="row">
+                                    <a t-attf-href="/my/vehicles/#{row['vehicle'].id}"
+                                       class="owp-mini d-block text-reset text-decoration-none">
+                                        <div class="fw-semibold" t-out="row['vehicle'].display_name"/>
+                                        <div class="small text-muted">
+                                            <t t-out="row['vehicle'].license_plate or 'No plate'"/>
+                                            <t t-if="row['vehicle'].model_year"> · <t t-out="row['vehicle'].model_year"/></t>
+                                        </div>
+                                    </a>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="portal_tile" name="Portal Tile">
+        <a t-att-href="tile_url" class="owp-tile">
+            <span t-attf-class="owp-tile-icon owp-t-#{tile_tone}">
+                <i t-attf-class="fa #{tile_icon}"/>
+            </span>
+            <span class="owp-tile-body">
+                <span class="owp-tile-title">
+                    <t t-out="tile_title"/>
+                    <span t-if="tile_count" class="owp-tile-count" t-out="tile_count"/>
+                </span>
+                <span class="owp-tile-text" t-out="tile_text"/>
+            </span>
+            <i class="fa fa-angle-right owp-tile-arrow"/>
+        </a>
+    </template>
+
+    <!-- ============================= Vehicle detail ================ -->
+    <template id="portal_vehicle_detail" name="Vehicle Detail">
+        <t t-call="portal.portal_layout">
+            <div class="owp">
+                <div class="owp-card p-3 p-lg-4 mb-3">
+                    <div class="d-flex flex-wrap justify-content-between gap-3">
+                        <div class="d-flex gap-3">
+                            <img t-if="vehicle.image_128"
+                                 t-attf-src="data:image/png;base64,#{vehicle.image_128}"
+                                 class="owp-vehicle-img" alt="Vehicle"/>
+                            <span t-else="" class="owp-tile-icon owp-t-green"><i class="fa fa-car"/></span>
+                            <div>
+                                <h4 class="fw-bold mb-1" t-out="vehicle.display_name"/>
+                                <div class="text-muted small">
+                                    <t t-out="vehicle.license_plate or 'No plate'"/>
+                                    <t t-if="vehicle.model_year"> · <t t-out="vehicle.model_year"/></t>
+                                </div>
+                                <div class="mt-2">
+                                    <span t-if="status" t-attf-class="owp-badge owp-b-#{status['tone']}"
+                                          t-out="status['label']"/>
+                                    <span t-else="" class="owp-badge owp-b-grey">Not currently in service</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-wrap gap-2 align-items-start">
+                            <a href="/book-service" class="btn btn-sm btn-primary">
+                                <i class="fa fa-calendar-plus-o me-1"/>Book Appointment</a>
+                            <a href="/my/service-history" class="btn btn-sm btn-outline-secondary">Service History</a>
+                            <a href="/my/invoices" class="btn btn-sm btn-outline-secondary">Invoices</a>
+                        </div>
+                    </div>
+                    <hr/>
+                    <div class="row g-3 owp-specs">
+                        <div class="col-6 col-md-4 col-xl-3">
+                            <span>Registration Number</span><b t-out="vehicle.plate_label()"/></div>
+                        <div class="col-6 col-md-4 col-xl-3">
+                            <span>Plate Number</span><b t-out="vehicle.license_plate or '-'"/></div>
+                        <div class="col-6 col-md-4 col-xl-3">
+                            <span>VIN / Chassis</span><b t-out="vehicle.vin_sn or '-'"/></div>
+                        <div class="col-6 col-md-4 col-xl-3">
+                            <span>Make</span><b t-out="vehicle.model_id.brand_id.name or '-'"/></div>
+                        <div class="col-6 col-md-4 col-xl-3">
+                            <span>Model</span><b t-out="vehicle.model_id.name or '-'"/></div>
+                        <div class="col-6 col-md-4 col-xl-3">
+                            <span>Year</span><b t-out="vehicle.model_year or '-'"/></div>
+                        <div class="col-6 col-md-4 col-xl-3">
+                            <span>Color</span><b t-out="vehicle.color or '-'"/></div>
+                        <div class="col-6 col-md-4 col-xl-3">
+                            <span>Customer</span><b t-out="partner.name"/></div>
+                        <div class="col-6 col-md-4 col-xl-3" t-if="partner.mobile or partner.phone">
+                            <span>Mobile</span><b t-out="partner.mobile or partner.phone"/></div>
+                        <div class="col-6 col-md-4 col-xl-3" t-if="partner.email">
+                            <span>Email</span><b t-out="partner.email"/></div>
+                        <t t-foreach="extra" t-as="key">
+                            <div class="col-6 col-md-4 col-xl-3">
+                                <span t-out="key.replace('_', ' ').title()"/>
+                                <b t-out="extra[key]"/>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+
+                <div t-if="timeline" class="owp-card p-3 p-lg-4 mb-3">
+                    <div class="owp-section-head mb-3"><i class="fa fa-road"/> Service Timeline</div>
+                    <div class="owp-timeline">
+                        <t t-foreach="timeline" t-as="stage">
+                            <div class="owp-tl-item">
+                                <span t-attf-class="owp-tl-dot owp-b-#{stage['tone']}"/>
+                                <div>
+                                    <div class="fw-semibold" t-out="stage['label']"/>
+                                    <div class="small text-muted">
+                                        <t t-if="stage['reference']"><t t-out="stage['reference']"/></t>
+                                        <t t-if="stage['date']"> · <t t-out="stage['date']"
+                                           t-options="{'widget': 'date'}"/></t>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+
+                <div class="owp-card p-3 p-lg-4">
+                    <div class="owp-section-head mb-3"><i class="fa fa-calendar"/> Recent Bookings</div>
+                    <t t-if="not bookings">
+                        <div class="text-muted small">No bookings for this vehicle yet.</div>
+                    </t>
+                    <div t-else="" class="table-responsive">
+                        <table class="table owp-table align-middle mb-0">
+                            <thead>
+                                <tr><th>Booking</th><th>Date</th><th>Time</th>
+                                    <th>Service</th><th>Status</th></tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="bookings" t-as="booking">
+                                    <tr>
+                                        <td><a t-attf-href="/my/bookings/#{booking.id}"
+                                               t-out="booking.name"/></td>
+                                        <td t-out="booking.booking_date"
+                                            t-options="{'widget': 'date'}"/>
+                                        <td t-out="booking.time_label"/>
+                                        <td t-out="booking.service_type_id.name"/>
+                                        <td><span t-attf-class="owb-status-badge owb-st-#{booking.state}"
+                                                  t-out="dict(booking._fields['state'].selection).get(booking.state)"/></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <a href="/my/vehicles" class="btn btn-sm btn-outline-secondary mt-3">
+                    <i class="fa fa-arrow-left me-1"/>Back to Vehicles</a>
+            </div>
+        </t>
+    </template>
+
+    <!-- ============================= Service history =============== -->
+    <template id="portal_service_history" name="Service History">
+        <t t-call="portal.portal_layout">
+            <div class="owp">
+                <a href="/my" class="btn btn-sm btn-outline-secondary mb-3">
+                    <i class="fa fa-arrow-left me-1"/>Back to Dashboard</a>
+                <h4 class="fw-bold mb-3">Service History</h4>
+                <t t-if="not invoices">
+                    <div class="owp-card p-5 text-center text-muted">
+                        No billed services yet.
+                    </div>
+                </t>
+                <div t-else="" class="d-flex flex-column gap-3">
+                    <t t-foreach="invoices" t-as="invoice">
+                        <div class="owp-card p-3 p-lg-4">
+                            <div class="d-flex flex-wrap justify-content-between gap-2">
+                                <div>
+                                    <div class="fw-bold" t-out="invoice.name"/>
+                                    <div class="small text-muted">
+                                        <t t-out="invoice.invoice_date"
+                                           t-options="{'widget': 'date'}"/>
+                                        · <t t-out="invoice.company_id.name"/>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <div class="fw-bold"
+                                         t-out="invoice.amount_total"
+                                         t-options="{'widget': 'monetary', 'display_currency': invoice.currency_id}"/>
+                                    <a t-attf-href="/my/invoices/#{invoice.id}"
+                                       class="owp-link">Open invoice</a>
+                                </div>
+                            </div>
+                            <div class="table-responsive mt-3">
+                                <table class="table table-sm owp-table mb-0">
+                                    <thead>
+                                        <tr><th>Description</th><th class="text-end">Qty</th>
+                                            <th class="text-end">Unit Price</th>
+                                            <th class="text-end">Disc.</th>
+                                            <th class="text-end">Taxes</th>
+                                            <th class="text-end">Total</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="invoice.invoice_line_ids.filtered(lambda l: l.display_type == 'product')"
+                                           t-as="line">
+                                            <tr>
+                                                <td t-out="line.name"/>
+                                                <td class="text-end" t-out="line.quantity"/>
+                                                <td class="text-end" t-out="line.price_unit"
+                                                    t-options="{'widget': 'monetary', 'display_currency': invoice.currency_id}"/>
+                                                <td class="text-end">
+                                                    <t t-out="line.discount"/>%</td>
+                                                <td class="text-end"
+                                                    t-out="', '.join(line.tax_ids.mapped('name')) or '-'"/>
+                                                <td class="text-end" t-out="line.price_subtotal"
+                                                    t-options="{'widget': 'monetary', 'display_currency': invoice.currency_id}"/>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- ============================= Support ======================= -->
+    <template id="portal_support" name="Workshop Support">
+        <t t-call="portal.portal_layout">
+            <div class="owp">
+                <a href="/my" class="btn btn-sm btn-outline-secondary mb-3">
+                    <i class="fa fa-arrow-left me-1"/>Back to Dashboard</a>
+                <div class="owp-card p-4">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <img t-if="company.logo" t-attf-src="data:image/png;base64,#{company.logo}"
+                             class="owp-logo" alt="Logo"/>
+                        <div>
+                            <h4 class="fw-bold mb-0" t-out="company.name"/>
+                            <div class="text-muted small" t-if="location" t-out="location.name"/>
+                        </div>
+                    </div>
+                    <div class="row g-4">
+                        <div class="col-12 col-md-6 owp-specs">
+                            <div><span>Address</span><b>
+                                <t t-out="company.street or ''"/>
+                                <t t-if="company.city">, <t t-out="company.city"/></t>
+                                <t t-if="company.country_id">, <t t-out="company.country_id.name"/></t>
+                            </b></div>
+                            <div t-if="company.phone"><span>Phone</span><b t-out="company.phone"/></div>
+                            <div t-if="company.mobile"><span>Mobile</span><b t-out="company.mobile"/></div>
+                            <div t-if="company.email"><span>Email</span><b t-out="company.email"/></div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="fw-semibold mb-2">Working Hours</div>
+                            <t t-if="working_hours">
+                                <t t-foreach="working_hours" t-as="line">
+                                    <div class="d-flex justify-content-between small border-bottom py-1">
+                                        <span t-out="dict(line._fields['dayofweek'].selection).get(line.dayofweek)"/>
+                                        <span>
+                                            <t t-out="'%02d:%02d' % (int(line.hour_from), round((line.hour_from %% 1) * 60))"/>
+                                            -
+                                            <t t-out="'%02d:%02d' % (int(line.hour_to), round((line.hour_to %% 1) * 60))"/>
+                                        </span>
+                                    </div>
+                                </t>
+                            </t>
+                            <div t-else="" class="text-muted small">Contact us for opening hours.</div>
+                        </div>
+                    </div>
+                    <hr/>
+                    <div class="d-flex flex-wrap gap-2">
+                        <a t-attf-href="mailto:#{company.email or ''}" class="btn btn-sm btn-primary">
+                            <i class="fa fa-envelope me-1"/>Raise Support Ticket</a>
+                        <a t-if="company.phone" t-attf-href="tel:#{company.phone}"
+                           class="btn btn-sm btn-outline-secondary">
+                            <i class="fa fa-phone me-1"/>Call Us</a>
+                        <a t-if="company.street"
+                           t-attf-href="https://maps.google.com/?q=#{company.street} #{company.city or ''}"
+                           target="_blank" class="btn btn-sm btn-outline-secondary">
+                            <i class="fa fa-map-marker me-1"/>Google Maps</a>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- ============================= Documents ===================== -->
+    <template id="portal_documents" name="Vehicle Documents">
+        <t t-call="portal.portal_layout">
+            <div class="owp">
+                <a href="/my" class="btn btn-sm btn-outline-secondary mb-3">
+                    <i class="fa fa-arrow-left me-1"/>Back to Dashboard</a>
+                <h4 class="fw-bold mb-3">Documents</h4>
+                <t t-if="not vehicles">
+                    <div class="owp-card p-5 text-center text-muted">No vehicles yet.</div>
+                </t>
+                <div t-else="" class="d-flex flex-column gap-3">
+                    <t t-foreach="vehicles" t-as="vehicle">
+                        <div class="owp-card p-3 p-lg-4">
+                            <div class="fw-bold mb-2" t-out="vehicle.display_name"/>
+                            <t t-set="files" t-value="documents.get(vehicle.id) or []"/>
+                            <t t-if="not files">
+                                <div class="small text-muted">
+                                    No documents uploaded for this vehicle.
+                                </div>
+                            </t>
+                            <div t-else="" class="d-flex flex-column gap-2">
+                                <t t-foreach="files" t-as="doc">
+                                    <div class="d-flex justify-content-between align-items-center owp-mini">
+                                        <span class="text-truncate">
+                                            <i class="fa fa-file-o me-2 text-primary"/>
+                                            <t t-out="doc.name"/>
+                                        </span>
+                                        <a t-attf-href="/web/content/#{doc.id}?download=true"
+                                           class="btn btn-sm btn-outline-primary">Download</a>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

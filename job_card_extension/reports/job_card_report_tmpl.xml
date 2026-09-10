@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+    	<template id="external_layout_standard">
+	        <div t-attf-class="header o_company_#{company.id}_layout" t-att-style="report_header_style">
+	            <div class="row">
+	                <div class="col-9 text-left mb4" style="margin-top:10px;">
+	                 	<div name="company_address" class="float-left mb4">
+	                        <ul class="list-unstyled" t-if="company.company_details or forced_vat">
+	                            <li t-if="company.company_details">
+	                                <t t-esc="company.company_details"/>
+	                            </li>
+	                            <li t-if="forced_vat">
+	                                <t t-esc="company.country_id.vat_label or 'Tax ID'"/>:
+	                                <span t-esc="forced_vat"/>
+	                            </li>
+	                        </ul>
+                      	</div>
+                    </div>
+	                	<!-- t-field="company.report_header" name="moto"/> -->
+	                <div class="col-3 text-right">
+	                    <img t-if="company.logo" t-att-src="image_data_uri(company.logo)"
+	                         style="max-height: 120px; width:150px;" alt="Logo"/>
+	                    <!-- <img t-if="company.qr_image" t-att-src="image_data_uri(company.qr_image)"
+	                         style="max-height: 120px; width:150px;" alt="QR"/> -->
+	                </div>
+	            </div>
+	        </div>
+
+        	<div t-attf-class="article o_report_layout_standard o_company_#{company.id}_layout {{  'o_layout_background' if company.layout_background in ['Geometric', 'Custom']  else  '' }}"
+             t-attf-style="background-image: url({{ 'data:image/png;base64,%s' % company.layout_background_image.decode('utf-8') if company.layout_background_image and company.layout_background == 'Custom' else '/base/static/img/bg_background_template.jpg' if company.layout_background == 'Geometric' else ''}});"
+             t-att-data-oe-model="o and o._name" t-att-data-oe-id="o and o.id"
+             t-att-data-oe-lang="o and o.env.context.get('lang')">
+	            <div class="pt-5">
+	                <!-- This div ensures that the address is not cropped by the header. -->
+	                <t t-call="web.address_layout"/>
+	            </div>
+	            <t t-out="0"/>
+        	</div>
+
+	        <div t-attf-class="footer o_standard_footer o_company_#{company.id}_layout">
+	            <div class="row">
+	                <div class="col-6">
+	                    <table align="left">
+	                        <tr style="border:hidden;">
+	                            <td>
+	                                <b>User Name:</b>
+	                            </td>
+	                            <td>
+	                                <t t-esc="user.name"/>
+	                            </td>
+	                        </tr>
+	                    </table>
+	                </div>
+	                <div class="col-6">
+	                    <table align="center">
+	                        <tr style="border:hidden;">
+	                            <td>
+	                                <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y %H:%M')"/>
+	                            </td>
+	                        </tr>
+	                    </table>
+	                </div>
+	            </div>
+	            <div class="text-center">
+	                <ul class="list-inline mb4">
+	                    <br/>
+	                    <div t-field="company.report_footer"/>
+	                </ul>
+	            </div>
+	        </div>
+    	</template>
+
+		<template id="external_layout">
+        	<t t-if="not o" t-set="o" t-value="doc"/>
+
+	        <t t-if="not company">
+	            <!-- Multicompany -->
+	            <t t-if="company_id">
+	                <t t-set="company" t-value="company_id"/>
+	            </t>
+	            <t t-elif="o and 'company_id' in o and o.company_id.sudo()">
+	                <t t-set="company" t-value="o.company_id.sudo()"/>
+	            </t>
+	            <t t-else="else">
+	                <t t-set="company" t-value="res_company"/>
+	            </t>
+	        </t>
+	        <t t-call="job_card_extension.external_layout_standard">
+	            <t t-out="0"/>
+	        </t>
+    	</template>
+
+    	<template id="jobcard_report">
+			<t t-foreach="docs" t-as="o">
+            	<t t-call="job_card_extension.external_layout">
+                	<t t-set="doc" t-value="o.with_context(lang=o.partner_id.lang)"/>
+                	<t t-call="web.html_container">
+                    	<div class="page" style="font-size: 12px;">
+                        	<style>
+                            th, td, tr {
+                                padding: 5px;
+                                border: none;
+                                }
+                        </style>
+                        	<div class="title">
+	                            <table width="100%">
+	                                <tr style="border: hidden;">
+	                                    <td class="text-center" style="font-size: 20px; margin-top:0px; padding-top:0px;">
+	                                        <b>Job Card</b>
+	                                    </td>
+	                                </tr>
+	                            </table>
+                        	</div>
+                        	<div class="row" style="border: 1px solid black; margin-top: 0.5rem;">
+                            	<div class="col-6" style="">
+	                                <table width="100%" style="margin-top: 1rem; margin-bottom: 1rem;">
+	                                    <tr style="line-height:9px;">
+	                                        <td style="width: 67px;" class="text-left">Job No.</td>
+	                                        <td style="width: 7px;" class="text-center">
+	                                            <b>:</b>
+	                                        </td>
+	                                        <td style="width: 150px;" class="text-left">
+	                                            <span t-field="o.name"/>
+	                                        </td>
+	                                    </tr>
+	                                </table>
+                            	</div>
+                            	<div class="col-6" style="">
+	                                <table width="100%" style="margin-top: 1rem;">
+	                                    <tr style="line-height:9px;">
+	                                        <td style="width: 160px;" class="text-left">Date and Time</td>
+	                                        <td style="width: 7px;" class="text-center">
+	                                            <b>:</b>
+	                                        </td>
+	                                        <td style="width: 150px;" class="text-left">
+	                                            <span t-field="o.create_date"/>
+	                                        </td>
+	                                    </tr>
+	                                </table>
+                            	</div>
+                        	</div>
+
+                        	<div class="row" style="border: 1px solid black;">
+                            	<div class="col-6" style="">
+	                                <table style="width: 100%; color: #212529; margin-top: 1rem; margin-bottom: 1rem;">
+	                                    <tr style="line-height:9px;">
+	                                        <td style="width: 25px;">Name</td>
+	                                        <td style="width: 5px;" class="text-left">
+	                                            <b>:</b>
+	                                        </td>
+	                                        <td style="width: 160px;" class="text-left">
+	                                            <t t-esc="o.partner_id.name"/>
+	                                        </td>
+	                                    </tr>
+	                                    <tr style="line-height:9px;">
+	                                        <td style="width: 25px;">Address</td>
+	                                        <td style="width: 5px;" class="text-left">
+	                                            <b>:</b>
+	                                        </td>
+	                                        <td style="width: 150px;">
+	                                            <t t-if="o.partner_id.street">
+	                                            	<span t-field="o.partner_id.street"/>,
+	                                            </t>
+	                                            <t t-if="o.partner_id.street2">
+	                                            	<span t-field="o.partner_id.street2"/>,
+	                                            </t>
+	                                            <t t-if="o.partner_id.city">
+	                                            	<span t-field="o.partner_id.city"/>,
+	                                            </t>
+	                                            <t t-if="o.partner_id.state_id">
+	                                            	<span t-field="o.partner_id.state_id.name"/>,
+	                                            </t>
+	                                            <t t-if="o.partner_id.zip">
+	                                                <span t-field="o.partner_id.zip"/>
+	                                            </t>
+	                                        </td>
+	                                    </tr>
+                                    	<tr style="line-height:9px;">
+	                                        <td style="width: 25px;">Telephone</td>
+	                                        <td style="width: 5px;" class="text-left">
+	                                            <b>:</b>
+	                                        </td>
+                                        	<td style="width: 150px;">
+                                                <span t-field="o.partner_id.phone"/>
+                                        	</td>
+                                    	</tr>
+                                    	<tr style="line-height:9px;">
+	                                        <td style="width: 25px;">Email</td>
+	                                        <td style="width: 5px;" class="text-left">
+	                                            <b>:</b>
+	                                        </td>
+	                                        <td style="width: 150px;">
+	                                            <span t-field="o.partner_id.email"/>
+	                                        </td>
+                                    	</tr>
+                                    	<tr style="line-height:9px;">
+	                                        <td style="width: 25px;">TRN No.</td>
+	                                        <td style="width: 5px;" class="text-left">
+	                                            <b>:</b>
+	                                        </td>
+	                                        <td style="width: 150px;">
+	                                            <span t-field="o.partner_id.vat"/>
+	                                        </td>
+	                                    </tr>
+                                	</table>
+                            	</div>
+
+                            	<div class="col-6" style="">
+                                	<table style="width: 100%;color: #212529; margin-top: 1rem;margin-bottom: 1rem;">
+	                                    <tr style="line-height:9px;">  
+	                                        <td style="width: 150px;" class="text-left">Estimation</td>
+	                                        <td style="width: 7px;" class="text-left">
+	                                            <b>:</b>
+	                                        </td>
+	                                        <td style="width: 200px;" class="text-left">
+	                                            <span t-field="o.sale_order_id.name"/>
+	                                        </td>
+	                                    </tr>
+	                                    <tr style="line-height:9px;">
+	                                        <td>License</td>
+	                                        <td>
+	                                            <b>:</b>
+	                                        </td>
+	                                        <td>
+	                                            <span t-field="o.vehicle_id.license_plate"/>
+	                                        </td>
+	                                    </tr>
+	                                    <tr style="line-height:9px;">
+	                                        <td>Make and Model</td>
+	                                        <td>
+	                                            <b>:</b>
+	                                        </td>
+	                                        <td>
+	                                            <span t-field="o.brand.name"/> - <span t-field="o.model_id.name"/>
+	                                        </td>
+	                                    </tr>
+	                                    <tr style="line-height:9px;">
+	                                        <td>VIN No.</td>
+	                                        <td>
+	                                            <b>:</b>
+	                                        </td>
+	                                        <td>
+	                                            <span t-field="o.vin"/>
+	                                        </td>
+	                                    </tr>
+										<tr style="line-height:9px;">
+	                                        <td>Odometer</td>
+	                                        <td><b>:</b></td>
+	                                        <td>
+	                                            <span t-field="o.odometer"/>
+	                                        </td>
+	                                    </tr>
+                                	</table>
+                            	</div>
+                        	</div>
+                    
+                        	<div class="row">
+	                            <table class="table" style="border-top: 2px solid black !important;margin-top:20px">
+	                                <tr style="line-height:8px;border-bottom: 2px solid black !important;border-left:hidden; border-right:hidden">
+	                                    <td style="width: 8%" class="text-center">
+	                                        <strong>S.No.</strong>
+	                                    </td>
+	                                    <td style="width: 50%" class="text-left">
+	                                        <strong>Service Requested</strong>
+	                                    </td>
+	                                    <td style="width: 42%" class="text-left">
+	                                        <strong>Remarks</strong>
+	                                    </td>
+	                                </tr>
+                                	<t t-set="req_ctr" t-value="1"/>
+                                	<t t-if="o.requested_services_ids">
+	                                    <tr t-foreach="o.requested_services_ids" t-as="req_line"
+	                                        style="line-height:8px; border-bottom:hidden; border-left:hidden; border-right:hidden;">
+	                                        <td style="width: 8%;" class="text-center">
+	                                            <t t-esc="req_ctr"/>
+	                                        </td>
+	                                        <td style="width: 50%" class="text-left">
+	                                            <t t-esc="req_line.product_id.name"/>
+	                                        </td>
+	                                        <td style="width: 42%" class="text-left">
+	                                            <t t-esc="req_line.remark"/>
+	                                        </td>
+	                                        <t t-set="req_ctr" t-value="req_ctr+1"/>
+	                                    </tr>
+                                	</t>
+                            	</table>
+                        	</div>
+
+                        	<div class="row">
+	                            <table class="table" style="border-top: 2px solid black !important;margin-top:20px">
+	                                <!--Cost Sheet Description-->
+	                                <tr style="line-height:8px;
+	                                	border-bottom: 2px solid black !important; border-left:hidden;
+	                                	border-right:hidden;">
+	                                    <td style="width: 8%" class="text-center">
+	                                        <strong>S.No.</strong>
+	                                    </td>
+	                                    <td style="width: 50%" class="text-left">
+	                                        <strong>Description</strong>
+	                                    </td>
+	                                    <td style="width: 42%" class="text-left">
+	                                        <strong>Quantity</strong>
+	                                    </td>
+	                                </tr>
+                                	<t t-set="sr_no" t-value="1"/>
+	                                <t t-if="o.job_cost_sheet_ids">
+	                                    <tr t-foreach="o.job_cost_sheet_ids" t-as="sheet_line"
+	                                        style="line-height:8px;border-bottom:hidden; border-left:hidden; border-right:hidden;">
+	                                        <td style="width: 8%;" class="text-center">
+	                                            <t t-esc="sr_no"/>
+	                                        </td>
+	                                        <td style="width: 50%" class="text-left">
+	                                            <t t-esc="sheet_line.name"/>
+	                                        </td>
+	                                        <td style="width: 42%" class="text-left">
+	                                            <t t-esc="sheet_line.quantity"/>
+	                                        </td>
+	                                        <t t-set="sr_no" t-value="sr_no+1"/>
+	                                    </tr>
+	                                </t>
+                            	</table>
+                        	</div>
+                        	<div class="row" style="margin-top: 1%;">
+	                            <div class="col-6">
+	                                <table style="width:40%" align="left">
+	                                    <tr style="border:hidden">
+	                                        <td>
+	                                            <b>Name:</b>
+	                                        </td>
+	                                        <td>............................................................</td>
+	                                    </tr>
+	                                </table>
+	                            </div>
+	                            <div class="col-6">
+	                                <table style="width:40%" align="center">
+	                                    <tr style="border:hidden;">
+	                                        <td>
+	                                            <b>Signature:</b>
+	                                        </td>
+	                                        <td>............................................................</td>
+	                                    </tr>
+	                                </table>
+	                            </div>
+                        	</div>
+                    	</div>
+                	</t>
+            	</t>
+        	</t>
+    	</template>
+
+    </data>
+</odoo>

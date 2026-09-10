@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ==================== PETTY CASH EXPENSE VIEWS ==================== -->
+
+    <!-- List View -->
+    <record id="view_petty_cash_expense_list" model="ir.ui.view">
+        <field name="name">petty.cash.expense.list</field>
+        <field name="model">petty.cash.expense</field>
+        <field name="arch" type="xml">
+            <list string="Expenses" decoration-success="state == 'posted'" decoration-muted="state == 'cancelled'">
+                <field name="date"/>
+                <field name="reference"/>
+                <field name="partner_id"/>
+                <field name="category_id"/>
+                <field name="description"/>
+                <field name="journal_id"/>
+                <field name="amount" sum="Total Expenses"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="state" widget="badge" decoration-success="state == 'posted'" decoration-warning="state == 'draft'" decoration-danger="state == 'cancelled'"/>
+                <field name="company_id" column_invisible="1"/>
+                <button name="action_post" string="Post" type="object" icon="fa-check" invisible="state != 'draft'" class="btn-sm btn-primary"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_petty_cash_expense_form" model="ir.ui.view">
+        <field name="name">petty.cash.expense.form</field>
+        <field name="model">petty.cash.expense</field>
+        <field name="arch" type="xml">
+            <form string="Petty Cash Expense">
+                <header>
+                    <button name="action_post" string="Post" type="object" class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_draft" string="Reset to Draft" type="object" invisible="state not in ['posted', 'cancelled']"/>
+                    <button name="action_cancel" string="Cancel" type="object" invisible="state in ['cancelled']"/>
+                    <button name="%(petty_cash_book.action_petty_cash_expense_voucher_report)s" string="Print Voucher" type="action" class="btn-secondary"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,posted"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_journal_entry" type="object" class="oe_stat_button" icon="fa-book" invisible="move_id == False">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_text">Journal Entry</span>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="reference" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Expense Details">
+                            <field name="date"/>
+                            <field name="partner_id"/>
+                            <field name="category_id"/>
+                            <field name="description"/>
+                            <field name="notes" placeholder="Additional notes..."/>
+                        </group>
+                        <group string="Accounting">
+                            <field name="journal_id"/>
+                            <field name="cash_account_id"/>
+                            <field name="expense_account_id"/>
+                            <field name="amount"/>
+                            <field name="currency_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                </sheet>
+                <chatter reload_on_follower="True"/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_petty_cash_expense_search" model="ir.ui.view">
+        <field name="name">petty.cash.expense.search</field>
+        <field name="model">petty.cash.expense</field>
+        <field name="arch" type="xml">
+            <search string="Search Expenses">
+                <field name="reference" string="Reference"/>
+                <field name="partner_id" string="Partner"/>
+                <field name="description" string="Description"/>
+                <field name="category_id" string="Category"/>
+                <separator/>
+                <filter string="Draft" name="filter_draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="Posted" name="filter_posted" domain="[('state', '=', 'posted')]"/>
+                <filter string="Cancelled" name="filter_cancelled" domain="[('state', '=', 'cancelled')]"/>
+                <separator/>
+                <filter string="Today" name="filter_today" domain="[('date', '=', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter string="This Month" name="filter_this_month" domain="[('date', '&gt;=', (context_today() + relativedelta(day=1)).strftime('%Y-%m-%d')), ('date', '&lt;=', (context_today() + relativedelta(day=31)).strftime('%Y-%m-%d'))]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="Date" name="group_date" context="{'group_by': 'date:month'}"/>
+                    <filter string="Partner" name="group_partner" context="{'group_by': 'partner_id'}"/>
+                    <filter string="Category" name="group_category" context="{'group_by': 'category_id'}"/>
+                    <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Journal" name="group_journal" context="{'group_by': 'journal_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Kanban View -->
+    <record id="view_petty_cash_expense_kanban" model="ir.ui.view">
+        <field name="name">petty.cash.expense.kanban</field>
+        <field name="model">petty.cash.expense</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile" default_group_by="state">
+                <field name="reference"/>
+                <field name="date"/>
+                <field name="partner_id"/>
+                <field name="amount"/>
+                <field name="currency_id"/>
+                <field name="state"/>
+                <field name="category_id"/>
+                <field name="description"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_card oe_kanban_global_click">
+                            <div class="row mb-0 no-gutters">
+                                <div class="col-8">
+                                    <strong><field name="reference"/></strong>
+                                    <div class="text-muted">
+                                        <field name="date"/> | <field name="partner_id"/>
+                                    </div>
+                                    <div class="text-muted small">
+                                        <field name="category_id"/> - <field name="description"/>
+                                    </div>
+                                </div>
+                                <div class="col-4 text-end">
+                                    <strong class="text-danger">
+                                        <field name="amount" widget="monetary"/>
+                                    </strong>
+                                    <div>
+                                        <field name="state" widget="badge"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Actions -->
+    <record id="action_petty_cash_expense" model="ir.actions.act_window">
+        <field name="name">Expenses</field>
+        <field name="res_model">petty.cash.expense</field>
+        <field name="view_mode">list,form,kanban</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No expense records yet!
+            </p>
+            <p>
+                Start by recording your first petty cash expense.
+            </p>
+        </field>
+    </record>
+
+    <!-- Expense Category List View -->
+    <record id="view_petty_cash_expense_category_list" model="ir.ui.view">
+        <field name="name">petty.cash.expense.category.list</field>
+        <field name="model">petty.cash.expense.category</field>
+        <field name="arch" type="xml">
+            <list string="Expense Categories" editable="top">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="account_id"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Expense Category Form View -->
+    <record id="view_petty_cash_expense_category_form" model="ir.ui.view">
+        <field name="name">petty.cash.expense.category.form</field>
+        <field name="model">petty.cash.expense.category</field>
+        <field name="arch" type="xml">
+            <form string="Expense Category">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="%(action_petty_cash_expense)s" type="action" class="oe_stat_button" icon="fa-list-alt">
+                            <field name="expense_count" widget="statinfo" string="Expenses"/>
+                        </button>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="code"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="account_id"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="description" placeholder="Description..."/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_petty_cash_expense_category" model="ir.actions.act_window">
+        <field name="name">Expense Categories</field>
+        <field name="res_model">petty.cash.expense.category</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No categories defined!
+            </p>
+            <p>
+                Create expense categories for better tracking.
+            </p>
+        </field>
+    </record>
+</odoo>

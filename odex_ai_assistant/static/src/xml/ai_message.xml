@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="odex_ai_assistant.AiMessage">
+        <div t-attf-class="odex-ai-message
+                #{isUser ? 'odex-ai-message--user' : 'odex-ai-message--assistant'}
+                #{isError ? 'odex-ai-message--error' : ''}
+                #{isStreaming ? 'odex-ai-message--streaming' : ''}"
+             t-on-mouseenter="onMouseEnter"
+             t-on-mouseleave="onMouseLeave">
+
+            <!-- Avatar -->
+            <div class="odex-ai-message__avatar">
+                <t t-if="isUser">
+                    <i class="fa fa-user"/>
+                </t>
+                <t t-else="">
+                    <i class="fa fa-robot"/>
+                </t>
+            </div>
+
+            <!-- Message Bubble -->
+            <div class="odex-ai-message__bubble">
+
+                <!-- Header -->
+                <div class="odex-ai-message__header">
+                    <span class="odex-ai-message__author">
+                        <t t-if="isUser">You</t>
+                        <t t-else="">ODEX AI</t>
+                    </span>
+                    <span class="odex-ai-message__time">
+                        <t t-esc="formattedTime"/>
+                    </span>
+                    <span class="odex-ai-message__model-badge" t-if="isAssistant and modelBadge">
+                        <t t-esc="modelBadge"/>
+                    </span>
+                </div>
+
+                <!-- Content -->
+                <div class="odex-ai-message__content">
+                    <!-- User messages: plain text -->
+                    <t t-if="isUser">
+                        <div class="odex-ai-message__text"
+                             t-out="renderedContent"/>
+                    </t>
+                    <!-- AI messages: rendered markdown -->
+                    <t t-else="">
+                        <div class="odex-ai-message__text odex-ai-message__text--ai"
+                             t-ref="messageContent">
+                            <!-- Content injected via JS for markdown rendering -->
+                            <t t-if="isStreaming and not props.message.content">
+                                <span class="odex-ai-cursor-blink">▍</span>
+                            </t>
+                            <t t-else="">
+                                <t t-out="renderedContent"/>
+                            </t>
+                        </div>
+                        <!-- Streaming cursor -->
+                        <span class="odex-ai-cursor-blink" t-if="isStreaming and props.message.content">▍</span>
+                    </t>
+
+                    <!-- Error state -->
+                    <div class="odex-ai-message__error" t-if="isError">
+                        <i class="fa fa-exclamation-circle me-1"/>
+                        <t t-esc="props.message.content"/>
+                    </div>
+                </div>
+
+                <!-- Message Actions (visible on hover) -->
+                <div t-attf-class="odex-ai-message__actions #{state.showActions ? 'odex-ai-message__actions--visible' : ''}"
+                     t-if="isAssistant and not isStreaming and not isError">
+                    <!-- Copy button -->
+                    <button class="odex-ai-msg-action" t-on-click="onCopy"
+                            t-att-title="state.isCopied ? 'Copied!' : 'Copy response'">
+                        <i t-attf-class="fa #{state.isCopied ? 'fa-check text-success' : 'fa-copy'}"/>
+                    </button>
+                    <!-- Thumbs up -->
+                    <button t-attf-class="odex-ai-msg-action #{state.feedbackGiven === 'positive' ? 'odex-ai-msg-action--active' : ''}"
+                            t-on-click="() => onFeedback('positive')"
+                            title="Helpful">
+                        <i class="fa fa-thumbs-up"/>
+                    </button>
+                    <!-- Thumbs down -->
+                    <button t-attf-class="odex-ai-msg-action #{state.feedbackGiven === 'negative' ? 'odex-ai-msg-action--active odex-ai-msg-action--negative' : ''}"
+                            t-on-click="() => onFeedback('negative')"
+                            title="Not helpful">
+                        <i class="fa fa-thumbs-down"/>
+                    </button>
+                    <!-- Post to chatter -->
+                    <button class="odex-ai-msg-action"
+                            t-on-click="onPostToChatter"
+                            title="Post to Chatter">
+                        <i class="fa fa-comment-o"/>
+                    </button>
+                </div>
+
+                <!-- Token info (small) -->
+                <div class="odex-ai-message__meta" t-if="isAssistant and props.message.tokens_used">
+                    <i class="fa fa-microchip me-1"/>
+                    <t t-esc="props.message.tokens_used"/> tokens
+                    <t t-if="props.message.processing_time">
+                        · <t t-esc="props.message.processing_time"/>s
+                    </t>
+                </div>
+            </div>
+        </div>
+    </t>
+
+</templates>

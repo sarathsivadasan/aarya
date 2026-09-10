@@ -1,0 +1,289 @@
+// Odex Workshop Booking - public wizard + portal styles
+$owb-primary: #1a56db;
+$owb-navy: #1e2b4a;
+$owb-bg: #f5f7fb;
+$owb-border: #e4e9f2;
+$owb-green: #16a34a;
+$owb-orange: #d97706;
+$owb-red: #dc2626;
+
+.owb-page {
+    background: $owb-bg;
+    // never lock the viewport height: the page must scroll normally on mobile
+    min-height: 60vh;
+    overflow: visible;
+    font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+
+    .owb-text-navy { color: $owb-navy; }
+
+    .owb-logo-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: rgba($owb-primary, .1);
+        color: $owb-primary;
+        font-size: 20px;
+    }
+
+    // Stepper -----------------------------------------------------------
+    .owb-step {
+        gap: .5rem;
+        .owb-step-circle {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            border: 2px solid $owb-border;
+            background: #fff;
+            color: #8a97ad;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all .2s;
+        }
+        .owb-step-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #8a97ad;
+        }
+        &.owb-step-active {
+            .owb-step-circle { background: $owb-primary; border-color: $owb-primary; color: #fff; }
+            .owb-step-label { color: $owb-primary; }
+        }
+        &.owb-step-done {
+            .owb-step-circle { background: rgba($owb-primary, .12); border-color: $owb-primary; color: $owb-primary; }
+            .owb-step-label { color: $owb-navy; }
+        }
+    }
+    .owb-step-line { width: 56px; height: 2px; background: $owb-border; }
+
+    // Cards -------------------------------------------------------------
+    .owb-card {
+        background: #fff;
+        border: 1px solid $owb-border;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(20, 40, 90, .06);
+    }
+    .owb-card-inner {
+        background: #fbfcfe;
+        border: 1px solid $owb-border;
+        border-radius: 12px;
+    }
+    .owb-mini-card {
+        background: #fff;
+        border: 1px solid $owb-border;
+        border-radius: 12px;
+    }
+
+    .owb-input {
+        border-radius: 10px;
+        border-color: $owb-border;
+        padding: .6rem .85rem;
+        font-size: 14px;
+        &:focus { border-color: $owb-primary; box-shadow: 0 0 0 3px rgba($owb-primary, .12); }
+    }
+
+    .owb-btn-primary {
+        background: $owb-primary;
+        border: none;
+        border-radius: 10px;
+        padding: .7rem 2rem;
+        font-weight: 600;
+        &:hover:not(:disabled) { background: darken($owb-primary, 6%); }
+        &:disabled { opacity: .5; }
+    }
+    .owb-btn-secondary {
+        background: #fff;
+        border: 1px solid $owb-border;
+        border-radius: 10px;
+        padding: .7rem 1.6rem;
+        font-weight: 600;
+        color: $owb-navy;
+        &:hover { border-color: $owb-primary; color: $owb-primary; }
+    }
+    .owb-nav-btn {
+        border: 1px solid $owb-border;
+        border-radius: 8px;
+        color: $owb-navy;
+        &:hover { border-color: $owb-primary; color: $owb-primary; }
+    }
+
+    // Calendar ----------------------------------------------------------
+    .owb-cal-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 4px;
+    }
+    .owb-cal-head div {
+        text-align: center;
+        font-size: 12px;
+        font-weight: 600;
+        color: #8a97ad;
+        padding: 6px 0;
+    }
+    .owb-cal-day {
+        aspect-ratio: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 500;
+        color: $owb-navy;
+        cursor: default;
+        span:first-child { line-height: 1; }
+        &.owb-selectable {
+            cursor: pointer;
+            &:hover { background: rgba($owb-primary, .08); }
+        }
+        &.owb-disabled { color: #c3ccda; }
+        &.owb-day-selected {
+            background: $owb-primary !important;
+            color: #fff;
+            .owb-day-dot { background: #fff !important; }
+        }
+    }
+    .owb-day-dot {
+        width: 5px; height: 5px; border-radius: 50%;
+        &.owb-day-available { background: $owb-green; }
+        &.owb-day-limited { background: $owb-orange; }
+        &.owb-day-full { background: $owb-red; }
+        &.owb-day-closed, &.owb-day-holiday { background: #c3ccda; }
+    }
+    .owb-dot {
+        display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+        margin-right: 4px;
+        &.owb-dot-green { background: $owb-green; }
+        &.owb-dot-orange { background: $owb-orange; }
+        &.owb-dot-red { background: $owb-red; }
+        &.owb-dot-grey { background: #c3ccda; }
+    }
+
+    // Slots -------------------------------------------------------------
+    .owb-slot-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        @media (min-width: 992px) { grid-template-columns: repeat(2, 1fr); }
+    }
+    .owb-slot {
+        border: 1.5px solid $owb-border;
+        border-radius: 10px;
+        padding: 10px 14px;
+        text-align: center;
+        font-size: 14px;
+        transition: all .15s;
+        .owb-slot-state { font-size: 11px; }
+        &.owb-slot-available { .owb-slot-state { color: $owb-green; } }
+        &.owb-slot-limited {
+            border-color: rgba($owb-orange, .4);
+            .owb-slot-state { color: $owb-orange; }
+        }
+        &.owb-slot-full {
+            background: #fdf1f1;
+            border-color: #f5cccc;
+            color: #b3b9c5;
+            .owb-slot-state { color: $owb-red; }
+        }
+        &.owb-slot-bookable {
+            cursor: pointer;
+            &:hover { border-color: $owb-primary; }
+        }
+        &.owb-slot-selected {
+            border-color: $owb-primary;
+            background: rgba($owb-primary, .06);
+            box-shadow: 0 0 0 3px rgba($owb-primary, .12);
+        }
+    }
+
+    // Strips ------------------------------------------------------------
+    .owb-info-strip {
+        background: #eef4ff;
+        color: $owb-primary;
+        border-radius: 10px;
+        padding: 10px 14px;
+        font-size: 13px;
+    }
+    .owb-success-strip {
+        background: #ecfdf3;
+        color: $owb-green;
+        border-radius: 10px;
+        padding: 10px 14px;
+        font-size: 13px;
+    }
+    .owb-examples-strip {
+        background: #fffbeb;
+        border: 1px solid #fde68a;
+        border-radius: 10px;
+        padding: 12px 14px;
+    }
+
+    // Vehicles ----------------------------------------------------------
+    .owb-vehicle-card {
+        border: 1.5px solid $owb-border;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all .15s;
+        .owb-vehicle-check { color: transparent; }
+        &:hover { border-color: $owb-primary; }
+        &.owb-vehicle-selected {
+            border-color: $owb-primary;
+            background: rgba($owb-primary, .05);
+            .owb-vehicle-check { color: $owb-primary; }
+        }
+    }
+
+    // Summary / thank you ----------------------------------------------
+    .owb-summary-row:last-child { border-bottom: none !important; }
+    .owb-success-icon {
+        width: 72px; height: 72px; border-radius: 50%;
+        background: $owb-green; color: #fff;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 32px;
+        box-shadow: 0 8px 24px rgba($owb-green, .35);
+    }
+
+    // Portal ------------------------------------------------------------
+    .owb-status-badge {
+        display: inline-block;
+        padding: 3px 12px;
+        border-radius: 100px;
+        font-size: 12px;
+        font-weight: 600;
+        &.owb-st-confirmed { background: #ecfdf3; color: $owb-green; }
+        &.owb-st-requested, &.owb-st-draft { background: #fffbeb; color: $owb-orange; }
+        &.owb-st-arrived { background: #eef4ff; color: $owb-primary; }
+        &.owb-st-done { background: #f1f5f9; color: #475569; }
+        &.owb-st-cancelled, &.owb-st-no_show { background: #fdf1f1; color: $owb-red; }
+    }
+}
+
+// "My Vehicles at a Glance" inside the wizard
+.owb-glance {
+    border: 1px solid #e4e9f2;
+    border-radius: 12px;
+    overflow: hidden;
+    thead th { background: #f6f8fc; font-size: 12px; color: #55637a; }
+    tbody tr { cursor: pointer; }
+    tbody tr:hover { background: #f9fbff; }
+    tbody tr.owb-vehicle-selected {
+        background: rgba(26, 86, 219, .06);
+        .owb-vehicle-check { color: #1a56db; }
+    }
+    .owb-vehicle-check { color: transparent; }
+}
+
+// A time that has simply passed is greyed out, not flagged red like a
+// genuinely full slot — the two mean very different things to a customer.
+.owb-page .owb-slot.owb-slot-past {
+    background: #f6f8fc;
+    border-color: #e4e9f2;
+    color: #b3b9c5;
+    .owb-slot-state { color: #98a5ba; }
+}

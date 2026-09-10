@@ -1,0 +1,519 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Website menu entry -->
+    <record id="menu_website_book_service" model="website.menu">
+        <field name="name">Book Service</field>
+        <field name="url">/book-service</field>
+        <field name="parent_id" ref="website.main_menu"/>
+        <field name="sequence">45</field>
+    </record>
+
+    <template id="booking_wizard_page" name="Book a Service">
+        <t t-call="website.layout">
+            <t t-set="pageName" t-value="'book_service'"/>
+            <div id="wrap" class="owb-page">
+
+                <!-- Top bar -->
+                <div class="owb-topbar d-flex align-items-center justify-content-between px-3 px-lg-5 py-3 bg-white border-bottom">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="owb-logo-badge"><i class="fa fa-car"/></span>
+                        <div class="lh-sm">
+                            <div class="fw-bold text-primary">WORKSHOP</div>
+                            <div class="small fw-semibold owb-text-navy">ONLINE BOOKING</div>
+                        </div>
+                    </div>
+                    <div class="d-none d-md-flex align-items-center gap-4 small owb-text-navy">
+                        <span><i class="fa fa-question-circle-o me-1"/>Need Help?</span>
+                        <span t-if="help_phone"><i class="fa fa-phone me-1"/><t t-out="help_phone"/></span>
+                    </div>
+                </div>
+
+                <!-- Stepper -->
+                <div class="owb-stepper d-flex align-items-center justify-content-center flex-wrap gap-2 py-4 bg-white border-bottom">
+                    <t t-foreach="[(1, 'Select Date'), (2, 'Select Time'), (3, 'Your Details'), (4, 'Service Details'), (5, 'Confirm Booking')]" t-as="step">
+                        <div class="owb-step d-flex align-items-center" t-att-data-step="step[0]">
+                            <span class="owb-step-circle" t-out="step[0]"/>
+                            <span class="owb-step-label d-none d-lg-inline" t-out="step[1]"/>
+                        </div>
+                        <div t-if="step[0] != 5" class="owb-step-line d-none d-md-block"/>
+                    </t>
+                </div>
+
+                <div t-if="not companies" class="container py-5">
+                    <div class="owb-card p-5 text-center">
+                        <i class="fa fa-exclamation-circle fs-1 text-warning d-block mb-3"/>
+                        <h4 class="fw-bold">Online booking is not available yet</h4>
+                        <p class="text-muted mb-0">No workshop has been published for
+                            online booking. Please call us to book your service.</p>
+                        <p t-if="help_phone" class="fw-semibold mt-2">
+                            <i class="fa fa-phone me-1"/><t t-out="help_phone"/></p>
+                    </div>
+                </div>
+
+                <div t-if="companies" class="container-fluid px-3 px-lg-5 py-4"
+                     id="owb_wizard"
+                     t-att-data-terms-url="terms_url or '#'">
+
+                    <!-- STEP 1: Date -->
+                    <div class="owb-pane" data-pane="1">
+                        <div class="row justify-content-center">
+                            <div class="col-12 col-lg-6 col-xl-5">
+                                <div class="owb-card p-4">
+                                    <h4 class="fw-bold mb-1">Select Date</h4>
+                                    <p class="text-muted small mb-3">Choose your preferred booking date</p>
+
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-semibold">Workshop <span class="text-danger">*</span></label>
+                                        <select id="owb_branch" class="form-select owb-input">
+                                            <t t-foreach="companies" t-as="company">
+                                                <option t-att-value="company.id"
+                                                        t-att-data-tz="company.booking_tz"
+                                                        t-out="company.name"/>
+                                            </t>
+                                        </select>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <div t-attf-class="alert alert-warning mt-3 mb-0 small #{'' if not companies else 'd-none'}"
+                                             id="owb_no_branch">
+                                            <i class="fa fa-exclamation-triangle me-1"/>
+                                            Online booking is not available right now. Please
+                                            <t t-if="help_phone">call <strong t-out="help_phone"/></t>
+                                            <t t-else="">contact the workshop</t> to book your service.
+                                        </div>
+                                    </div>
+
+                                    <div class="owb-calendar owb-card-inner p-3">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <button type="button" class="btn btn-sm owb-nav-btn" id="owb_cal_prev"><i class="fa fa-chevron-left"/></button>
+                                            <div class="fw-bold" id="owb_cal_title">July 2026</div>
+                                            <button type="button" class="btn btn-sm owb-nav-btn" id="owb_cal_next"><i class="fa fa-chevron-right"/></button>
+                                        </div>
+                                        <div class="owb-cal-grid owb-cal-head">
+                                            <div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div>
+                                            <div>Fri</div><div>Sat</div><div>Sun</div>
+                                        </div>
+                                        <div class="owb-cal-grid" id="owb_cal_days"></div>
+                                        <div class="d-flex gap-3 mt-3 small flex-wrap">
+                                            <span><span class="owb-dot owb-dot-green"/> Available</span>
+                                            <span><span class="owb-dot owb-dot-orange"/> Limited</span>
+                                            <span><span class="owb-dot owb-dot-red"/> Fully Booked</span>
+                                            <span><span class="owb-dot owb-dot-grey"/> Closed</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="owb-info-strip mt-3" id="owb_tz_strip">
+                                        <i class="fa fa-info-circle me-2"/>All timings are in local workshop time
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 2: Time -->
+                    <div class="owb-pane d-none" data-pane="2">
+                        <div class="row justify-content-center">
+                            <div class="col-12 col-lg-6 col-xl-5">
+                                <div class="owb-card p-4">
+                                    <h4 class="fw-bold mb-1">Select Time Slot</h4>
+                                    <p class="text-muted small mb-3" id="owb_slot_subtitle">Available slots</p>
+                                    <div id="owb_slots_loading" class="text-center py-5 d-none">
+                                        <div class="spinner-border text-primary"/>
+                                    </div>
+                                    <div id="owb_slots_container">
+                                        <div class="fw-semibold mb-2">Morning</div>
+                                        <div class="owb-slot-grid mb-4" id="owb_slots_morning"></div>
+                                        <div class="fw-semibold mb-2">Afternoon</div>
+                                        <div class="owb-slot-grid" id="owb_slots_afternoon"></div>
+                                    </div>
+                                    <div id="owb_slot_note" class="owb-info-strip mt-3 d-none"/>
+                                    <div class="owb-info-strip mt-4" id="owb_duration_strip">
+                                        <i class="fa fa-clock-o me-2"/>Each slot duration is 30 minutes
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 3: Customer + Vehicle -->
+                    <div class="owb-pane d-none" data-pane="3">
+                        <div class="row justify-content-center">
+                            <div class="col-12 col-lg-6 col-xl-5">
+                                <div class="owb-card p-4">
+                                    <h4 class="fw-bold mb-1">Your Details</h4>
+                                    <p class="text-muted small mb-3">Please enter your information</p>
+
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-semibold">Full Name <span class="text-danger">*</span></label>
+                                        <input type="text" id="owb_name" t-att-value="portal_partner.name if portal_partner else ''" t-att-readonly="'readonly' if portal_partner else None" class="form-control owb-input" placeholder="Enter your full name"/>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-semibold">Mobile Number <span class="text-danger">*</span></label>
+                                        <div class="input-group">
+                                            <span class="input-group-text owb-input">+971</span>
+                                            <input type="tel" id="owb_mobile" t-att-value="(portal_partner.mobile or portal_partner.phone or '').replace('+971', '').strip() if portal_partner else ''" class="form-control owb-input" placeholder="50 123 4567"/>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-semibold">Phone</label>
+                                        <input type="tel" id="owb_phone" class="form-control owb-input" placeholder="Optional landline"/>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-semibold">Email Address</label>
+                                        <input type="email" id="owb_email" t-att-value="portal_partner.email if portal_partner else ''" class="form-control owb-input" placeholder="Enter your email address"/>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-semibold">Country</label>
+                                        <select id="owb_country" class="form-select owb-input">
+                                            <option value="">Select country</option>
+                                            <t t-foreach="countries" t-as="country">
+                                                <option t-att-value="country.id"
+                                                        t-att-selected="default_country and country.id == default_country.id"
+                                                        t-out="country.name"/>
+                                            </t>
+                                        </select>
+                                    </div>
+
+                                    <div id="owb_existing_banner" class="owb-success-strip d-none mb-3">
+                                        <i class="fa fa-check-circle me-2"/>Welcome back, <span id="owb_existing_name"/>! We found your details.
+                                    </div>
+
+                                    <hr class="my-4"/>
+                                    <h5 class="fw-bold mb-1">Vehicle Information</h5>
+                                    <p class="text-muted small mb-3">Select an existing vehicle or add a new one</p>
+
+                                    <div t-if="portal_partner" class="owb-success-strip mb-3">
+                                        <i class="fa fa-user-circle-o me-2"/>
+                                        Signed in as <b t-out="portal_partner.name"/>. Your details
+                                        are filled in automatically &#8212;
+                                        <a href="/my/account">update your profile</a> to change them.
+                                    </div>
+
+                                    <div t-if="own_vehicles" class="mb-3" id="owb_own_wrap">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <label class="form-label small fw-semibold mb-0">
+                                                <i class="fa fa-car me-1"/>My Vehicles at a Glance</label>
+                                            <a href="/my/vehicles" class="small">View all</a>
+                                        </div>
+                                        <div class="table-responsive d-none d-md-block owb-glance">
+                                            <table class="table table-sm align-middle mb-0">
+                                                <thead>
+                                                    <tr><th>Vehicle</th><th>Plate No.</th>
+                                                        <th>Model</th><th>Year</th>
+                                                        <th>Status</th><th class="text-end">Action</th></tr>
+                                                </thead>
+                                                <tbody>
+                                                    <t t-foreach="own_vehicles" t-as="own_vehicle">
+                                                        <tr class="owb-vehicle-card"
+                                                            t-att-data-vehicle-id="own_vehicle.id"
+                                                            t-att-data-vehicle-name="own_vehicle.display_name">
+                                                            <td class="fw-semibold" t-out="own_vehicle.display_name"/>
+                                                            <td t-out="own_vehicle.plate_label()"/>
+                                                            <td t-out="own_vehicle.model_id.name or '-'"/>
+                                                            <td t-out="own_vehicle.model_year or '-'"/>
+                                                            <td>
+                                                                <t t-set="vstatus" t-value="own_vehicle_status.get(own_vehicle.id)"/>
+                                                                <span t-if="vstatus"
+                                                                      t-attf-class="owp-badge owp-b-#{vstatus['tone']}"
+                                                                      t-out="vstatus['label']"/>
+                                                                <span t-else="" class="owp-badge owp-b-green">Ready</span>
+                                                            </td>
+                                                            <td class="text-end">
+                                                                <span class="btn btn-sm btn-outline-primary owb-pick-btn">Select</span>
+                                                                <i class="fa fa-check-circle ms-2 owb-vehicle-check"/>
+                                                            </td>
+                                                        </tr>
+                                                    </t>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="d-md-none d-flex flex-column gap-2" id="owb_own_vehicles">
+                                            <t t-foreach="own_vehicles" t-as="own_vehicle">
+                                                <div class="owb-vehicle-card p-3"
+                                                     t-att-data-vehicle-id="own_vehicle.id"
+                                                     t-att-data-vehicle-name="own_vehicle.display_name">
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        <i class="fa fa-car text-primary"/>
+                                                        <div>
+                                                            <div class="fw-semibold" t-out="own_vehicle.display_name"/>
+                                                            <div class="small text-muted">
+                                                                <t t-out="own_vehicle.plate_label()"/>
+                                                            </div>
+                                                        </div>
+                                                        <i class="fa fa-check-circle ms-auto owb-vehicle-check"/>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </div>
+                                        <button type="button" id="owb_add_new_vehicle"
+                                                class="btn btn-link btn-sm px-0 mt-1">
+                                            + Book for another vehicle</button>
+                                    </div>
+
+                                    <div id="owb_existing_vehicles" class="d-none mb-3">
+                                        <label class="form-label small fw-semibold">Your Vehicles</label>
+                                        <div id="owb_vehicle_cards" class="d-flex flex-column gap-2"></div>
+                                        <button type="button" class="btn btn-link btn-sm px-0 mt-1" id="owb_add_new_vehicle">
+                                            <i class="fa fa-plus me-1"/>Add a different vehicle
+                                        </button>
+                                    </div>
+
+                                    <div id="owb_new_vehicle">
+                                        <div class="row g-3">
+                                            <div class="col-4">
+                                                <label class="form-label small fw-semibold">Emirate</label>
+                                                <select id="owb_emirate" class="form-select owb-input">
+                                                    <option value="">Select Emirates</option>
+                                                    <t t-foreach="emirates" t-as="emirate_rec">
+                                                        <option t-att-value="emirate_rec.id"
+                                                                t-out="emirate_rec.display_name"/>
+                                                    </t>
+                                                </select>
+                                            </div>
+                                            <div class="col-4">
+                                                <label class="form-label small fw-semibold">Plate Code</label>
+                                                <select id="owb_plate_code" class="form-select owb-input">
+                                                    <option value="">Select Code</option>
+                                                    <t t-foreach="plate_codes" t-as="code_rec">
+                                                        <option t-att-value="code_rec.id"
+                                                                t-out="code_rec.display_name"/>
+                                                    </t>
+                                                </select>
+                                            </div>
+                                            <div class="col-12">
+                                                <label class="form-label small fw-semibold">Plate Number <span class="text-danger">*</span></label>
+                                                <input type="text" id="owb_plate" class="form-control owb-input" placeholder="e.g. 12345"/>
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-label small fw-semibold">Vehicle Make <span class="text-danger">*</span></label>
+                                                <select id="owb_make" class="form-select owb-input">
+                                                    <option value="">Select Make</option>
+                                                    <t t-foreach="makes" t-as="make">
+                                                        <option t-att-value="make.id" t-out="make.name"/>
+                                                    </t>
+                                                </select>
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-label small fw-semibold">Vehicle Model <span class="text-danger">*</span></label>
+                                                <select id="owb_model" class="form-select owb-input" disabled="disabled">
+                                                    <option value="">Select Model</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-label small fw-semibold">Year</label>
+                                                <input type="number" id="owb_year" class="form-control owb-input" placeholder="e.g. 2022" min="1980" max="2030"/>
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-label small fw-semibold">Color</label>
+                                                <input type="text" id="owb_color" class="form-control owb-input" placeholder="e.g. White"/>
+                                            </div>
+                                            <div class="col-12">
+                                                <label class="form-label small fw-semibold">Chassis Number (VIN)</label>
+                                                <input type="text" id="owb_vin" class="form-control owb-input" placeholder="Optional"/>
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-label small fw-semibold">Engine Number</label>
+                                                <input type="text" id="owb_engine" class="form-control owb-input" placeholder="Optional"/>
+                                            </div>
+                                            <div class="col-3">
+                                                <label class="form-label small fw-semibold">Cylinders</label>
+                                                <input type="number" id="owb_cylinders" class="form-control owb-input" min="0"/>
+                                            </div>
+                                            <div class="col-3">
+                                                <label class="form-label small fw-semibold">Odometer</label>
+                                                <input type="number" id="owb_odometer" class="form-control owb-input" min="0"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 4: Service -->
+                    <div class="owb-pane d-none" data-pane="4">
+                        <div class="row justify-content-center">
+                            <div class="col-12 col-lg-6 col-xl-5">
+                                <div class="owb-card p-4">
+                                    <h4 class="fw-bold mb-1">Service Details</h4>
+                                    <p class="text-muted small mb-3">Tell us about the service you need</p>
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-semibold">Type of Service <span class="text-danger">*</span></label>
+                                        <select id="owb_service" class="form-select owb-input">
+                                            <option value="">Select Service Type</option>
+                                            <t t-foreach="services" t-as="service">
+                                                <option t-att-value="service.id" t-out="service.name"/>
+                                            </t>
+                                        </select>
+                                    </div>
+                                    <div class="mb-1">
+                                        <label class="form-label small fw-semibold">Vehicle Issue / Description <span class="text-danger">*</span></label>
+                                        <textarea id="owb_complaint" class="form-control owb-input" rows="4" maxlength="500"
+                                                  placeholder="Please describe the issue / problem with your vehicle"/>
+                                        <div class="text-end text-muted small"><span id="owb_complaint_count">0</span> / 500</div>
+                                    </div>
+                                    <div class="owb-examples-strip mb-3">
+                                        <div class="fw-semibold small mb-1"><i class="fa fa-lightbulb-o me-1 text-warning"/>Examples:</div>
+                                        <ul class="small text-muted mb-0 ps-3">
+                                            <li>AC not cooling properly</li>
+                                            <li>Noise from front suspension</li>
+                                            <li>Engine warning light on</li>
+                                            <li>Brake noise</li>
+                                            <li>Any other issues</li>
+                                        </ul>
+                                    </div>
+                                    <div class="row g-3 mb-3" t-if="pickup_locations or drop_locations">
+                                        <div class="col-12 col-md-6" t-if="pickup_locations">
+                                            <label class="form-label small fw-semibold">Pickup Location (Optional)</label>
+                                            <select id="owb_pickup" class="form-select owb-input">
+                                                <option value="">Not required</option>
+                                                <t t-foreach="pickup_locations" t-as="loc">
+                                                    <option t-att-value="loc.id"
+                                                            t-att-selected="loc == pickup_location"
+                                                            t-out="loc.display_name"/>
+                                                </t>
+                                            </select>
+                                        </div>
+                                        <div class="col-12 col-md-6" t-if="drop_locations">
+                                            <label class="form-label small fw-semibold">Drop-off Location (Optional)</label>
+                                            <select id="owb_drop" class="form-select owb-input">
+                                                <option value="">Not required</option>
+                                                <t t-foreach="drop_locations" t-as="loc">
+                                                    <option t-att-value="loc.id"
+                                                            t-att-selected="loc == drop_location"
+                                                            t-out="loc.display_name"/>
+                                                </t>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-semibold">How did you hear about us?</label>
+                                        <select id="owb_referral" class="form-select owb-input">
+                                            <option value="">Select Option (Optional)</option>
+                                            <option value="friend">Friend / Family</option>
+                                            <option value="google">Google Search</option>
+                                            <option value="social">Social Media</option>
+                                            <option value="repeat">Existing Customer</option>
+                                            <option value="passing">Passing By</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-semibold">Additional Notes (Optional)</label>
+                                        <textarea id="owb_note" class="form-control owb-input" rows="2" maxlength="300"
+                                                  placeholder="Any additional information..."/>
+                                        <div class="text-end text-muted small"><span id="owb_note_count">0</span> / 300</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 5: Confirm -->
+                    <div class="owb-pane d-none" data-pane="5">
+                        <div class="row justify-content-center">
+                            <div class="col-12 col-lg-6 col-xl-5">
+                                <div class="owb-card p-4">
+                                    <h4 class="fw-bold mb-1">Confirm Your Booking</h4>
+                                    <p class="text-muted small mb-3">Please check your booking details</p>
+                                    <div class="owb-card-inner p-3" id="owb_summary"></div>
+                                    <div class="form-check mt-3">
+                                        <input class="form-check-input" type="checkbox" id="owb_terms"/>
+                                        <label class="form-check-label small" for="owb_terms">
+                                            I agree to the <a t-att-href="terms_url or '#'" target="_blank">Terms &amp; Conditions</a> and Privacy Policy.
+                                        </label>
+                                    </div>
+                                    <div id="owb_submit_error" class="alert alert-danger d-none mt-3 mb-0"/>
+                                    <button type="button" class="btn btn-primary owb-btn-primary w-100 mt-3" id="owb_confirm_btn" disabled="disabled">
+                                        Confirm Booking
+                                    </button>
+                                    <div class="text-center text-muted small mt-2">
+                                        <i class="fa fa-lock me-1"/>Your booking is secure and encrypted.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Nav buttons -->
+                    <div class="d-flex justify-content-center gap-3 mt-4">
+                        <button type="button" class="btn owb-btn-secondary d-none" id="owb_back_btn">
+                            <i class="fa fa-arrow-left me-1"/>Back
+                        </button>
+                        <button type="button" class="btn btn-primary owb-btn-primary" id="owb_next_btn" disabled="disabled">
+                            Continue<i class="fa fa-arrow-right ms-1"/>
+                        </button>
+                    </div>
+                    <div id="owb_step_error" class="text-center text-danger small mt-2"/>
+                </div>
+
+                <div class="owb-footer text-center py-3 small text-muted border-top bg-white">
+                    <i class="fa fa-shield me-1"/>We respect your privacy and your information is safe with us.
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="booking_thank_you_page" name="Booking Confirmed">
+        <t t-call="website.layout">
+            <div id="wrap" class="owb-page py-5">
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-12 col-lg-7">
+                            <div class="owb-card p-5 text-center">
+                                <div class="owb-success-icon mx-auto mb-3"><i class="fa fa-check"/></div>
+                                <h2 class="fw-bold">Booking Confirmed!</h2>
+                                <p class="text-muted">Thank you! Your service booking has been received.<br/>
+                                   You will receive a confirmation message on your email shortly.</p>
+                                <div class="owb-card-inner p-4 text-start mx-auto mt-4" style="max-width: 420px;">
+                                    <div class="d-flex justify-content-between py-2 border-bottom">
+                                        <span class="text-muted">Booking Number</span>
+                                        <strong t-out="booking.name"/>
+                                    </div>
+                                    <div class="d-flex justify-content-between py-2 border-bottom">
+                                        <span class="text-muted">Date</span>
+                                        <strong t-out="booking.booking_date" t-options="{'widget': 'date'}"/>
+                                    </div>
+                                    <div class="d-flex justify-content-between py-2 border-bottom">
+                                        <span class="text-muted">Time</span>
+                                        <strong t-out="booking.time_label"/>
+                                    </div>
+                                    <div class="d-flex justify-content-between py-2">
+                                        <span class="text-muted">Workshop</span>
+                                        <strong t-out="booking.company_id.name"/>
+                                    </div>
+                                </div>
+                                <div class="row g-3 mt-4 text-start">
+                                    <div class="col-12 col-md-4">
+                                        <div class="owb-mini-card p-3 h-100">
+                                            <i class="fa fa-envelope-o text-success mb-2 d-block fs-4"/>
+                                            <div class="fw-semibold small">Confirmation</div>
+                                            <div class="text-muted small">You will receive an email confirmation</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-4">
+                                        <div class="owb-mini-card p-3 h-100">
+                                            <i class="fa fa-bell-o text-warning mb-2 d-block fs-4"/>
+                                            <div class="fw-semibold small">Reminder</div>
+                                            <div class="text-muted small">We will remind you before your appointment</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-4">
+                                        <div class="owb-mini-card p-3 h-100">
+                                            <i class="fa fa-users text-primary mb-2 d-block fs-4"/>
+                                            <div class="fw-semibold small">Expert Service</div>
+                                            <div class="text-muted small">Our team will take care of your vehicle</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <a href="/book-service" class="btn owb-btn-secondary mt-4">Book Another Service</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

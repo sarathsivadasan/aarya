@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="dashboard_config_default" model="job.card.dashboard.config">
+            <field name="name">Dashboard Configuration</field>
+            <field name="auto_refresh" eval="True"/>
+            <field name="refresh_interval">30</field>
+            <field name="default_date_filter">all</field>
+            <field name="date_field">create_date</field>
+            <field name="list_limit">10</field>
+            <field name="overdue_warning_days">1</field>
+            <field name="overdue_critical_days">3</field>
+            <field name="overdue_severe_days">7</field>
+            <field name="efficiency_target">80</field>
+        </record>
+
+    </data>
+</odoo>

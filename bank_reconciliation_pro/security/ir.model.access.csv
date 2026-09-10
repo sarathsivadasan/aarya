@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_bank_reco_line_user,bank.reco.line user,model_bank_reco_line,bank_reconciliation_pro.group_bank_reco_user,1,1,1,0
+access_bank_reco_line_manager,bank.reco.line manager,model_bank_reco_line,bank_reconciliation_pro.group_bank_reco_manager,1,1,1,1
+access_bank_reco_session_user,bank.reco.session user,model_bank_reco_session,bank_reconciliation_pro.group_bank_reco_user,1,1,1,1
+access_bank_reco_session_manager,bank.reco.session manager,model_bank_reco_session,bank_reconciliation_pro.group_bank_reco_manager,1,1,1,1

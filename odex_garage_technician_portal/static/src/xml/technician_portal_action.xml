@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="odex_garage_technician_portal.TechnicianPortalAction">
+        <div class="o_technician_portal" t-att-class="rootClass">
+            <div class="o_tp_sidebar_backdrop" t-if="isSmall and state.sidebarOpen"
+                 t-on-click="toggleSidebar"/>
+            <aside class="o_tp_sidebar" t-att-class="state.sidebarOpen ? 'o_tp_sidebar_open' : ''">
+                <ul class="o_tp_menu">
+                    <li t-att-class="state.page === 'dashboard' ? 'active' : ''"
+                        t-on-click="() => this.setPage('dashboard')">
+                        <i class="fa fa-th-large"/> Dashboard
+                    </li>
+                    <li t-att-class="state.page === 'inspection' ? 'active' : ''"
+                        t-on-click="() => this.setPage('inspection')">
+                        <i class="fa fa-search"/> Vehicle Inspection
+                    </li>
+                    <li t-att-class="state.page === 'job_card' ? 'active' : ''"
+                        t-on-click="() => this.setPage('job_card')">
+                        <i class="fa fa-id-card"/> Job Card
+                    </li>
+                    <li t-att-class="state.page === 'parts' ? 'active' : ''"
+                        t-on-click="() => this.setPage('parts')">
+                        <i class="fa fa-shopping-cart"/> Parts Requested
+                    </li>
+                    <li t-att-class="state.page === 'performance' ? 'active' : ''"
+                        t-on-click="() => this.setPage('performance')">
+                        <i class="fa fa-bar-chart"/> My Performance
+                    </li>
+                    <li t-att-class="state.page === 'profile' ? 'active' : ''"
+                        t-on-click="() => this.setPage('profile')">
+                        <i class="fa fa-user"/> Profile
+                    </li>
+                    <!-- administrators only: every assigned job in the
+                         workshop, whatever its origin -->
+                    <li t-if="state.isAdmin"
+                        t-att-class="state.page === 'admin_jobs' ? 'active' : ''"
+                        t-on-click="() => this.setPage('admin_jobs')">
+                        <i class="fa fa-tasks"/> All Assigned Jobs
+                    </li>
+                </ul>
+            </aside>
+
+            <div class="o_tp_main">
+                <header class="o_tp_topbar">
+                    <i t-if="isSmall" class="fa fa-bars o_tp_hamburger" t-on-click="toggleSidebar"/>
+                    <div class="o_tp_topbar_spacer"/>
+                    <div class="o_tp_topbar_icons">
+                        <i class="fa fa-comments-o"/>
+                        <i class="fa fa-bell-o"/>
+                        <span class="o_tp_user" t-esc="state.userName"/>
+                    </div>
+                </header>
+
+                <main class="o_tp_content">
+                    <DashboardPage t-if="state.page === 'dashboard'"
+                                   openInspection.bind="openInspection"
+                                   viewAll.bind="viewAll"/>
+                    <InspectionWorkspace t-if="state.page === 'inspection'"
+                                         taskType="'is_vc'"
+                                         selectedLineId="state.selectedLineId"
+                                         statusFilter="state.statusFilter"/>
+                    <InspectionWorkspace t-if="state.page === 'job_card'"
+                                         taskType="'is_jobcard'"
+                                         selectedLineId="state.selectedLineId"
+                                         statusFilter="state.statusFilter"/>
+                    <InspectionWorkspace t-if="state.page === 'parts'"
+                                         taskType="'is_jobcard'"
+                                         selectedLineId="state.selectedLineId"
+                                         focusTab="'parts'"/>
+                    <AdminJobsPage t-if="state.page === 'admin_jobs' and state.isAdmin"/>
+                    <PerformancePage t-if="state.page === 'performance'"/>
+                    <ProfilePage t-if="state.page === 'profile'"/>
+                </main>
+            </div>
+        </div>
+    </t>
+</templates>

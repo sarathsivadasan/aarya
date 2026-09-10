@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+	<record id="view_template_cost_type_form_inherit" model="ir.ui.view">
+        <field name="name">product.template.product.form</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_only_form_view"/>
+        <field name="arch" type="xml">
+        	<field name="type" position="after">
+        		<field name="cost_type"/>
+                        <field name="parts_type"/>
+                        <field name="vehicle_make_id"/>
+                        <field name="assign_hours" widget="timesheet_uom" invisible="type != 'service'"/>
+        	</field>
+        </field>
+    </record>
+
+        <record model="ir.ui.menu" id="stock.menu_stock_root">
+                <field name="sequence">11</field>
+        </record>
+
+</odoo>

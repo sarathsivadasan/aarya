@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_booking_reschedule_list" model="ir.ui.view">
+        <field name="name">odex.booking.reschedule.list</field>
+        <field name="model">odex.booking.reschedule</field>
+        <field name="arch" type="xml">
+            <list decoration-success="state == 'approved'"
+                  decoration-danger="state == 'rejected'" sample="1">
+                <field name="create_date" string="Requested On"/>
+                <field name="booking_id"/>
+                <field name="partner_id"/>
+                <field name="old_slot_id" string="From"/>
+                <field name="new_date" string="New Date"/>
+                <field name="new_hour" widget="float_time" string="To"/>
+                <field name="requested_by"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'approved'"
+                       decoration-warning="state == 'pending'"
+                       decoration-danger="state == 'rejected'"/>
+                <button name="action_approve" string="Approve" type="object"
+                        icon="fa-check" invisible="state != 'pending'"/>
+                <button name="action_reject" string="Reject" type="object"
+                        icon="fa-times" invisible="state != 'pending'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_booking_reschedule_form" model="ir.ui.view">
+        <field name="name">odex.booking.reschedule.form</field>
+        <field name="model">odex.booking.reschedule</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_approve" string="Approve &amp; Move Booking"
+                            type="object" class="btn-primary"
+                            invisible="state != 'pending'"/>
+                    <button name="action_reject" string="Reject" type="object"
+                            invisible="state != 'pending'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="booking_id" options="{'no_create': True}"
+                                   readonly="state != 'pending'"/>
+                            <field name="partner_id"/>
+                            <field name="company_id" invisible="1"/>
+                            <field name="requested_by"/>
+                        </group>
+                        <group string="Current Appointment">
+                            <field name="old_slot_id" readonly="1"/>
+                            <field name="old_date" readonly="1"/>
+                            <field name="old_time" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="New Appointment">
+                        <group>
+                            <field name="new_date" readonly="state != 'pending'"/>
+                            <field name="new_hour" widget="float_time"
+                                   readonly="state != 'pending'"/>
+                            <field name="new_slot_id" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="slot_summary" readonly="1"
+                                   string="Free Times"/>
+                        </group>
+                    </group>
+                    <group><field name="reason"/></group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_booking_reschedule" model="ir.actions.act_window">
+        <field name="name">Reschedule Requests</field>
+        <field name="res_model">odex.booking.reschedule</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_pending': 1}</field>
+    </record>
+
+    <record id="view_booking_reschedule_search" model="ir.ui.view">
+        <field name="name">odex.booking.reschedule.search</field>
+        <field name="model">odex.booking.reschedule</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="booking_id"/>
+                <field name="partner_id"/>
+                <filter string="Pending" name="pending" domain="[('state', '=', 'pending')]"/>
+                <filter string="Approved" name="approved" domain="[('state', '=', 'approved')]"/>
+            </search>
+        </field>
+    </record>
+</odoo>

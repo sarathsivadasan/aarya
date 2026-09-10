@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ===================================================================
+         v2.0.0: rebuilt against the real schema. These native views are a
+         SUPERVISOR-ONLY fallback for bulk edits/debugging outside the OWL
+         portal - deliberately minimal, using only fields confirmed to
+         exist on your instance. These now sit on account.analytic.line -
+         the portal's primary model - rather than project.task. The OWL portal
+         (action_technician_portal_client) is the primary UI technicians use.
+         =================================================================== -->
+
+    <!-- List: MY work records (account.analytic.line) - the portal's
+         primary model. Supervisors can use this to inspect/repair data
+         outside the OWL portal. -->
+    <record id="view_analytic_line_technician_list" model="ir.ui.view">
+        <field name="name">account.analytic.line.technician.list</field>
+        <field name="model">account.analytic.line</field>
+        <field name="arch" type="xml">
+            <list string="Technician Work Records" create="0">
+                <field name="task_id"/>
+                <field name="employees_id"/>
+                <field name="product_id"/>
+                <field name="technician_status" widget="badge"
+                       decoration-danger="technician_status == 'paused'"
+                       decoration-success="technician_status == 'completed'"
+                       decoration-info="technician_status == 'running'"/>
+                <field name="start_datetime"/>
+                <field name="pause_datetime" optional="hide"/>
+                <field name="resume_datetime" optional="hide"/>
+                <field name="end_datetime"/>
+                <field name="total_pause_time" sum="Paused"/>
+                <field name="technician_net_hours" sum="Net Working Hours"/>
+                <field name="total_hours" sum="Total Hours"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_analytic_line_technician_form" model="ir.ui.view">
+        <field name="name">account.analytic.line.technician.form</field>
+        <field name="model">account.analytic.line</field>
+        <field name="arch" type="xml">
+            <form string="Technician Work Record">
+                <header>
+                    <button name="action_technician_start" type="object"
+                            string="Start" class="btn-primary"
+                            invisible="technician_status != 'not_started'"/>
+                    <button name="action_technician_pause" type="object"
+                            string="Pause" class="btn-secondary"
+                            invisible="technician_status != 'running'"/>
+                    <button name="action_technician_resume" type="object"
+                            string="Resume" class="btn-secondary"
+                            invisible="technician_status != 'paused'"/>
+                    <button name="action_technician_end" type="object"
+                            string="End" class="btn-success"
+                            invisible="technician_status not in ('running', 'paused')"/>
+                    <!-- Administrator controls. Same time tracking as the
+                         technician buttons above (both call the shared
+                         _do_*() internals); the difference is the
+                         permission check and the audit entry. Admin Stop
+                         also bypasses the QC gate so a stuck job can
+                         always be closed out. -->
+                    <button name="action_admin_pause" type="object"
+                            string="Admin: Pause" class="btn-warning"
+                            groups="odex_garage_technician_portal.group_garage_technician_supervisor"
+                            invisible="technician_status != 'running'"/>
+                    <button name="action_admin_resume" type="object"
+                            string="Admin: Resume" class="btn-warning"
+                            groups="odex_garage_technician_portal.group_garage_technician_supervisor"
+                            invisible="technician_status != 'paused'"/>
+                    <button name="action_admin_end" type="object"
+                            string="Admin: Stop" class="btn-danger"
+                            groups="odex_garage_technician_portal.group_garage_technician_supervisor"
+                            invisible="technician_status not in ('running', 'paused')"/>
+                    <field name="technician_status" widget="statusbar"
+                           statusbar_visible="not_started,running,paused,completed"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group string="Assignment">
+                            <field name="task_id"/>
+                            <field name="employees_id"/>
+                            <field name="product_id"/>
+                            <field name="vehicle_id" readonly="1"/>
+                        </group>
+                        <group string="Time">
+                            <field name="start_datetime" readonly="1"/>
+                            <field name="pause_datetime" readonly="1"/>
+                            <field name="resume_datetime" readonly="1"/>
+                            <field name="end_datetime" readonly="1"/>
+                            <field name="total_pause_time" readonly="1"/>
+                            <field name="technician_net_hours" readonly="1"/>
+                            <field name="total_hours" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Activity Log" name="technician_activity">
+                            <field name="technician_log_ids" readonly="1">
+                                <list create="0" edit="0" delete="0">
+                                    <field name="log_date"/>
+                                    <field name="action"/>
+                                    <field name="technician_id"/>
+                                    <field name="description"/>
+                                    <field name="user_id"/>
+                                    <field name="is_admin_action"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Actions -->
+    <record id="action_technician_my_inspections" model="ir.actions.act_window">
+        <field name="name">Vehicle Inspection Work Records</field>
+        <field name="res_model">account.analytic.line</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('task_id.is_vc', '=', True)]</field>
+        <field name="view_ids" eval="[
+            (5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_analytic_line_technician_list')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_analytic_line_technician_form')}),
+        ]"/>
+    </record>
+
+    <record id="action_technician_job_cards" model="ir.actions.act_window">
+        <field name="name">Job Card Work Records</field>
+        <field name="res_model">account.analytic.line</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('task_id.is_jobcard', '=', True)]</field>
+        <field name="view_ids" eval="[
+            (5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_analytic_line_technician_list')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_analytic_line_technician_form')}),
+        ]"/>
+    </record>
+
+    <record id="action_admin_all_assigned_jobs" model="ir.actions.act_window">
+        <field name="name">All Assigned Jobs</field>
+        <field name="res_model">account.analytic.line</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">['&amp;', ('employees_id', '!=', False),
+                              '|', ('task_id.is_jobcard', '=', True),
+                                   ('task_id.is_vc', '=', True)]</field>
+        <field name="context">{'search_default_group_technician': 1}</field>
+        <field name="view_ids" eval="[
+            (5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_analytic_line_technician_list')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_analytic_line_technician_form')}),
+        ]"/>
+    </record>
+
+    <record id="action_technician_parts_requested" model="ir.actions.act_window">
+        <field name="name">Parts Requested</field>
+        <field name="res_model">jobcard.part.requisition</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_technician_profile" model="ir.actions.act_window">
+        <field name="name">My Profile</field>
+        <field name="res_model">hr.employee</field>
+        <field name="view_mode">form</field>
+        <field name="domain">[('user_id', '=', uid)]</field>
+        <field name="context">{'form_view_initial_mode': 'readonly'}</field>
+    </record>
+
+    <!-- Root menu -->
+    <menuitem id="menu_technician_portal_root" name="Technician Portal"
+              sequence="45" groups="group_garage_technician"
+              action="action_technician_portal_client"/>
+
+    <menuitem id="menu_technician_dashboard" name="Dashboard"
+              parent="menu_technician_portal_root"
+              action="action_technician_portal_client" sequence="10"/>
+    <menuitem id="menu_technician_inspection" name="Vehicle Inspection"
+              parent="menu_technician_portal_root"
+              action="action_technician_portal_client" sequence="20"/>
+    <menuitem id="menu_technician_job_card" name="Job Card"
+              parent="menu_technician_portal_root"
+              action="action_technician_portal_client" sequence="30"/>
+    <menuitem id="menu_technician_parts" name="Parts Requested"
+              parent="menu_technician_portal_root"
+              action="action_technician_portal_client" sequence="40"/>
+    <menuitem id="menu_technician_profile" name="Profile"
+              parent="menu_technician_portal_root"
+              action="action_technician_portal_client" sequence="60"/>
+
+    <!-- Native Odoo backend fallbacks - handy for supervisors doing bulk
+         edits/debugging outside the OWL portal. Not shown to plain
+         technicians. -->
+    <menuitem id="menu_technician_native_fallback" name="Backend Views (Admin)"
+              parent="menu_technician_portal_root" sequence="90"
+              groups="group_garage_technician_supervisor"/>
+    <menuitem id="menu_technician_native_inspections" name="Inspections (List/Form)"
+              parent="menu_technician_native_fallback"
+              action="action_technician_my_inspections" sequence="10"/>
+    <menuitem id="menu_technician_native_job_cards" name="Job Cards (List/Form)"
+              parent="menu_technician_native_fallback"
+              action="action_technician_job_cards" sequence="20"/>
+    <menuitem id="menu_technician_native_parts" name="Parts Requested (List)"
+              parent="menu_technician_native_fallback"
+              action="action_technician_parts_requested" sequence="30"/>
+    <menuitem id="menu_admin_all_assigned_jobs" name="All Assigned Jobs"
+              parent="menu_technician_native_fallback"
+              action="action_admin_all_assigned_jobs" sequence="5"/>
+</odoo>

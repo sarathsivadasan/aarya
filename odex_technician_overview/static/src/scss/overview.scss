@@ -1,0 +1,261 @@
+// Odex Technician Overview — purple/blue theme
+$ov-purple: #5B4BB7;
+$ov-purple-dark: #4C3B92;
+$ov-purple-soft: #8B7CE0;
+$ov-blue: #2F80ED;
+$ov-green: #27AE60;
+$ov-orange: #F2994A;
+$ov-red: #EB5757;
+$ov-grey: #B0B3C0;
+$ov-yellow: #F2C94C;
+$ov-bg: #F5F5FB;
+$ov-card: #FFFFFF;
+$ov-text: #2B2B3C;
+$ov-muted: #8A8CA0;
+$ov-radius: 14px;
+$ov-shadow: 0 4px 18px rgba(76, 59, 146, 0.08);
+
+.o_odex_overview {
+    position: relative;
+    min-height: 100%;
+    background: $ov-bg;
+    color: $ov-text;
+    padding: 16px;
+    overflow-y: auto;
+    font-size: 13px;
+
+    h1 { font-size: 20px; font-weight: 700; margin: 0; color: $ov-purple-dark; }
+    h3 { font-size: 14px; font-weight: 600; margin: 0 0 10px; color: $ov-purple-dark; }
+
+    // ------- header -------
+    .ov-header {
+        display: flex; align-items: center; justify-content: space-between;
+        flex-wrap: wrap; gap: 10px; margin-bottom: 14px;
+    }
+    .ov-title { display: flex; align-items: center; gap: 10px; }
+    .ov-title-icon { font-size: 22px; }
+    .ov-header-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .ov-pill {
+        border-radius: 999px; padding: 6px 14px; font-weight: 600; font-size: 12px;
+        box-shadow: $ov-shadow;
+        &.ov-pill-jobcard { background: lighten($ov-yellow, 28%); color: darken($ov-yellow, 32%); }
+        &.ov-pill-inspection { background: lighten($ov-blue, 38%); color: $ov-blue; }
+    }
+    .ov-sync { color: $ov-muted; font-size: 12px; }
+
+    // ------- filter toolbar: single horizontal row -------
+    .ov-toolbar {
+        display: flex; flex-wrap: nowrap; align-items: center; gap: 8px;
+        background: $ov-card; border-radius: $ov-radius; padding: 8px 10px;
+        box-shadow: $ov-shadow; margin-bottom: 10px;
+        overflow-x: auto; // never stacks; scrolls on narrow screens
+
+        select {
+            flex: 0 0 auto; width: auto; max-width: 190px;
+            border: 1px solid #E3E1F2; border-radius: 9px; padding: 7px 28px 7px 10px;
+            background: #FAFAFE; color: $ov-text; font-size: 12px; font-weight: 500;
+            outline: none; cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%235B4BB7'/%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 9px center;
+            &:focus, &:hover { border-color: $ov-purple-soft; }
+        }
+        .ov-search-wrap {
+            flex: 1 1 240px; min-width: 180px; position: relative;
+            .ov-search-icon {
+                position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+                font-size: 12px; opacity: 0.6;
+            }
+            .ov-search {
+                width: 100%; border: 1px solid #E3E1F2; border-radius: 9px;
+                padding: 7px 10px 7px 30px; background: #FAFAFE; color: $ov-text;
+                font-size: 12px; outline: none;
+                &:focus { border-color: $ov-purple-soft; }
+            }
+        }
+    }
+
+    // ------- department toggle bar -------
+    .ov-dept-bar {
+        display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+        margin-bottom: 14px; padding: 2px 2px;
+        .ov-dept-label {
+            font-size: 11px; font-weight: 700; letter-spacing: 0.6px;
+            text-transform: uppercase; color: $ov-muted; flex: 0 0 auto;
+        }
+        .ov-dept-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+        .ov-dept-chip {
+            border: 1px solid #E3E1F2; background: $ov-card; color: $ov-text;
+            border-radius: 999px; padding: 6px 16px; font-size: 12px;
+            font-weight: 600; cursor: pointer; box-shadow: $ov-shadow;
+            transition: background 0.15s ease, color 0.15s ease,
+                        border-color 0.15s ease;
+            &:hover { border-color: $ov-purple-soft; color: $ov-purple; }
+            &.ov-dept-active {
+                background: linear-gradient(135deg, $ov-purple, $ov-purple-soft);
+                border-color: $ov-purple; color: #fff;
+                box-shadow: 0 4px 14px rgba(91, 75, 183, 0.35);
+            }
+        }
+    }
+
+    // legacy class kept for the Reports view filters
+    .ov-filters {
+        display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+        margin-bottom: 14px;
+        select, input {
+            flex: 0 0 auto; width: auto;
+            border: 1px solid #E3E1F2; border-radius: 10px; padding: 7px 10px;
+            background: $ov-card; color: $ov-text; font-size: 12px; outline: none;
+            box-shadow: $ov-shadow;
+            &:focus { border-color: $ov-purple-soft; }
+        }
+        .ov-search { flex: 1 1 260px; min-width: 200px; }
+    }
+
+    // ------- KPI cards -------
+    .ov-kpis {
+        display: grid; gap: 12px; margin-bottom: 14px;
+        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    }
+    .ov-kpi {
+        display: flex; align-items: center; gap: 12px;
+        background: $ov-card; border-radius: $ov-radius; padding: 14px 16px;
+        box-shadow: $ov-shadow;
+        .ov-kpi-icon {
+            width: 42px; height: 42px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center; font-size: 20px;
+        }
+        .ov-kpi-label { color: $ov-muted; font-size: 12px; }
+        .ov-kpi-value { font-size: 22px; font-weight: 700; line-height: 1.15; }
+        &.kpi-blue .ov-kpi-icon { background: lighten($ov-blue, 38%); }
+        &.kpi-green .ov-kpi-icon { background: lighten($ov-green, 45%); }
+        &.kpi-grey .ov-kpi-icon { background: #EEEFF5; }
+        &.kpi-red .ov-kpi-icon { background: lighten($ov-red, 32%); }
+        &.kpi-purple .ov-kpi-icon { background: lighten($ov-purple-soft, 22%); }
+        &.kpi-yellow .ov-kpi-icon { background: lighten($ov-yellow, 28%); }
+        &.kpi-orange .ov-kpi-icon { background: lighten($ov-orange, 30%); }
+    }
+
+    // ------- generic card -------
+    .ov-card {
+        background: $ov-card; border-radius: $ov-radius; padding: 14px;
+        box-shadow: $ov-shadow;
+    }
+
+    // ------- table -------
+    .ov-table-card { margin-bottom: 14px; }
+    .ov-table-scroll { overflow-x: auto; }
+    .ov-table {
+        width: 100%; border-collapse: collapse; min-width: 1400px;
+        th {
+            text-align: left; padding: 9px 10px; white-space: nowrap;
+            background: #F2F1FA; color: $ov-purple-dark; font-size: 11px;
+            text-transform: uppercase; letter-spacing: 0.4px;
+            position: sticky; top: 0; z-index: 1;
+            &:first-child { border-radius: 10px 0 0 10px; }
+            &:last-child { border-radius: 0 10px 10px 0; }
+        }
+        td {
+            padding: 9px 10px; border-bottom: 1px solid #EFEEF7;
+            white-space: nowrap; background: $ov-card; // no row highlight colors
+        }
+        .ov-row-clickable { cursor: pointer; }
+        .ov-row-clickable:hover td { background: #FAFAFF; }
+    }
+    .ov-tech-cell { display: flex; align-items: center; gap: 8px; }
+    .ov-avatar { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; }
+    .ov-tech-name { font-weight: 600; }
+    .ov-remarks { max-width: 200px; overflow: hidden; text-overflow: ellipsis; }
+    .ov-empty { text-align: center; color: $ov-muted; padding: 28px !important; }
+
+    // ------- work-type badges -------
+    .ov-badge {
+        display: inline-flex; align-items: center; gap: 5px;
+        border-radius: 8px; padding: 4px 10px; font-weight: 700; font-size: 12px;
+        &.badge-jobcard { background: lighten($ov-yellow, 26%); color: darken($ov-yellow, 34%); border: 1px solid lighten($ov-yellow, 10%); }
+        &.badge-inspection { background: lighten($ov-blue, 38%); color: $ov-blue; border: 1px solid lighten($ov-blue, 24%); }
+        &.badge-none { color: $ov-muted; }
+    }
+
+    // ------- status badges -------
+    .ov-status {
+        display: inline-flex; align-items: center; gap: 6px;
+        border-radius: 999px; padding: 4px 11px; font-weight: 600; font-size: 12px;
+        .ov-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+        &.status-working { background: lighten($ov-green, 46%); color: darken($ov-green, 6%); }
+        &.status-paused { background: lighten($ov-orange, 32%); color: darken($ov-orange, 18%); }
+        &.status-completed { background: lighten($ov-blue, 38%); color: $ov-blue; }
+        &.status-delayed { background: lighten($ov-red, 32%); color: $ov-red; }
+        &.status-assigned { background: lighten($ov-purple-soft, 24%); color: $ov-purple; }
+        &.status-idle { background: #EEEFF5; color: $ov-muted; }
+    }
+
+    // ------- timer / variance -------
+    .ov-timer { font-variant-numeric: tabular-nums; font-weight: 600; }
+    .ov-timer-live { color: $ov-green; }
+    .ov-variance-exceeded { color: $ov-red; font-weight: 700; }
+    .ov-variance-ok { color: $ov-muted; }
+
+    // ------- productivity -------
+    .ov-prod-cell { min-width: 130px; }
+    .ov-progress {
+        height: 7px; border-radius: 999px; background: #EEEFF5;
+        overflow: hidden; margin-bottom: 3px;
+        .ov-progress-bar {
+            height: 100%; border-radius: 999px;
+            background: linear-gradient(90deg, $ov-purple-soft, $ov-purple);
+        }
+    }
+    .ov-prod-pct { font-weight: 700; font-size: 12px; }
+
+    // ------- charts -------
+    .ov-charts {
+        display: grid; gap: 12px;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+    .ov-charts-2 { grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); margin-bottom: 14px; }
+    .ov-chart-canvas { position: relative; height: 220px; }
+    .ov-chart-tall { height: 280px; }
+
+    // ------- reports -------
+    .ov-report-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+    .ov-tab {
+        border: 1px solid #E3E1F2; background: $ov-card; color: $ov-text;
+        border-radius: 999px; padding: 7px 15px; font-size: 12px; font-weight: 600;
+        cursor: pointer; box-shadow: $ov-shadow;
+        &.ov-tab-active { background: $ov-purple; border-color: $ov-purple; color: #fff; }
+    }
+    .ov-btn {
+        border: 1px solid #E3E1F2; background: $ov-card; color: $ov-text;
+        border-radius: 10px; padding: 7px 13px; font-size: 12px; font-weight: 600;
+        cursor: pointer; box-shadow: $ov-shadow;
+        &:hover { border-color: $ov-purple-soft; }
+        &.ov-btn-primary { background: $ov-purple; border-color: $ov-purple; color: #fff; }
+    }
+    .ov-report-title { margin-bottom: 8px; }
+
+    // ------- loading -------
+    .ov-loading {
+        position: absolute; inset: 0; display: flex; align-items: center;
+        justify-content: center; background: rgba(245, 245, 251, 0.55); z-index: 5;
+    }
+    .ov-spinner {
+        width: 38px; height: 38px; border-radius: 50%;
+        border: 4px solid #E3E1F2; border-top-color: $ov-purple;
+        animation: ov-spin 0.8s linear infinite;
+    }
+    @keyframes ov-spin { to { transform: rotate(360deg); } }
+
+    // ------- responsive -------
+    @media (max-width: 992px) {
+        .ov-kpis { grid-template-columns: repeat(2, 1fr); }
+        .ov-charts, .ov-charts-2 { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 576px) {
+        padding: 10px;
+        .ov-kpis { grid-template-columns: 1fr; }
+        .ov-toolbar { padding: 6px 8px; }
+        .ov-toolbar select { max-width: 150px; }
+    }
+}

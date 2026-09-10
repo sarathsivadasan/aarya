@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Vehicle link on the standalone scan form -->
+    <record id="view_mulkiya_scan_form_fleet" model="ir.ui.view">
+        <field name="name">odex.mulkiya.scan.form.fleet</field>
+        <field name="model">odex.mulkiya.scan</field>
+        <field name="inherit_id" ref="odex_mulkiya_scan.view_mulkiya_scan_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header/field[@name='state']" position="before">
+                <button name="action_apply_to_vehicle" type="object"
+                        string="Apply to Vehicle" class="btn-primary"
+                        invisible="not can_apply_to_vehicle"/>
+            </xpath>
+            <xpath expr="//div[@class='oe_title']" position="after">
+                <field name="can_apply_to_vehicle" invisible="1"/>
+                <group>
+                    <group>
+                        <field name="vehicle_id" options="{'no_create': True}"
+                               readonly="state in ['applied']"/>
+                    </group>
+                </group>
+            </xpath>
+            <xpath expr="//page[@name='matching']" position="before">
+                <page string="Changes To Apply" name="apply_preview"
+                      invisible="not vehicle_id or state in ['draft', 'uploaded', 'processing']">
+                    <field name="apply_preview" nolabel="1" readonly="1"/>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Compact dialog opened from the vehicle form -->
+    <record id="view_mulkiya_scan_form_dialog" model="ir.ui.view">
+        <field name="name">odex.mulkiya.scan.form.dialog</field>
+        <field name="model">odex.mulkiya.scan</field>
+        <field name="priority">99</field>
+        <field name="arch" type="xml">
+            <form string="Scan Mulkiya (OCR)" class="o_mulkiya_form o_mulkiya_dialog">
+                <field name="vehicle_id" invisible="1"/>
+                <field name="has_both_images" invisible="1"/>
+                <field name="show_confidence" invisible="1"/>
+                <field name="confidence_threshold" invisible="1"/>
+                <field name="state" invisible="1"/>
+                <field name="can_apply_to_vehicle" invisible="1"/>
+
+                <div class="alert alert-info" role="alert"
+                     invisible="has_both_images">
+                    Please upload both front and back sides before scanning.
+                </div>
+                <div class="alert alert-danger" role="alert"
+                     invisible="state != 'failed'">
+                    <field name="ocr_error" readonly="1" nolabel="1"/>
+                </div>
+                <div class="alert alert-warning" role="alert"
+                     invisible="not vin_warning">
+                    <i class="fa fa-exclamation-triangle me-1"/>
+                    <field name="vin_warning" readonly="1" nolabel="1"/>
+                </div>
+                <div class="alert alert-warning" role="alert"
+                     invisible="not duplicate_warning">
+                    <i class="fa fa-exclamation-triangle me-1"/>
+                    <field name="duplicate_warning" readonly="1" nolabel="1"/>
+                </div>
+
+                <div class="row o_mulkiya_images">
+                    <div class="col-12 col-lg-6">
+                        <h5 class="o_mulkiya_section">
+                            1. Front Side (Mulkiya)
+                            <i class="fa fa-check-circle text-success ms-1"
+                               invisible="not front_image"/>
+                        </h5>
+                        <field name="front_image" widget="mulkiya_image" nolabel="1"
+                               readonly="state in ['processing', 'applied']"/>
+                    </div>
+                    <div class="col-12 col-lg-6">
+                        <h5 class="o_mulkiya_section">
+                            2. Back Side (Mulkiya)
+                            <i class="fa fa-check-circle text-success ms-1"
+                               invisible="not back_image"/>
+                        </h5>
+                        <field name="back_image" widget="mulkiya_image" nolabel="1"
+                               readonly="state in ['processing', 'applied']"/>
+                    </div>
+                </div>
+
+                <div class="text-center my-3" invisible="state != 'uploaded'">
+                    <button name="action_scan" type="object" string="Scan Mulkiya"
+                            class="btn btn-primary btn-lg" icon="fa-qrcode"/>
+                </div>
+
+                <div class="o_mulkiya_results"
+                     invisible="state in ['draft', 'uploaded', 'processing']">
+                    <h5 class="o_mulkiya_section">
+                        3. Extracted Information
+                        <span class="badge text-bg-success ms-2"
+                              invisible="not show_confidence">Confidence Shown</span>
+                        <button name="action_rescan" type="object" string="Rescan"
+                                class="btn btn-secondary btn-sm ms-auto"
+                                icon="fa-refresh"/>
+                    </h5>
+                    <div class="row">
+                        <div class="col-12 col-lg-4">
+                            <div class="o_mulkiya_field">
+                                <label for="engine_no"/>
+                                <div class="o_mulkiya_input">
+                                    <field name="engine_no" nolabel="1"
+                                           readonly="state == 'applied'"/>
+                                    <field name="engine_no_conf" nolabel="1"
+                                           widget="mulkiya_confidence"
+                                           invisible="not show_confidence"/>
+                                </div>
+                            </div>
+                            <div class="o_mulkiya_field">
+                                <label for="vin_sn"/>
+                                <div class="o_mulkiya_input">
+                                    <field name="vin_sn" nolabel="1"
+                                           readonly="state == 'applied'"/>
+                                    <field name="vin_sn_conf" nolabel="1"
+                                           widget="mulkiya_confidence"
+                                           invisible="not show_confidence"/>
+                                </div>
+                            </div>
+                            <div class="o_mulkiya_field">
+                                <label for="license_plate"/>
+                                <div class="o_mulkiya_input">
+                                    <field name="license_plate" nolabel="1"
+                                           readonly="state == 'applied'"/>
+                                    <field name="license_plate_conf" nolabel="1"
+                                           widget="mulkiya_confidence"
+                                           invisible="not show_confidence"/>
+                                </div>
+                            </div>
+                            <div class="o_mulkiya_field">
+                                <label for="plate_code"/>
+                                <div class="o_mulkiya_input">
+                                    <field name="plate_code" nolabel="1"
+                                           readonly="state == 'applied'"/>
+                                    <field name="plate_code_conf" nolabel="1"
+                                           widget="mulkiya_confidence"
+                                           invisible="not show_confidence"/>
+                                </div>
+                            </div>
+                            <div class="o_mulkiya_field">
+                                <label for="registration_emirate"/>
+                                <div class="o_mulkiya_input">
+                                    <field name="registration_emirate" nolabel="1"
+                                           readonly="state == 'applied'"/>
+                                    <field name="registration_emirate_conf" nolabel="1"
+                                           widget="mulkiya_confidence"
+                                           invisible="not show_confidence"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-4">
+                            <div class="o_mulkiya_field">
+                                <label for="make"/>
+                                <div class="o_mulkiya_input">
+                                    <field name="make" nolabel="1"
+                                           readonly="state == 'applied'"/>
+                                    <field name="make_conf" nolabel="1"
+                                           widget="mulkiya_confidence"
+                                           invisible="not show_confidence"/>
+                                </div>
+                            </div>
+                            <div class="o_mulkiya_field">
+                                <label for="vehicle_model"/>
+                                <div class="o_mulkiya_input">
+                                    <field name="vehicle_model" nolabel="1"
+                                           readonly="state == 'applied'"/>
+                                    <field name="vehicle_model_conf" nolabel="1"
+                                           widget="mulkiya_confidence"
+                                           invisible="not show_confidence"/>
+                                </div>
+                            </div>
+                            <div class="o_mulkiya_field">
+                                <label for="model_year"/>
+                                <div class="o_mulkiya_input">
+                                    <field name="model_year" nolabel="1"
+                                           readonly="state == 'applied'"/>
+                                    <field name="model_year_conf" nolabel="1"
+                                           widget="mulkiya_confidence"
+                                           invisible="not show_confidence"/>
+                                </div>
+                            </div>
+                            <div class="o_mulkiya_field">
+                                <label for="color"/>
+                                <div class="o_mulkiya_input">
+                                    <field name="color" nolabel="1"
+                                           readonly="state == 'applied'"/>
+                                    <field name="color_conf" nolabel="1"
+                                           widget="mulkiya_confidence"
+                                           invisible="not show_confidence"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-4">
+                            <div class="o_mulkiya_field">
+                                <label for="fuel_type"/>
+                                <div class="o_mulkiya_input">
+                                    <field name="fuel_type" nolabel="1"
+                                           readonly="state == 'applied'"/>
+                                    <field name="fuel_type_conf" nolabel="1"
+                                           widget="mulkiya_confidence"
+                                           invisible="not show_confidence"/>
+                                </div>
+                            </div>
+                            <div class="o_mulkiya_field">
+                                <label for="cylinder_count"/>
+                                <div class="o_mulkiya_input">
+                                    <field name="cylinder_count" nolabel="1"
+                                           readonly="state == 'applied'"/>
+                                    <field name="cylinder_count_conf" nolabel="1"
+                                           widget="mulkiya_confidence"
+                                           invisible="not show_confidence"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="alert alert-light border mt-2 mb-0" role="status">
+                        <i class="fa fa-info-circle me-1"/>
+                        Please verify the extracted information before applying.
+                        You can edit any field if needed.
+                    </div>
+                </div>
+
+                <footer>
+                    <button name="action_apply_to_vehicle" type="object"
+                            string="Apply to Vehicle" class="btn-primary"
+                            invisible="not can_apply_to_vehicle"/>
+                    <button name="action_scan" type="object" string="Scan Mulkiya"
+                            class="btn-primary" invisible="state != 'uploaded'"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

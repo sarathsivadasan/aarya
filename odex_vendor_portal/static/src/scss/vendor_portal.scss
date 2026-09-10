@@ -1,0 +1,462 @@
+// ODEX Vendor Portal
+// Same design language as the existing Customer Portal: white cards,
+// soft borders, navy text, blue accents, pastel icon tiles.
+
+$ovp-navy:        #0f2c52;
+$ovp-navy-soft:   #1b3f6b;
+$ovp-muted:       #6b7f9e;
+$ovp-border:      #e8edf4;
+$ovp-blue:        #2563eb;
+$ovp-blue-soft:   #e9eefd;
+$ovp-green:       #12a150;
+$ovp-green-soft:  #e4f6ec;
+$ovp-red:         #e5484d;
+$ovp-red-soft:    #fdeaec;
+$ovp-amber:       #b7791f;
+$ovp-amber-soft:  #fdf3e2;
+$ovp-radius:      14px;
+
+.o_vendor_portal {
+    color: $ovp-navy;
+
+    // ---------- cards ----------
+    .o_vendor_card {
+        background: #fff;
+        border: 1px solid $ovp-border;
+        border-radius: $ovp-radius;
+        box-shadow: 0 1px 2px rgba(16, 24, 40, .04);
+    }
+
+    .o_vendor_card_head {
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+    }
+
+    .o_vendor_head_icon {
+        color: $ovp-blue;
+        font-size: 1.05rem;
+    }
+
+    .o_vendor_card_title {
+        font-weight: 600;
+        font-size: 1.05rem;
+        color: $ovp-navy;
+    }
+
+    .o_vendor_sep {
+        border-color: $ovp-border;
+        opacity: 1;
+        margin: 1rem 0;
+    }
+
+    // ---------- vendor details ----------
+    .o_vendor_avatar {
+        flex: 0 0 auto;
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+        background: $ovp-blue-soft;
+        color: $ovp-blue;
+        font-weight: 600;
+        letter-spacing: .5px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .o_vendor_name {
+        font-weight: 600;
+        font-size: 1.05rem;
+        color: $ovp-navy;
+    }
+
+    .o_vendor_muted { color: $ovp-muted; }
+
+    .o_vendor_label {
+        font-size: .8125rem;
+        font-weight: 600;
+        color: $ovp-navy-soft;
+        margin-bottom: .15rem;
+    }
+
+    .o_vendor_value {
+        font-size: .9375rem;
+        color: $ovp-muted;
+        white-space: pre-line;
+    }
+
+    .o_vendor_link {
+        color: $ovp-blue;
+        font-weight: 600;
+        font-size: .9375rem;
+        text-decoration: none;
+        white-space: nowrap;
+
+        &:hover { text-decoration: underline; }
+        i { margin-left: .25rem; }
+    }
+
+    // ---------- quick links ----------
+    .o_vendor_quicklink {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: .65rem 0;
+        color: $ovp-navy;
+        text-decoration: none;
+        border-bottom: 1px solid rgba($ovp-border, .8);
+        font-size: .95rem;
+
+        &:last-child { border-bottom: 0; }
+        &:hover { color: $ovp-blue; }
+
+        i.fa-angle-right { color: $ovp-muted; }
+        span i { color: $ovp-blue; }
+    }
+
+    // ---------- dashboard tiles ----------
+    .o_vendor_tile {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        text-decoration: none;
+        color: inherit;
+        transition: box-shadow .15s ease, transform .15s ease;
+
+        &:hover {
+            box-shadow: 0 6px 18px rgba(16, 24, 40, .08);
+            transform: translateY(-1px);
+        }
+    }
+
+    .o_vendor_tile_icon {
+        flex: 0 0 auto;
+        width: 52px;
+        height: 52px;
+        border-radius: $ovp-radius;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.35rem;
+
+        &--blue  { background: $ovp-blue-soft;  color: $ovp-blue; }
+        &--green { background: $ovp-green-soft; color: $ovp-green; }
+        &--red   { background: $ovp-red-soft;   color: $ovp-red; }
+    }
+
+    .o_vendor_tile_body { flex: 1 1 auto; min-width: 0; }
+
+    .o_vendor_tile_title {
+        font-weight: 600;
+        font-size: 1.05rem;
+        color: $ovp-navy;
+        margin-bottom: .25rem;
+    }
+
+    .o_vendor_tile_sub {
+        color: $ovp-muted;
+        font-size: .9375rem;
+        line-height: 1.35;
+    }
+
+    .o_vendor_tile_count {
+        margin-top: .5rem;
+        font-size: .8125rem;
+        font-weight: 600;
+        color: $ovp-blue;
+    }
+
+    .o_vendor_tile_arrow {
+        align-self: center;
+        color: $ovp-muted;
+    }
+
+    // ---------- toolbar ----------
+    .o_vendor_pill {
+        display: inline-block;
+        padding: .25rem .75rem;
+        border-radius: 999px;
+        border: 1px solid $ovp-border;
+        color: $ovp-navy-soft;
+        background: #fff;
+        font-size: .8125rem;
+        text-decoration: none;
+
+        &:hover { border-color: $ovp-blue; color: $ovp-blue; }
+
+        &--active {
+            background: $ovp-blue-soft;
+            border-color: $ovp-blue-soft;
+            color: $ovp-blue;
+            font-weight: 600;
+        }
+    }
+
+    .o_vendor_sort_btn {
+        border: 1px solid $ovp-border;
+        border-radius: 999px;
+        color: $ovp-navy-soft;
+        background: #fff;
+        font-size: .8125rem;
+    }
+
+    .o_vendor_due {
+        color: $ovp-muted;
+        font-size: .9375rem;
+        b { color: $ovp-navy; }
+    }
+
+    // ---------- tables ----------
+    .o_vendor_table {
+        font-size: .9375rem;
+
+        thead th {
+            border-bottom: 1px solid $ovp-border;
+            color: $ovp-navy-soft;
+            font-weight: 600;
+            font-size: .8125rem;
+            text-transform: none;
+            white-space: nowrap;
+        }
+
+        td {
+            border-color: rgba($ovp-border, .9);
+            color: $ovp-muted;
+            vertical-align: middle;
+        }
+
+        .o_vendor_ref {
+            color: $ovp-blue;
+            font-weight: 600;
+            text-decoration: none;
+            &:hover { text-decoration: underline; }
+        }
+    }
+
+    .o_vendor_action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        color: $ovp-navy-soft;
+        background: #f5f7fb;
+        margin-left: .25rem;
+        text-decoration: none;
+
+        &:hover { background: $ovp-blue-soft; color: $ovp-blue; }
+
+        &--primary {
+            background: $ovp-blue-soft;
+            color: $ovp-blue;
+        }
+    }
+
+    // ---------- badges ----------
+    .o_vendor_badge {
+        display: inline-block;
+        padding: .2rem .6rem;
+        border-radius: 999px;
+        font-size: .75rem;
+        font-weight: 600;
+        white-space: nowrap;
+        background: #f2f4f8;
+        color: $ovp-navy-soft;
+
+        &--pending   { background: $ovp-amber-soft; color: $ovp-amber; }
+        &--responded { background: $ovp-blue-soft;  color: $ovp-blue; }
+        &--confirmed { background: $ovp-green-soft; color: $ovp-green; }
+        &--done      { background: $ovp-green-soft; color: $ovp-green; }
+        &--paid      { background: $ovp-green-soft; color: $ovp-green; }
+        &--partial   { background: $ovp-blue-soft;  color: $ovp-blue; }
+        &--overdue   { background: $ovp-red-soft;   color: $ovp-red; }
+        &--cancel    { background: $ovp-red-soft;   color: $ovp-red; }
+        &--nobill    { background: #f2f4f8;         color: $ovp-muted; }
+    }
+
+    // ---------- totals ----------
+    .o_vendor_totals {
+        margin-left: auto;
+        max-width: 340px;
+        color: $ovp-muted;
+        font-size: .9375rem;
+
+        > div { padding: .3rem 0; }
+
+        .o_vendor_total_line {
+            border-top: 1px solid $ovp-border;
+            margin-top: .3rem;
+            padding-top: .6rem;
+            color: $ovp-navy;
+            font-weight: 700;
+            font-size: 1.05rem;
+        }
+    }
+
+    .o_vendor_note {
+        background: #f8fafc;
+        border: 1px solid $ovp-border;
+        border-radius: 10px;
+        padding: .75rem 1rem;
+    }
+
+    // ---------- buttons / alerts ----------
+    .o_vendor_btn_primary {
+        background: $ovp-blue;
+        border-color: $ovp-blue;
+        color: #fff;
+        border-radius: 10px;
+        font-weight: 600;
+
+        &:hover { background: darken($ovp-blue, 6%); color: #fff; }
+    }
+
+    .o_vendor_btn_light {
+        background: #fff;
+        border: 1px solid $ovp-border;
+        border-radius: 10px;
+        color: $ovp-navy-soft;
+        margin-left: .35rem;
+
+        &:hover { border-color: $ovp-blue; color: $ovp-blue; }
+    }
+
+    .o_vendor_alert_success {
+        background: $ovp-green-soft;
+        border: 1px solid rgba($ovp-green, .25);
+        color: darken($ovp-green, 8%);
+        border-radius: 10px;
+    }
+
+    .o_vendor_alert_error {
+        background: $ovp-red-soft;
+        border: 1px solid rgba($ovp-red, .25);
+        color: darken($ovp-red, 8%);
+        border-radius: 10px;
+    }
+
+    .o_vendor_price_input {
+        max-width: 140px;
+        margin-left: auto;
+        text-align: right;
+        border-radius: 8px;
+    }
+
+    // ---------- activity ----------
+    .o_vendor_activity_item {
+        display: flex;
+        align-items: center;
+        gap: .85rem;
+        padding: .75rem 0;
+        border-bottom: 1px solid rgba($ovp-border, .8);
+        text-decoration: none;
+        color: inherit;
+
+        &:last-child { border-bottom: 0; }
+        &:hover .o_vendor_activity_title { color: $ovp-blue; }
+    }
+
+    .o_vendor_activity_icon {
+        flex: 0 0 auto;
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        &--blue  { background: $ovp-blue-soft;  color: $ovp-blue; }
+        &--green { background: $ovp-green-soft; color: $ovp-green; }
+        &--red   { background: $ovp-red-soft;   color: $ovp-red; }
+    }
+
+    .o_vendor_activity_body {
+        flex: 1 1 auto;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .o_vendor_activity_title {
+        font-weight: 600;
+        color: $ovp-navy;
+        font-size: .95rem;
+    }
+
+    .o_vendor_activity_sub {
+        color: $ovp-muted;
+        font-size: .875rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .o_vendor_activity_date {
+        flex: 0 0 auto;
+        color: $ovp-muted;
+        font-size: .8125rem;
+        white-space: nowrap;
+    }
+
+    // ---------- empty state ----------
+    .o_vendor_empty_icon {
+        width: 68px;
+        height: 68px;
+        border-radius: 50%;
+        background: $ovp-blue-soft;
+        color: $ovp-blue;
+        font-size: 1.6rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .o_vendor_empty_title {
+        font-weight: 600;
+        color: $ovp-navy;
+    }
+
+    .o_vendor_empty_sub {
+        color: $ovp-muted;
+        font-size: .9375rem;
+    }
+
+    // ---------- responsive: tables become stacked cards ----------
+    @media (max-width: 767.98px) {
+        .o_vendor_table {
+            thead { display: none; }
+
+            tbody tr {
+                display: block;
+                border: 1px solid $ovp-border;
+                border-radius: 10px;
+                padding: .5rem .75rem;
+                margin-bottom: .75rem;
+            }
+
+            tbody td {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 1rem;
+                border: 0;
+                padding: .3rem 0;
+                text-align: right !important;
+
+                &::before {
+                    content: attr(data-label);
+                    font-weight: 600;
+                    color: $ovp-navy-soft;
+                    font-size: .8125rem;
+                    text-align: left;
+                }
+            }
+        }
+
+        .o_vendor_totals { max-width: none; }
+        .o_vendor_price_input { max-width: 120px; }
+        .o_vendor_activity_date { display: none; }
+    }
+}

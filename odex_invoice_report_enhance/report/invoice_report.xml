@@ -1,0 +1,552 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        Inherit the STANDARD invoice document template and replace only the
+        body (<div class="page">).  web.external_layout (header with logo /
+        company / TRN and the footer) is kept untouched, so the standard
+        curved Odoo header and footer remain exactly as configured on the
+        company.  No report action is duplicated.
+    -->
+<template id="odex_invoice_report_enhance.report_invoice_document_odex" inherit_id="account.report_invoice_document">
+        <xpath expr="//div[hasclass('page')]" position="replace">
+            <xpath expr="//t[@t-set='address']" position="replace">
+            <t t-set="address"/>
+        </xpath>
+        
+        <xpath expr="//t[@t-set='information_block']" position="replace">
+            <t t-set="information_block"/>
+        </xpath>
+
+            <div class="page odex-invoice">
+
+                <!-- ============ Scoped styles (print / HTML safe) ============ -->
+                <style>
+                    .odex-invoice { color:#2c2f36; font-size:12px; }
+                    .odex-invoice .odex-title {
+                        text-align:right; color:#16264c;
+                        font-weight:700; font-size:26px; letter-spacing:.5px;
+                        margin:8px 0 14px 0;
+                    }
+                    .odex-invoice .odex-info {
+                        border:1px solid #f3d8c2; background:#fdf1e7;
+                        border-radius:10px; padding:10px 4px; margin-bottom:16px;
+                    }
+                    .odex-invoice .odex-info .odex-info-label {
+                        color:#f26522; font-weight:700; font-size:12px;
+                    }
+                    .odex-invoice .odex-info .odex-info-value {
+                        color:#16264c; font-weight:700; font-size:12px;
+                    }
+                    .odex-invoice .odex-info .odex-sep {
+                        border-left:1px solid #f3d8c2;
+                    }
+                    .odex-invoice .odex-card {
+                        border:1px solid #e3e6ec; border-radius:10px;
+                        overflow:hidden; height:100%;
+                    }
+                    .odex-invoice .odex-card-head {
+                        background:#16264c; color:#fff; font-weight:700;
+                        font-size:13px; letter-spacing:.4px;
+                        padding:9px 14px;
+                    }
+                    .odex-invoice .odex-card-body { padding:12px 14px; height: 160px; }
+                    .odex-invoice .odex-row { margin-bottom:6px; }
+                    .odex-invoice .odex-lbl {
+                        font-weight:700; color:#2c2f36;
+                    }
+                    .odex-invoice table.odex-table {
+                        width:100%; border-collapse:collapse; margin-top:4px;
+                    }
+                    .odex-invoice table.odex-table thead th {
+                        background:#16264c; color:#fff; font-weight:700;
+                        font-size:11px; padding:8px 6px; border:1px solid #16264c;
+                        vertical-align:middle;
+                    }
+                    .odex-invoice table.odex-table tbody td {
+                        padding:8px 6px; border:1px solid #e3e6ec;
+                        font-size:11.5px; vertical-align:middle;
+                    }
+                    .odex-invoice .odex-sec-title {
+                        color:#16264c; font-weight:700; font-size:14px;
+                        letter-spacing:.6px; margin:14px 0 2px 0;
+                    }
+                    .odex-invoice .odex-sec-total {
+                        text-align:right; font-weight:700; color:#16264c;
+                        padding:8px 6px; font-size:13px;
+                    }
+                    .odex-invoice .odex-sec-total .odex-amt { color:#1b5fa8; }
+                    .odex-invoice .odex-summary td { padding:5px 4px; }
+                    .odex-invoice .odex-summary .odex-sub {
+                        border-top:1px solid #cfd4dd;
+                    }
+                    .odex-invoice .odex-grand {
+                        background:#16264c; color:#fff; font-weight:700;
+                        font-size:15px;
+                    }
+                    .odex-invoice .odex-grand td { padding:10px 10px; }
+                    .odex-invoice .odex-words {
+                        color:#1b5fa8; font-size:11.5px; margin-top:6px;
+                    }
+                    .odex-invoice .odex-ack-line {
+                        border-bottom:1px solid #9aa1ad; height:16px;
+                    }
+                    .odex-invoice .odex-avoid { page-break-inside:avoid; }
+                    .odex-invoice .text-navy { color:#16264c; }
+                </style>
+
+                <!-- lang already set by the standard template wrapper -->
+
+                <!-- ==================== Document title ==================== -->
+                <div class="odex-title">
+                    <span t-out="o.odex_document_title"/>
+                    <span t-if="o.name and o.name != '/'"> <span t-field="o.name"/></span>
+                </div>
+
+                <!-- ==================== Invoice info row ==================== -->
+                <div class="odex-info odex-avoid">
+                    <div class="row g-0 text-center">
+                        <div class="col-3">
+                            <div class="odex-info-label">
+                                <i class="fa fa-calendar me-1"/> Invoice Date
+                            </div>
+                            <div class="odex-info-value">
+                                <span t-if="o.invoice_date" t-field="o.invoice_date"/>
+                                <span t-else="">-</span>
+                            </div>
+                        </div>
+                        <div class="col-3 odex-sep">
+                            <div class="odex-info-label">
+                                <i class="fa fa-calendar-check-o me-1"/> Due Date
+                            </div>
+                            <div class="odex-info-value">
+                                <span t-if="o.invoice_date_due" t-field="o.invoice_date_due"/>
+                                <span t-else="">-</span>
+                            </div>
+                        </div>
+                        <div class="col-3 odex-sep">
+                            <div class="odex-info-label">
+                                <i class="fa fa-user me-1"/> Salesperson
+                            </div>
+                            <div class="odex-info-value">
+                                <span t-if="o.invoice_user_id" t-field="o.invoice_user_id"/>
+                                <span t-else="">-</span>
+                            </div>
+                        </div>
+                        <div class="col-3 odex-sep">
+                            <div class="odex-info-label">
+                                <i class="fa fa-file-text-o me-1"/> Payment Terms
+                            </div>
+                            <div class="odex-info-value">
+                                <span t-if="o.invoice_payment_term_id" t-field="o.invoice_payment_term_id"/>
+                                <span t-else="">Immediate</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============ Customer & Vehicle cards ============ -->
+                <div class="row g-3 mb-2">
+
+                    <!-- Customer card -->
+                    <div class="col-6">
+                        <div class="odex-card odex-avoid">
+                            <div class="odex-card-head">
+                                <i class="fa fa-user me-2"/> CUSTOMER DETAILS
+                            </div>
+                            <div class="odex-card-body">
+                                <t t-set="p" t-value="o.partner_id"/>
+                                <div class="row odex-row" t-if="p.name">
+                                    <div class="col-4 odex-lbl">Customer Name</div>
+                                    <div class="col-8">: <span t-field="p.name"/></div>
+                                </div>
+                                <div class="row odex-row" t-if="p.mobile or p.phone">
+                                    <div class="col-4 odex-lbl">Phone</div>
+                                    <div class="col-8">: <span t-out="p.mobile or p.phone"/></div>
+                                </div>
+                                <div class="row odex-row" t-if="p.email">
+                                    <div class="col-4 odex-lbl">Email</div>
+                                    <div class="col-8">: <span t-field="p.email"/></div>
+                                </div>
+                                <div class="row odex-row" t-if="p.street or p.street2 or p.city or p.zip or p.country_id">
+                                    <div class="col-4 odex-lbl">Billing Address</div>
+                                    <div class="col-8">:
+                                        <span t-if="p.street"><span t-field="p.street"/></span>
+                                        <span t-if="p.street2"><span t-field="p.street2"/></span>
+                                        <span t-if="p.city or p.state_id or p.zip">
+                                            <span t-if="p.zip"><span t-field="p.zip"/> </span>
+                                            <span t-if="p.city"><span t-field="p.city"/></span>
+                                            <span t-if="p.state_id">, <span t-field="p.state_id.name"/></span>
+                                        </span>
+                                        <span t-if="p.country_id"><span t-field="p.country_id.name"/></span>
+                                    </div>
+                                </div>
+                                <div class="row odex-row" t-if="p.vat">
+                                    <div class="col-4 odex-lbl">TRN</div>
+                                    <div class="col-8">: <span t-field="p.vat"/></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Vehicle card -->
+                    <div class="col-6">
+                        <div class="odex-card odex-avoid">
+                            <div class="odex-card-head">
+                                <i class="fa fa-car me-2"/> VEHICLE DETAILS
+                            </div>
+                            <div class="odex-card-body">
+                                    <div class="row">
+                                        <!-- left col -->
+                                        <div class="col-6">
+                                            <div class="row odex-row">
+                                                <div class="col-5 odex-lbl">License Plate</div>
+                                                <div class="col-7">: <span t-out="o.vehicle_id.name"/></div>
+                                            </div>
+                                            <div class="row odex-row">
+                                                <div class="col-5 odex-lbl">Make</div>
+                                                <div class="col-7">: <span t-out="o.vehicle_id.brand_id.name"/></div>
+                                            </div>
+                                            <div class="row odex-row">
+                                                <div class="col-5 odex-lbl">Model</div>
+                                                <div class="col-7">: <span t-out="o.vehicle_id.model_id.name"/></div>
+                                            </div>
+                                            <div class="row odex-row">
+                                                <div class="col-5 odex-lbl">Year</div>
+                                                <div class="col-7">: <span t-out="o.vehicle_id.model_year"/></div>
+                                            </div>
+                                            <div class="row odex-row">
+                                                <div class="col-5 odex-lbl">Color</div>
+                                                <div class="col-7">: <span t-out="o.vehicle_id.color_id.name"/></div>
+                                            </div>
+                                        </div>
+                                        <!-- right col -->
+                                        <div class="col-6">
+                                            <div class="row odex-row">
+                                                <div class="col-4 odex-lbl">Chassis No.</div>
+                                                <div class="col-8">: <span t-out="o.vehicle_id.vin_sn"/></div>
+                                            </div>
+                                            <div class="row odex-row">
+                                                <div class="col-4 odex-lbl">Engine No.</div>
+                                                <div class="col-8">: <span t-out="o.vehicle_id.engin_no"/></div>
+                                            </div>
+                                            <div class="row odex-row">
+                                                <div class="col-4 odex-lbl">Fuel Type</div>
+                                                <div class="col-8">: <span t-out="o.vehicle_id.fuel_type"/></div>
+                                            </div>
+                                            <div class="row odex-row">
+                                                <div class="col-4 odex-lbl">Odometer</div>
+                                                <div class="col-8">: <span t-out="o.vehicle_id.odometer"/></div>
+                                            </div>
+                                            <div class="row odex-row">
+                                                <div class="col-4 odex-lbl">Cylinder</div>
+                                                <div class="col-8">: <span t-out="o.vehicle_id.cylinder_count"/></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==================== PARTS ==================== -->
+                <div class="odex-sec-title">PARTS</div>
+                <table class="odex-table">
+                    <thead>
+                        <tr>
+                            <th style="width:4%;" class="text-center">#</th>
+                            <th style="width:12%;">Parts Type</th>
+                            <th style="width:26%;">Description</th>
+                            <th style="width:9%;" class="text-center">Quantity</th>
+                            <th style="width:8%;" class="text-center">Unit</th>
+                            <th style="width:13%;" class="text-end">Unit Price (<span t-out="o.currency_id.name"/>)</th>
+                            <th style="width:12%;" class="text-end">Tax Amount (<span t-out="o.currency_id.name"/>)</th>
+                            <th style="width:16%;" class="text-end">Amount (Incl. Tax) (<span t-out="o.currency_id.name"/>)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-if="o.odex_parts_line_ids">
+                            <tr t-foreach="o.odex_parts_line_ids" t-as="line">
+                                <td class="text-center"><span t-out="line_index + 1"/></td>
+                                <td>
+                                    <span t-if="line.odex_parts_type" t-field="line.odex_parts_type"/>
+                                    <span t-else="">–</span>
+                                </td>
+                                <td><span t-field="line.name"/></td>
+                                <td class="text-center"><span t-esc="'%.2f' % line.quantity"/></td>
+                                <td class="text-center"><span t-out="line.product_uom_id.name"/></td>
+                                <td class="text-end"><span t-esc="'%.2f' % line.price_unit"/></td>
+                                <td class="text-end"><span t-esc="'%.2f' % line.odex_tax_amount"/></td>
+                                <td class="text-end"><span t-esc="'%.2f' % line.price_total"/></td>
+                            </tr>
+                        </t>
+                        <t t-else="">
+                            <tr><td colspan="8" class="text-center text-muted fst-italic">No parts.</td></tr>
+                        </t>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="8" class="odex-sec-total">
+                                TOTAL PARTS (Incl. Tax)
+                                <span class="odex-amt ms-2" t-field="o.odex_parts_amount_total" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+                <!-- ==================== LABOUR ==================== -->
+                <t t-if="o.odex_labour_line_ids">
+                    <div class="odex-sec-title">LABOUR</div>
+                    <table class="odex-table">
+                        <thead>
+                            <tr>
+                                <th style="width:4%;" class="text-center">#</th>
+                                <th style="width:12%;">Parts Type</th>
+                                <th style="width:26%;">Description</th>
+                                <th style="width:9%;" class="text-center">Quantity</th>
+                                <th style="width:8%;" class="text-center">Unit</th>
+                                <th style="width:13%;" class="text-end">Unit Price (<span t-out="o.currency_id.name"/>)</th>
+                                <th style="width:12%;" class="text-end">Tax Amount (<span t-out="o.currency_id.name"/>)</th>
+                                <th style="width:16%;" class="text-end">Amount (Incl. Tax) (<span t-out="o.currency_id.name"/>)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="o.odex_labour_line_ids" t-as="line">
+                                <td class="text-center"><span t-out="line_index + 1"/></td>
+                                <td>
+                                    <span t-if="line.odex_parts_type" t-field="line.odex_parts_type"/>
+                                    <span t-else="">–</span>
+                                </td>
+                                <td><span t-field="line.name"/></td>
+                                <td class="text-center"><span t-esc="'%.2f' % line.quantity"/></td>
+                                <td class="text-center"><span t-out="line.product_uom_id.name"/></td>
+                                <td class="text-end"><span t-esc="'%.2f' % line.price_unit"/></td>
+                                <td class="text-end"><span t-esc="'%.2f' % line.odex_tax_amount"/></td>
+                                <td class="text-end"><span t-esc="'%.2f' % line.price_total"/></td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="8" class="odex-sec-total">
+                                    TOTAL LABOUR (Incl. Tax)
+                                    <span class="odex-amt ms-2" t-field="o.odex_labour_amount_total" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </t>
+
+                <!-- ============ Notes / Acknowledgement / Summary ============ -->
+                <div style="float: left; width: 31.5%; margin-right: 2.7%;margin-top:2.7%;">
+                    <div class="card h-100 p-2" style="border: 1px solid #e5e7eb !important; border-radius: 8px !important; box-shadow: none !important; background-color: #ffffff;">
+                        <div class="clearfix mb-2 pb-1" style="border: none !important;">
+                            <i class="fa fa-calendar-check-o me-2" style="color: #e27227; font-size: 14px; float: left;"/>
+                            <strong class="text-uppercase" style="color: #e27227; font-size: 12px; font-weight: 700; float: left;">NOTES</strong>
+                        </div>
+                        <div class="p-0 small text-muted" style="font-size: 9.5px; line-height: 1.3; border: none !important; clear: both;">
+                            <span t-if="not is_html_empty(o.narration)" t-field="o.narration"/>
+                            <t t-else="">
+                                <ul class="ps-3 mb-0" style="list-style-type: disc;">
+                                    <li class="mb-1">This invoice is valid until the due date mentioned above.</li>
+                                    <li class="mb-1">Prices are subject to change without prior notice.</li>
+                                    <li class="mb-1">Additional repairs or parts will be carried out only after customer approval.</li>
+                                    <li class="mb-1">Warranty applicable only on manufacturer-approved parts.</li>
+                                </ul>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+
+                <!--<div class="row g-3 mt-3 odex-avoid">-->
+
+                    <!-- Notes -->
+                    <!--<div class="col-4">-->
+                    <!--    <div class="odex-sec-title">-->
+                    <!--        <i class="fa fa-sticky-note-o me-1"/> NOTES-->
+                    <!--    </div>-->
+                    <!--    <div t-if="o.narration" t-field="o.narration"/>-->
+                    <!--    <ul t-else="" class="ps-3 mb-0" style="font-size:11px;">-->
+                    <!--        <li>This invoice is valid until the due date mentioned above.</li>-->
+                    <!--        <li>Prices are subject to change without prior notice.</li>-->
+                    <!--        <li>Additional repairs or parts will be carried out only after customer approval.</li>-->
+                    <!--        <li>Warranty applicable only on manufacturer-approved parts.</li>-->
+                    <!--    </ul>-->
+                    <!--</div>-->
+                    
+                    <div style="float: left; width: 31.5%; margin-right: 2.7%;margin-top:2.7%;">
+                        <div class="card h-100 p-2" style="border: 1px solid #e5e7eb !important; border-radius: 8px !important; box-shadow: none !important; background-color: #ffffff;">
+                            <div class="clearfix mb-2 pb-1" style="border: none !important;">  
+Press esc to exit full screen
+
+
+                                <i class="fa fa-pencil me-2" style="color: #e27227; font-size: 14px; float: left;"/>
+                                <strong class="text-uppercase" style="color: #e27227; font-size: 12px; font-weight: 700; float: left;"> CUSTOMER ACKNOWLEDGEMENT</strong>
+                            </div>
+                            
+                            <div class="p-0" style="border: none !important; clear: both;">
+                                <!-- Customer Name Row -->
+                                <div class="clearfix py-1" style="font-size: 10px; border: none !important; width: 100%;">
+                                    <div style="float: left; width: 42%; font-weight: 600;">Customer Name</div>
+                                    <div style="float: left; width: 5%;">:</div>
+                                    <div style="float: left; width: 53%; border-bottom: 1px solid #cccccc !important; min-height: 16px;">
+                                        
+                                    </div>
+                                </div>
+            
+                                <!-- Signature Row -->
+                                <div class="clearfix py-1" style="font-size: 10px; border: none !important; width: 100%;">
+                                    <div style="float: left; width: 42%; font-weight: 600; margin-top: 10px;">Signature</div>
+                                    <div style="float: left; width: 5%; margin-top: 10px;">:</div>
+                                    <div style="float: left; width: 53%; border-bottom: 1px solid #cccccc !important; min-height: 25px;">
+                                        <!--<img t-if="doc.signature" t-att-src="image_data_uri(doc.signature)" style="max-height: 1.2cm; max-width: 3cm;" alt="Signature"/>-->
+                                    </div>
+                                </div>
+            
+                                <!-- Date Row -->
+                                <div class="clearfix py-1 mb-2" style="font-size: 10px; border: none !important; width: 100%;">
+                                    <div style="float: left; width: 42%; font-weight: 600;">Date</div>
+                                    <div style="float: left; width: 5%;">:</div>
+                                    <div style="float: left; width: 53%; border-bottom: 1px solid #cccccc !important; min-height: 16px;">
+                                        <!--<span t-if="doc.signed_on" t-field="doc.signed_on" t-options="{&quot;widget&quot;: &quot;date&quot;}"/>-->
+                                    </div>
+                                </div>
+            
+                                <!-- QR Code Block -->
+                                <div class="clearfix mt-3 pt-1 text-center" style="border: none !important; width: 100%;">
+                                    <div style="display: inline-block; vertical-align: middle;">
+                                        <!--<img t-att-src="image_data_uri(o.odex_qr_code)" style="width:90px; height:90px;" alt="Portal QR"/>-->
+                                    </div>
+                                    <div style="display: inline-block; vertical-align: middle; margin-left: 10px; text-align: center; font-weight: bold; font-size: 9.5px; line-height: 1.3; color: #004065;">
+                                        Scan to view<br/>this invoice online
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- Customer acknowledgement + QR -->
+                    <!--<div class="col-4">-->
+                    <!--    <div class="odex-sec-title">-->
+                    <!--        <i class="fa fa-pencil-square-o me-1"/> CUSTOMER ACKNOWLEDGEMENT-->
+                    <!--    </div>-->
+                    <!--    <div class="row odex-row mt-2">-->
+                    <!--        <div class="col-4 odex-lbl">Customer Name</div>-->
+                    <!--        <div class="col-8">: <span class="d-inline-block odex-ack-line" style="width:80%;"/></div>-->
+                    <!--    </div>-->
+                    <!--    <div class="row odex-row">-->
+                    <!--        <div class="col-4 odex-lbl">Signature</div>-->
+                    <!--        <div class="col-8">: <span class="d-inline-block odex-ack-line" style="width:80%;"/></div>-->
+                    <!--    </div>-->
+                    <!--    <div class="row odex-row">-->
+                    <!--        <div class="col-4 odex-lbl">Date</div>-->
+                    <!--        <div class="col-8">: <span class="d-inline-block odex-ack-line" style="width:80%;"/></div>-->
+                    <!--    </div>-->
+                    <!--    <div class="d-flex align-items-center mt-3" t-if="o.odex_qr_code">-->
+                    <!--        <img t-att-src="image_data_uri(o.odex_qr_code)" style="width:90px; height:90px;" alt="Portal QR"/>-->
+                    <!--        <div class="ms-3 text-navy" style="font-weight:600;">-->
+                    <!--            Scan to view<br/>this invoice online-->
+                    <!--        </div>-->
+                    <!--    </div>-->
+                    <!--</div>-->
+
+                    <!-- Summary -->
+                     <!-- 3. TOTALS & SUMMARY CARD (Fixed Strict Float Left/Right) -->
+                    <div id="total" style="float: left; width: 31.5%;margin-top:2.7%;">
+                    <div class="card h-100 p-2 overflow-hidden" style="border: 1px solid #e5e7eb !important; border-radius: 8px !important; box-shadow: none !important; background-color: #ffffff;">
+                        <div class="p-0 mb-2" style="font-size: 10px; border: none !important;">
+                            <!-- Total Parts Row -->
+                            <div class="clearfix py-1" style="border: none !important; width: 100%;">
+                                <div style="float: left; width: 60%; text-align: left; color: #444444;">Total Parts (Excl. Tax)</div>
+                                <div style="float: right; width: 40%; text-align: right; font-weight: 600;">
+                                    <span t-field="o.odex_parts_amount_untaxed" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                                </div>
+                            </div>
+
+                            <!-- Total Labour Row -->
+                            <div class="clearfix py-1" style="border: none !important; width: 100%;">
+                                <div style="float: left; width: 60%; text-align: left; color: #444444;">Total Labour (Excl. Tax)</div>
+                                <div style="float: right; width: 40%; text-align: right; font-weight: 600;">
+                                    <span t-field="o.odex_labour_amount_untaxed" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                                </div>
+                            </div>
+
+                            <!-- Sub Total Row -->
+                            <div class="clearfix py-1" style="border: none !important; width: 100%;">
+                                <div style="float: left; width: 60%; text-align: left; font-weight: 700; color: #333333;">Sub Total (Excl. Tax)</div>
+                                <div style="float: right; width: 40%; text-align: right; font-weight: 700;">
+                                     <span t-field="o.amount_untaxed" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                                </div>
+                            </div>
+
+                            <!-- Taxes Row -->
+                            <div class="clearfix py-1" style="border: none !important; width: 100%;">
+                                <div style="float: left; width: 60%; text-align: left; color: #444444;">Taxes</div>
+                                <div style="float: right; width: 40%; text-align: right; font-weight: 600;">
+                                    <span t-field="o.amount_tax" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Grand Total Bar -->
+                        <div class="clearfix py-2 px-2 rounded-2 mb-2" style="background-color: #16264c; !important; color: #ffffff !important; border: none !important; width: 100%;">
+                            <div style="float: left; font-weight: 700; font-size: 10.5px; letter-spacing: 0.3px;">TOTAL (Incl. Tax)</div>
+                            <div style="float: right; font-weight: 700; font-size: 12.5px;">
+                                <span t-field="o.amount_total" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                            </div>
+                        </div>
+
+                        <!-- Amount in Words -->
+                        <div class="px-1" style="font-size: 9px; border: none !important; clear: both;">
+                            <span class="text-muted d-block fw-bold">Amount in Words:</span>
+                            <span class="fw-bold" style="color: #1e3a8a;" t-out="o.currency_id.amount_to_text(o.amount_total)"/>
+                        </div>
+                    </div>
+                </div>
+                    <!--<div class="col-4">-->
+                    <!--    <table class="odex-summary" style="width:100%;">-->
+                    <!--        <tr>-->
+                    <!--            <td>Total Parts (Excl. Tax)</td>-->
+                    <!--            <td class="text-end">-->
+                    <!--                <span t-field="o.odex_parts_amount_untaxed" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>-->
+                    <!--            </td>-->
+                    <!--        </tr>-->
+                    <!--        <tr>-->
+                    <!--            <td>Total Labour (Excl. Tax)</td>-->
+                    <!--            <td class="text-end">-->
+                    <!--                <span t-field="o.odex_labour_amount_untaxed" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>-->
+                    <!--            </td>-->
+                    <!--        </tr>-->
+                    <!--        <tr>-->
+                    <!--            <td class="odex-sub pt-2">Sub Total (Excl. Tax)</td>-->
+                    <!--            <td class="odex-sub pt-2 text-end">-->
+                    <!--                <span t-field="o.amount_untaxed" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>-->
+                    <!--            </td>-->
+                    <!--        </tr>-->
+                    <!--        <tr>-->
+                    <!--            <td>Taxes</td>-->
+                    <!--            <td class="text-end">-->
+                    <!--                <span t-field="o.amount_tax" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>-->
+                    <!--            </td>-->
+                    <!--        </tr>-->
+                    <!--        <tr class="odex-grand">-->
+                    <!--            <td>TOTAL (Incl. Tax)</td>-->
+                    <!--            <td class="text-end">-->
+                    <!--                <span t-field="o.amount_total" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>-->
+                    <!--            </td>-->
+                    <!--        </tr>-->
+                    <!--    </table>-->
+                    <!--    <div class="odex-words">-->
+                    <!--        <span class="odex-lbl text-navy">Amount in Words:</span><br/>-->
+                    <!--        <span t-out="o.currency_id.amount_to_text(o.amount_total)"/>-->
+                    <!--    </div>-->
+                    <!--</div>-->
+                <!--</div>-->
+
+                <!-- Preserve the standard structure anchor for editability -->
+                <div class="oe_structure"/>
+
+            </div>
+        </xpath>
+    </template>
+</odoo>

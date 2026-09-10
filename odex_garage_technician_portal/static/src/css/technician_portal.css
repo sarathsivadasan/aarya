@@ -1,0 +1,547 @@
+/* ==========================================================================
+   Odex Garage Technician Portal - OWL client action styling
+   Palette matches the reference UI: purple primary, soft card backgrounds,
+   status badges color-coded by state.
+   ========================================================================== */
+
+:root {
+    --tp-primary: #5b3fd6;
+    --tp-primary-dark: #4a32b0;
+    --tp-bg: #f5f6fa;
+    --tp-card-bg: #ffffff;
+    --tp-border: #e6e6ef;
+    --tp-text-muted: #8a8a99;
+}
+
+.o_technician_portal {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    background: var(--tp-bg);
+    font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+/* ---------- Sidebar ---------- */
+.o_tp_sidebar {
+    width: 220px;
+    background: #ffffff;
+    border-right: 1px solid var(--tp-border);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+}
+.o_tp_logo {
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--tp-primary);
+    padding: 20px;
+}
+.o_tp_menu { list-style: none; margin: 0; padding: 20px 0 0; }
+.o_tp_menu li {
+    padding: 12px 20px;
+    cursor: pointer;
+    color: #444;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+}
+.o_tp_menu li i { width: 16px; text-align: center; }
+.o_tp_menu li:hover { background: #f4f2fc; }
+.o_tp_menu li.active {
+    background: var(--tp-primary);
+    color: #fff;
+    border-radius: 0 20px 20px 0;
+    margin-right: 10px;
+}
+
+/* ---------- Top bar ---------- */
+.o_tp_main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.o_tp_topbar {
+    height: 56px;
+    background: #fff;
+    border-bottom: 1px solid var(--tp-border);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 20px;
+}
+.o_tp_topbar_icons { display: flex; align-items: center; gap: 16px; color: #666; }
+.o_tp_user { font-weight: 600; margin-left: 8px; }
+
+.o_tp_content { flex: 1; overflow: auto; padding: 20px; }
+
+/* ---------- Dashboard cards ---------- */
+.o_tp_cards_row { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; }
+.o_tp_card {
+    background: var(--tp-card-bg);
+    border: 1px solid var(--tp-border);
+    border-radius: 10px;
+    padding: 16px 20px;
+    flex: 1;
+    min-width: 180px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+}
+.o_tp_card_icon {
+    width: 40px; height: 40px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 16px; flex-shrink: 0;
+}
+.bg-blue { background: #4b7bec; }
+.bg-orange { background: #fd9644; }
+.bg-yellow { background: #f6c343; }
+.bg-green { background: #26b978; }
+.bg-purple { background: var(--tp-primary); }
+
+.o_tp_card_label { font-size: 12px; color: var(--tp-text-muted); }
+.o_tp_card_value { font-size: 22px; font-weight: 700; color: #222; }
+.o_tp_card_link { font-size: 12px; color: var(--tp-primary); }
+
+/* ---------- Inspection list rows (shared: dashboard recent + workspace list) ---------- */
+.o_tp_recent, .o_tp_list_pane {
+    background: var(--tp-card-bg);
+    border: 1px solid var(--tp-border);
+    border-radius: 10px;
+    padding: 12px;
+}
+.o_tp_recent_header, .o_tp_list_header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 4px 8px 12px;
+}
+.o_tp_search {
+    width: 100%; margin-bottom: 10px; padding: 6px 10px;
+    border: 1px solid var(--tp-border); border-radius: 6px;
+}
+.o_tp_inspection_list { overflow-y: auto; max-height: 70vh; }
+.o_tp_inspection_row {
+    padding: 10px; border-radius: 8px; cursor: pointer; margin-bottom: 4px;
+    border-left: 3px solid transparent;
+}
+.o_tp_inspection_row:hover { background: #f7f6fd; }
+.o_tp_inspection_row.active { background: #f0edfc; border-left-color: var(--tp-primary); }
+.o_tp_row_left { display: flex; justify-content: space-between; align-items: center; }
+.o_tp_row_code { color: var(--tp-primary); font-weight: 600; }
+.o_tp_row_vehicle { font-weight: 600; margin: 2px 0; }
+.o_tp_row_bottom { display: flex; justify-content: space-between; font-size: 12px; color: var(--tp-text-muted); }
+
+/* ---------- Priority / status badges ---------- */
+.o_tp_priority_High { background: #ffe3e3; color: #d63031; }
+.o_tp_priority_Medium { background: #fff3d6; color: #b8860b; }
+.o_tp_priority_Low { background: #e4f9ee; color: #16a35a; }
+
+.o_tp_status_not_started, .o_tp_status_Assigned { background: #e7ecff; color: #4b7bec; }
+.o_tp_status_running, .o_tp_status_In_Progress { background: #e7ecff; color: #4b7bec; }
+.o_tp_status_paused, .o_tp_status_Paused { background: #fff3d6; color: #b8860b; }
+.o_tp_status_completed, .o_tp_status_Completed { background: #e4f9ee; color: #16a35a; }
+
+/* ---------- Workspace (list + detail) ---------- */
+.o_tp_workspace { display: flex; gap: 16px; align-items: flex-start; max-width: 100%; }
+.o_tp_list_pane { width: 340px; flex-shrink: 0; min-width: 0; max-width: 100%; }
+.o_tp_detail_pane {
+    flex: 1;
+    background: var(--tp-card-bg);
+    border: 1px solid var(--tp-border);
+    border-radius: 10px;
+    padding: 16px 20px;
+    min-width: 0;
+}
+.o_tp_detail_pane.o_tp_empty { display: flex; align-items: center; justify-content: center; color: var(--tp-text-muted); min-height: 300px; }
+
+.o_tp_detail_header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
+.o_tp_detail_title { display: flex; align-items: center; gap: 10px; font-size: 18px; }
+.o_tp_detail_actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.o_tp_detail_actions .btn { font-size: 13px; }
+
+.o_tp_vehicle_row { display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 16px; }
+.o_tp_vehicle_image { width: 160px; height: 100px; object-fit: contain; }
+.o_tp_vehicle_facts, .o_tp_job_facts { flex: 1; min-width: 220px; }
+.o_tp_vehicle_facts div, .o_tp_job_facts div {
+    display: flex; justify-content: space-between; font-size: 13px; padding: 3px 0; border-bottom: 1px dashed var(--tp-border);
+}
+.o_tp_vehicle_facts label, .o_tp_job_facts label { color: var(--tp-text-muted); }
+
+.o_tp_timer_row { display: flex; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+.o_tp_timer_box {
+    background: #f7f6fd; border-radius: 10px; padding: 12px 20px; flex: 1; min-width: 160px;
+}
+.o_tp_timer_label { font-size: 12px; color: var(--tp-text-muted); }
+.o_tp_timer_value { font-size: 20px; font-weight: 700; }
+
+/* ---------- Bay row ---------- */
+.o_tp_bay_row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    background: #f7f6fd;
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 14px;
+}
+.o_tp_bay_current { display: flex; align-items: center; gap: 8px; }
+.o_tp_bay_current label { font-size: 12px; color: var(--tp-text-muted); margin: 0; }
+.o_tp_bay_name { font-size: 15px; font-weight: 700; color: var(--tp-primary, #7b68c9); }
+.o_tp_bay_actions { display: flex; align-items: center; gap: 8px; }
+.o_tp_bay_actions select { min-width: 180px; }
+
+/* ---------- Live timer box (3rd box): ticks on Start, freezes on
+   Pause, resumes on Resume, stops on End ---------- */
+.o_tp_live_timer { display: flex; flex-direction: column; gap: 2px; }
+.o_tp_timer_clock {
+    font-size: 30px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    letter-spacing: 1px;
+    line-height: 1.1;
+}
+.o_tp_live_timer .o_tp_timer_label { display: flex; align-items: center; gap: 6px; }
+.o_tp_live_dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--tp-text-muted);
+    flex-shrink: 0;
+}
+/* running: green + pulsing */
+.o_tp_live_running { background: #e9f9f1; }
+.o_tp_live_running .o_tp_timer_clock { color: #16a35a; }
+.o_tp_live_running .o_tp_live_dot { background: #16a35a; animation: o_tp_pulse 1.2s ease-in-out infinite; }
+/* paused: amber, frozen */
+.o_tp_live_paused { background: #fff8e6; }
+.o_tp_live_paused .o_tp_timer_clock { color: #b8860b; }
+.o_tp_live_paused .o_tp_live_dot { background: #f6c343; }
+/* completed: grey, stopped for good */
+.o_tp_live_completed .o_tp_timer_clock { color: #555; }
+.o_tp_live_completed .o_tp_live_dot { background: #999; }
+/* not started */
+.o_tp_live_not_started .o_tp_timer_clock { color: var(--tp-text-muted); }
+
+@keyframes o_tp_pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.35; transform: scale(0.8); }
+}
+.o_tp_timer_exceeded {
+    background: #fff0f0; border-radius: 10px; padding: 12px 20px;
+    display: flex; align-items: center; gap: 16px; justify-content: space-between; flex: 1; min-width: 260px;
+}
+
+.o_tp_tabs { display: flex; gap: 24px; border-bottom: 1px solid var(--tp-border); margin-bottom: 16px; }
+.o_tp_tabs span { padding: 8px 2px; cursor: pointer; color: var(--tp-text-muted); font-size: 14px; }
+.o_tp_tabs span.active { color: var(--tp-primary); border-bottom: 2px solid var(--tp-primary); font-weight: 600; }
+
+.o_tp_tab_content table.table { font-size: 13px; }
+
+/* ---------- Technicians line-item table ---------- */
+.o_tp_technicians_block { margin-bottom: 16px; }
+.o_tp_technicians_label { font-size: 12px; color: var(--tp-text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .03em; }
+.o_tp_technicians_table { font-size: 13px; }
+.o_tp_technicians_table tr.o_tp_my_line { background: #f7f6fd; }
+.o_tp_me_badge { background: var(--tp-primary); color: #fff; margin-left: 6px; font-size: 10px; vertical-align: middle; }
+
+/* ---------- Complaints: assignee chips ---------- */
+.o_tp_assignee_chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #f0edfc;
+    border-radius: 10px;
+    padding: 1px 8px;
+    margin: 1px 3px 1px 0;
+    font-size: 11px;
+}
+
+/* ---------- Employee kanban: technician work-status label ---------- */
+.o_tp_work_status {
+    display: inline-block;
+    padding: 1px 8px;
+    border-radius: 10px;
+    margin-left: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+.o_tp_work_status_working { background: #e4f9ee; color: #16a35a; }
+.o_tp_work_status_paused { background: #fff3d6; color: #b8860b; }
+.o_tp_work_status_idle { background: #ffe3e3; color: #d63031; }
+.o_tp_current_vehicle {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #4a4a68;
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.o_tp_current_vehicle .fa-car { color: var(--tp-primary, #7b68c9); }
+
+/* ---------- Photos: fixed named slot grid ---------- */
+.o_tp_photo_slot_grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; }
+.o_tp_photo_slot { display: flex; flex-direction: column; gap: 4px; }
+.o_tp_photo_slot_label { font-size: 12px; font-weight: 600; color: #444; }
+.o_tp_photo_slot_image {
+    height: 120px; border-radius: 8px; overflow: hidden; cursor: pointer;
+    background: #f4f2fc; display: flex; align-items: center; justify-content: center;
+    border: 1px dashed var(--tp-border);
+}
+.o_tp_photo_slot_image img { width: 100%; height: 100%; object-fit: cover; }
+.o_tp_photo_slot_placeholder { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--tp-text-muted); font-size: 12px; }
+.o_tp_photo_slot_actions { display: flex; justify-content: space-between; }
+.o_tp_photo_slot_actions .btn { padding: 0; font-size: 11px; }
+
+/* ---------- Parts Photos: freeform grid (distinct from the fixed
+   Vehicle Photos slots above) ---------- */
+.o_tp_uploading { color: var(--tp-text-muted); font-size: 12px; margin-left: 8px; }
+.o_tp_photo_grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; margin-top: 12px; }
+.o_tp_photo_item img { width: 100%; height: 100px; object-fit: cover; border-radius: 6px; }
+.o_tp_photo_meta { display: flex; justify-content: space-between; font-size: 11px; color: var(--tp-text-muted); padding: 2px 0; }
+.o_tp_photo_meta i { cursor: pointer; color: #d63031; }
+
+/* ---------- Parts ---------- */
+.o_tp_add_line { display: flex; gap: 8px; align-items: center; margin: 10px 0; flex-wrap: wrap; }
+.o_tp_add_line select, .o_tp_add_line input { padding: 5px 8px; border: 1px solid var(--tp-border); border-radius: 6px; }
+.o_tp_parts_footer { display: flex; align-items: center; gap: 24px; margin-top: 12px; }
+.o_tp_parts_footer div { display: flex; gap: 6px; font-size: 13px; }
+.o_tp_parts_footer label { color: var(--tp-text-muted); }
+.o_tp_info_note { background: #eef1ff; border-radius: 8px; padding: 10px 14px; margin-top: 12px; font-size: 12px; color: #444; }
+
+/* ---------- Log / Notes ---------- */
+.o_tp_log_row { display: grid; grid-template-columns: 160px 140px 1fr 140px; gap: 8px; font-size: 12px; padding: 6px 0; border-bottom: 1px dashed var(--tp-border); }
+.o_tp_note_composer { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+.o_tp_note_composer button { align-self: flex-end; }
+.o_tp_note_item { border-bottom: 1px dashed var(--tp-border); padding: 8px 0; font-size: 13px; }
+.o_tp_note_meta { color: var(--tp-text-muted); font-size: 11px; margin-bottom: 2px; }
+
+/* ---------- Complaints ---------- */
+.o_tp_autosave_hint { font-size: 11px; color: var(--tp-text-muted); margin-top: 4px; }
+
+/* ---------- Performance ---------- */
+.o_tp_chart_block { background: var(--tp-card-bg); border: 1px solid var(--tp-border); border-radius: 10px; padding: 16px; margin-top: 16px; }
+.o_tp_bar_chart { display: flex; align-items: flex-end; gap: 16px; height: 160px; margin-top: 16px; }
+.o_tp_bar_col { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; flex: 1; height: 100%; }
+.o_tp_bar { width: 24px; background: var(--tp-primary); border-radius: 4px 4px 0 0; min-height: 4px; }
+.o_tp_bar_label { font-size: 11px; color: var(--tp-text-muted); margin-top: 6px; }
+
+/* ---------- Profile ---------- */
+.o_tp_profile { background: var(--tp-card-bg); border: 1px solid var(--tp-border); border-radius: 10px; padding: 24px; max-width: 480px; }
+.o_tp_profile_image { width: 96px; height: 96px; border-radius: 50%; object-fit: cover; margin-bottom: 12px; }
+.o_tp_profile_facts div { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed var(--tp-border); font-size: 13px; }
+.o_tp_profile_facts label { color: var(--tp-text-muted); }
+
+/* ==========================================================================
+   MOBILE / TABLET / RESPONSIVE
+   The .o_tp_is_mobile / .o_tp_workspace_mobile classes are applied by
+   useNarrowScreen() (static/src/js/narrow_screen.js), which triggers at
+   <=1024px AND re-evaluates on rotation - unlike ui.isSmall, which flips
+   only below ~768px and so left every tablet in PORTRAIT on the desktop
+   two-pane layout. The media query below mirrors the same threshold as a
+   CSS-only safety net.
+   ========================================================================== */
+
+/* ---------- Sidebar becomes a slide-in drawer ---------- */
+.o_tp_is_mobile .o_tp_sidebar {
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    width: 250px;
+    z-index: 1000;
+    transform: translateX(-100%);
+    transition: transform 0.2s ease;
+    box-shadow: 2px 0 12px rgba(0,0,0,0.15);
+}
+.o_tp_is_mobile .o_tp_sidebar.o_tp_sidebar_open {
+    transform: translateX(0);
+}
+.o_tp_sidebar_backdrop {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.35);
+    z-index: 999;
+}
+.o_tp_hamburger {
+    font-size: 20px;
+    padding: 8px 12px;
+    cursor: pointer;
+    color: #555;
+}
+
+/* ---------- Workspace: list/detail stack instead of side-by-side ---------- */
+.o_tp_workspace_mobile { flex-direction: column; }
+.o_tp_workspace_mobile .o_tp_list_pane { width: 100%; }
+.o_tp_workspace_mobile .o_tp_detail_pane { width: 100%; }
+.o_tp_back_btn { cursor: pointer; margin-right: 4px; }
+
+/* ---------- Narrow-viewport layout.
+   Threshold is 1024px, NOT 768px: every tablet in portrait is wider than
+   768 (iPad Mini 744, iPad 10.2" 810, iPad Air 820, iPad Pro 11" 834,
+   iPad Pro 12.9" 1024), so a 768 cutoff left them on the desktop
+   two-pane layout with the detail pane squeezed to a sliver. Landscape
+   tablets are 1080-1194 wide and stay on the two-pane layout. This also
+   backs up the JS class toggle for hosts that report sizes oddly
+   (embedded webviews, Odoo mobile app). ---------- */
+@media (max-width: 1024px) {
+    .o_tp_content { padding: 12px; }
+    .o_tp_cards_row { flex-direction: column; }
+    .o_tp_card { min-width: 0; }
+
+    /* Graceful degradation: if the JS drawer class didn't apply (stale
+       assets, unexpected host), shrink the sidebar instead of turning it
+       into a hidden drawer - a CSS-only drawer would leave no way to
+       open it, since the hamburger is rendered by the same JS. */
+    .o_technician_portal:not(.o_tp_is_mobile) .o_tp_sidebar { width: 160px; }
+    .o_technician_portal:not(.o_tp_is_mobile) .o_tp_menu li { padding: 12px 14px; font-size: 13px; }
+
+    .o_tp_workspace { flex-direction: column; }
+    .o_tp_list_pane { width: 100%; }
+    .o_tp_detail_pane { width: 100%; padding: 12px 14px; }
+
+    .o_tp_vehicle_row { flex-direction: column; gap: 12px; }
+    .o_tp_vehicle_image { width: 100%; height: auto; max-height: 140px; }
+    .o_tp_vehicle_facts, .o_tp_job_facts { min-width: 0; }
+
+    .o_tp_timer_row { flex-direction: column; }
+    .o_tp_bay_row { flex-direction: column; align-items: stretch; }
+    .o_tp_bay_actions { width: 100%; }
+    .o_tp_bay_actions select { flex: 1; min-width: 0; }
+    .o_tp_timer_box, .o_tp_timer_exceeded { min-width: 0; }
+
+    /* Tabs: horizontal scroll instead of wrapping into a cramped grid */
+    .o_tp_tabs {
+        overflow-x: auto;
+        white-space: nowrap;
+        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch;
+    }
+    .o_tp_tabs span { flex-shrink: 0; }
+
+    /* Tables: horizontal scroll wrapper so columns don't crush together */
+    .o_tp_tab_content table.table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+    }
+    .o_tp_tab_content table.table thead,
+    .o_tp_tab_content table.table tbody,
+    .o_tp_tab_content table.table tr { display: table; width: 100%; table-layout: fixed; }
+
+    .o_tp_add_line { flex-direction: column; align-items: stretch; }
+    .o_tp_add_line select, .o_tp_add_line input, .o_tp_add_line button { width: 100%; }
+
+    .o_tp_photo_slot_grid { grid-template-columns: repeat(2, 1fr); }
+    .o_tp_photo_grid { grid-template-columns: repeat(2, 1fr); }
+
+    .o_tp_detail_actions { width: 100%; }
+    .o_tp_detail_actions .btn { flex: 1; min-width: 0; }
+
+    .o_tp_bar_chart { overflow-x: auto; }
+
+    .o_tp_technicians_table { font-size: 11px; }
+    .o_tp_log_row { grid-template-columns: 1fr; gap: 2px; }
+
+    /* bigger tap targets throughout */
+    .o_tp_menu li { padding: 14px 20px; }
+    .o_tp_inspection_row { padding: 14px 10px; }
+}
+
+@media (max-width: 420px) {
+    .o_tp_photo_slot_grid { grid-template-columns: 1fr; }
+    .o_tp_photo_grid { grid-template-columns: 1fr; }
+}
+
+/* ==========================================================================
+   v4.0.0 ADDITIONS
+   Classes below were referenced by the templates but had no rule at all,
+   so they rendered as unstyled stacked divs on every platform (Windows
+   included). Defining them is a fix, not a change of an existing layout.
+   ========================================================================== */
+
+/* ---------- Top bar spacer (pushes the user block right once the
+     hamburger occupies the left) ---------- */
+.o_tp_topbar_spacer { flex: 1 1 auto; }
+
+/* ---------- Start / Pause / Resume / End stamps ---------- */
+.o_tp_stamps_row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 24px;
+    align-items: center;
+    background: #fafaff;
+    border: 1px solid var(--tp-border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-bottom: 16px;
+    font-size: 13px;
+}
+.o_tp_stamps_row > div { display: flex; align-items: baseline; gap: 6px; }
+.o_tp_stamps_row label { color: var(--tp-text-muted); margin: 0; font-size: 12px; }
+.o_tp_tz_note { color: var(--tp-text-muted); font-size: 11px; margin-left: auto; }
+.o_tp_record_type { background: #efeaff; color: var(--tp-primary); }
+
+/* ---------- Parts tab: the editable Part column ---------- */
+.o_tp_part_cell { min-width: 160px; }
+.o_tp_part_input {
+    width: 100%;
+    padding: 4px 8px;
+    border: 1px solid var(--tp-border);
+    border-radius: 6px;
+    font-size: 13px;
+}
+.o_tp_part_input:focus { outline: 2px solid #d9d0ff; border-color: var(--tp-primary); }
+.o_tp_part_input.o_tp_saving { border-color: #f6c343; }
+.o_tp_part_input.o_tp_saved { border-color: #26b978; }
+.o_tp_part_source {
+    display: block;
+    font-size: 10px;
+    color: var(--tp-text-muted);
+    margin-top: 2px;
+}
+.o_tp_related_row { background: #fbfaff; color: #666; }
+.o_tp_related_badge {
+    background: #efeaff; color: var(--tp-primary);
+    font-size: 10px; margin-left: 6px;
+}
+
+/* ---------- Administrator: all assigned jobs ---------- */
+.o_tp_admin_page { display: flex; flex-direction: column; gap: 16px; }
+.o_tp_admin_filters {
+    display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+    background: var(--tp-card-bg); border: 1px solid var(--tp-border);
+    border-radius: 10px; padding: 12px 14px;
+}
+.o_tp_admin_filters input, .o_tp_admin_filters select {
+    padding: 6px 10px; border: 1px solid var(--tp-border); border-radius: 6px;
+    font-size: 13px;
+}
+.o_tp_admin_filters .o_tp_admin_search { flex: 1 1 220px; min-width: 0; }
+.o_tp_admin_table_wrap {
+    background: var(--tp-card-bg); border: 1px solid var(--tp-border);
+    border-radius: 10px; padding: 8px 12px; overflow-x: auto;
+}
+.o_tp_admin_table { font-size: 13px; width: 100%; margin: 0; }
+.o_tp_admin_table th { color: var(--tp-text-muted); font-weight: 600; font-size: 12px; }
+.o_tp_admin_table td { vertical-align: middle; }
+.o_tp_admin_actions { display: flex; gap: 6px; flex-wrap: wrap; }
+.o_tp_admin_actions .btn { padding: 2px 10px; font-size: 12px; }
+.o_tp_admin_log { max-height: 320px; overflow-y: auto; }
+.o_tp_admin_log_row {
+    display: grid;
+    grid-template-columns: 150px 150px 120px 1fr 150px;
+    gap: 8px; font-size: 12px; padding: 6px 0;
+    border-bottom: 1px dashed var(--tp-border);
+    align-items: center;
+}
+.o_tp_admin_log_row .o_tp_admin_flag { color: var(--tp-primary); font-weight: 700; }
+.o_tp_admin_empty { color: var(--tp-text-muted); padding: 16px; text-align: center; }
+
+@media (max-width: 1024px) {
+    .o_tp_stamps_row { flex-direction: column; align-items: flex-start; }
+    .o_tp_tz_note { margin-left: 0; }
+    .o_tp_admin_filters { flex-direction: column; align-items: stretch; }
+    .o_tp_admin_log_row { grid-template-columns: 1fr; gap: 2px; }
+}

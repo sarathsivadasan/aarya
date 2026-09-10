@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="fleet_vehicle_view_form_mulkiya" model="ir.ui.view">
+        <field name="name">fleet.vehicle.form.mulkiya</field>
+        <field name="model">fleet.vehicle</field>
+        <field name="inherit_id" ref="fleet.fleet_vehicle_view_form"/>
+        <field name="arch" type="xml">
+            <!-- Available immediately on a new vehicle: the widget writes into
+                 the open form, it does not need a saved record. -->
+            <xpath expr="//sheet" position="before">
+                <div class="d-flex justify-content-end pt-2 pe-3"
+                     groups="odex_mulkiya_scan.group_mulkiya_user">
+                    <widget name="mulkiya_scan_button"/>
+                </div>
+            </xpath>
+            <xpath expr="//div[hasclass('oe_button_box')]" position="inside">
+                <button name="action_open_mulkiya_scans" type="object"
+                        class="oe_stat_button" icon="fa-id-card-o"
+                        invisible="mulkiya_scan_count == 0"
+                        groups="odex_mulkiya_scan.group_mulkiya_user">
+                    <field name="mulkiya_scan_count" widget="statinfo"
+                           string="Mulkiya Scans"/>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

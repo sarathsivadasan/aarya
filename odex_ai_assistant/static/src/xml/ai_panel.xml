@@ -1,0 +1,385 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- ============================================================ -->
+    <!-- MAIN AI PANEL                                                 -->
+    <!-- ============================================================ -->
+    <t t-name="odex_ai_assistant.AiPanel">
+        <t t-if="aiState.isOpen">
+            <div t-ref="panel"
+                 t-attf-class="odex-ai-panel
+                     #{aiState.panelPosition === 'right' ? 'odex-ai-panel--right' : ''}
+                     #{aiState.panelPosition === 'left' ? 'odex-ai-panel--left' : ''}
+                     #{aiState.panelPosition === 'floating' ? 'odex-ai-panel--floating' : ''}
+                     #{aiState.isMinimized ? 'odex-ai-panel--minimized' : ''}
+                     #{aiState.isFullscreen ? 'odex-ai-panel--fullscreen' : ''}"
+                 t-att-style="panelStyle">
+
+                <!-- Panel Header -->
+                <div class="odex-ai-header" t-on-mousedown="onDragStart">
+                    <div class="odex-ai-header__left">
+                        <div class="odex-ai-logo">
+                            <i class="fa fa-robot odex-ai-logo__icon"/>
+                        </div>
+                        <div class="odex-ai-header__info">
+                            <span class="odex-ai-header__title">ODEX AI</span>
+                            <span class="odex-ai-header__subtitle" t-if="aiState.activeResName">
+                                <t t-esc="aiState.activeResName"/>
+                            </span>
+                            <span class="odex-ai-header__subtitle" t-else="">
+                                AI Assistant
+                            </span>
+                        </div>
+                        <!-- Typing indicator -->
+                        <div class="odex-ai-typing-indicator" t-if="aiState.isLoading or aiState.isStreaming">
+                            <span/><span/><span/>
+                        </div>
+                    </div>
+                    <div class="odex-ai-header__actions">
+                        <button class="odex-ai-header-btn" t-on-click="onToggleSidebar"
+                                title="Toggle History">
+                            <i class="fa fa-history"/>
+                        </button>
+                        <button class="odex-ai-header-btn" t-on-click="onMinimize"
+                                title="Minimize">
+                            <i t-attf-class="fa #{aiState.isMinimized ? 'fa-chevron-up' : 'fa-minus'}"/>
+                        </button>
+                        <button class="odex-ai-header-btn" t-on-click="onToggleFullscreen"
+                                title="Fullscreen">
+                            <i t-attf-class="fa #{aiState.isFullscreen ? 'fa-compress' : 'fa-expand'}"/>
+                        </button>
+                        <button class="odex-ai-header-btn odex-ai-header-btn--close"
+                                t-on-click="onClosePanel" title="Close">
+                            <i class="fa fa-times"/>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Minimized state: just show header -->
+                <t t-if="not aiState.isMinimized">
+
+                    <!-- Tab Navigation -->
+                    <div class="odex-ai-tabs">
+                        <button t-attf-class="odex-ai-tab #{state.activeTab === 'chat' ? 'odex-ai-tab--active' : ''}"
+                                t-on-click="() => onTabSwitch('chat')">
+                            <i class="fa fa-comments me-1"/>Chat
+                        </button>
+                        <button t-attf-class="odex-ai-tab #{state.activeTab === 'history' ? 'odex-ai-tab--active' : ''}"
+                                t-on-click="() => onTabSwitch('history')">
+                            <i class="fa fa-history me-1"/>History
+                            <span class="odex-ai-badge" t-if="aiState.conversations.length">
+                                <t t-esc="aiState.conversations.length"/>
+                            </span>
+                        </button>
+                        <button t-attf-class="odex-ai-tab #{state.activeTab === 'templates' ? 'odex-ai-tab--active' : ''}"
+                                t-on-click="() => onTabSwitch('templates')">
+                            <i class="fa fa-list-alt me-1"/>Templates
+                        </button>
+                    </div>
+
+                    <!-- ============================================================ -->
+                    <!-- CHAT TAB                                                       -->
+                    <!-- ============================================================ -->
+                    <div class="odex-ai-body" t-if="state.activeTab === 'chat'">
+
+                        <!-- No API Key Warning -->
+                        <div class="odex-ai-warning" t-if="not aiState.config.hasApiKey">
+                            <div class="odex-ai-warning__icon">
+                                <i class="fa fa-key fa-2x"/>
+                            </div>
+                            <div class="odex-ai-warning__text">
+                                <strong>API Key Required</strong>
+                                <p>Please configure your Groq API key in
+                                    <strong>Settings → AI Assistant</strong>
+                                    to start using the AI assistant.
+                                </p>
+                                <p class="small">
+                                    Get a free API key at
+                                    <a href="https://console.groq.com" target="_blank">console.groq.com</a>
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Context Banner (current record) -->
+                        <div class="odex-ai-context-banner" t-if="aiState.activeResModel and aiState.activeResName">
+                            <i class="fa fa-link me-1"/>
+                            <span>Context: <strong><t t-esc="aiState.activeResName"/></strong></span>
+                            <button class="odex-ai-context-banner__clear" title="Summarize this record"
+                                    t-on-click="onSummarizeRecord">
+                                <i class="fa fa-magic me-1"/>Summarize
+                            </button>
+                        </div>
+
+                        <!-- Messages Container -->
+                        <div class="odex-ai-messages"
+                             t-ref="messagesContainer"
+                             t-on-scroll="onScrollMessages">
+
+                            <!-- Empty State -->
+                            <div class="odex-ai-empty" t-if="not hasMessages and not aiState.isLoading">
+                                <div class="odex-ai-empty__icon">
+                                    <i class="fa fa-robot fa-4x"/>
+                                </div>
+                                <h4 class="odex-ai-empty__title">Hello! I'm ODEX AI</h4>
+                                <p class="odex-ai-empty__subtitle">
+                                    Your intelligent Odoo assistant powered by Groq.
+                                    How can I help you today?
+                                </p>
+                                <!-- Quick action buttons -->
+                                <div class="odex-ai-quick-actions">
+                                    <button class="odex-ai-quick-btn"
+                                            t-on-click="() => onUseSuggestedPrompt('Summarize the current record for me')">
+                                        <i class="fa fa-file-text-o"/>
+                                        <span>Summarize</span>
+                                    </button>
+                                    <button class="odex-ai-quick-btn"
+                                            t-on-click="() => onUseSuggestedPrompt('What are the key action items here?')">
+                                        <i class="fa fa-lightbulb-o"/>
+                                        <span>Next Steps</span>
+                                    </button>
+                                    <button class="odex-ai-quick-btn"
+                                            t-on-click="() => onUseSuggestedPrompt('Draft a professional email response')">
+                                        <i class="fa fa-envelope-o"/>
+                                        <span>Draft Email</span>
+                                    </button>
+                                    <button class="odex-ai-quick-btn"
+                                            t-on-click="() => state.showSuggestedPrompts = !state.showSuggestedPrompts">
+                                        <i class="fa fa-ellipsis-h"/>
+                                        <span>More</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Suggested Prompts Dropdown -->
+                            <div class="odex-ai-suggested-prompts" t-if="state.showSuggestedPrompts">
+                                <t t-foreach="state.suggestedPrompts" t-as="category" t-key="category.category">
+                                    <div class="odex-ai-prompt-category">
+                                        <div class="odex-ai-prompt-category__header">
+                                            <i t-attf-class="fa #{category.icon} me-1"/>
+                                            <t t-esc="category.category"/>
+                                        </div>
+                                        <t t-foreach="category.prompts" t-as="prompt" t-key="prompt">
+                                            <button class="odex-ai-prompt-item"
+                                                    t-on-click="() => onUseSuggestedPrompt(prompt)">
+                                                <t t-esc="prompt"/>
+                                            </button>
+                                        </t>
+                                    </div>
+                                </t>
+                            </div>
+
+                            <!-- Message List -->
+                            <t t-foreach="aiState.messages" t-as="message" t-key="message.id">
+                                <AiMessage
+                                    message="message"
+                                    onCopy.bind="onCopyMessage"
+                                    onFeedback.bind="aiService.submitFeedback"
+                                />
+                            </t>
+
+                            <!-- Streaming typing dots when waiting for first token -->
+                            <div class="odex-ai-thinking" t-if="aiState.isLoading and not aiState.isStreaming and hasMessages">
+                                <div class="odex-ai-thinking__avatar">
+                                    <i class="fa fa-robot"/>
+                                </div>
+                                <div class="odex-ai-thinking__dots">
+                                    <span/><span/><span/>
+                                </div>
+                            </div>
+
+                            <!-- Scroll anchor -->
+                            <div t-ref="messagesEnd"/>
+                        </div>
+
+                        <!-- Scroll to bottom button -->
+                        <button class="odex-ai-scroll-btn"
+                                t-if="state.showScrollButton"
+                                t-on-click="() => scrollToBottom()">
+                            <i class="fa fa-chevron-down"/>
+                        </button>
+
+                        <!-- Input Area -->
+                        <div class="odex-ai-input-area">
+                            <div class="odex-ai-input-toolbar">
+                                <button class="odex-ai-toolbar-btn"
+                                        title="Suggested Prompts"
+                                        t-on-click="() => state.showSuggestedPrompts = !state.showSuggestedPrompts">
+                                    <i class="fa fa-magic"/>
+                                </button>
+                                <button class="odex-ai-toolbar-btn"
+                                        title="Templates"
+                                        t-on-click="() => onTabSwitch('templates')">
+                                    <i class="fa fa-list-alt"/>
+                                </button>
+                                <button class="odex-ai-toolbar-btn"
+                                        title="New Conversation"
+                                        t-on-click="onNewConversation">
+                                    <i class="fa fa-plus"/>
+                                </button>
+                                <button class="odex-ai-toolbar-btn"
+                                        title="Export Conversation"
+                                        t-on-click="onExportConversation"
+                                        t-if="aiState.activeConversationId">
+                                    <i class="fa fa-download"/>
+                                </button>
+                            </div>
+                            <div class="odex-ai-input-row">
+                                <textarea
+                                    t-ref="chatInput"
+                                    class="odex-ai-input"
+                                    placeholder="Ask anything... (Enter to send, Shift+Enter for new line)"
+                                    t-att-value="state.inputValue"
+                                    t-on-input="onInputChange"
+                                    t-on-keydown="onKeyDown"
+                                    t-att-disabled="aiState.isLoading or aiState.isStreaming or not aiState.config.hasApiKey"
+                                    rows="1"/>
+                                <button class="odex-ai-send-btn"
+                                        t-on-click="onSendMessage"
+                                        t-att-disabled="not state.inputValue.trim() or aiState.isLoading or aiState.isStreaming or not aiState.config.hasApiKey">
+                                    <i t-attf-class="fa #{aiState.isLoading or aiState.isStreaming ? 'fa-spinner fa-spin' : 'fa-paper-plane'}"/>
+                                </button>
+                            </div>
+                            <div class="odex-ai-input-hint">
+                                <span t-if="aiState.config.model">
+                                    <i class="fa fa-microchip me-1"/>
+                                    <t t-esc="aiState.config.providerLabel or aiState.config.provider or 'AI'"/>
+                                    ·
+                                    <t t-esc="aiState.config.model"/>
+                                </span>
+                                <span t-if="aiState.isStreaming" class="text-primary">
+                                    <i class="fa fa-circle-o-notch fa-spin me-1"/>Streaming...
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ============================================================ -->
+                    <!-- HISTORY TAB                                                    -->
+                    <!-- ============================================================ -->
+                    <div class="odex-ai-body" t-if="state.activeTab === 'history'">
+                        <div class="odex-ai-history">
+                            <div class="odex-ai-history__header">
+                                <input type="text"
+                                       class="odex-ai-search"
+                                       placeholder="Search conversations..."
+                                       t-att-value="state.searchQuery"
+                                       t-on-input="onSearchChange"/>
+                                <button class="odex-ai-btn odex-ai-btn--primary odex-ai-btn--sm"
+                                        t-on-click="onNewConversation">
+                                    <i class="fa fa-plus me-1"/>New
+                                </button>
+                            </div>
+
+                            <!-- Loading state -->
+                            <div class="odex-ai-loading-conversations" t-if="state.isLoadingConversations">
+                                <i class="fa fa-spinner fa-spin me-2"/>Loading conversations...
+                            </div>
+
+                            <!-- Empty state -->
+                            <div class="odex-ai-empty odex-ai-empty--sm" t-elif="not filteredConversations.length">
+                                <i class="fa fa-comments-o fa-2x mb-2"/>
+                                <p>No conversations yet</p>
+                            </div>
+
+                            <!-- Conversation list -->
+                            <div class="odex-ai-conv-list" t-else="">
+                                <t t-foreach="filteredConversations" t-as="conv" t-key="conv.id">
+                                    <div t-attf-class="odex-ai-conv-item #{aiState.activeConversationId === conv.id ? 'odex-ai-conv-item--active' : ''}"
+                                         t-on-click="() => onSelectConversation(conv.id)">
+                                        <div class="odex-ai-conv-item__left">
+                                            <i t-attf-class="fa #{conv.is_pinned ? 'fa-thumb-tack text-warning' : 'fa-comment-o'} me-2"/>
+                                        </div>
+                                        <div class="odex-ai-conv-item__content">
+                                            <div class="odex-ai-conv-item__name">
+                                                <t t-esc="conv.name"/>
+                                            </div>
+                                            <div class="odex-ai-conv-item__preview">
+                                                <t t-esc="truncate(conv.last_message, 60)"/>
+                                            </div>
+                                            <div class="odex-ai-conv-item__meta">
+                                                <span><t t-esc="formatTime(conv.last_message_date)"/></span>
+                                                <span t-if="conv.message_count">
+                                                    <i class="fa fa-comments-o me-1"/>
+                                                    <t t-esc="conv.message_count"/>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="odex-ai-conv-item__actions">
+                                            <button class="odex-ai-conv-action"
+                                                    t-on-click="(e) => onPinConversation(e, conv.id, conv.is_pinned)"
+                                                    t-att-title="conv.is_pinned ? 'Unpin' : 'Pin'">
+                                                <i t-attf-class="fa #{conv.is_pinned ? 'fa-thumb-tack' : 'fa-thumb-tack-o'}"/>
+                                            </button>
+                                            <button class="odex-ai-conv-action odex-ai-conv-action--delete"
+                                                    t-on-click="(e) => onDeleteConversation(e, conv.id)"
+                                                    title="Delete">
+                                                <i class="fa fa-trash-o"/>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ============================================================ -->
+                    <!-- TEMPLATES TAB                                                  -->
+                    <!-- ============================================================ -->
+                    <div class="odex-ai-body" t-if="state.activeTab === 'templates'">
+                        <div class="odex-ai-templates">
+                            <div class="odex-ai-templates__header">
+                                <h5 class="odex-ai-templates__title">
+                                    <i class="fa fa-list-alt me-2"/>Prompt Templates
+                                </h5>
+                                <p class="odex-ai-templates__subtitle">
+                                    Click any template to use it as your message
+                                </p>
+                            </div>
+
+                            <!-- No templates -->
+                            <div class="odex-ai-empty odex-ai-empty--sm" t-if="not state.templates.length">
+                                <i class="fa fa-list-alt fa-2x mb-2"/>
+                                <p>No templates available</p>
+                                <small>Configure templates in AI Assistant → Prompt Templates</small>
+                            </div>
+
+                            <!-- Template cards grouped by category -->
+                            <t t-if="state.templates.length">
+                                <t t-set="categories" t-value="[...new Set(state.templates.map(t => t.category))]"/>
+                                <t t-foreach="categories" t-as="cat" t-key="cat">
+                                    <div class="odex-ai-template-group">
+                                        <div class="odex-ai-template-group__label">
+                                            <t t-esc="cat.charAt(0).toUpperCase() + cat.slice(1).replace('_', ' ')"/>
+                                        </div>
+                                        <t t-foreach="state.templates.filter(t => t.category === cat)"
+                                           t-as="tmpl" t-key="tmpl.id">
+                                            <div class="odex-ai-template-card"
+                                                 t-on-click="() => onUseTemplate(tmpl)">
+                                                <div class="odex-ai-template-card__icon">
+                                                    <i t-attf-class="fa #{tmpl.icon or 'fa-magic'}"/>
+                                                </div>
+                                                <div class="odex-ai-template-card__content">
+                                                    <div class="odex-ai-template-card__name">
+                                                        <t t-esc="tmpl.name"/>
+                                                    </div>
+                                                    <div class="odex-ai-template-card__desc" t-if="tmpl.description">
+                                                        <t t-esc="tmpl.description"/>
+                                                    </div>
+                                                </div>
+                                                <div class="odex-ai-template-card__arrow">
+                                                    <i class="fa fa-chevron-right"/>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </t>
+                            </t>
+                        </div>
+                    </div>
+
+                </t> <!-- end not minimized -->
+            </div>
+        </t>
+    </t>
+
+</templates>

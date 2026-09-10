@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+	<!-- ── Form View ───────────────────────────────────────────────────────── -->
+    <record id="view_purchase_multi_rfq_task_form" model="ir.ui.view">
+        <field name="name">purchase.multi.rfq.form</field>
+        <field name="model">purchase.multi.rfq</field>
+        <field name="inherit_id" ref="odex_multi_vendor_rfq.view_purchase_multi_rfq_form"/>
+        <field name="arch" type="xml">
+        	<field name="currency_id" position="after">
+        		<field name="inspection_id" string="Inspection/Job No."/>
+        	</field>
+        </field>
+    </record>
+
+    <record id="view_purchase_multi_rfq_task_list" model="ir.ui.view">
+        <field name="name">purchase.multi.rfq.list</field>
+        <field name="model">purchase.multi.rfq</field>
+        <field name="inherit_id" ref="odex_multi_vendor_rfq.view_purchase_multi_rfq_list"/>
+        <field name="arch" type="xml">
+        	<field name="purchase_user_id" position="after">
+        		<field name="inspection_id" string="Inspection/Job No."/>
+        	</field>
+        </field>
+    </record>
+
+</odoo>

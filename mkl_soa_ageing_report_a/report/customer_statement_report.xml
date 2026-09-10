@@ -1,0 +1,23 @@
+<odoo>
+    <data>
+
+
+        <!-- QWeb Reports -->
+        <record id="action_variable_month_ageing_customer_statement_report" model="ir.actions.report">
+            <field name="name">Default Customer Statement of Account</field>
+            <field name="model">ageing.customer.statement.wizard</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">mkl_soa_ageing_report_a.customer_statement_ageing_report</field>
+            <field name="report_file">mkl_soa_ageing_report_a.customer_statement_ageing_report</field>
+            <field name="print_report_name">(object._get_soa_a_report_base_filename())</field>
+            <field name="attachment"/>
+            <!-- <field name="binding_model_id" ref="model_res_partner"/> -->
+            <!-- <field name="binding_type">report</field> -->
+        </record>
+
+    </data>
+</odoo>
+
+
+
+

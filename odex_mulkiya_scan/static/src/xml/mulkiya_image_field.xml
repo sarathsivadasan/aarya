@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="odex_mulkiya_scan.MulkiyaImageField">
+        <div class="o_mulkiya_image_field"
+             t-att-class="{ 'o_mulkiya_dragover': state.dragOver, 'o_mulkiya_has_image': hasImage }"
+             t-on-dragover="onDragOver"
+             t-on-dragleave="onDragLeave"
+             t-on-drop="onDrop">
+
+            <div class="o_mulkiya_drop_area" t-if="!hasImage">
+                <div class="o_mulkiya_placeholder" t-if="!state.loading">
+                    <i class="fa fa-id-card-o fa-3x mb-2"/>
+                    <div class="fw-bold">No image yet</div>
+                    <div class="small text-muted">
+                        Drop a picture here, upload a file or use the camera.
+                    </div>
+                </div>
+                <div class="o_mulkiya_placeholder" t-if="state.loading">
+                    <i class="fa fa-circle-o-notch fa-spin fa-2x"/>
+                    <div class="small text-muted mt-2">Reading image...</div>
+                </div>
+            </div>
+
+            <div class="o_mulkiya_preview" t-if="hasImage">
+                <img t-att-src="imageSrc" alt="Mulkiya side" t-on-click="onPreview"/>
+            </div>
+
+            <div class="o_mulkiya_image_actions" t-if="!isReadonly">
+                <button type="button" class="btn btn-secondary btn-sm"
+                        t-on-click="onUploadClick">
+                    <i class="fa fa-upload me-1"/>
+                    <span t-if="!hasImage">Upload Image</span>
+                    <span t-else="">Replace</span>
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm"
+                        t-on-click="onCameraClick">
+                    <i class="fa fa-camera me-1"/>
+                    <span t-if="!hasImage">Take Photo</span>
+                    <span t-else="">Retake</span>
+                </button>
+                <button type="button" class="btn btn-link btn-sm text-danger"
+                        t-if="hasImage" t-on-click="onRemove" title="Remove">
+                    <i class="fa fa-trash-o"/>
+                </button>
+            </div>
+
+            <input type="file" class="d-none" t-ref="uploadInput"
+                   accept="image/jpeg,image/png,image/webp"
+                   t-on-change="onFileChange"/>
+            <input type="file" class="d-none" t-ref="cameraInput"
+                   accept="image/*" capture="environment"
+                   t-on-change="onFileChange"/>
+        </div>
+    </t>
+
+</templates>

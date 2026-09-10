@@ -1,0 +1,19 @@
+.ai_nav_btn {
+    border: none !important;
+    background: transparent !important;
+    padding: 0 2px !important;
+    margin: 0 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: none !important;
+}
+
+.ai_nav_btn:hover {
+    background: transparent !important;
+}
+
+.ai_nav_icon {
+    height: 16px;
+    width: auto;
+}

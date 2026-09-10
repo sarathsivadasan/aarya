@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- ============================================================ -->
+    <!-- NAVBAR BUTTON (Systray)                                       -->
+    <!-- ============================================================ -->
+    <t t-name="odex_ai_assistant.AiNavbarButton">
+        <div class="odex-ai-navbar-btn-wrapper">
+            <!-- The AI toggle button in the navbar -->
+            <button t-attf-class="odex-ai-navbar-btn #{isActive ? 'odex-ai-navbar-btn--active' : ''}"
+                    t-on-click="onTogglePanel"
+                    title="ODEX AI Assistant (Alt+A)">
+                <i t-attf-class="fa #{iconClass}"/>
+                <!-- Dot indicator when no API key -->
+                <span class="odex-ai-navbar-btn__dot odex-ai-navbar-btn__dot--warning"
+                      t-if="state.isReady and not hasApiKey"
+                      title="API key not configured"/>
+                <!-- Active dot -->
+                <span class="odex-ai-navbar-btn__dot odex-ai-navbar-btn__dot--active"
+                      t-elif="isActive"/>
+            </button>
+
+            <!-- The AI Panel renders here (attached to the DOM globally) -->
+            <AiPanel/>
+        </div>
+    </t>
+
+    <!-- ============================================================ -->
+    <!-- CHATTER BUTTON (injected into form view chatter)              -->
+    <!-- ============================================================ -->
+    <t t-name="odex_ai_assistant.AiChatterButton">
+        <div class="odex-ai-chatter-btn-wrapper">
+            <div class="dropdown">
+                <button t-attf-class="btn btn-sm btn-outline-secondary odex-ai-chatter-btn #{state.isLoading ? 'disabled' : ''}"
+                        t-on-click="onToggleMenu"
+                        title="ODEX AI Assistant">
+                    <i t-attf-class="fa #{state.isLoading ? 'fa-spinner fa-spin' : 'fa-robot'} me-1"/>
+                    <span>AI</span>
+                    <i class="fa fa-chevron-down ms-1 small"/>
+                </button>
+
+                <!-- Dropdown Menu -->
+                <div t-attf-class="dropdown-menu dropdown-menu-end odex-ai-chatter-menu #{state.showMenu ? 'show' : ''}"
+                     t-on-click.stop="">
+                    <!-- Header -->
+                    <div class="odex-ai-chatter-menu__header">
+                        <i class="fa fa-robot me-2 text-primary"/>
+                        <strong>ODEX AI Assistant</strong>
+                    </div>
+                    <div class="dropdown-divider"/>
+
+                    <!-- Open AI Panel -->
+                    <a class="dropdown-item odex-ai-chatter-menu__item"
+                       href="#"
+                       t-on-click.prevent="onOpenAIPanel">
+                        <i class="fa fa-comments me-2 text-primary"/>
+                        <div>
+                            <div class="odex-ai-menu-item__title">Open AI Chat</div>
+                            <div class="odex-ai-menu-item__desc">Open the AI panel with this record's context</div>
+                        </div>
+                    </a>
+
+                    <!-- Open Wizard (full-featured) -->
+                    <a class="dropdown-item odex-ai-chatter-menu__item"
+                       href="#"
+                       t-on-click.prevent="onOpenWizard">
+                        <i class="fa fa-magic me-2 text-success"/>
+                        <div>
+                            <div class="odex-ai-menu-item__title">AI Generate &amp; Post</div>
+                            <div class="odex-ai-menu-item__desc">Generate content and post to chatter</div>
+                        </div>
+                    </a>
+
+                    <!-- Quick Summary to Chatter -->
+                    <a class="dropdown-item odex-ai-chatter-menu__item"
+                       href="#"
+                       t-on-click.prevent="onSummarizeToChatter"
+                       t-if="hasRecord">
+                        <i class="fa fa-file-text-o me-2 text-warning"/>
+                        <div>
+                            <div class="odex-ai-menu-item__title">Quick AI Summary</div>
+                            <div class="odex-ai-menu-item__desc">Generate and post summary to chatter instantly</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Click-outside overlay to close menu -->
+            <div class="odex-ai-overlay" t-if="state.showMenu" t-on-click="onHideMenu"/>
+        </div>
+    </t>
+
+</templates>

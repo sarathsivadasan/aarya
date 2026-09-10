@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="odex_garage_technician_portal.LogTab">
+        <div class="o_tp_log_tab">
+            <div t-foreach="state.logs" t-as="log" t-key="log.id" class="o_tp_log_row">
+                <div class="o_tp_log_date" t-esc="log.date"/>
+                <div class="o_tp_log_action">
+                    <t t-esc="log.action_label"/>
+                    <i t-if="log.is_admin_action" class="fa fa-shield o_tp_admin_flag"
+                       title="Performed by an administrator"/>
+                </div>
+                <div class="o_tp_log_desc" t-esc="log.description"/>
+                <div class="o_tp_log_user" t-esc="log.user"/>
+            </div>
+            <div t-if="!state.logs.length" class="text-muted">No activity logged yet.</div>
+        </div>
+    </t>
+</templates>

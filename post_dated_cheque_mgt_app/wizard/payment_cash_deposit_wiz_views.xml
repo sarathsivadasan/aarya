@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_payment_cash_deposit_wizard" model="ir.ui.view">
+            <field name="name">payment.cash.deposit.wizard.form</field>
+            <field name="model">payment.cash.deposit.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Deposit The PDC Payments">
+                    <separator string="Deposit The PDC Payments" />
+                    <p class="oe_grey">
+                        Deposit The PDC Payments
+                    </p>
+                    <footer>
+                        <button icon="fa-lock" string="Applied" name="payment_cash_deposit_records" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_payment_cash_deposit_wizard" model="ir.actions.act_window">
+            <field name="name">Deposit The PDC Payments</field>
+            <field name="res_model">payment.cash.deposit.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="view_payment_cash_deposit_wizard"/>
+            <field name="binding_model_id" ref="post_dated_cheque_mgt_app.model_pdc_account_payment" />
+            <field name="binding_view_types">list</field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="odex_mulkiya_scan.Dashboard">
+        <div class="o_mulkiya_dashboard o_action">
+            <div class="o_mulkiya_dashboard_header">
+                <div>
+                    <h2 class="mb-0">Odex Mulkiya Scan</h2>
+                    <div class="text-muted small">
+                        Read, verify and share UAE vehicle registration data.
+                    </div>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-secondary" t-if="state.canConfigure"
+                            t-on-click="onConfigure">
+                        <i class="fa fa-cog me-1"/>Configuration
+                    </button>
+                    <button class="btn btn-primary" t-on-click="onNewScan">
+                        <i class="fa fa-plus me-1"/>New Scan
+                    </button>
+                </div>
+            </div>
+
+            <div t-if="state.loading" class="text-center py-5 text-muted">
+                <i class="fa fa-circle-o-notch fa-spin fa-2x"/>
+            </div>
+
+            <t t-else="">
+                <div class="o_mulkiya_cards">
+                    <div t-foreach="cards" t-as="card" t-key="card.key"
+                         class="o_mulkiya_card" t-att-class="card.css"
+                         t-on-click="() => this.onOpenList(card.domain)">
+                        <div class="o_mulkiya_card_icon"><i class="fa" t-att-class="card.icon"/></div>
+                        <div class="o_mulkiya_card_value" t-esc="card.value"/>
+                        <div class="o_mulkiya_card_label" t-esc="card.label"/>
+                    </div>
+                </div>
+
+                <div class="o_mulkiya_recent">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h4 class="mb-0">Recent Scans</h4>
+                        <button class="btn btn-link" t-on-click="() => this.onOpenList([])">
+                            View all
+                        </button>
+                    </div>
+                    <div t-if="!state.recent.length" class="text-muted py-4 text-center">
+                        No scan yet. Start by scanning a Mulkiya.
+                    </div>
+                    <table t-else="" class="table table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Scan No.</th>
+                                <th>Date</th>
+                                <th>VIN</th>
+                                <th>Plate</th>
+                                <th class="d-none d-md-table-cell">Vehicle</th>
+                                <th class="d-none d-md-table-cell">Emirate</th>
+                                <th class="text-end">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="state.recent" t-as="scan" t-key="scan.id"
+                                class="o_mulkiya_recent_row"
+                                t-on-click="() => this.onOpenScan(scan.id)">
+                                <td class="fw-bold" t-esc="scan.name"/>
+                                <td t-esc="formatDate(scan.create_date)"/>
+                                <td class="text-muted small" t-esc="scan.vin_sn || '-'"/>
+                                <td t-esc="scan.license_plate || '-'"/>
+                                <td class="d-none d-md-table-cell">
+                                    <t t-esc="scan.make || ''"/>
+                                    <t t-esc="scan.vehicle_model || ''"/>
+                                </td>
+                                <td class="d-none d-md-table-cell"
+                                    t-esc="scan.registration_emirate || '-'"/>
+                                <td class="text-end">
+                                    <span class="badge" t-att-class="stateClass(scan.state)"
+                                          t-esc="stateLabel(scan.state)"/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+        </div>
+    </t>
+
+</templates>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Fallback container: reparented under the existing Workshop root by
+         the post_init_hook when that menu exists. -->
+    <menuitem id="menu_overview_root" name="Technician Overview"
+              sequence="60" groups="group_overview_technician"/>
+
+    <menuitem id="menu_technician_overview" name="Technician Overview"
+              parent="menu_overview_root" sequence="10"
+              action="action_technician_overview_dashboard"
+              groups="group_overview_technician"/>
+
+    <menuitem id="menu_overview_reports" name="Reports &amp; Analytics"
+              parent="menu_overview_root" sequence="20"
+              action="action_technician_overview_reports"
+              groups="group_overview_technician"/>
+
+    <menuitem id="menu_overview_schedules" name="Scheduled Reports"
+              parent="menu_overview_root" sequence="30"
+              action="action_overview_report_schedule"
+              groups="group_overview_manager"/>
+</odoo>

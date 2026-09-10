@@ -1,0 +1,51 @@
+// Base layout — full Discuss view (thread can be wide)
+.o-mail-AiPromptTemplateCards {
+    padding: 1rem 1.5rem;
+
+    &__hint {
+        margin-bottom: 0.75rem;
+    }
+
+    &__list {
+        max-width: 640px;
+    }
+}
+
+.o-mail-AiPromptTemplateCard {
+    width: 190px;
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+
+    &:hover {
+        background-color: rgba(var(--o-brand-primary-rgb, 113, 75, 103), 0.06);
+        border-color: var(--o-brand-primary, #714b67);
+    }
+
+    &__name {
+        font-size: 0.85rem;
+    }
+
+    &__preview {
+        font-size: 0.75rem;
+    }
+}
+
+// Narrow sidebar chat window (360px wide).
+.o-mail-ChatWindow {
+    .o-mail-AiPromptTemplateCards {
+        padding: 0;
+
+        &__hint {
+            font-size: 0.8rem;
+            margin-bottom: 0.5rem;
+        }
+    }
+
+    .o-mail-AiPromptTemplateCard {
+        max-width: 150px;
+
+        &__name { font-size: 0.8rem; }
+        &__preview { font-size: 0.7rem; }
+    }
+}

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="jobcard_part_requisition_form_view" model="ir.ui.view">
+            <field name="name">jobcard.part.requisition.form.view</field>
+            <field name="model">jobcard.part.requisition</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="user_approve" type="object" string="Approve" invisible="state != 'draft'" class="btn-primary"/>
+                        <button name="user_reject" type="object" string="Reject" invisible="state != 'draft'" class="btn-primary"/>
+                        <field name="state" widget="statusbar" string="Status"  
+                                    statusbar_visible="draft,approve,"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button class="oe_stat_button" type="object" icon="fa-truck" name="show_picking" string="Delivery Order" groups="base.group_user"/>
+                        </div>                            
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name"/><br/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group readonly="state != 'draft'">
+                                <field name="employee_id"/>  
+                                <field name="request_date"/>
+                                <field name="cost_type"/>
+                                <field name="product_id"/>
+                                <field name="description"/>
+                                <field name="po_id" readonly="1"/>
+                                <field name="qty_available"/>
+                                <field name="qty"/>
+                                <field name="uom_id"/>
+                                <field name="cost_price"/>
+                                <field name="sale_price"/>
+                            </group>
+                            <group eadonly="state != 'draft'">
+                                <field name="company_id" groups="base.group_multi_company"/>
+                                <field name="location_id"
+                                    groups="stock.group_stock_user" domain="[('usage','!=', 'view')]"/>
+                                <field name="dest_location_id" groups="stock.group_stock_user"/> 
+                                <field name="job_id"/>  
+                                <field name="register_no"/>
+                                <field name="cc_vehicle_model"/>
+                                <field name="approve_reject_employee_id"/>
+                            </group>
+                        </group>
+                    </sheet>  
+                </form>
+            </field>
+        </record>
+
+        <record id="jobcard_part_requisition_tree_view" model="ir.ui.view">
+            <field name="name">jobcard.part.requisition.view.list</field>
+            <field name="model">jobcard.part.requisition</field>
+            <field name="arch" type="xml">
+                <list>
+                    <header>
+                        <button name="action_create_purchase_order"
+                            type="object"
+                            string="Create Purchase Order"
+                            class="btn-primary"/>
+                            <!-- context="{'active_ids': active_ids}"/> -->
+                    </header>   
+                    <field name="name"/>
+                    <field name="job_id"/>
+                    <field name="employee_id"/>
+                    <field name="request_date"/>
+                    <field name="register_no"/>
+                    <field name="cc_vehicle_model"/>
+                    <field name="cost_type"/>
+                    <field name="product_id"/>
+                    <field name="location_id"/>
+                    <field name="po_id"/>
+                    <field name="qty_available"/>
+                    <field name="qty"/>
+                    <field name="cost_price"/>
+                    <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+                    <field name="state"/>
+                    <button name="user_approve" type="object" string="Approve" invisible="state != 'draft'" class="btn-primary"/>
+                    <button name="user_reject" type="object" string="Reject" invisible="state != 'draft'" class="btn-primary"/>
+                </list>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_jobcard_part_requisition">
+            <field name="name">Part Request</field>
+            <field name="res_model">jobcard.part.requisition</field>
+            <field name="view_mode">list,form</field>
+        </record>
+        
+        <menuitem id="menu_jobcard_part_requisition" name="Part Request" groups="base.group_user" web_icon="parts_request,static/description/icon.png" sequence="5"/>
+        <menuitem id="menu_item_jobcard_part_requisition" name="Part Request" parent="menu_jobcard_part_requisition"/>
+        <menuitem id="menu_action_jobcard_part_requisition" name="Part Request" parent="menu_item_jobcard_part_requisition" action="action_jobcard_part_requisition"/>
+        <menuitem id="menu_item_purchase_order" name="Purchase Order" parent="menu_jobcard_part_requisition"          action="purchase.purchase_form_action"/>
+
+    </data>
+</odoo>

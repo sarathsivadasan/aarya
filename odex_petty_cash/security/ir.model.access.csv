@@ -1,0 +1,16 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_pc_account_employee,pc.account.employee,model_odex_petty_cash_account,odex_petty_cash.group_petty_cash_employee,1,0,0,0
+access_pc_account_manager,pc.account.manager,model_odex_petty_cash_account,odex_petty_cash.group_petty_cash_manager,1,1,0,0
+access_pc_account_admin,pc.account.admin,model_odex_petty_cash_account,odex_petty_cash.group_petty_cash_finance_admin,1,1,1,1
+access_pc_category_employee,pc.category.employee,model_odex_petty_cash_category,odex_petty_cash.group_petty_cash_employee,1,0,0,0
+access_pc_category_admin,pc.category.admin,model_odex_petty_cash_category,odex_petty_cash.group_petty_cash_finance_admin,1,1,1,1
+access_pc_txn_employee,pc.txn.employee,model_odex_petty_cash_transaction,odex_petty_cash.group_petty_cash_employee,1,1,1,0
+access_pc_txn_manager,pc.txn.manager,model_odex_petty_cash_transaction,odex_petty_cash.group_petty_cash_manager,1,1,1,0
+access_pc_txn_admin,pc.txn.admin,model_odex_petty_cash_transaction,odex_petty_cash.group_petty_cash_finance_admin,1,1,1,1
+access_pc_alloc_employee,pc.alloc.employee,model_odex_petty_cash_allocation,odex_petty_cash.group_petty_cash_employee,1,0,0,0
+access_pc_alloc_manager,pc.alloc.manager,model_odex_petty_cash_allocation,odex_petty_cash.group_petty_cash_manager,1,1,1,0
+access_pc_alloc_admin,pc.alloc.admin,model_odex_petty_cash_allocation,odex_petty_cash.group_petty_cash_finance_admin,1,1,1,1
+access_pc_return_employee,pc.return.employee,model_odex_petty_cash_return,odex_petty_cash.group_petty_cash_employee,1,1,1,0
+access_pc_return_manager,pc.return.manager,model_odex_petty_cash_return,odex_petty_cash.group_petty_cash_manager,1,1,1,0
+access_pc_return_admin,pc.return.admin,model_odex_petty_cash_return,odex_petty_cash.group_petty_cash_finance_admin,1,1,1,1
+access_pc_statement,pc.statement,model_odex_petty_cash_statement,odex_petty_cash.group_petty_cash_employee,1,1,1,1

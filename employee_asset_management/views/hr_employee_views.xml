@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_employee_form_inherit_asset" model="ir.ui.view">
+        <field name="name">hr.employee.form.inherit.asset</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+
+            <div name="button_box" position="inside">
+                <button name="action_open_employee_assets"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-desktop"
+                        groups="hr.group_hr_user">
+                    <field name="assigned_asset_count" widget="statinfo" string="Assets"/>
+                </button>
+            </div>
+
+            <xpath expr="//page[@name='hr_settings']" position="after">
+                <page name="employee_assets" string="Assets" groups="hr.group_hr_user">
+                    <separator string="Assigned Assets"/>
+                    <field name="asset_assignment_ids"
+                           context="{'default_employee_id': id}"
+                           nolabel="1">
+                        <list string="Assigned Assets">
+                            <control>
+                                <create string="Add Asset"/>
+                            </control>
+                            <field name="asset_id" string="Asset Name"/>
+                            <field name="serial_number"/>
+                            <field name="assign_date"/>
+                            <field name="return_date"/>
+                            <field name="condition_note" string="Note for Health Condition"/>
+                            <field name="state" widget="badge"
+                                   decoration-success="state == 'assigned'"
+                                   decoration-muted="state == 'returned'"/>
+                            <button name="action_return_asset" type="object"
+                                    string="Return" icon="fa-undo"
+                                    title="Return Asset"
+                                    invisible="state != 'assigned'"/>
+                            <field name="company_id" column_invisible="True"/>
+                        </list>
+                        <form string="Asset Assignment">
+                            <header>
+                                <button name="action_return_asset" type="object"
+                                        string="Return Asset" class="btn-primary"
+                                        invisible="state != 'assigned'"/>
+                                <field name="state" widget="statusbar"
+                                       statusbar_visible="assigned,returned"/>
+                            </header>
+                            <group>
+                                <group>
+                                    <field name="employee_id" readonly="1"
+                                           invisible="not employee_id"
+                                           options="{'no_open': True}"/>
+                                    <field name="asset_id"
+                                           options="{'no_create': True}"/>
+                                    <field name="serial_number"
+                                           placeholder="Scan or type the barcode..."/>
+                                    <field name="company_id"
+                                           groups="base.group_multi_company"/>
+                                </group>
+                                <group>
+                                    <field name="assign_date"/>
+                                    <field name="return_date"/>
+                                </group>
+                            </group>
+                            <group string="Note for Health Condition">
+                                <field name="condition_note" nolabel="1"
+                                       placeholder="Good condition, minor scratches on back cover..."/>
+                            </group>
+                            <group string="Notes">
+                                <field name="notes" nolabel="1"
+                                       placeholder="Additional notes..."/>
+                            </group>
+                        </form>
+                    </field>
+                </page>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>

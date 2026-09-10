@@ -1,0 +1,545 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- <record id="cc_extend_project_task_form_id" model="ir.ui.view">
+        <field name="name">cc.extend.project.task.form.id</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_form2"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="contact_person_name"/>
+            </xpath>
+            <xpath expr="//field[@name='promise_date']" position="after">
+                <field name="fleet_service_id" attrs="{'readonly': [('sale_order_id', '=', True)]}"/>
+            </xpath>
+        </field>
+    </record> -->
+
+    <record id="view_form_v_job_card_extension" model="ir.ui.view">
+        <field name="name">Project Task Form Inherit Job Card Extension</field>
+        <field name="model">project.task</field>
+        <!--        <field name="inherit_id" ref="project.view_task_form2"/>-->
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_create_mv_rfq"
+                            type="object" string="Confirm Parts" invisible="mv_rfq_count > 0" class="oe_stat_button">
+                    </button>
+                </header>
+                <sheet>
+                    <!--  <header>
+                         <field name="is_estimate_created" invisible="1"/>
+                         <button name="create_inspection_estimate" string="Create Estimate" type="object" class="btn-primary"
+                         attrs="{'invisible': [('is_estimate_created', '=', True)]}"/>
+                     </header> -->
+                    <div class="oe_button_box" name="button_box">
+                        <!--                        <button name="action_open_parent_task" type="object" class="oe_stat_button" icon="fa-tasks" string="Parent Task" attrs="{'invisible': ['|', ('allow_subtasks', '=', False), ('parent_id', '=', False)]}" groups="project.group_subtask_project"/>-->
+                        <button class="oe_stat_button" type="object" string="Quotation" name="show_estimate" icon="fa-pencil-square-o"/>
+                        <button name="360" type="action" invisible="rating_count == 0" class="oe_stat_button"
+                                icon="fa-smile-o" groups="project.group_project_rating">
+                            <field name="rating_count" string="Rating" widget="statinfo"/>
+                        </button>
+                        <button name="action_view_mv_rfq"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-shopping-cart">
+                            <field name="mv_rfq_count"
+                                   string="MV RFQ"
+                                   widget="statinfo"/>
+                        </button>
+                        <!--                        <button name="action_recurring_tasks" type="object" attrs="{'invisible': [('recurrence_id', '=', False)]}" class="oe_stat_button" icon="fa-repeat" groups="project.group_project_recurring_tasks">-->
+                        <!--                            <div class="o_field_widget o_stat_info">-->
+                        <!--                                <span class="o_stat_value">-->
+                        <!--                                    <field name="recurring_count" widget="statinfo" nolabel="1"/>-->
+                        <!--                                    Tasks-->
+                        <!--                                </span>-->
+                        <!--                                <span class="o_stat_text">in Recurrence</span>-->
+                        <!--                            </div>-->
+                        <!--                        </button>-->
+                        <!--                        <button name="action_dependent_tasks" type="object" attrs="{'invisible': [('dependent_tasks_count', '=', 0)]}" class="oe_stat_button" icon="fa-tasks" groups="project.group_project_task_dependencies">-->
+                        <!--                            <div class="o_field_widget o_stat_info">-->
+                        <!--                                <span class="o_stat_text">Blocking</span>-->
+                        <!--                                <span class="o_stat_value ">-->
+                        <!--                                    <field name="dependent_tasks_count" widget="statinfo" nolabel="1"/>-->
+                        <!--                                    Tasks-->
+                        <!--                                </span>-->
+                        <!--                            </div>-->
+                        <!--                        </button>-->
+                        <field name="active" invisible="1"/>
+                        <field name="is_vc" invisible="1"/>
+                    </div>
+                    <widget name="web_ribbon" title="Archived" bg_color="bg-danger" invisible="active"/>
+                    <!-- <field name="vehicle_photo" invisible="not is_vc" widget='image' class="oe_avatar" options='{"preview_image": "avatar_128"}'/> -->
+                    <div class="oe_title pe-0">
+                        <h1 class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex w-100">
+                                <field name="priority" widget="priority_switch" class="me-3"/>
+                                <field name="name" required="0" string="Name" readonly="1"
+                                       options="{'line_breaks': False}" widget="text"
+                                       class="o_task_name text-truncate w-md-75 w-100 pe-2"
+                                       placeholder="Task Title..."/>
+                            </div>
+                        </h1>
+                    </div>
+                    <group>
+                        <group name="customer_info" string="Customer Details">
+                            <field name="partner_id" string="Customer Name"/>
+                            <field name="cc_partner_phone"/>
+                            <field name="cc_partner_mobile"/>
+                            <field name="tag_ids" widget="many2many_tags"
+                                   options="{'color_field': 'color', 'no_create_edit': True}"
+                                   context="{'project_id': project_id}"/>
+                            <field name="customer_waiting" widget="boolean_toggle"/>
+                        </group>
+                        <group name="vehicle_info" string="Vehicle Details">
+                            <field name="vehicle_id" string="License Plate" default_focus="1"/>
+                            <field name="brand"/>
+                            <field name="model_id" string="Model"/>
+                            <field name="vin" string="Chassis No."/>
+                            <field name="cylinder_count"/>
+                            <field name="vehicle_color" string="Colour"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group name="extra_info" string="Extra Info">
+                            <field name="repair_category" string="Business"/>
+                            <field name="repair_sub_category_ids" string="Job Type" widget="many2many_tags"
+                                   domain="[('repair_category_id', '=', repair_category)]"/>
+                            <field name="bay_id"/>
+                        </group>
+                        <group>
+                            <field name="engine"/>
+                            <field name="year" string="Year"/>
+                            <field name="odometer"/>
+                            <field name="fuel_level"/>
+                            <field name="warranty"/>
+                        </group>
+                    </group>
+
+                    <group>
+                        <group name="other_info" string="Other Info">
+                            <label for="project_id"/>
+                            <div name="project" class="d-inline-flex w-100">
+                                <field name="project_id"
+                                       domain="[('active', '=', True), '|', ('company_id', '=', False), ('company_id', '=?', company_id)]"
+                                       widget="project"/>
+                                <field name="display_in_project" string="Display the sub-task in your pipeline"
+                                       widget="boolean_icon" options="{'icon': 'fa-eye-slash'}" class="ms-0"
+                                       style="width: fit-content;" force_save="1"
+                                       invisible="display_in_project or not show_display_in_project"/>
+                                <field name="display_in_project" string="Hide the sub-task in your pipeline"
+                                       widget="boolean_icon" options="{'icon': 'fa-eye'}" class="ms-0"
+                                       style="width: fit-content;" force_save="1"
+                                       invisible="not display_in_project or not show_display_in_project"/>
+                            </div>
+                            <field name="analytic_account_id"/>
+                            <field name="sale_order_id" string="Estimate"/>
+                            <field name="inspection_state"/>
+                        </group>
+                        <group string="_">
+                            <field name="user_ids" class="o_task_user_field"
+                                   options="{'no_open': True, 'no_quick_create': True}" widget="many2many_avatar_user"/>
+                            <field name="create_date" string="Inspection Date"/>
+                            <field name="date_assign" groups="base.group_no_one"/>
+                            <field name="promise_date" widget="date"/>
+                            <field name="date_end" string="Out Date"/>
+                            <field name="next_service_date"/>
+                            <field name="final_inspection" widget="boolean_toggle"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="complaints" string="Complaints">
+                            <field name="requested_services_ids">
+                                <list editable="bottom">
+                                    <field name="product_id"/>
+                                    <field name="remark"/>
+                                    <field name="assign_hours" widget="timesheet_uom"/>
+                                    <field name="is_added_in_timesheet" invisible="1"/>
+                                    <button name="add_service_to_timesheet_ext"
+                                            type="object" invisible="is_added_in_timesheet"
+                                            string="Add To Timesheet" class="oe_link"/>
+                                </list>
+                            </field>
+                            <!-- <field name="work_description_ids" readonly="is_close">
+                                <list editable="bottom">
+                                    <field name="name" width="30%"/>
+                                    <field name="remark" width="70%"/>
+                                </list>
+                            </field> -->
+                        </page>
+                        <page name="vehicle_details" string="Vehicle Photos" invisible="not is_vc">
+                            <group string="Vehicle Servicing Details">
+                                <field name="detail"/>
+                            </group>
+                            <group>
+                                <group>
+                                    <field name="image1_name" nolabel="1"/>
+                                    <field name="image1" widget="image" nolabel="1"/>
+                                    <field name="image1_desc" nolabel="1" placeholder="Description"/>
+                                </group>
+                                <group>
+                                    <field name="image2_name" nolabel="1"/>
+                                    <field name="image2" widget="image" nolabel="1"/>
+                                    <field name="image2_desc" nolabel="1" placeholder="Description"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group>
+                                    <field name="image3_name" nolabel="1"/>
+                                    <field name="image3" widget="image" nolabel="1"/>
+                                    <field name="image3_desc" nolabel="1" placeholder="Description"/>
+                                </group>
+                                <group>
+                                    <field name="image4_name" nolabel="1"/>
+                                    <field name="image4" widget="image" nolabel="1"/>
+                                    <field name="image4_desc" nolabel="1" placeholder="Description"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group>
+                                    <field name="image5_name" nolabel="1"/>
+                                    <field name="image5" widget="image" nolabel="1"/>
+                                    <field name="image5_desc" nolabel="1" placeholder="Description"/>
+                                </group>
+                                <group>
+                                    <field name="image6_name" nolabel="1"/>
+                                    <field name="image6" widget="image" nolabel="1"/>
+                                    <field name="image6_desc" nolabel="1" placeholder="Description"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group>
+                                    <field name="image7_name" nolabel="1"/>
+                                    <field name="image7" widget="image" nolabel="1"/>
+                                    <field name="image7_desc" nolabel="1" placeholder="Description"/>
+                                </group>
+                                <group>
+                                    <field name="image8_name" nolabel="1"/>
+                                    <field name="image8" widget="image" nolabel="1"/>
+                                    <field name="image8_desc" nolabel="1" placeholder="Description"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group>
+                                    <field name="image9_name" nolabel="1"/>
+                                    <field name="image9" widget="image" nolabel="1"/>
+                                    <field name="image9_desc" nolabel="1" placeholder="Description"/>
+                                </group>
+                                <group>
+                                    <field name="image10_name" nolabel="1"/>
+                                    <field name="image10" widget="image" nolabel="1"/>
+                                    <field name="image10_desc" nolabel="1" placeholder="Description"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group>
+                                    <field name="image11_name" nolabel="1"/>
+                                    <field name="image11" widget="image" nolabel="1"/>
+                                    <field name="image11_desc" nolabel="1" placeholder="Description"/>
+                                </group>
+                                <group>
+                                    <field name="image12_name" nolabel="1"/>
+                                    <field name="image12" widget="image" nolabel="1"/>
+                                    <field name="image12_desc" nolabel="1" placeholder="Description"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Parts">
+                            <field name="inspection_part_ids">
+                                <list editable="bottom">
+                                    <field name="is_confirm"/>
+                                    <field name="parts_type"/>
+                                    <field name="part_no" readonly="1"/>
+                                    <field name="part"/>
+                                    <field name="product_id"/>
+                                    <field name="quantity"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Estimated Hours">
+                            <field name="inspection_estimated_hour_ids">
+                                <list editable="bottom">
+                                    <field name="department_id"/>
+                                    <field name="assign_hours" widget="Timesheet_uom"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page name="health_check" string="QC">
+                            <field name="quality_checklist_ids" widget="section_and_note_one2many" mode="list">
+                                <list editable="bottom" default_order="serial_no" limit="100">
+                                    <control>
+                                        <create name="add_product_control" string="Add a product"/>
+                                        <create name="add_section_control" string="Add a section"
+                                                context="{'default_display_type': 'line_section'}"/>
+                                        <create name="add_note_control" string="Add a note"
+                                                context="{'default_display_type': 'line_note'}"/>
+                                    </control>
+
+                                    <field name="serial_no" column_invisible="1"/>
+                                    <field name="name" widget="section_and_note_text" optional="show"
+                                           string="Checklist" readonly="1" force_save="1"/>
+                                    <field name="display_type" column_invisible="1"/>
+                                    <field name="checklist_name_ids" column_invisible="1"/>
+                                    <field name="description"/>
+                                    <field name="check_mark"
+                                           options='{"bg_color": "red: check_mark == False; green: check_mark == True", "fg_color": "red: check_mark == False"}'/>
+                                </list>
+                            </field>
+                        </page>
+                        <page name="daily_report" string="Timesheet">
+                            <field name="job_card_daily_report_ids">
+                                <list string="Timesheet" editable="bottom">
+                                    <field name="task_id" string="Inspection Number"/>
+                                    <field name="product_id" string="Service Requested"/>
+                                    <field name="name" string="Instruction"/>
+                                    <field name="user_id"/>
+                                    <!-- <field name="job_card_payment_id"/> -->
+                                    <field name="assign_hours"/>
+                                    <field name="departments_id" readonly="0"/>
+                                    <field name="employees_id"/>
+                                    <field name="start_time" optional="show"/>
+                                    <field name="pause_time" optional="show"/>
+                                    <field name="total_pause_time" widget="float_time" optional="show"/>
+                                    <field name="end_time" optional="show"/>
+
+                                    <button name="action_start_time" class="oe_highlight"
+                                            invisible="is_start_time"
+                                            string="Start" icon="fa-play" type="object"/>
+
+                                    <button name="action_pause_time" class="oe_highlight"
+                                            invisible="not is_start_time or is_pause_time or is_end_time" string="Pause" icon="fa-pause"
+                                            type="object"/>
+                                    <!-- attrs="{'invisible': ['|', '|', ('is_start_time', '=', False), ('is_pause_time', '!=', False), ('is_end_time', '!=', False)]}" -->
+
+
+                                    <button name="action_resume_time" class="oe_highlight"
+                                            invisible="not is_start_time or not is_pause_time or is_resume_time or is_end_time"
+                                            string="Resume" icon="fa-play" type="object"/>
+
+                                    <!-- invisible="" -->
+                                    <!-- attrs="{'invisible': ['|', '|',('is_start_time', '=', False), ('is_resume_time', '!=', False), ('is_end_time', '!=', False)]}" -->
+
+
+                                    <button name="action_end_time" class="oe_highlight"
+                                            invisible="is_end_time"
+                                            string="End" type="object" icon="fa-stop"/>
+
+                                    <field name="total_hours" string="Working Hours" widget="float_time"/>
+                                    <field name="date"/>
+                                    <field name="company_id" invisible="1"/>
+                                </list>      
+                            </field>
+                        </page>
+                        <page string="Bay History" name="bay_history">
+                            <field name="bay_log_ids">
+                                <list create="false" edit="false" delete="false">
+                                    <field name="bay_id"/>
+                                    <field name="bay_in"/>
+                                    <field name="bay_out"/>
+                                    <field name="duration" widget="float_time"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page name="signature" string="Signature" invisible="not is_vc">
+                            <group>
+                                <field name="is_vc" invisible="1"/>
+                                <field name="custom_job_sign_by"/>
+                                <field name="custom_job_sign_date"/>
+                                <field name="custom_signature_job_card" widget="signature"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter reload_on_follower="True"/>
+            </form>
+
+            <!--            <xpath expr="//header" position="inside">-->
+            <!--                <div attrs="{'invisible': [('is_vc', '=', False)]}">-->
+            <!--                 <button name="action_done" string="Inspection Finished" type="object" class="oe_highlight"-->
+            <!--                                    attrs="{'invisible': [('state', '=', 'inspection_finished')]}"/>-->
+            <!--                         <field name="state" widget="statusbar" attrs="{'invisible': [('is_vc', '=', False)]}"-->
+            <!--                           statusbar_visible="inspection_started,inspection_finished"/>-->
+            <!--                </div>-->
+            <!--            </xpath>-->
+            <!--            <xpath expr="//div[@class='oe_button_box']/button[@name='action_open_parent_task']" position="before">-->
+            <!--                   <field name="vehicle_photo" attrs="{'invisible': [('is_vc', '=', False)]}" widget='image' class="oe_avatar" options='{"preview_image": "avatar_128"}'/>-->
+            <!--&lt;!&ndash;                <field name="vehicle_photo" attrs="{'invisible': [('is_vc', '=', False)]}"/>&ndash;&gt;-->
+            <!--            </xpath>-->
+            <!--            <xpath expr="//field[@name='cc_stage_id']" position="after">-->
+            <!--                    <field name="state" string="Stage" attrs="{'invisible': [('is_vc', '=', False)]}"/>-->
+            <!--                    <field name="id_card" attrs="{'invisible': [('is_vc', '=', False)]}"/>-->
+            <!--            </xpath>-->
+            <!--            <xpath expr="//field[@name='name']" position="after">-->
+            <!--                <field name="is_vc" invisible="1"/>-->
+            <!--            </xpath>-->
+            <!--            <xpath expr="//field[@name='is_insurance']" position="attributes">-->
+            <!--                <attribute name="attrs">{'invisible': [('is_vc', '=', True)]}</attribute>-->
+            <!--            </xpath>-->
+
+            <!--            <xpath expr="//field[@name='cc_partner_mobile']" position="attributes">-->
+            <!--                   <attribute name="attrs">{'invisible': [('is_vc', '=', True)]}</attribute>-->
+            <!--            </xpath>-->
+            <!--            <xpath expr="//field[@name='lpo_no']" position="attributes">-->
+            <!--                  <attribute name="attrs">{'invisible': [('is_vc', '=', True)]}</attribute>-->
+            <!--            </xpath>-->
+            <!--             <xpath expr="//field[@name='cc_stage_id']" position="attributes">-->
+            <!--                  <attribute name="attrs">{'invisible': [('is_vc', '=', True)]}</attribute>-->
+            <!--            </xpath>-->
+            <!--            <xpath expr="//field[@name='claim_no']" position="attributes">-->
+            <!--                   <attribute name="attrs">{'invisible': [('is_vc', '=', True)]}</attribute>-->
+            <!--            </xpath>-->
+            <!--            <xpath expr="//field[@name='policy_no']" position="attributes">-->
+            <!--                  <attribute name="attrs">{'invisible': [('is_vc', '=', True)]}</attribute>-->
+            <!--            </xpath>-->
+            <!--            <xpath expr="//field[@name='analytic_account_id']" position="attributes">-->
+            <!--                    <attribute name="attrs">{'invisible': [('is_vc', '=', True)]}</attribute>-->
+            <!--            </xpath>-->
+            <!--            <xpath expr="//field[@name='pay_type']" position="attributes">-->
+            <!--                  <attribute name="attrs">{'invisible': [('is_vc', '=', True)]}</attribute>-->
+            <!--            </xpath>-->
+            <!--            <xpath expr="//field[@name='estimate_no']" position="attributes">-->
+            <!--                  <attribute name="attrs">{'invisible': [('is_vc', '=', True)]}</attribute>-->
+            <!--            </xpath>-->
+            <!--            <xpath expr="//field[@name='service_due_km']" position="attributes">-->
+            <!--                   <attribute name="attrs">{'invisible': [('is_vc', '=', True)]}</attribute>-->
+            <!--            </xpath>-->
+            <!--            <xpath expr="//field[@name='fuel_in']" position="attributes">-->
+            <!--                   <attribute name="attrs">{'invisible': [('is_vc', '=', True)]}</attribute>-->
+            <!--            </xpath>-->
+            <!--            <xpath expr="//page[@name='material_purchase_requisition']" position="attributes">-->
+            <!--                 <attribute name="attrs">{'invisible': [('is_vc', '=', True)]}</attribute>-->
+            <!--            </xpath>-->
+            <!--            <xpath expr="//page[@name='material_purchase_requisition_line']" position="attributes">-->
+            <!--                   <attribute name="attrs">{'invisible': [('is_vc', '=', True)]}</attribute>-->
+            <!--            </xpath>-->
+            <!--&lt;!&ndash;            <xpath expr="//page[@name='date_end']" position="replace"/>&ndash;&gt;-->
+            <!--            <xpath expr="//field[@name='cc_vehicle']" position="replace">-->
+            <!--                <field name="cc_vehicle"/>-->
+            <!--                <field name="date_end"/>-->
+            <!--            </xpath>-->
+        </field>
+    </record>
+    <!-- <record id="view_quotatazsdion_tree_with_onboarding" model="ir.ui.view">
+        <field name="name">sale.order.tree.inherit</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_quotation_tree_with_onboarding"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="replace">
+                <field name="partner_id" string="Vehicle Owner"/>
+            </xpath>
+        </field>
+    </record> -->
+    <record id="view_tree_v_job_card_extension" model="ir.ui.view">
+        <field name="name">Project Task Tree Inherit Job Card Extension</field>
+        <field name="model">project.task</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name" string="Number"/>
+                <field name="inspection_state" options='{"bg_color": "
+                                                            #FFFFFF:cc_state_color == 0;
+                                                            #F89880:cc_state_color == 1;
+                                                            #8fd907:cc_state_color == 2;
+                                                        ",
+                                                        "fg_color": "white:cc_state_color > 0"}'/>
+                <field name="create_date" string="Inspection Date"/>
+                <field name="partner_id" string="Customer"/>
+                <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}" optional="show"/>
+                <field name="user_ids" widget="many2many_avatar_user"/>
+                <field name="vin" string="Chassis No." optional="hide"/>
+                <field name="cc_state_color" invisible="0" readonly="1" force_save="1" optional="hide"/>
+                <field name="vehicle_id" string="License Plate"/>
+                <field name="brand"/>
+                <field name="model_id"/>
+                <field name="vehicle_color"/>
+                <!-- <field name="km_in"/> -->
+                <!-- <field name="date_time_in"/>
+                <field name="date_time_out"/> -->
+            </list>
+            <!--            <xpath expr="//field[@name='cc_stage_id']" position="before">-->
+            <!--                  <field name="state" optional="hide" attrs="{'invisible': [('is_vc', '=', False)]}"/>-->
+            <!--            </xpath>-->
+            <!--            <xpath expr="//field[@name='name']" position="after">-->
+            <!--                <field name="is_vc" invisible="1"/>-->
+            <!--            </xpath>-->
+            <!--                   <xpath expr="//field[@name='cc_stage_id']" position="attributes">-->
+            <!--                <attribute name="attrs">{'invisible': [('is_vc', '=', True)]}</attribute>-->
+            <!--            </xpath>-->
+            <!--            <xpath expr="//field[@name='project_id']" position="attributes">-->
+            <!--                   <attribute name="attrs">{'invisible': [('is_vc', '=', True)]}</attribute>-->
+            <!--            </xpath>-->
+            <!--            <xpath expr="//field[@name='estimate_no']" position="attributes">-->
+            <!--                   <attribute name="attrs">{'invisible': [('is_vc', '=', True)]}</attribute>-->
+            <!--            </xpath>-->
+            <!--            <xpath expr="//field[@name='invoice_number']" position="attributes">-->
+            <!--                <attribute name="invisible">1</attribute>-->
+            <!--            </xpath>-->
+            <!--            <xpath expr="//field[@name='invoice_state']" position="attributes">-->
+            <!--                  <attribute name="attrs">{'invisible': [('is_vc', '=', True)]}</attribute>-->
+            <!--            </xpath>-->
+            <!--            <xpath expr="//field[@name='invoice_journal_name']" position="attributes">-->
+            <!--                    <attribute name="attrs">{'invisible': [('is_vc', '=', True)]}</attribute>-->
+            <!--            </xpath>-->
+            <!--&lt;!&ndash;               <xpath expr="//field[@name='date_time_out']" position="attributes">&ndash;&gt;-->
+            <!--&lt;!&ndash;                    <attribute name="attrs">{'invisible': [('is_vc', '=', False)]}</attribute>&ndash;&gt;-->
+            <!--&lt;!&ndash;            </xpath>&ndash;&gt;-->
+            <!--&lt;!&ndash;            <xpath expr="//field[@name='analytic_account_id']" position="attributes">&ndash;&gt;-->
+            <!--&lt;!&ndash;                <attribute name="invisible">1</attribute>&ndash;&gt;-->
+            <!--&lt;!&ndash;            </xpath>&ndash;&gt;-->
+            <!--            <xpath expr="//field[@name='estimate_no']" position="attributes">-->
+            <!--                   <attribute name="attrs">{'invisible': [('is_vc', '=', True)]}</attribute>-->
+            <!--            </xpath>-->
+            <!--            <xpath expr="//field[@name='service_due_km']" position="attributes">-->
+            <!--                <attribute name="invisible">1</attribute>-->
+            <!--            </xpath>-->
+        </field>
+    </record>
+
+
+    <!--         <record id="hr_leave_request_action_inherit" model="ir.actions.act_window">-->
+    <!--            <field name="name">Leave Request</field>-->
+    <!--            <field name="res_model">hr.leave</field>-->
+    <!--            <field name="view_mode">tree,form,kanban,calendar,activity</field>-->
+    <!--            <field name="search_view_id" ref="hr_holidays.hr_leave_view_search_manager"/>-->
+    <!--            <field name="domain">[('annual_leave', '!=', True)]</field>-->
+    <!--            <field name="context">{'hide_employee_name': 1 ,'default_annual_leave': False}</field>-->
+    <!--            <field name="help" type="html">-->
+    <!--                <p class="o_view_nocontent_smiling_face">-->
+    <!--                    Meet the time off dashboard.-->
+    <!--                </p>-->
+    <!--                <p>-->
+    <!--                    A great way to keep track on employee’s PTOs, sick days, and approval status.-->
+    <!--                </p>-->
+    <!--            </field>-->
+    <!--        </record>-->
+
+
+    <record id="action_vehicle_inspection" model="ir.actions.act_window">
+        <field name="name">Vehicle Inspection</field>
+        <field name="res_model">project.task</field>
+        <field name="view_mode">list,form,search</field>
+        <field name="domain">[('is_vc', '=', True)]</field>
+        <field name="context">{'default_is_vc': True}</field>
+        <field name="view_ids"
+               eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'list', 'view_id': ref('view_tree_v_job_card_extension')}),
+                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_form_v_job_card_extension')})
+                          ]"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_neutral_face">
+                This is the Vehicle Inspection dashboard
+            </p>
+        </field>
+    </record>
+
+    <menuitem
+            id="menu_vehicle_inspection"
+            name="Vehicle Inspection"
+            web_icon="vehicle_inspection_report,static/src/img/inspection.png"
+            sequence="3"/>
+
+    <menuitem
+            action="action_vehicle_inspection"
+            id="sub_menu_vehicle_inspection"
+            parent="menu_vehicle_inspection"
+            sequence="3"/>
+
+</odoo>

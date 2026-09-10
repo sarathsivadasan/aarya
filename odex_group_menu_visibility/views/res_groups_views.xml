@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_groups_form_menu_visibility" model="ir.ui.view">
+        <field name="name">res.groups.form.menu.visibility</field>
+        <field name="model">res.groups</field>
+        <field name="inherit_id" ref="base.view_groups_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Menu Visibility" name="odex_menu_visibility">
+                    <div class="text-muted o_form_label mb-2">
+                        Menus selected below are hidden from every user of this group,
+                        together with their sub menus. Access rights are not modified.
+                    </div>
+                    <field name="hidden_menu_count" invisible="1"/>
+                    <field name="hidden_menu_ids"
+                           widget="many2many"
+                           nolabel="1"
+                           context="{'ir.ui.menu.full_list': True}"
+                           options="{'no_create': True, 'no_create_edit': True}">
+                        <list string="Hidden Menus">
+                            <field name="odex_full_path" string="Menu Path"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

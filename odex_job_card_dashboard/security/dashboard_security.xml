@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="module_category_job_card_dashboard" model="ir.module.category">
+        <field name="name">Job Card Dashboard</field>
+        <field name="description">Access to the workshop command center.</field>
+        <field name="sequence">25</field>
+    </record>
+
+    <record id="group_job_card_dashboard_user" model="res.groups">
+        <field name="name">Dashboard User</field>
+        <field name="category_id" ref="module_category_job_card_dashboard"/>
+        <field name="comment">Can open the dashboard. Job cards visible are still
+            limited by the record rules of the job card module.</field>
+    </record>
+
+    <record id="group_job_card_dashboard_manager" model="res.groups">
+        <field name="name">Dashboard Manager</field>
+        <field name="category_id" ref="module_category_job_card_dashboard"/>
+        <field name="implied_ids" eval="[(4, ref('group_job_card_dashboard_user'))]"/>
+        <field name="comment">Can configure widgets, colours, thresholds and the
+            refresh interval.</field>
+    </record>
+
+    <record id="base.user_admin" model="res.users">
+        <field name="groups_id" eval="[(4, ref('group_job_card_dashboard_manager'))]"/>
+    </record>
+
+    <record id="base.group_user" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('group_job_card_dashboard_user'))]"/>
+    </record>
+
+</odoo>

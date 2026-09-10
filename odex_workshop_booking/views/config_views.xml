@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Booking configuration lives on the company -->
+    <record id="view_company_form_booking" model="ir.ui.view">
+        <field name="name">res.company.form.booking</field>
+        <field name="model">res.company</field>
+        <field name="inherit_id" ref="base.view_company_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('oe_button_box')]" position="inside">
+                <button name="action_open_schedule" type="object"
+                        class="oe_stat_button" icon="fa-clock-o"
+                        groups="odex_workshop_booking.group_booking_user">
+                    <div class="o_stat_info">
+                        <span class="o_stat_text">Working</span>
+                        <span class="o_stat_text">Schedule</span>
+                    </div>
+                </button>
+                <button name="action_view_bookings" type="object"
+                        class="oe_stat_button" icon="fa-calendar-check-o"
+                        groups="odex_workshop_booking.group_booking_user">
+                    <field name="booking_count" widget="statinfo" string="Bookings"/>
+                </button>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Workshop Booking" name="booking"
+                      groups="odex_workshop_booking.group_booking_user">
+                    <group>
+                        <group string="Booking">
+                            <field name="booking_tz"/>
+                            <field name="booking_published"/>
+                        </group>
+                        <group string="Slot Configuration">
+                            <field name="slot_duration" widget="float_time"/>
+                            <field name="slot_capacity"/>
+                            <field name="max_advisors_per_slot"/>
+                            <field name="max_bookings_per_day"/>
+                        </group>
+                        <group string="Booking Rules">
+                            <label for="min_notice_hours"/>
+                            <div class="o_row">
+                                <field name="min_notice_hours" nolabel="1"/>
+                                <span class="text-muted ms-2">
+                                    hours (0 = allow same-day booking of any
+                                    time still to come)
+                                </span>
+                            </div>
+                            <field name="max_advance_days"/>
+                            <field name="cancel_limit_hours"/>
+                            <field name="reschedule_limit_hours"/>
+                        </group>
+                        <group string="Team">
+                            <field name="advisor_ids" widget="many2many_tags_avatar"/>
+                        </group>
+                    </group>
+                    <separator string="Working Hours (reference)"/>
+                    <div class="alert alert-info" role="status">
+                        Slot generation is driven by
+                        <b>Slot Management → Working Schedules</b>. The hours below
+                        stay available as a reference for staff and holiday checks.
+                    </div>
+                    <field name="working_hours_ids">
+                        <list editable="bottom">
+                            <field name="dayofweek"/>
+                            <field name="hour_from" widget="float_time"/>
+                            <field name="hour_to" widget="float_time"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_booking_company" model="ir.actions.act_window">
+        <field name="name">Workshop Locations</field>
+        <field name="res_model">res.company</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Configure your workshop</p>
+            <p>Each company is a workshop location. Open the
+               <b>Workshop Booking</b> tab to set slot rules, timezone and advisors.</p>
+        </field>
+    </record>
+
+    <!-- Pickup / Drop locations -->
+    <record id="view_booking_location_list" model="ir.ui.view">
+        <field name="name">odex.booking.location.list</field>
+        <field name="model">odex.booking.location</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="code" optional="show"/>
+                <field name="location_type"/>
+                <field name="city" optional="show"/>
+                <field name="phone" optional="show"/>
+                <field name="website_published" widget="boolean_toggle"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_booking_location_form" model="ir.ui.view">
+        <field name="name">odex.booking.location.form</field>
+        <field name="model">odex.booking.location</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger"
+                            invisible="active"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="e.g. Al Quoz Service Centre"/></h1>
+                    </div>
+                    <group>
+                        <group string="Usage">
+                            <field name="location_type" widget="radio"/>
+                            <field name="website_published" widget="boolean_toggle"/>
+                            <field name="code"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                        <group string="Contact">
+                            <field name="phone"/>
+                            <field name="mobile"/>
+                            <field name="email" widget="email"/>
+                        </group>
+                        <group string="Address">
+                            <field name="street" placeholder="Street..."/>
+                            <field name="street2"/>
+                            <field name="city"/>
+                            <field name="state_id" options="{'no_create': True}"/>
+                            <field name="zip"/>
+                            <field name="country_id" options="{'no_create': True}"/>
+                        </group>
+                        <group string="Customer Instructions">
+                            <field name="notes" nolabel="1" colspan="2"
+                                   placeholder="Shown to the customer when they pick this location..."/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_booking_location" model="ir.actions.act_window">
+        <field name="name">Pickup &amp; Drop Locations</field>
+        <field name="res_model">odex.booking.location</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Add a pickup or drop-off point</p>
+            <p>Locations are offered to customers on the booking page and in the
+               customer portal. They are independent of branches.</p>
+        </field>
+    </record>
+
+    <!-- Service Types -->
+    <record id="view_booking_service_type_list" model="ir.ui.view">
+        <field name="name">odex.booking.service.type.list</field>
+        <field name="model">odex.booking.service.type</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="icon"/>
+                <field name="estimated_duration" widget="float_time"/>
+                <field name="website_published" widget="boolean_toggle"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_booking_service_type" model="ir.actions.act_window">
+        <field name="name">Service Types</field>
+        <field name="res_model">odex.booking.service.type</field>
+        <field name="view_mode">list</field>
+    </record>
+
+    <!-- Holidays -->
+    <record id="view_booking_holiday_list" model="ir.ui.view">
+        <field name="name">odex.booking.holiday.list</field>
+        <field name="model">odex.booking.holiday</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="name"/>
+                <field name="company_id" placeholder="All Companies"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+                <field name="closure_type"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_booking_holiday" model="ir.actions.act_window">
+        <field name="name">Holidays &amp; Closures</field>
+        <field name="res_model">odex.booking.holiday</field>
+        <field name="view_mode">list</field>
+    </record>
+
+    <!-- Settings -->
+    <record id="res_config_settings_view_form_booking" model="ir.ui.view">
+        <field name="name">res.config.settings.form.booking</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Booking" string="Booking" name="odex_workshop_booking">
+                    <block title="Website Booking">
+                        <setting string="Auto-Confirm Website Bookings"
+                                 help="Skip the Requested stage: website bookings are confirmed instantly with a calendar event and confirmation email.">
+                            <field name="odex_booking_auto_confirm"/>
+                        </setting>
+                        <setting string="Terms &amp; Conditions URL"
+                                 help="Linked from the booking wizard consent checkbox.">
+                            <field name="odex_booking_terms_url" placeholder="/terms"/>
+                        </setting>
+                        <setting string="Help Phone Number"
+                                 help="Shown in the booking portal header.">
+                            <field name="odex_booking_help_phone" placeholder="+971 50 123 4567"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_booking_settings" model="ir.actions.act_window">
+        <field name="name">Booking Settings</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+        <field name="context">{'module': 'odex_workshop_booking'}</field>
+    </record>
+</odoo>

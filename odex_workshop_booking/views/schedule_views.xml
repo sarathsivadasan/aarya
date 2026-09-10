@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================= Slot lines (one2many, editable) ============== -->
+    <!-- Popup list shown when the Booked count is opened -->
+    <record id="view_booking_slot_booking_list" model="ir.ui.view">
+        <field name="name">odex.workshop.booking.slot.popup.list</field>
+        <field name="model">odex.workshop.booking</field>
+        <field name="priority">99</field>
+        <field name="arch" type="xml">
+            <list create="false" edit="false">
+                <field name="name" string="Booking Number"/>
+                <field name="partner_id" string="Customer"/>
+                <field name="vehicle_id" string="Vehicle"/>
+                <field name="service_type_id" string="Service Type"/>
+                <field name="state" string="Booking Status" widget="badge"
+                       decoration-success="state == 'confirmed'"
+                       decoration-warning="state == 'requested'"
+                       decoration-info="state == 'arrived'"
+                       decoration-danger="state in ('cancelled', 'no_show')"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ================= Working Schedule form ======================== -->
+    <record id="view_booking_schedule_form" model="ir.ui.view">
+        <field name="name">odex.booking.schedule.form</field>
+        <field name="model">odex.booking.schedule</field>
+        <field name="arch" type="xml">
+            <form class="owbs-form">
+                <header>
+                    <button name="action_add_offday" type="object"
+                            string="Add Off Days" icon="fa-calendar-times-o"/>
+                    <button name="action_block_day" type="object"
+                            string="Block Day" icon="fa-ban"/>
+                    <button name="action_copy_schedule" type="object"
+                            string="Copy Schedule" icon="fa-copy"/>
+                </header>
+                <sheet>
+                    <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
+                        <div class="oe_title m-0">
+                            <div class="owbs-eyebrow">Slot Management</div>
+                            <h1 class="mb-0"><field name="name" readonly="1"/></h1>
+                        </div>
+                        <div class="owbs-status">
+                            <span class="owbs-status-badge" invisible="not active">
+                                <span class="owbs-dot owbs-d-green"/> Active
+                            </span>
+                            <span class="owbs-status-badge owbs-status-off" invisible="active">
+                                <span class="owbs-dot owbs-d-grey"/> Archived
+                            </span>
+                        </div>
+                    </div>
+
+
+                    <div class="alert alert-info" role="status">
+                        <i class="fa fa-bolt me-1"/>
+                        Times are taken straight from this configuration —
+                        change a day, an hour, a break or an off day and the
+                        booking calendar reflects it immediately. Nothing to
+                        generate.
+                    </div>
+
+                    <!-- Configuration -->
+                    <div class="owbs-panel">
+                        <div class="row g-3">
+                            <div class="col-12 col-md-6 owbs-col">
+                                <div class="owbs-field">
+                                    <label for="company_id">Company</label>
+                                    <field name="company_id" nolabel="1" required="1"
+                                           options="{'no_create': True, 'no_open': True}"/>
+                                </div>
+                                <div class="owbs-field">
+                                    <label for="slot_duration">Slot Duration</label>
+                                    <field name="slot_duration" nolabel="1"/>
+                                </div>
+                                <div class="owbs-field">
+                                    <label for="default_capacity">Default Capacity per Slot</label>
+                                    <field name="default_capacity" nolabel="1"/>
+                                </div>
+                                <div class="owbs-field">
+                                    <label for="limited_threshold">Mark Limited Below</label>
+                                    <field name="limited_threshold" nolabel="1"/>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6 owbs-col">
+                                <div class="owbs-field">
+                                    <label for="date_from">Effective From</label>
+                                    <field name="date_from" nolabel="1"/>
+                                </div>
+                                <div class="owbs-field">
+                                    <label for="date_to">Effective To</label>
+                                    <field name="date_to" nolabel="1"
+                                           placeholder="DD/MM/YYYY"/>
+                                </div>
+                                <div class="owbs-field">
+                                    <label for="allow_overbooking">Allow Overbooking</label>
+                                    <field name="allow_overbooking" nolabel="1" widget="boolean_toggle"/>
+                                </div>
+                                <div class="owbs-field">
+                                    <label for="active">Active</label>
+                                    <field name="active" nolabel="1" widget="boolean_toggle"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <notebook>
+                        <page string="Working Days" name="days">
+                            <field name="day_ids" nolabel="1">
+                                <list editable="bottom" create="0" delete="0">
+                                    <field name="dayofweek" readonly="1" force_save="1"/>
+                                    <field name="is_working" widget="boolean_toggle"/>
+                                    <field name="hour_from" widget="float_time"
+                                           invisible="not is_working"/>
+                                    <field name="hour_to" widget="float_time"
+                                           invisible="not is_working"/>
+                                    <field name="capacity" invisible="not is_working"
+                                           placeholder="Default"/>
+                                    <field name="break_ids" widget="many2many_tags"
+                                           invisible="not is_working"
+                                           options="{'no_quick_create': True}"/>
+                                </list>
+                            </field>
+                            <div class="text-muted small mt-2">
+                                Untick a day to close it. Each day keeps its own hours,
+                                capacity and breaks.
+                            </div>
+                        </page>
+                        <page string="Breaks" name="breaks">
+                            <field name="break_ids" nolabel="1"
+                                   context="{'default_schedule_id': id}">
+                                <list editable="bottom">
+                                    <field name="name"/>
+                                    <field name="hour_from" widget="float_time"/>
+                                    <field name="hour_to" widget="float_time"/>
+                                    <field name="day_id" options="{'no_create': True}"
+                                           placeholder="All working days"/>
+                                    <field name="show_in_grid" widget="boolean_toggle"/>
+                                </list>
+                            </field>
+                            <div class="text-muted small mt-2">
+                                Add as many breaks as you need — lunch, tea, prayer.
+                                Leave <b>Day</b> empty to apply a break to every working day.
+                                No slot is generated inside a break.
+                            </div>
+                        </page>
+                        <page string="Off Days" name="offdays">
+                            <field name="offday_ids" nolabel="1">
+                                <list editable="bottom">
+                                    <field name="date"/>
+                                    <field name="reason"/>
+                                    <field name="block_existing" widget="boolean_toggle"/>
+                                </list>
+                            </field>
+                            <div class="text-muted small mt-2">
+                                Any date listed here is skipped when generating and its
+                                existing slots are blocked. Use <b>Add Off Days</b> above
+                                to add a range or every occurrence of a weekday.
+                            </div>
+                        </page>
+                    </notebook>
+
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_booking_schedule_list" model="ir.ui.view">
+        <field name="name">odex.booking.schedule.list</field>
+        <field name="model">odex.booking.schedule</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="company_id"/>
+                <field name="working_days_label" string="Working Days"/>
+                <field name="lunch_label" string="Breaks" optional="hide"/>
+                <field name="slot_duration"/>
+                <field name="default_capacity" string="Capacity"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+                <field name="offday_count" string="Off Days" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_booking_schedule_search" model="ir.ui.view">
+        <field name="name">odex.booking.schedule.search</field>
+        <field name="model">odex.booking.schedule</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="company_id"/>
+                <filter name="active" string="Active" domain="[('active', '=', True)]"/>
+                <filter name="inactive" string="Archived" domain="[('active', '=', False)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_company" string="Company"
+                            context="{'group_by': 'company_id'}"/>
+                    <filter name="group_company" string="Company"
+                            context="{'group_by': 'company_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_booking_schedule" model="ir.actions.act_window">
+        <field name="name">Slot Management</field>
+        <field name="res_model">odex.booking.schedule</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_booking_schedule_list"/>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create a working schedule</p>
+            <p>Set the working days, hours, lunch break and slot duration once,
+               then click Generate Slots — every appointment slot is created and
+               managed for you.</p>
+        </field>
+    </record>
+
+    <!-- ================= Wizards ===================================== -->
+    <record id="view_schedule_copy_form" model="ir.ui.view">
+        <field name="name">odex.booking.schedule.copy.form</field>
+        <field name="model">odex.booking.schedule.copy</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="schedule_id" invisible="1"/>
+                    <field name="mode" widget="radio"/>
+                    <field name="target_company_id" invisible="mode != 'company'"
+                           required="mode == 'company'" options="{'no_create': True}"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="generate" widget="boolean_toggle"/>
+                </group>
+                <footer>
+                    <button name="action_apply" type="object" string="Copy Schedule"
+                            class="btn-primary"/>
+                    <button string="Cancel" special="cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_block_day_form" model="ir.ui.view">
+        <field name="name">odex.booking.block.day.form</field>
+        <field name="model">odex.booking.block.day</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="schedule_id" invisible="1"/>
+                    <field name="action" widget="radio"/>
+                    <field name="company_id" options="{'no_create': True}"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="reason" invisible="action != 'block'"/>
+                    <field name="create_closure" widget="boolean_toggle"
+                           invisible="action != 'block'"/>
+                </group>
+                <footer>
+                    <button name="action_apply" type="object" string="Apply"
+                            class="btn-primary"/>
+                    <button string="Cancel" special="cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Default workshop on the user form -->
+    <record id="view_users_form_booking_branch" model="ir.ui.view">
+        <field name="name">res.users.form.booking.branch</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='login']" position="after">
+                <field name="booking_company_id"
+                       groups="odex_workshop_booking.group_booking_user"
+                       options="{'no_create': True}"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="view_offday_wizard_form" model="ir.ui.view">
+        <field name="name">odex.booking.offday.wizard.form</field>
+        <field name="model">odex.booking.offday.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="schedule_id" invisible="1"/>
+                    <field name="mode" widget="radio"/>
+                    <field name="date" invisible="mode != 'single'"
+                           required="mode == 'single'"/>
+                    <field name="date_from" invisible="mode == 'single'"
+                           required="mode != 'single'"/>
+                    <field name="date_to" invisible="mode == 'single'"/>
+                    <field name="dayofweek" invisible="mode != 'weekday'"
+                           required="mode == 'weekday'"/>
+                    <field name="reason" placeholder="e.g. Public holiday, stocktake..."/>
+                    <field name="block_existing" widget="boolean_toggle"/>
+                </group>
+                <footer>
+                    <button name="action_apply" type="object" string="Add Off Days"
+                            class="btn-primary"/>
+                    <button string="Cancel" special="cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="action_booking_schedule_default" model="ir.actions.server">
+        <field name="name">Slot Management</field>
+        <field name="model_id" ref="model_odex_booking_schedule"/>
+        <field name="state">code</field>
+        <field name="code">action = model.action_open_default()</field>
+    </record>
+</odoo>

@@ -1,0 +1,514 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- One table definition shared by PARTS and LABOUR, so the two sections
+         can never drift apart. Expects: doc, tus_lines, tus_section_label,
+         tus_section_total. -->
+     <template id="report_parts_table" name="Quotation Parts/Labour Table">
+        <div class="card mb-2 overflow-hidden" style="border: 1px solid #e5e7eb !important; border-radius: 6px !important; box-shadow: none !important;">
+            <table class="table table-sm mb-0 align-middle" style="border-collapse: separate; border-spacing: 0; width: 100%;">
+                
+                <!-- Table Header -->
+                <thead>
+                    <tr style="background-color: #004065 !important; color: #ffffff !important;">
+                        <th class="text-center" style="width: 4%; padding: 4px 2px !important; border-right: 1px solid rgba(255,255,255,0.15); font-weight: 600; font-size: 10px;">#</th>
+                        <th class="text-center text-uppercase" style="width: 12%; padding: 4px 2px !important; border-right: 1px solid rgba(255,255,255,0.15); font-weight: 600; font-size: 10px;">PARTS TYPE</th>
+                        <th class="text-center text-uppercase" style="padding: 4px 4px !important; border-right: 1px solid rgba(255,255,255,0.15); font-weight: 600; font-size: 10px;">DESCRIPTION</th>
+                        <th class="text-center text-uppercase" style="width: 9%; padding: 4px 2px !important; border-right: 1px solid rgba(255,255,255,0.15); font-weight: 600; font-size: 10px;">QUANTITY</th>
+                        <th class="text-center text-uppercase" style="width: 7%; padding: 4px 2px !important; border-right: 1px solid rgba(255,255,255,0.15); font-weight: 600; font-size: 10px;">UNIT</th>
+                        <th class="text-center text-uppercase" style="width: 12%; padding: 4px 2px !important; border-right: 1px solid rgba(255,255,255,0.15); font-weight: 600; font-size: 10px;">
+                            UNIT PRICE (<span t-out="doc.currency_id.name"/>)
+                        </th>
+                        <th class="text-center text-uppercase" style="width: 12%; padding: 4px 2px !important; border-right: 1px solid rgba(255,255,255,0.15); font-weight: 600; font-size: 10px;">
+                            TAXES (5%) (<span t-out="doc.currency_id.name"/>)
+                        </th>
+                        <th class="text-center text-uppercase" style="width: 14%; padding: 4px 2px !important; font-weight: 600; font-size: 10px;">
+                            AMOUNT (<span t-out="doc.currency_id.name"/>) (Incl. Tax)
+                        </th>
+                    </tr>
+                </thead>
+
+                <!-- Table Body -->
+                <tbody>
+                    <t t-foreach="tus_lines" t-as="line">
+                        <tr style="page-break-inside: avoid; border-bottom: 1px solid #f0f0f0;">
+                            <td class="text-center" style="padding: 3px 2px !important; font-size: 10px; border-right: 1px solid #f0f0f0;">
+                                <span t-out="line_index + 1"/>
+                            </td>
+                            <td class="text-center" style="padding: 3px 2px !important; font-size: 10px; border-right: 1px solid #f0f0f0;">
+                                <span t-if="'parts_type' in line._fields" t-field="line.parts_type"/>
+                            </td>
+                            <td class="text-start ps-2" style="padding: 3px 4px !important; font-size: 10px; border-right: 1px solid #f0f0f0;">
+                                <span t-field="line.name"/>
+                                <div t-if="'part_no' in line._fields and line.part_no" class="text-muted" style="font-size: 8.5px; line-height: 1.1;">
+                                    Part No.: <span t-field="line.part_no"/>
+                                </div>
+                            </td>
+                            <td class="text-center" style="padding: 3px 2px !important; font-size: 10px; border-right: 1px solid #f0f0f0;">
+                                <span t-out="line.product_uom_qty" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-center" style="padding: 3px 2px !important; font-size: 10px; border-right: 1px solid #f0f0f0;">
+                                <span t-field="line.product_uom"/>
+                            </td>
+                            <td class="text-center" style="padding: 3px 2px !important; font-size: 10px; border-right: 1px solid #f0f0f0;">
+                                <span t-out="line.price_unit" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-center" style="padding: 3px 2px !important; font-size: 10px; border-right: 1px solid #f0f0f0;">
+                                <span t-out="line.price_total - line.price_subtotal" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                            <td class="text-center" style="padding: 3px 2px !important; font-size: 10px;">
+                                <span t-out="line.price_total" t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
+                        </tr>
+                    </t>
+
+                    <!-- Section Total Summary Row -->
+                    <tr>
+                        <td colspan="8" class="text-end" style="padding: 4px 10px !important; background-color: #ffffff; border: none !important;">
+                            <span class="me-2 text-uppercase" style="font-weight: 700; color: #333333; font-size: 11px;">
+                                <t t-out="tus_section_label"/>
+                            </span>
+                            <strong style="color: #004065; font-size: 13px;">
+                                <t t-out="tus_section_total" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                            </strong>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </template>
+
+    <!-- Label / value pair used across both information cards. -->
+    <!-- <template id="report_card_row" name="Quotation Card Row">
+        <tr>
+            <td class="py-0 ps-0 align-top" style="width: 42%;">
+                <strong t-out="tus_item[0]"/>
+            </td>
+            <td class="py-0 px-1 align-top" style="width: 4%;">:</td>
+            <td class="py-0 pe-0 align-top">
+                <span t-out="tus_item[1]"/>
+            </td>
+        </tr>
+    </template> -->
+
+    <!-- Pure xpath on the standard report: the report action, the engine,
+         web.external_layout (default header + footer) and Odoo's own colours
+         all stay in place. -->
+   <template id="report_saleorder_document_odex" inherit_id="sale.report_saleorder_document" name="Quotation - Odex Workshop Layout">
+
+        <!-- 1. Remove standard Odoo address & info blocks -->
+        <xpath expr="//t[@t-set='address']" position="replace">
+            <t t-set="address"/>
+        </xpath>
+        
+        <xpath expr="//t[@t-set='information_block']" position="replace">
+            <t t-set="information_block"/>
+        </xpath>
+
+        <!-- 2. Customize Document Title -->
+        <xpath expr="//t[@t-set='layout_document_title']" position="replace">
+            <t t-set="layout_document_title">
+                <span t-if="is_proforma">Pro-Forma Invoice # </span>
+                <span t-elif="doc.state in ['draft','sent']">Quotation # </span>
+                <span t-else="">Order # </span>
+                <span t-field="doc.name"/>
+                <!--<span t-out="doc.tus_get_report_name()"/>-->
+            </t>
+        </xpath>
+
+        <!-- 3. Top Strip & Separated Rounded Cards -->
+        <xpath expr="//div[@id='informations']" position="replace">
+            
+            <!-- Summary Information Bar -->
+            <div class="row border rounded-3 mx-0 mb-3 py-2 text-center align-items-center" id="informations" style="border-color: #f2a97b !important; background-color: #fdf8f5; border-radius: 10px !important;">
+                <div class="col-3 border-end">
+                    <div class="text-muted small">
+                        <i class="fa fa-calendar me-2" style="color: #004065;"/><strong>Quotation Date</strong>
+                    </div>
+                    <div><strong t-field="doc.date_order" t-options="{&quot;widget&quot;: &quot;date&quot;}"/></div>
+                </div>
+                <div class="col-3 border-end">
+                    <div class="text-muted small">
+                        <i class="fa fa-calendar-times-o me-2" style="color: #004065;"/><strong>Expiration</strong>
+                    </div>
+                    <div><strong t-field="doc.validity_date"/></div>
+                </div>
+                <div class="col-3 border-end">
+                    <div class="text-muted small">
+                        <i class="fa fa-user-o me-2" style="color: #004065;"/><strong>Salesperson</strong>
+                    </div>
+                    <div><strong t-field="doc.user_id"/></div>
+                </div>
+                <div class="col-3">
+                    <div class="text-muted small">
+                        <i class="fa fa-file-text-o me-2" style="color: #004065;"/><strong>Payment Terms</strong>
+                    </div>
+                    <div><strong t-field="doc.payment_term_id"/></div>
+                </div>
+            </div>
+
+            <!-- Customer & Vehicle Info Cards -->
+            <!--<t t-set="tus_customer_info" t-value="doc.tus_get_customer_info()"/>-->
+            <!--<t t-set="tus_vehicle_info" t-value="doc.tus_get_vehicle_info()"/>-->
+            <!--<t t-set="tus_split" t-value="(len(tus_vehicle_info) + 1) // 2"/>-->
+
+            <div class="d-flex mb-3" name="tus_info_cards">
+                
+                <!-- CUSTOMER DETAILS CARD (Rounded Outline + Right Spacing) -->
+                <div style="width: 41%;" class="me-3">
+                    <div class="card h-100 rounded-3 overflow-hidden" style="border: 1px solid #004065 !important; border-radius: 10px !important;">
+                        <div class="card-header py-2 px-3" style="background-color: #004065 !important; color: #ffffff !important; border-top-left-radius: 8px !important; border-top-right-radius: 8px !important;">
+                            <i class="fa fa-user me-2" style="color: #ffffff !important;"/>
+                            <strong class="text-uppercase" style="color: #ffffff !important;">CUSTOMER DETAILS</strong>
+                        </div>
+                        <div class="card-body py-2 px-3" style="border: none !important;height: 250px !important;">
+                            <!--<t t-foreach="tus_customer_info" t-as="tus_item">-->
+                                <div class="d-flex align-items-start py-1" style="border: none !important; background: transparent !important;">
+                                    <div style="width: 35%; border: none !important;">
+                                        <strong>Customer</strong>
+                                    </div>
+                                    <div style="width: 5%; text-align: center; border: none !important;">:</div>
+                                    <div style="width: 60%; border: none !important;">
+                                        <span t-field="doc.partner_id.name"/>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-start py-1" style="border: none !important; background: transparent !important;">
+                                    <div style="width: 35%; border: none !important;">
+                                        <strong>Phone</strong>
+                                    </div>
+                                    <div style="width: 5%; text-align: center; border: none !important;">:</div>
+                                    <div style="width: 60%; border: none !important;">
+                                        <span t-field="doc.partner_id.phone"/>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-start py-1" style="border: none !important; background: transparent !important;">
+                                    <div style="width: 35%; border: none !important;">
+                                        <strong>Email</strong>
+                                    </div>
+                                    <div style="width: 5%; text-align: center; border: none !important;">:</div>
+                                    <div style="width: 60%; border: none !important;">
+                                        <span t-field="doc.partner_id.email"/>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-start py-1" style="border: none !important; background: transparent !important;">
+                                    <div style="width: 35%; border: none !important;">
+                                        <strong>Billing Address</strong>
+                                    </div>
+                                    <div style="width: 5%; text-align: center; border: none !important;">:</div>
+                                    <div style="width: 60%; border: none !important;">
+                                        <span t-if="doc.partner_id.street" t-out="doc.partner_id.street"/>
+                                        <span t-if="doc.partner_id.street2" t-out="doc.partner_id.street2"/>
+                                        <!-- City, State, ZIP --> 
+                                        <span t-if="doc.partner_id.city" t-out="doc.partner_id.city"/>
+                                        <span t-if="doc.partner_id.state_id">, <t t-out="doc.partner_id.state_id.name"/></span>
+                                        <span t-if="doc.partner_id.zip" t-out="' ' + doc.partner_id.zip"/>
+                                        <span t-if="doc.partner_id.city or doc.partner_id.state_id or doc.partner.zip"/>
+                                        
+                                         <!-- Country -->
+                                        <span t-if="doc.partner_id.country_id" t-out="doc.partner_id.country_id.name"/>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-start py-1" style="border: none !important; background: transparent !important;">
+                                    <div style="width: 35%; border: none !important;">
+                                        <strong>TRN</strong>
+                                    </div>
+                                    <div style="width: 5%; text-align: center; border: none !important;">:</div>
+                                    <div style="width: 60%; border: none !important;">
+                                        <span t-field="doc.partner_id.vat"/>
+                                    </div>
+                                </div>
+                                <!--<t t-call="portal_quotation_customize.report_card_row"/>-->
+                            <!--</t>-->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VEHICLE DETAILS CARD (Rounded Outline) -->
+                <div style="width: 58%;">
+                    <div class="card h-100 rounded-3 overflow-hidden" style="border: 1px solid #004065 !important; border-radius: 10px !important;">
+                        <div class="card-header py-2 px-3" style="background-color: #004065 !important; color: #ffffff !important; border-top-left-radius: 8px !important; border-top-right-radius: 8px !important;">
+                            <i class="fa fa-car me-2" style="color: #ffffff !important;"/>
+                            <strong class="text-uppercase" style="color: #ffffff !important;">VEHICLE DETAILS</strong>
+                        </div>
+                        <div class="card-body py-2 px-3" style="border: none !important;height: 250px !important;">
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <div class="d-flex align-items-start py-1" style="border: none !important; background: transparent !important;">
+                                        <div style="width: 35%; border: none !important;">
+                                            <strong>Plate No.</strong>
+                                        </div>
+                                        <div style="width: 5%; text-align: center; border: none !important;">:</div>
+                                        <div style="width: 60%; border: none !important;">
+                                            <span t-field="doc.vehicle_id.name"/>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-start py-1" style="border: none !important; background: transparent !important;">
+                                        <div style="width: 35%; border: none !important;">
+                                            <strong>Make</strong>
+                                        </div>
+                                        <div style="width: 5%; text-align: center; border: none !important;">:</div>
+                                        <div style="width: 60%; border: none !important;">
+                                            <span t-field="doc.vehicle_id.brand_id.name"/>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-start py-1" style="border: none !important; background: transparent !important;">
+                                        <div style="width: 35%; border: none !important;">
+                                            <strong>Model</strong>
+                                        </div>
+                                        <div style="width: 5%; text-align: center; border: none !important;">:</div>
+                                        <div style="width: 60%; border: none !important;">
+                                            <span t-field="doc.vehicle_id.model_id.name"/>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-start py-1" style="border: none !important; background: transparent !important;">
+                                        <div style="width: 35%; border: none !important;">
+                                            <strong>year</strong>
+                                        </div>
+                                        <div style="width: 5%; text-align: center; border: none !important;">:</div>
+                                        <div style="width: 60%; border: none !important;">
+                                            <span t-field="doc.vehicle_id.model_year"/>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-start py-1" style="border: none !important; background: transparent !important;">
+                                        <div style="width: 35%; border: none !important;">
+                                            <strong>color</strong>
+                                        </div>
+                                        <div style="width: 5%; text-align: center; border: none !important;">:</div>
+                                        <div style="width: 60%; border: none !important;">
+                                            <span t-field="doc.vehicle_id.color_id.name"/>
+                                        </div>
+                                    </div>
+                                    <!--<t t-foreach="tus_vehicle_info[:tus_split]" t-as="tus_item">-->
+                                    <!--    <t t-call="portal_quotation_customize.report_card_row"/>-->
+                                    <!--</t>-->
+                                </div>
+                                <div class="col-6">
+                                    <div class="d-flex align-items-start py-1" style="border: none !important; background: transparent !important;">
+                                        <div style="width: 35%; border: none !important;">
+                                            <strong>Chassis No.</strong>
+                                        </div>
+                                        <div style="width: 5%; text-align: center; border: none !important;">:</div>
+                                        <div style="width: 60%; border: none !important;">
+                                            <span t-field="doc.vehicle_id.vin_sn"/>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-start py-1" style="border: none !important; background: transparent !important;">
+                                        <div style="width: 35%; border: none !important;">
+                                            <strong>Engin No.</strong>
+                                        </div>
+                                        <div style="width: 5%; text-align: center; border: none !important;">:</div>
+                                        <div style="width: 60%; border: none !important;">
+                                            <span t-field="doc.vehicle_id.engin_no"/>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-start py-1" style="border: none !important; background: transparent !important;">
+                                        <div style="width: 35%; border: none !important;">
+                                            <strong>Fuel type</strong>
+                                        </div>
+                                        <div style="width: 5%; text-align: center; border: none !important;">:</div>
+                                        <div style="width: 60%; border: none !important;">
+                                            <span t-field="doc.vehicle_id.fuel_type"/>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-start py-1" style="border: none !important; background: transparent !important;">
+                                        <div style="width: 35%; border: none !important;">
+                                            <strong>Odometer</strong>
+                                        </div>
+                                        <div style="width: 5%; text-align: center; border: none !important;">:</div>
+                                        <div style="width: 60%; border: none !important;">
+                                            <span t-field="doc.vehicle_id.odometer"/>
+                                        </div>
+                                    </div>
+                                     <div class="d-flex align-items-start py-1" style="border: none !important; background: transparent !important;">
+                                        <div style="width: 35%; border: none !important;">
+                                            <strong>Cylinder</strong>
+                                        </div>
+                                        <div style="width: 5%; text-align: center; border: none !important;">:</div>
+                                        <div style="width: 60%; border: none !important;">
+                                            <span t-field="doc.vehicle_id.cylinder_count"/>
+                                        </div>
+                                    </div>
+                                    <!--<t t-foreach="tus_vehicle_info[tus_split:]" t-as="tus_item">-->
+                                    <!--    <t t-call="portal_quotation_customize.report_card_row"/>-->
+                                    <!--</t>-->
+                                </div>
+                            </div>
+                            <!--<span t-else="" class="text-muted fst-italic">-->
+                            <!--    No vehicle linked.-->
+                            <!--</span>-->
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </xpath>
+        
+        <!-- PARTS and LABOUR replace the single generic line table. -->
+           <xpath expr="//table[contains(@class, 'o_main_table')]" position="replace">
+            <t t-set="tus_sections" t-value="doc.tus_get_report_sections()"/>
+            <t t-set="tus_summary" t-value="doc.tus_get_report_summary()"/>
+
+            <!-- PARTS SECTION -->
+            <div t-if="tus_sections.get('parts')" class="mb-2" name="tus_parts_section">
+                <h6 class="mb-1 text-uppercase" style="color: #004065; font-weight: 700; font-size: 12px; letter-spacing: 0.5px;">PARTS</h6>
+                <t t-call="portal_quotation_customize.report_parts_table">
+                    <t t-set="tus_lines" t-value="tus_sections['parts']"/>
+                    <t t-set="tus_section_label">TOTAL PARTS (Incl. Tax)</t>
+                    <t t-set="tus_section_total" t-value="tus_summary['parts_total']"/>
+                </t>
+            </div>
+
+            <!-- LABOUR SECTION -->
+            <div t-if="tus_sections.get('labour')" class="mb-2" name="tus_labour_section">
+                <h6 class="mb-1 text-uppercase" style="color: #004065; font-weight: 700; font-size: 12px; letter-spacing: 0.5px;">LABOUR</h6>
+                <t t-call="portal_quotation_customize.report_parts_table">
+                    <t t-set="tus_lines" t-value="tus_sections['labour']"/>
+                    <t t-set="tus_section_label">TOTAL LABOUR (Incl. Tax)</t>
+                    <t t-set="tus_section_total" t-value="tus_summary['labour_total']"/>
+                </t>
+            </div>
+        </xpath>
+
+        <xpath expr="//div[@name='so_total_summary']" position="replace">
+            <div class="clearfix mb-3" name="so_total_summary" style="page-break-inside: avoid; width: 100%;">
+                
+                <!-- 1. NOTES CARD -->
+                <div style="float: left; width: 31.5%; margin-right: 2.7%;">
+                    <div class="card h-100 p-2" style="border: 1px solid #e5e7eb !important; border-radius: 8px !important; box-shadow: none !important; background-color: #ffffff;">
+                        <div class="clearfix mb-2 pb-1" style="border: none !important;">
+                            <i class="fa fa-calendar-check-o me-2" style="color: #e27227; font-size: 14px; float: left;"/>
+                            <strong class="text-uppercase" style="color: #e27227; font-size: 12px; font-weight: 700; float: left;">NOTES</strong>
+                        </div>
+                        <div class="p-0 small text-muted" style="font-size: 9.5px; line-height: 1.3; border: none !important; clear: both;">
+                            <span t-if="not is_html_empty(doc.note)" t-field="doc.note"/>
+                            <t t-else="">
+                                <ul class="ps-3 mb-0" style="list-style-type: disc;">
+                                    <li class="mb-1">This quotation is valid until the expiry date mentioned above.</li>
+                                    <li class="mb-1">Prices are subject to change without prior notice.</li>
+                                    <li class="mb-1">Additional repairs or parts will be carried out only after customer approval.</li>
+                                    <li class="mb-1">Warranty applicable only on manufacturer-approved parts.</li>
+                                    <li class="mb-1">Labour warranty: 30 days from the date of service.</li>
+                                </ul>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. CUSTOMER APPROVAL CARD -->
+                <div style="float: left; width: 31.5%; margin-right: 2.7%;">
+                    <div class="card h-100 p-2" style="border: 1px solid #e5e7eb !important; border-radius: 8px !important; box-shadow: none !important; background-color: #ffffff;">
+                        <div class="clearfix mb-2 pb-1" style="border: none !important;">
+                            <i class="fa fa-pencil me-2" style="color: #e27227; font-size: 14px; float: left;"/>
+                            <strong class="text-uppercase" style="color: #e27227; font-size: 12px; font-weight: 700; float: left;">CUSTOMER APPROVAL</strong>
+                        </div>
+                        
+                        <div class="p-0" style="border: none !important; clear: both;">
+                            <!-- Customer Name Row -->
+                            <div class="clearfix py-1" style="font-size: 10px; border: none !important; width: 100%;">
+                                <div style="float: left; width: 42%; font-weight: 600;">Customer Name</div>
+                                <div style="float: left; width: 5%;">:</div>
+                                <div style="float: left; width: 53%; border-bottom: 1px solid #cccccc !important; min-height: 16px;">
+                                    <span t-out="doc.signed_by or ''"/>
+                                </div>
+                            </div>
+
+                            <!-- Signature Row -->
+                            <div class="clearfix py-1" style="font-size: 10px; border: none !important; width: 100%;">
+                                <div style="float: left; width: 42%; font-weight: 600; margin-top: 10px;">Signature</div>
+                                <div style="float: left; width: 5%; margin-top: 10px;">:</div>
+                                <div style="float: left; width: 53%; border-bottom: 1px solid #cccccc !important; min-height: 25px;">
+                                    <img t-if="doc.signature" t-att-src="image_data_uri(doc.signature)" style="max-height: 1.2cm; max-width: 3cm;" alt="Signature"/>
+                                </div>
+                            </div>
+
+                            <!-- Date Row -->
+                            <div class="clearfix py-1 mb-2" style="font-size: 10px; border: none !important; width: 100%;">
+                                <div style="float: left; width: 42%; font-weight: 600;">Date</div>
+                                <div style="float: left; width: 5%;">:</div>
+                                <div style="float: left; width: 53%; border-bottom: 1px solid #cccccc !important; min-height: 16px;">
+                                    <span t-if="doc.signed_on" t-field="doc.signed_on" t-options="{&quot;widget&quot;: &quot;date&quot;}"/>
+                                </div>
+                            </div>
+
+                            <!-- QR Code Block -->
+                            <div class="clearfix mt-3 pt-1 text-center" style="border: none !important; width: 100%;">
+                                <div style="display: inline-block; vertical-align: middle;">
+                                    <img t-att-src="doc.tus_get_portal_qr_src()" style="width: 50px; height: 50px;" alt="Quotation portal QR code"/>
+                                </div>
+                                <div style="display: inline-block; vertical-align: middle; margin-left: 10px; text-align: center; font-weight: bold; font-size: 9.5px; line-height: 1.3; color: #004065;">
+                                    Scan to approve<br/>this quotation online
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. TOTALS & SUMMARY CARD (Fixed Strict Float Left/Right) -->
+                <div id="total" style="float: left; width: 31.5%;">
+                    <div class="card h-100 p-2 overflow-hidden" style="border: 1px solid #e5e7eb !important; border-radius: 8px !important; box-shadow: none !important; background-color: #ffffff;">
+                        
+                        <div class="p-0 mb-2" style="font-size: 10px; border: none !important;">
+                            
+                            <!-- Total Parts Row -->
+                            <div class="clearfix py-1" style="border: none !important; width: 100%;">
+                                <div style="float: left; width: 60%; text-align: left; color: #444444;">Total Parts (Excl. Tax)</div>
+                                <div style="float: right; width: 40%; text-align: right; font-weight: 600;">
+                                    <span t-out="tus_summary.get('parts_untaxed', 0.0)" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: doc.currency_id}"/>
+                                </div>
+                            </div>
+
+                            <!-- Total Labour Row -->
+                            <div class="clearfix py-1" style="border: none !important; width: 100%;">
+                                <div style="float: left; width: 60%; text-align: left; color: #444444;">Total Labour (Excl. Tax)</div>
+                                <div style="float: right; width: 40%; text-align: right; font-weight: 600;">
+                                    <span t-out="tus_summary.get('labour_untaxed', 0.0)" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: doc.currency_id}"/>
+                                </div>
+                            </div>
+
+                            <!-- Sub Total Row -->
+                            <div class="clearfix py-1" style="border: none !important; width: 100%;">
+                                <div style="float: left; width: 60%; text-align: left; font-weight: 700; color: #333333;">Sub Total (Excl. Tax)</div>
+                                <div style="float: right; width: 40%; text-align: right; font-weight: 700;">
+                                    <span t-out="tus_summary.get('subtotal', doc.amount_untaxed)" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: doc.currency_id}"/>
+                                </div>
+                            </div>
+
+                            <!-- Taxes Row -->
+                            <div class="clearfix py-1" style="border: none !important; width: 100%;">
+                                <div style="float: left; width: 60%; text-align: left; color: #444444;">Taxes (5%)</div>
+                                <div style="float: right; width: 40%; text-align: right; font-weight: 600;">
+                                    <span t-out="tus_summary.get('tax', doc.amount_tax)" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: doc.currency_id}"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Grand Total Bar -->
+                        <div class="clearfix py-2 px-2 rounded-2 mb-2" style="background-color: #004065 !important; color: #ffffff !important; border: none !important; width: 100%;">
+                            <div style="float: left; font-weight: 700; font-size: 10.5px; letter-spacing: 0.3px;">TOTAL (Incl. Tax)</div>
+                            <div style="float: right; font-weight: 700; font-size: 12.5px;">
+                                <span t-out="tus_summary.get('grand_total', doc.amount_total)" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: doc.currency_id}"/>
+                            </div>
+                        </div>
+
+                        <!-- Amount in Words -->
+                        <div class="px-1" style="font-size: 9px; border: none !important; clear: both;">
+                            <span class="text-muted d-block fw-bold">Amount in Words:</span>
+                            <span class="fw-bold" style="color: #1e3a8a;" t-out="doc.tus_get_amount_in_words()"/>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </xpath>
+
+        <!-- Hide original single note expression if present -->
+        <xpath expr="//span[@name='order_note']" position="replace">
+            <span name="order_note" t-if="False"/>
+        </xpath>
+
+        <!-- Hide Odoo's bottom default signature block -->
+        <xpath expr="//div[@name='signature']" position="replace">
+            <div name="signature" t-if="False"/>
+        </xpath>
+
+    </template>
+</odoo>

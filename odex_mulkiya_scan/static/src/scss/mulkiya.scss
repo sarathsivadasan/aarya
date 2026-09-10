@@ -1,0 +1,178 @@
+// Odex Mulkiya Scan - backend styles
+
+.o_mulkiya_form {
+
+    .o_mulkiya_section {
+        font-weight: 600;
+        margin: 16px 0 8px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .o_mulkiya_images {
+        margin-bottom: 8px;
+    }
+
+    .o_mulkiya_field {
+        margin-bottom: 10px;
+
+        > label {
+            display: block;
+            font-size: 0.8125rem;
+            color: var(--o-gray-700, #6c757d);
+            margin-bottom: 2px;
+        }
+    }
+
+    .o_mulkiya_input {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+
+        .o_field_widget {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+
+        input {
+            width: 100%;
+        }
+    }
+}
+
+.o_mulkiya_confidence {
+    flex: 0 0 auto;
+    min-width: 48px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+}
+
+.o_mulkiya_image_field {
+    border: 1px dashed var(--o-gray-400, #ced4da);
+    border-radius: 8px;
+    padding: 10px;
+    background-color: var(--o-gray-100, #f8f9fa);
+    transition: border-color .15s ease, background-color .15s ease;
+
+    &.o_mulkiya_dragover {
+        border-color: var(--o-brand-primary, #714b67);
+        background-color: rgba(113, 75, 103, .06);
+    }
+
+    &.o_mulkiya_has_image {
+        border-style: solid;
+        background-color: transparent;
+    }
+
+    .o_mulkiya_drop_area {
+        min-height: 190px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: var(--o-gray-600, #868e96);
+    }
+
+    .o_mulkiya_preview {
+        text-align: center;
+
+        img {
+            max-width: 100%;
+            max-height: 320px;
+            border-radius: 6px;
+            cursor: zoom-in;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, .15);
+        }
+    }
+
+    .o_mulkiya_image_actions {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 10px;
+        flex-wrap: wrap;
+    }
+}
+
+// ---------------------------------------------------------------- Dashboard
+.o_mulkiya_dashboard {
+    padding: 20px;
+    overflow: auto;
+
+    .o_mulkiya_dashboard_header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .o_mulkiya_cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 14px;
+        margin-bottom: 26px;
+    }
+
+    .o_mulkiya_card {
+        position: relative;
+        background: #fff;
+        border: 1px solid var(--o-gray-300, #dee2e6);
+        border-radius: 10px;
+        padding: 18px 18px 16px;
+        cursor: pointer;
+        transition: transform .12s ease, box-shadow .12s ease;
+
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, .08);
+        }
+
+        .o_mulkiya_card_icon {
+            position: absolute;
+            top: 14px;
+            right: 16px;
+            font-size: 1.4rem;
+            opacity: .25;
+        }
+
+        .o_mulkiya_card_value {
+            font-size: 2rem;
+            font-weight: 700;
+            line-height: 1.1;
+        }
+
+        .o_mulkiya_card_label {
+            color: var(--o-gray-600, #868e96);
+            font-size: .875rem;
+        }
+
+        &.o_mulkiya_card_total { border-left: 4px solid #714b67; }
+        &.o_mulkiya_card_verified { border-left: 4px solid #28a745; }
+        &.o_mulkiya_card_pending { border-left: 4px solid #f0ad4e; }
+        &.o_mulkiya_card_failed { border-left: 4px solid #dc3545; }
+    }
+
+    .o_mulkiya_recent {
+        background: #fff;
+        border: 1px solid var(--o-gray-300, #dee2e6);
+        border-radius: 10px;
+        padding: 16px;
+    }
+
+    .o_mulkiya_recent_row {
+        cursor: pointer;
+    }
+}
+
+@media (max-width: 767px) {
+    .o_mulkiya_form .o_mulkiya_input {
+        flex-wrap: wrap;
+    }
+
+    .o_mulkiya_image_field .o_mulkiya_preview img {
+        max-height: 220px;
+    }
+}

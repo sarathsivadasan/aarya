@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_user_ageing_customer_statement_wizard,mkl_soa_ageing_report_a.ageing_customer_statement_wizard,model_ageing_customer_statement_wizard,base.group_user,1,1,1,1
+
+

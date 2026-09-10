@@ -1,0 +1,326 @@
+<odoo>
+
+    <template id="prints_extend.custom_print_account_move_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="job_card_extension.external_layout">
+                    <t t-set="doc" t-value="doc.with_context(lang=doc.partner_id.lang)"/>
+                    <t t-set="forced_vat" t-value="doc.fiscal_position_id.foreign_vat"/> <!-- So that it appears in the footer of the report instead of the company VAT if it's set -->
+                    <table width="100%" cellpadding="5" cellspacing="0">
+	<col width="85*"/>
+
+	<col width="85*"/>
+
+	<col width="85*"/>
+
+	<tr valign="top">
+		<td width="33%" style="border: none; padding: 0in"><span align="center">
+			<br/>
+
+			</span>
+		</td>
+		<td width="33%" style="text-align: center; border: 1px solid #000000; padding: 0.04in;"><span align="center">
+			<font size="4" style="font-size: 16pt"><u><b>TAX INVOICE </b></u></font>
+			</span>
+		</td>
+		<td width="33%" style="border: none; padding: 0in"><span align="center">
+			<br/>
+
+			</span>
+		</td>
+	</tr>
+</table>
+<table width="100%" cellpadding="5" cellspacing="0">
+	<col width="85*"/>
+
+	<col width="85*"/>
+
+	<col width="85*"/>
+
+	<tr valign="top">
+		<td width="33%" style="border: none; padding: 0in"><span align="center">
+			<br/>
+
+			</span>
+		</td>
+		<td width="33%" style="text-align: center; border-top: 1px solid #000000; border-bottom: none; border-left: none; border-right: none; padding-top: 0.04in; padding-bottom: 0in; padding-left: 0in; padding-right: 0in"><span align="center">
+			TRN: 1234545667i8</span>
+		</td>
+		<td width="33%" style="border: none; padding: 0in"><span align="center">
+			<br/>
+
+			</span>
+		</td>
+	</tr>
+</table>
+<span align="center" style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</span>
+<table width="100%" cellpadding="5" cellspacing="0">
+	<col width="172*"/>
+
+	<col width="2*"/>
+
+	<col width="82*"/>
+
+	<tr valign="top">
+		<td width="67%" style="border: 1px solid #000000; padding: 0px;">
+			<span align="left"><b>Invoice#: <t t-esc="doc.partner_id.name"/></b></span><br/>
+			<span align="left" style="font-weight: normal">Address: <t t-esc="str(doc.partner_id.street) + ', ' + str(doc.partner_id.city) + ', '+ str(doc.partner_id.country_id.name)"/></span><br/>
+			<span align="left" style="font-weight: normal">Phone: <t t-esc="doc.partner_id.phone"/></span><br/>
+			<span align="left" style="font-weight: normal">TRN: <t t-esc="doc.partner_id.trn_no"/></span><br/>
+		</td>
+		<td width="1%" style="border: none; padding: 0in"><span align="center">
+			<br/>
+
+			</span>
+		</td>
+		<td width="32%" style="border: 1px solid #000000; padding: 0.04in">
+			<span align="left"><b>Invoice#: <t t-esc="doc.name"/></b></span><br/>
+			<span align="left" style="font-weight: normal">Date: <t t-esc="doc.invoice_date"/></span><br/>
+			<span align="left" style="font-weight: normal">EST No: 123</span><br/>
+			<span align="left" style="font-weight: normal">LPO No: 123</span><br/>
+			<span align="left" style="font-weight: normal">Claim No: CL22</span>
+		</td>
+	</tr>
+</table>
+<span align="center" style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</span>
+<table width="100%" cellpadding="5" cellspacing="0">
+	<col width="64*"/>
+
+	<col width="96*"/>
+
+	<col width="32*"/>
+
+	<col width="64*"/>
+
+	<tr valign="top">
+		<td width="25%" style="text-align: center; border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0.04in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0in"><span align="center">
+			<b>Plate No. <t t-esc="doc.cc_registration_no"/></b></span>
+		</td>
+		<td width="38%" style="text-align: center; border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0.04in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0in"><span align="center">
+			<b>Make &amp; Model</b></span>
+		</td>
+		<td width="12%" style="text-align: center; border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0.04in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0in"><span align="center">
+			<b>Year</b></span>
+		</td>
+		<td width="25%" style="text-align: center; border: 1px solid #000000; padding: 0.04in"><span align="center">
+			<b>Vin</b></span>
+		</td>
+	</tr>
+	<tr></tr>
+	<tr></tr>
+	<tr></tr>
+	<tr></tr>
+	<tr></tr>
+	<tr></tr>
+	<tr></tr>
+	<tr></tr>
+	<tr></tr>
+	<tr valign="top">
+		<td width="25%" style="text-align: center; border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0in"><span align="center" style="font-weight: normal">
+			<t t-esc="doc.cc_registration_no"/></span>
+		</td>
+		<td width="38%" style="text-align: center; border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0in"><span align="center" style="font-weight: normal">
+			<t t-esc="str(doc.cc_vehicle_make.name) + ' ' + str(doc.cc_vehicle_model.name)"/></span>
+		</td>
+		<td width="12%" style="text-align: center; border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0in"><span align="center" style="font-weight: normal">
+			<t t-esc="doc.cc_year"/></span>
+		</td>
+		<td width="25%" style="text-align: center; border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000; padding-top: 0in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0.04in"><span align="center" style="font-weight: normal">
+			<t t-esc="doc.cc_vin"/></span>
+		</td>
+	</tr>
+</table>
+<span align="center" style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</span>
+<table width="100%" cellpadding="5" cellspacing="0">
+	<col width="24*"/>
+
+	<col width="120*"/>
+
+	<col width="39*"/>
+
+	<col width="32*"/>
+
+	<col width="41*"/>
+
+	<tr valign="top">
+		<td width="9%" style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0.04in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0in"><span align="center">
+			<font size="2" style="font-size: 11pt"><b>SI No.</b></font></span>
+		</td>
+		<td width="47%" style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0.04in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0in"><span align="left">
+			<font size="2" style="font-size: 11pt"><b>Description</b></font></span>
+		</td>
+		<td width="15%" style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0.04in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0in"><span align="center">
+			<font size="2" style="font-size: 11pt"><b>Gross Amount</b></font></span>
+		</td>
+		<td width="13%" style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0.04in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0in"><span align="center">
+			<font size="2" style="font-size: 11pt"><b>VAT</b></font></span>
+		</td>
+		<td width="16%" style="border: 1px solid #000000; padding: 0.04in"><span align="center">
+			<font size="2" style="font-size: 11pt"><b>Total Amount</b></font></span>
+		</td>
+	</tr>
+	<tr></tr>
+	<tr></tr>
+	<tr></tr>
+	<tr></tr>
+	<tr></tr>
+	<tr></tr>
+	<tr></tr>
+	<tr></tr>
+	<tr></tr>
+	<t t-set="sr" t-value="0"/>
+	<t t-foreach="doc.invoice_line_ids" t-as="line">
+		<t t-set="sr" t-value="sr + 1"/>
+		<tr valign="top">
+			<td width="9%" style="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0in"><span align="center" style="font-weight: normal">
+				<font size="2" style="font-size: 11pt"><t t-esc="sr"/></font></span>
+			</td>
+			<td width="47%" style="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0in"><span align="left" style="font-weight: normal">
+				<font size="2" style="font-size: 11pt"><t t-esc="line.product_id.name"/></font></span>
+			</td>
+			<td width="15%" style="text-align: right; border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0in"><span align="right" style="font-weight: normal">
+				<font size="2" style="font-size: 11pt"><t t-esc="'%.2f'% (line.price_unit * line.quantity)"/></font></span>
+			</td>
+			<td width="13%" style="text-align: right; border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0in"><span align="right" style="font-weight: normal">
+				<font size="2" style="font-size: 11pt"><t t-if="line.tax_ids" t-esc="'%.2f'% (line.price_unit * line.quantity * line.tax_ids[0].amount/100)"/></font></span>
+			</td>
+			<td width="16%" style="text-align: right; border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000; padding-top: 0in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0.04in"><span align="right" style="font-weight: normal">
+				<font size="2" style="font-size: 11pt"><t t-esc="'%.2f'% (line.price_unit * line.quantity + (line.price_unit * line.quantity * line.tax_ids[0].amount/100))"/></font></span>
+			</td>
+		</tr>
+	</t>
+</table>
+<span align="center" style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</span>
+<span align="center" style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</span>
+<span align="center" style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</span>
+<span align="center" style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</span>
+<span align="center" style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</span>
+<span align="center" style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</span>
+<table width="100%" cellpadding="5" cellspacing="0">
+	<colgroup>
+		<col width="141*"/>
+
+	</colgroup>
+	<colgroup>
+		<col width="68*"/>
+
+		<col width="47*"/>
+
+	</colgroup>
+	<tbody>
+		<tr valign="top">
+			<td width="55%" style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0.04in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0in"><span align="left">
+				<font size="2" style="font-size: 11pt"><b>Amount In Words:</b></font></span>
+			</td>
+			<td width="27%" style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0.04in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0in"><span align="left">
+				<font size="2" style="font-size: 11pt"><b>Total Amount in AED</b></font></span>
+			</td>
+			<td width="18%" style="text-align: right; border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0.04in; padding-bottom: 0.04in; padding-left: 0in; padding-right: 0.04in"><span align="right">
+				<font size="2" style="font-size: 11pt"><b><t t-esc="'%.2f'% doc.cc_total_amount"/></b></font></span>
+			</td>
+		</tr>
+		<tr></tr>
+		<tr></tr>
+		<tr></tr>
+		<tr></tr>
+		<tr></tr>
+		<tr></tr>
+		<tr></tr>
+		<tr></tr>
+		<tr></tr>
+	</tbody>
+	<tbody>
+		<tr valign="top">
+			<td rowspan="4" width="55%" style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0.04in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0in">
+				<span align="left" style="font-weight: normal"><font size="2" style="font-size: 11pt">
+					<t t-esc="doc.currency_id.name + ' ' + doc.num_convert_to_text('%.2f'% doc.amount_total) + ' Only/-'"/>
+				</font></span>
+			</td>
+			<td width="27%" style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0.04in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0in"><span align="left">
+				<font size="2" style="font-size: 11pt"><b>Excess Deductible AED</b></font></span>
+			</td>
+			<td width="18%" style="text-align: right; border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0.04in; padding-bottom: 0.04in; padding-left: 0in; padding-right: 0.04in"><span align="right">
+				<font size="2" style="font-size: 11pt"><b><t t-esc="'%.2f'% doc.excess_amount"/></b></font></span>
+			</td>
+		</tr>
+		<tr valign="top">
+<!--			<td width="55%" style="border: none; padding: 0in"><p align="center">-->
+<!--				<br/>-->
+
+<!--				</p>-->
+<!--			</td>-->
+			<td width="27%" style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0.04in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0in"><span align="left">
+				<font size="2" style="font-size: 11pt"><b>Total After Deductible
+				AED</b></font></span>
+			</td>
+			<td width="18%" style="text-align: right; border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0.04in; padding-bottom: 0.04in; padding-left: 0in; padding-right: 0.04in"><span align="right">
+				<font size="2" style="font-size: 11pt"><b><t t-esc="'%.2f'% doc.amount_untaxed"/></b></font></span>
+			</td>
+		</tr>
+		<tr valign="top">
+<!--			<td width="55%" style="border: none; padding: 0in"><p align="center">-->
+<!--				<br/>-->
+
+<!--				</p>-->
+<!--			</td>-->
+			<td width="27%" style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0.04in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0in"><span align="left">
+				<font size="2" style="font-size: 11pt"><b>VAT @5% AED</b></font></span>
+			</td>
+			<td width="18%" style="text-align: right; border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0.04in; padding-bottom: 0.04in; padding-left: 0in; padding-right: 0.04in"><span align="right">
+				<font size="2" style="font-size: 11pt"><b><t t-esc="'%.2f'% doc.amount_tax"/></b></font></span>
+			</td>
+		</tr>
+		<tr valign="top">
+<!--			<td width="55%" style="border: none; padding: 0in"><p align="center">-->
+<!--				<br/>-->
+
+<!--				</p>-->
+<!--			</td>-->
+			<td width="27%" style="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0in"><span align="left">
+				<font size="2" style="font-size: 11pt"><b>Net Total Amount AED</b></font></span>
+			</td>
+			<td width="18%" style="text-align: right; border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: 1px solid #000000; padding-top: 0in; padding-bottom: 0.04in; padding-left: 0in; padding-right: 0.04in"><span align="right">
+				<font size="2" style="font-size: 11pt"><b><t t-esc="'%.2f'% doc.amount_total"/></b></font></span>
+			</td>
+		</tr>
+	</tbody>
+</table>
+<span align="center" style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</span>
+                </t>
+            </t>
+        </t>
+    </template>
+
+
+
+    <record id="prints_extend_custom_print_account_move_template" model="ir.actions.report">
+        <field name="name">Custom Invoice</field>
+        <field name="model">account.move</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">prints_extend.custom_print_account_move_template</field>
+        <field name="report_file">prints_extend.custom_print_account_move_template</field>
+        <field name="print_report_name">object.name</field>
+        <field name="binding_model_id" ref="sale.model_account_move"/>
+        <field name="binding_type">report</field>
+    </record>
+</odoo>

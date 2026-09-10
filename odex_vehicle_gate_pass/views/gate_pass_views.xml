@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_gate_pass_list" model="ir.ui.view">
+        <field name="name">odex.gate.pass.list</field>
+        <field name="model">odex.gate.pass</field>
+        <field name="arch" type="xml">
+            <list string="Gate Passes" decoration-muted="state == 'cancelled'"
+                  decoration-success="state == 'gatepass_out'">
+                <field name="name"/>
+                <field name="date_in"/>
+                <field name="customer_id"/>
+                <field name="registration_no"/>
+                <field name="vehicle_id" optional="hide"/>
+                <field name="booking_status" widget="badge"/>
+                <field name="payment_status" widget="badge"
+                       decoration-success="payment_status == 'paid'"
+                       decoration-warning="payment_status == 'partial'"
+                       decoration-danger="payment_status == 'unpaid'"/>
+                <field name="state" widget="badge"
+                       decoration-info="state not in ('gatepass_out','cancelled')"
+                       decoration-success="state == 'gatepass_out'"/>
+                <field name="location_label" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_gate_pass_kanban" model="ir.ui.view">
+        <field name="name">odex.gate.pass.kanban</field>
+        <field name="model">odex.gate.pass</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_kanban_small_column">
+                <field name="name"/>
+                <field name="state"/>
+                <field name="payment_status"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_global_click o_gp_kanban_card">
+                            <div class="o_gp_kanban_title">
+                                <strong><field name="name"/></strong>
+                                <field name="payment_status" widget="badge"/>
+                            </div>
+                            <div class="text-muted">
+                                <field name="customer_id"/>
+                            </div>
+                            <div>
+                                <i class="fa fa-car me-1"/><field name="registration_no"/>
+                            </div>
+                            <div class="text-muted small">
+                                <i class="fa fa-clock-o me-1"/><field name="date_in"/>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_gate_pass_search" model="ir.ui.view">
+        <field name="name">odex.gate.pass.search</field>
+        <field name="model">odex.gate.pass</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" string="Gate Pass / Reg. No."
+                       filter_domain="['|', ('name', 'ilike', self), ('registration_no', 'ilike', self)]"/>
+                <field name="customer_id"/>
+                <field name="vehicle_id"/>
+                <field name="chassis_no"/>
+                <separator/>
+                <filter name="inside" string="Inside Workshop"
+                        domain="[('state', 'not in', ('draft', 'gatepass_out', 'cancelled'))]"/>
+                <filter name="out" string="Left Workshop" domain="[('state', '=', 'gatepass_out')]"/>
+                <filter name="unpaid" string="Unpaid"
+                        domain="[('payment_status', 'in', ('unpaid', 'partial'))]"/>
+                <filter name="booked" string="Booked" domain="[('booking_status', '=', 'booked')]"/>
+                <separator/>
+                <filter name="today" string="Checked In Today"
+                        domain="[('date_in', '>=', datetime.datetime.combine(context_today(), datetime.time(0,0,0)))]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_payment" string="Payment"
+                            context="{'group_by': 'payment_status'}"/>
+                    <filter name="group_customer" string="Customer"
+                            context="{'group_by': 'customer_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_gate_pass_form" model="ir.ui.view">
+        <field name="name">odex.gate.pass.form</field>
+        <field name="model">odex.gate.pass</field>
+        <field name="arch" type="xml">
+            <form string="Vehicle Gate Pass" class="o_gate_pass_form">
+                <header>
+                    <button name="action_gatepass_in" type="object" string="Check In"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_vehicle" type="object" string="Confirm Vehicle"
+                            invisible="state != 'gatepass_in'"/>
+                    <button name="action_inspection" type="object" string="Start Inspection"
+                            invisible="state != 'vehicle'"/>
+                    <button name="action_quotation" type="object" string="Quotation"
+                            invisible="state != 'inspection'"/>
+                    <button name="action_rfq" type="object" string="RFQ"
+                            invisible="state != 'purchase'"/>
+                    <button name="action_purchase" type="object" string="Purchase"
+                            invisible="state != 'quotation'"/>
+                    <button name="action_jobcard" type="object" string="Job Card"
+                            invisible="state != 'rfq'"/>
+                    <button name="action_invoice" type="object" string="Invoice"
+                            invisible="state != 'jobcard'"/>
+                    <button name="action_gatepass_out" type="object" string="Check Out"
+                            class="btn-primary" invisible="state != 'invoice'"/>
+                    <button name="action_sync_links" type="object" string="Refresh Links"
+                            class="btn-secondary"
+                            invisible="state in ('draft', 'cancelled')"/>
+                    <button name="action_cancel" type="object" string="Cancel"
+                            invisible="state in ('draft', 'cancelled', 'gatepass_out')"/>
+                    <button name="action_draft" type="object" string="Reset to Draft"
+                            invisible="state != 'cancelled'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="gatepass_in,vehicle,inspection,rfq,purchase,quotation,jobcard,invoice,gatepass_out"/>
+                </header>
+                <sheet>
+                    <field name="flow_json" invisible="1"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="active" invisible="1"/>
+                    <field name="booking_model" invisible="1"/>
+                    <field name="quotation_model" invisible="1"/>
+                    <field name="rfq_model" invisible="1"/>
+                    <field name="job_card_model" invisible="1"/>
+
+                    <!-- Flow bar -->
+                    <div class="o_gp_flow_wrap">
+                        <widget name="odex_gp_flow"/>
+                    </div>
+
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_jobs_list" type="object" class="oe_stat_button" icon="fa-history">
+                            <field name="count_jobcard" widget="statinfo" string="Job Orders"/>
+                        </button>
+                        <button name="action_vehicle_inspection_list" type="object" class="oe_stat_button" icon="fa-history">
+                            <field name="count_inspection" widget="statinfo" string="Vehicle Inspection"/>
+                        </button>
+                        <button name="action_sales_list" type="object" class="oe_stat_button" icon="fa-history">
+                            <field name="count_sales" widget="statinfo" string="Sale Orders"/>
+                        </button>
+                        <button name="action_invoices_list" type="object" class="oe_stat_button" icon="fa-history">
+                            <field name="count_invoices" widget="statinfo" string="Invoices"/>
+                        </button>
+                        <button name="action_open_invoice" type="object" class="oe_stat_button"
+                                icon="fa-money" invisible="not invoice_id">
+                            <field name="payment_status" widget="statinfo" string="Payment"/>
+                        </button>
+                    </div>
+
+                    <div class="oe_title">
+                        <label for="name" string="Gate Pass No."/>
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+
+                    <group>
+                        <group name="status_cards">
+                            <widget name="odex_gp_booking_status"/>
+                            <widget name="odex_gp_payment_status"/>
+                        </group>
+                        <group name="entry">
+                            <field name="date_in"/>
+                            <field name="date_out"/>
+                            <field name="location_label"/>
+                            <field name="booking_status"/>
+                        </group>
+                    </group>
+
+                    <group col="2">
+                        <group colspan="1">
+                            <group string="Customer Details">
+                                <field name="customer_id" string="Customer Name"/>
+                                <field name="mobile_no" string="Contact Number"/>
+                                <field name="alternative_contact" string="Alternate Number"/>
+                                <field name="tag_ids" widget="many2many_tags" string="Tags"/>
+                                <field name="customer_waiting" widget="boolean_toggle"/>
+                                <field name="email" invisible="1"/>
+                                <!-- <field name="customer_name" invisible="1"/> -->
+                            </group>
+                            <group string="Extra Info">
+                                <field name="repair_category_id"/>
+                                <field name="repair_sub_category_ids" widget="many2many_tags"/>
+                                <!-- <field name="job_type"/> -->
+                                <!-- <field name="job_bay"/> -->
+                            </group>
+                        </group>
+                        <group string="Vehicle Details" colspan="1">
+                            <field name="vehicle_id" string="Vehicle"/>
+                            <label for="registration_no" string="License Plate"/>
+                            <div class="o_row">
+                                <field name="registration_no" nolabel="1"/>
+                                <widget name="odex_ocr_scan" options="{'kind': 'plate'}"/>
+                            </div>
+                            <field name="brand" string="Vehicle Make"/>
+                            <field name="vehicle_model" string="Model"/>
+                            <label for="chassis_no" string="Chassis No."/>
+                            <div class="o_row">
+                                <field name="chassis_no" nolabel="1"/>
+                                <widget name="odex_ocr_scan" options="{'kind': 'mulkiya'}"/>
+                            </div>
+                            <field name="cylinder_count"/>
+                            <field name="color" string="Colour"/>
+                            <field name="engine_no" string="Engine No."/>
+                            <field name="manufacturing_year" string="Year"/>
+                            <field name="odometer_reading"/>
+                            <!-- <field name="warranty"/> -->
+                            <!-- <field name="vehicle_id" string="Fleet Record"/> -->
+                            <field name="fuel_type" invisible="1"/>
+                            <field name="transmission" invisible="1"/>
+                            <field name="engine_capacity" invisible="1"/>
+                            <field name="plate_source" invisible="1"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Vehicle Condition" name="condition">
+                            <group>
+                                <group string="Condition">
+                                    <field name="fuel_level" widget="odex_fuel_gauge"/>
+                                    <field name="overall_condition"/>
+                                    <field name="tyre_condition"/>
+                                    <field name="accessories"/>
+                                    <field name="visible_damage"/>
+                                </group>
+                                <group string="A/C &amp; Electrical">
+                                    <field name="ac_cooling"/>
+                                    <field name="battery_health"/>
+                                    <field name="lights_indicators"/>
+                                    <field name="other_electrical"/>
+                                </group>
+                            </group>
+                            <group string="Additional Remarks">
+                                <field name="additional_remarks" nolabel="1" placeholder="Enter inspection remarks..."/>
+                            </group>
+                            <!-- <separator string="Inspection Details"/>
+                            <field name="inspection_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="result"/>
+                                    <field name="remark"/>
+                                </list>
+                            </field> -->
+                            <separator string="Complaints"/>
+                            <field name="requested_services_ids">
+                                <list editable="bottom">
+                                    <field name="product_id"/>
+                                    <field name="remark"/>
+                                    <field name="assign_hours" widget="timesheet_uom"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <page string="Photos" name="photos">
+                            <field name="photo_count" invisible="1"/>
+                            <widget name="odex_photo_gallery"/>
+                            <field name="photo_ids" invisible="1"/>
+                        </page>
+
+                        <page string="Damage Map" name="damage_map">
+                            <field name="damage_count" invisible="1"/>
+                            <widget name="odex_damage_map"/>
+                            <field name="damage_ids" invisible="1"/>
+                        </page>
+
+                        <page string="Signature" name="signature">
+                            <group>
+                                <field name="signature" widget="image" class="oe_avatar"/>
+                                <field name="signed_by"/>
+                                <field name="signed_at"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_gate_pass" model="ir.actions.act_window">
+        <field name="name">Gate Passes</field>
+        <field name="res_model">odex.gate.pass</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="context">{'search_default_inside': 0}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create the first gate pass</p>
+            <p>Check a vehicle in, inspect it, and follow it through to check-out.</p>
+        </field>
+    </record>
+
+</odoo>

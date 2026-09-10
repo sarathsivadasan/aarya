@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Products smart button — one row per RFQ product line, enriched
+         with the live recommended supplier / lowest price and the
+         permanent awarded vendor / price / Purchase Order once awarded.
+         Both come from purchase.multi.rfq's single shared recommendation
+         method (get_recommended_suppliers()) — never computed here. -->
+    <record id="view_purchase_multi_rfq_line_list" model="ir.ui.view">
+        <field name="name">purchase.multi.rfq.line.list</field>
+        <field name="model">purchase.multi.rfq.line</field>
+        <field name="arch" type="xml">
+            <list string="RFQ Products" create="0" delete="0">
+                <field name="product_id"/>
+                <field name="description" optional="show"/>
+                <field name="quantity"/>
+                <field name="uom_id" groups="uom.group_uom"/>
+                <field name="recommended_vendor_id" string="Recommended Supplier"/>
+                <field name="lowest_price" string="Lowest Price"/>
+                <field name="awarded_vendor_id" string="Awarded Vendor"/>
+                <field name="awarded_po_id" string="Purchase Order"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_purchase_multi_rfq_line_form" model="ir.ui.view">
+        <field name="name">purchase.multi.rfq.line.form</field>
+        <field name="model">purchase.multi.rfq.line</field>
+        <field name="arch" type="xml">
+            <form string="RFQ Product Line" create="0" delete="0">
+                <sheet>
+                    <group>
+                        <group string="Product">
+                            <field name="product_id"/>
+                            <field name="description"/>
+                            <field name="quantity"/>
+                            <field name="uom_id" groups="uom.group_uom"/>
+                            <field name="expected_date"/>
+                        </group>
+                        <group string="Recommendation &amp; Award">
+                            <field name="recommended_vendor_id" string="Recommended Supplier"/>
+                            <field name="lowest_price"/>
+                            <field name="awarded_vendor_id"/>
+                            <field name="awarded_price"/>
+                            <field name="awarded_po_id"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+</odoo>

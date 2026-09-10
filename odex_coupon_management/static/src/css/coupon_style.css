@@ -1,0 +1,175 @@
+/* ═══════════════════════════════════════════════════════════════
+   ODEX COUPON MANAGEMENT - Custom Styles
+   Matching Native Odoo 18 UI
+═══════════════════════════════════════════════════════════════ */
+
+/* ─── Coupon Cards ─────────────────────────────────────────── */
+.o_coupon_card {
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    overflow: hidden;
+}
+
+.o_coupon_card_header {
+    background: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    color: #6c757d;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.o_coupon_card_header i {
+    color: #7c3aed;
+    margin-right: 8px;
+}
+
+.o_coupon_card_body {
+    padding: 16px;
+}
+
+/* ─── Grid Layout for Customer/Vehicle ─────────────────────── */
+.o_coupon_details_grid {
+    margin: 0 -8px;
+}
+
+.o_coupon_details_grid > div {
+    padding: 0 8px;
+}
+
+/* ─── Payment Summary Widget ────────────────────────────────── */
+.o_coupon_payment_summary {
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 20px;
+    position: sticky;
+    top: 16px;
+}
+
+.o_payment_summary_row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #f1f3f5;
+}
+
+.o_payment_summary_row:last-of-type {
+    border-bottom: none;
+}
+
+.o_summary_label {
+    color: #6c757d;
+    font-size: 13px;
+}
+
+.o_summary_value {
+    color: #212529;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: right;
+}
+
+.o_summary_value_balance {
+    font-size: 14px;
+    font-weight: 700;
+    color: #dc3545;
+    text-align: right;
+}
+
+/* ─── Status Badges ─────────────────────────────────────────── */
+.badge {
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+}
+
+/* Coupon type badges */
+.o_field_badge .badge[data-value="monthly"] {
+    background-color: #e8f4fd !important;
+    color: #1a73e8 !important;
+    border: 1px solid #bbdefb !important;
+}
+
+.o_field_badge .badge[data-value="quarterly"] {
+    background-color: #fff8e1 !important;
+    color: #f57f17 !important;
+    border: 1px solid #ffe082 !important;
+}
+
+.o_field_badge .badge[data-value="yearly"] {
+    background-color: #e8f5e9 !important;
+    color: #2e7d32 !important;
+    border: 1px solid #a5d6a7 !important;
+}
+
+/* ─── Outstanding Credits Alert ─────────────────────────────── */
+.alert-info.o_coupon_credits_banner {
+    background: #e3f2fd;
+    border: 1px solid #90caf9;
+    border-radius: 6px;
+    color: #1565c0;
+    padding: 10px 16px;
+    margin-bottom: 16px;
+}
+
+/* ─── Form Header Adjustments ───────────────────────────────── */
+.o_form_view .o_form_sheet_bg {
+    background: #f5f5f5;
+}
+
+/* ─── Notebook Tabs ─────────────────────────────────────────── */
+.o_notebook .nav-link.active {
+    color: #7c3aed !important;
+    border-bottom-color: #7c3aed !important;
+}
+
+/* ─── Smart Buttons ─────────────────────────────────────────── */
+.oe_stat_button {
+    border-right: 1px solid #dee2e6 !important;
+}
+
+/* ─── List View Colored Remaining Amount ────────────────────── */
+.o_list_table .o_field_monetary.text-success {
+    color: #198754 !important;
+    font-weight: 600;
+}
+
+.o_list_table .o_field_monetary.text-danger {
+    color: #dc3545 !important;
+    font-weight: 600;
+}
+
+/* ─── Pay Now Button ────────────────────────────────────────── */
+.o_coupon_payment_summary .btn-primary {
+    background: #7c3aed;
+    border-color: #7c3aed;
+    border-radius: 6px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+.o_coupon_payment_summary .btn-primary:hover {
+    background: #6d28d9;
+    border-color: #6d28d9;
+}
+
+/* ─── Responsive ────────────────────────────────────────────── */
+@media (max-width: 992px) {
+    .o_coupon_details_grid .col-lg-6 {
+        margin-bottom: 16px;
+    }
+
+    .o_coupon_payment_summary {
+        position: static;
+        margin-top: 16px;
+    }
+}

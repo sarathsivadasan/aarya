@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_report_multi_rfq_comparison" model="ir.actions.report">
+        <field name="name">Odex Multi Vendor RFQ Comparison</field>
+        <field name="model">purchase.multi.rfq</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">odex_multi_vendor_rfq.report_multi_rfq_comparison_doc</field>
+        <field name="report_file">odex_multi_vendor_rfq.report_multi_rfq_comparison_doc</field>
+        <field name="binding_model_id" ref="model_purchase_multi_rfq"/>
+        <field name="binding_type">report</field>
+    </record>
+
+</odoo>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ═══════════════════════════════════════════════
+         MAIN APP MENU
+    ═══════════════════════════════════════════════ -->
+    <menuitem id="menu_coupon_root"
+              name="Coupon Management"
+              sequence="100"
+              groups="odex_coupon_management.group_coupon_user"/>
+
+    <!-- Dashboard -->
+    <menuitem id="menu_coupon_dashboard"
+              name="Dashboard"
+              parent="menu_coupon_root"
+              sequence="10"
+              action="action_coupon_dashboard"
+              groups="odex_coupon_management.group_coupon_user"/>
+
+    <!-- Customer Coupons -->
+    <menuitem id="menu_customer_coupon"
+              name="Customer Coupons"
+              parent="menu_coupon_root"
+              sequence="20"
+              action="action_customer_coupon"
+              groups="odex_coupon_management.group_coupon_user"/>
+
+    <!-- Coupon Types -->
+    <menuitem id="menu_coupon_types"
+              name="Coupon Types"
+              parent="menu_coupon_root"
+              sequence="30"
+              action="action_coupon_master"
+              groups="odex_coupon_management.group_coupon_user"/>
+
+    <!-- Reports -->
+    <menuitem id="menu_coupon_reports"
+              name="Reports"
+              parent="menu_coupon_root"
+              sequence="40"
+              groups="odex_coupon_management.group_coupon_user"/>
+
+    <menuitem id="menu_coupon_report_summary"
+              name="Coupon Summary"
+              parent="menu_coupon_reports"
+              sequence="10"
+              action="action_coupon_report_summary"
+              groups="odex_coupon_management.group_coupon_user"/>
+
+    <menuitem id="menu_coupon_report_payments"
+              name="Payment Report"
+              parent="menu_coupon_reports"
+              sequence="20"
+              action="action_coupon_payments"
+              groups="odex_coupon_management.group_coupon_user"/>
+
+    <!-- Configuration -->
+    <menuitem id="menu_coupon_configuration"
+              name="Configuration"
+              parent="menu_coupon_root"
+              sequence="50"
+              groups="odex_coupon_management.group_coupon_manager"/>
+
+    <menuitem id="menu_coupon_config_settings"
+              name="Settings"
+              parent="menu_coupon_configuration"
+              sequence="10"
+              action="action_coupon_config_settings"
+              groups="odex_coupon_management.group_coupon_manager"/>
+
+</odoo>

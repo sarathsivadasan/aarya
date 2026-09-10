@@ -1,0 +1,70 @@
+/* odex_multi_vendor_rfq — Backend styles */
+
+/* Comparison matrix — colour coding */
+.o_multi_rfq_price_lowest {
+    color: #059669;
+    font-weight: 600;
+}
+.o_multi_rfq_price_mid {
+    color: #d97706;
+    font-weight: 600;
+}
+.o_multi_rfq_price_second {
+    color: #d97706;
+}
+.o_multi_rfq_price_highest {
+    color: #dc2626;
+    font-weight: 600;
+}
+
+/* Stat button badge tweak */
+.o_multi_rfq_stat_badge {
+    background-color: #ede9fe;
+    color: #5b21b6;
+    border-radius: 12px;
+    padding: 1px 8px;
+    font-size: 11px;
+}
+
+/* Vendor tags in form */
+.o_field_many2many_tags.o_vendor_tags .badge {
+    background-color: #ede9fe !important;
+    color: #5b21b6 !important;
+}
+
+/* Quotation Comparison matrix — dynamic product x vendor table */
+.o_multi_rfq_comparison_wrap {
+    overflow-x: auto;
+    max-width: 100%;
+    margin-bottom: 8px;
+}
+.o_multi_rfq_comparison_table {
+    margin-bottom: 0;
+}
+.o_multi_rfq_comparison_table th,
+.o_multi_rfq_comparison_table td {
+    white-space: nowrap;
+    vertical-align: middle;
+}
+.o_multi_rfq_comparison_table .o_multi_rfq_product_col {
+    white-space: normal;
+    min-width: 160px;
+    font-weight: 500;
+    position: sticky;
+    left: 0;
+    background-color: inherit;
+}
+.o_multi_rfq_comparison_table thead .o_multi_rfq_product_col {
+    background-color: #f8f9fa;
+}
+.o_multi_rfq_comparison_table .o_multi_rfq_vendor_col {
+    min-width: 90px;
+}
+.o_multi_rfq_comparison_table .o_multi_rfq_price {
+    min-width: 90px;
+}
+.o_multi_rfq_comparison_table .o_multi_rfq_supplier {
+    white-space: normal;
+    min-width: 120px;
+    font-weight: 500;
+}

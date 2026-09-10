@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_job_card_dashboard" model="ir.actions.client">
+        <field name="name">Dashboard</field>
+        <field name="tag">odex_job_card_dashboard</field>
+    </record>
+
+    <menuitem id="menu_job_card_dashboard_root"
+              name="Workshop Dashboard"
+              web_icon="odex_job_card_dashboard,static/description/icon.png"
+              sequence="1"
+              groups="group_job_card_dashboard_user"/>
+
+    <menuitem id="menu_job_card_dashboard"
+              name="Dashboard"
+              parent="menu_job_card_dashboard_root"
+              action="action_job_card_dashboard"
+              sequence="10"/>
+
+    <menuitem id="menu_job_card_dashboard_config"
+              name="Configuration"
+              parent="menu_job_card_dashboard_root"
+              sequence="90"
+              groups="group_job_card_dashboard_manager"/>
+
+    <menuitem id="menu_job_card_dashboard_settings"
+              name="Dashboard Settings"
+              parent="menu_job_card_dashboard_config"
+              action="action_dashboard_config"
+              sequence="10"/>
+
+    <menuitem id="menu_job_card_dashboard_stages"
+              name="Status Cards"
+              parent="menu_job_card_dashboard_config"
+              action="action_job_card_stage_dashboard"
+              sequence="20"/>
+
+</odoo>

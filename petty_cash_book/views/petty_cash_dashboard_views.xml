@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ==================== PETTY CASH DASHBOARD VIEW ==================== -->
+
+        <!-- Dashboard Action -->
+    <record id="action_petty_cash_dashboard" model="ir.actions.act_window">
+        <field name="name">Petty Cash Book</field>
+        <field name="res_model">petty.cash.dashboard</field>
+        <field name="view_mode">form</field>
+        <field name="target">main</field>
+        <field name="context">{}</field>
+    </record>
+
+    <record id="view_petty_cash_dashboard_form" model="ir.ui.view">
+        <field name="name">petty.cash.dashboard.form</field>
+        <field name="model">petty.cash.dashboard</field>
+        <field name="arch" type="xml">
+            <form string="Petty Cash Book" class="petty_cash_dashboard">
+                <sheet>
+                    <!-- Header Toolbar -->
+                    <div class="pcb_header d-flex align-items-center justify-content-between mb-3">
+                        <h2 class="pcb_title mb-0">
+                            <i class="fa fa-book me-2 text-primary"/>
+                            Petty Cash Book
+                        </h2>
+                        <div class="pcb_header_actions d-flex gap-2">
+                            <button name="action_add_received" type="object" class="btn btn-primary btn-sm pcb_btn_received">
+                                <i class="fa fa-plus-circle me-1"/> Add Cash Received
+                            </button>
+                            <button name="action_add_expense" type="object" class="btn btn-danger btn-sm pcb_btn_expense">
+                                <i class="fa fa-minus-circle me-1"/> Add Expense
+                            </button>
+                            <button name="action_print_report" type="object" class="btn btn-secondary btn-sm">
+                                <i class="fa fa-print me-1"/> Print
+                            </button>
+                            <button name="%(action_petty_cash_dashboard)s" type="action" class="btn btn-light btn-sm">
+                                <i class="fa fa-refresh me-1"/> Reset
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Filter Bar -->
+                    <div class="pcb_filter_bar card mb-3 p-3">
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-3">
+                                <label class="o_form_label fw-semibold small text-muted" for="account_id">Petty Cash Account</label>
+                                <field name="account_id" widget="many2one" class="form-control form-control-sm" placeholder="Select account..."/>
+                            </div>
+                            <div class="col-md-2">
+                                 <label class="o_form_label fw-semibold small text-muted" for="journal_id">Journal</label>
+                                <field name="journal_id" widget="many2one" class="form-control form-control-sm" placeholder="Select journal..."/>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="o_form_label fw-semibold small text-muted" for="date_from">From Date</label>
+                                <field name="date_from" widget="date" class="form-control form-control-sm"/>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="o_form_label fw-semibold small text-muted" for="date_to">To Date</label>
+                                <field name="date_to" widget="date" class="form-control form-control-sm"/>
+                            </div>
+                            <div class="col-md-3">
+                                <button name="%(action_petty_cash_dashboard)s" type="action" class="btn btn-primary btn-sm w-100">
+                                    <i class="fa fa-filter me-1"/> Apply Filter
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Quick Date Filters -->
+                        <div class="pcb_quick_filters d-flex gap-2 mt-3 flex-wrap">
+                            <button name="action_today" type="object" class="btn btn-outline-secondary btn-sm pcb_date_btn">Today</button>
+                            <button name="action_this_week" type="object" class="btn btn-outline-secondary btn-sm pcb_date_btn">This Week</button>
+                            <button name="action_this_month" type="object" class="btn btn-outline-primary btn-sm pcb_date_btn active">This Month</button>
+                            <button name="action_last_month" type="object" class="btn btn-outline-secondary btn-sm pcb_date_btn">Last Month</button>
+                            <button name="action_this_quarter" type="object" class="btn btn-outline-secondary btn-sm pcb_date_btn">This Quarter</button>
+                            <button name="action_this_year" type="object" class="btn btn-outline-secondary btn-sm pcb_date_btn">This Year</button>
+                            <span class="ms-auto text-muted small align-self-center pcb_date_info">
+                                <i class="fa fa-info-circle me-1"/>
+                                Showing data from <field name="date_from" readonly="1" widget="date"/> to <field name="date_to" readonly="1" widget="date"/>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Summary Cards Row -->
+                    <div class="row g-3 mb-4 pcb_summary_cards">
+                        <div class="col-md col-sm-6">
+                            <div class="pcb_card pcb_card_opening">
+                                <div class="pcb_card_label">Opening Balance</div>
+                                <div class="pcb_card_sub">(<field name="date_from" readonly="1" widget="date"/>)</div>
+                                <div class="pcb_card_value">
+                                    <field name="opening_balance" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md col-sm-6">
+                            <div class="pcb_card pcb_card_received">
+                                <div class="pcb_card_label">Total Cash Received</div>
+                                <div class="pcb_card_sub">&amp;nbsp;</div>
+                                <div class="pcb_card_value text-success">
+                                    <field name="total_received" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md col-sm-6">
+                            <div class="pcb_card pcb_card_expenses">
+                                <div class="pcb_card_label">Total Expenses</div>
+                                <div class="pcb_card_sub">&amp;nbsp;</div>
+                                <div class="pcb_card_value text-danger">
+                                    <field name="total_expenses" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md col-sm-6">
+                            <div class="pcb_card pcb_card_closing">
+                                <div class="pcb_card_label">Closing Balance</div>
+                                <div class="pcb_card_sub">(<field name="date_to" readonly="1" widget="date"/>)</div>
+                                <div class="pcb_card_value text-primary">
+                                    <field name="closing_balance" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md col-sm-12">
+                            <div class="pcb_card pcb_card_cash">
+                                <div class="d-flex align-items-center mb-1">
+                                    <i class="fa fa-money fa-2x me-3 text-success"/>
+                                    <div>
+                                        <div class="pcb_card_label">Cash in Hand</div>
+                                        <div class="pcb_card_value text-success">
+                                            <field name="cash_in_hand" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hidden field for currency -->
+                    <field name="currency_id" invisible="1"/>
+                    <field name="company_id" invisible="1"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

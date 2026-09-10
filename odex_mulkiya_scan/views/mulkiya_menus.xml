@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_mulkiya_root"
+              name="Mulkiya Scan"
+              web_icon="odex_mulkiya_scan,static/description/icon.png"
+              sequence="72"
+              groups="odex_mulkiya_scan.group_mulkiya_user"/>
+
+    <menuitem id="menu_mulkiya_dashboard"
+              name="Dashboard"
+              parent="menu_mulkiya_root"
+              action="action_mulkiya_dashboard"
+              sequence="10"/>
+
+    <menuitem id="menu_mulkiya_scans"
+              name="Scans"
+              parent="menu_mulkiya_root"
+              action="action_mulkiya_scan"
+              sequence="20"/>
+
+    <menuitem id="menu_mulkiya_configuration"
+              name="Configuration"
+              parent="menu_mulkiya_root"
+              sequence="90"
+              groups="odex_mulkiya_scan.group_mulkiya_admin"/>
+
+    <menuitem id="menu_mulkiya_settings"
+              name="Settings"
+              parent="menu_mulkiya_configuration"
+              action="action_mulkiya_settings"
+              sequence="10"/>
+
+    <menuitem id="menu_mulkiya_match_rules"
+              name="Matching Rules"
+              parent="menu_mulkiya_configuration"
+              action="action_mulkiya_match_rule"
+              sequence="20"/>
+
+    <menuitem id="menu_mulkiya_aliases"
+              name="Value Aliases"
+              parent="menu_mulkiya_configuration"
+              action="action_mulkiya_alias"
+              sequence="30"/>
+
+</odoo>

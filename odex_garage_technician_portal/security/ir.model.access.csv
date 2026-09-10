@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_technician_log_technician,technician.log.technician,model_technician_log,group_garage_technician,1,0,1,0
+access_technician_log_supervisor,technician.log.supervisor,model_technician_log,group_garage_technician_supervisor,1,1,1,1
+access_technician_note_technician,technician.note.technician,model_technician_note,group_garage_technician,1,1,1,0
+access_technician_note_supervisor,technician.note.supervisor,model_technician_note,group_garage_technician_supervisor,1,1,1,1
+access_technician_part_photo_technician,technician.part.photo.technician,model_technician_part_photo,group_garage_technician,1,1,1,1
+access_technician_part_photo_supervisor,technician.part.photo.supervisor,model_technician_part_photo,group_garage_technician_supervisor,1,1,1,1

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="odex_garage_technician_portal.ProfilePage">
+        <div class="o_tp_profile" t-if="state.profile">
+            <img t-att-src="state.profile.image_url" class="o_tp_profile_image"/>
+            <h2 t-esc="state.profile.name"/>
+            <div class="o_tp_profile_facts">
+                <div><label>Department</label><span t-esc="state.profile.department"/></div>
+                <div><label>Designation</label><span t-esc="state.profile.designation"/></div>
+                <div t-if="state.profile.workshop_position"><label>Workshop Role</label><span t-esc="state.profile.workshop_position"/></div>
+                <div><label>Email</label><span t-esc="state.profile.email"/></div>
+                <div><label>Phone</label><span t-esc="state.profile.phone"/></div>
+                <div><label>Experience</label><span><t t-esc="state.profile.experience_years"/> years</span></div>
+                <div><label>Skills</label><span t-esc="state.profile.skills"/></div>
+            </div>
+        </div>
+    </t>
+</templates>

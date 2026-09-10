@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_move_form_debit_note_label" model="ir.ui.view">
+        <field name="name">account.move.form.debit.note.label</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_reverse']" position="replace">
+
+                <!-- Customer Invoice -->
+                <button name="action_reverse"
+                        type="object"
+                        string="Credit Note"
+                        invisible="move_type not in ('out_invoice','out_refund')"/>
+
+                <!-- Vendor Bill -->
+                <button name="action_reverse"
+                        type="object"
+                        string="Debit Note"
+                        invisible="move_type not in ('in_invoice','in_refund')"/>
+
+            </xpath>
+        </field>
+    </record>
+    <!-- This view may need xpath adjustment depending on your exact Odoo 18 build -->
+    <record id="account_move_reversal_view_inherit_debit_note" model="ir.ui.view">
+        <field name="name">account.move.reversal.debit.note.dynamic</field>
+        <field name="model">account.move.reversal</field>
+        <field name="inherit_id" ref="account.view_account_move_reversal"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="attributes">
+                <attribute name="string">Credit Note / Debit Note</attribute>
+            </xpath>
+        </field>
+    </record>
+
+
+</odoo>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_mulkiya_dashboard" model="ir.actions.client">
+        <field name="name">Mulkiya Dashboard</field>
+        <field name="tag">odex_mulkiya_dashboard</field>
+    </record>
+
+</odoo>

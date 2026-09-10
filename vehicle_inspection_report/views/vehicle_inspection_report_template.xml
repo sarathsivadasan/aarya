@@ -1,0 +1,439 @@
+<odoo>
+
+    <template id="external_layout_standard_vehical" inherit_id="job_card_extension.external_layout_standard">
+        <xpath expr="//div[contains(@t-attf-class, 'footer')]" position="replace">
+        <div t-attf-class="footer o_standard_footer o_company_#{company.id}_layout">
+            <div class="last-page" style="position:relative;margin-top:0;">
+                <div class="signature-box clearfix"
+                     style="padding-top: 10px; font-size: 16px; font-family: 'Times New Roman', Times, serif;">
+                    <div style="width: 45%; display: inline-block;">
+                        <p style="font-weight: bold; color: black; font-size:14px;">Name:
+                            ............................................
+                        </p>
+                        <p style="font-weight: bold; color: black; font-size:14px; margin-top: -10px; ">
+                            User Name:
+                            <span t-field="o.create_uid.name"/>
+                        </p>
+                    </div>
+                    <div style="width: 45%; display: inline-block; text-align: right;">
+                        <p style="font-weight: bold; color: black; font-size:14px;">Signature:
+                            ............................................
+                        </p>
+                        <p style="font-weight: bold; color: black; font-size:14px; margin-top: -10px; ">
+                            Date:
+                            <!-- <span t-field="o.cc_vehicle_in"/> -->
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center" style="border-top: 1px solid black;">
+                <ul class="list-inline mb4">
+                    <div t-field="company.report_footer"/>
+                </ul>
+
+                <div t-if="report_type == 'pdf'" class="text-muted">
+                    Page:
+                    <span class="page"/>
+                    /
+                    <span class="topage"/>
+                </div>
+                <div t-if="report_type == 'pdf' and display_name_in_footer" class="text-muted">
+                    <span t-field="o.name"/>
+                </div>
+            </div>
+        </div>
+    </xpath>
+    </template>
+
+    <template id="report_vehicle_inspection">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="job_card_extension.external_layout">
+                    <div class="page" style="margin-top: -5px;">
+                        <style>
+                            .info-box { border: 0px solid black; padding: 25px; margin-top: -15px; font-size: 14px;
+                            /* Base font size for the info box */ } .info-box strong { font-size: 16px; /* Slightly
+                            larger font for labels */ } .info-box span { font-size: 14px; /* Keep the content size same
+                            as base */ } .info-left, .info-right { width: 45%; display: inline-block; vertical-align:
+                            top; } .info-left p, .info-right p { margin: 3px 0; } .clearfix::after { content: ""; clear:
+                            both; display: table; } .fuel-gauge-container { font-family: monospace; font-size: 10px;
+                            display: flex; align-items: center; } .fuel-gauge-label { font-weight: bold; margin-right:
+                            6px; } .fuel-gauge { display: flex; flex-direction: column; } .fuel-gauge-markers { display:
+                            flex; justify-content: space-between; margin-bottom: 1px; } .fuel-gauge-markers span {
+                            width: 20px; text-align: center; } .fuel-gauge-markers span:first-child { text-align: left;
+                            } .fuel-gauge-markers span:last-child { text-align: right; } .fuel-gauge-line { position:
+                            relative; width: 80px; height: 12px; border-bottom: 1px solid black; }
+                            .fuel-gauge-line::before, .fuel-gauge-line::after, .fuel-gauge-line span { content: '';
+                            position: absolute; bottom: 0; width: 1px; height: 12px; background-color: black; }
+                            .fuel-gauge-line::before { left: 0; } .fuel-gauge-line::after { right: 0; } .fuel-gauge-line
+                            span:nth-child(1) { left: 20px; } .fuel-gauge-line span:nth-child(2) { left: 40px; }
+                            .fuel-gauge-line span:nth-child(3) { left: 60px; } .pt-5 { padding-top: 0.5rem !important; }
+                            .header-container { display: flex; flex-direction: column; align-items: center; margin: 0px
+                            auto; text-align: center; } .header-box { border: 2px solid black; border-radius: 25px;
+                            padding: 2px 40px; font-family: 'Times New Roman', Times, serif; font-weight: bold;
+                            font-size: 18px; margin-bottom: 0px; text-align: center; display: inline-block; box-sizing:
+                            border-box; } .trn-no { margin-top: 1px; font-weight: bold; white-space: nowrap; text-align:
+                            center; font-family: 'Times New Roman', Times, serif; font-size: 15px; } .signature-box {
+                            margin-top: 20px; } .signature-box div { width: 45%; display: inline-block; vertical-align:
+                            top; } .mt-4, .my-4 { margin-top: 0.25rem !important; } .inspection-table { width: 100%;
+                            border-collapse: collapse; border: 0px solid black; } .inspection-table td { border: 0px
+                            solid black; padding: 1px; vertical-align: top; font-size: 8px; } .header-row {
+                            border-bottom: 1px solid black; } .header-row td { border-bottom: none; }
+                            .vertical-black-line { position: absolute; top: 0; left: -1px; bottom: 0; width: 1px;
+                            background-color: black; } .payment-mode-container { display: flex; justify-content: center;
+                            border-top: 1px solid black; padding: 2px 0; } .payment-mode { display: flex; align-items:
+                            center; gap: 8px; font-size: 10px; font-weight: bold; } .payment-mode strong { margin-right:
+                            8px; } .checkbox { font-size: 14px; line-height: 1; } .option { font-weight: bold; }
+                            .vertical-img { display: block; margin: 100px auto 0 auto; width: 100%; max-width: 80px; }
+                            .car-diagram { max-height: 425px; width: auto; object-fit: contain; } .legend { display:
+                            flex; justify-content: space-between; padding: 1px 0; border-bottom: 0px solid black;
+                            font-family: monospace; white-space: nowrap; font-size: 10px; margin-bottom: -8px;
+                            margin-top: -8px; } .legend-item { display:
+                            inline-block; } .legend-letter { font-weight: bold; } .legend-spacer { display:
+                            inline-block; width: 70px; } .legend-spacer-two { display: inline-block; width: 30px; }
+                            .legend-spacer-three { display: inline-block; width: 20px; }
+                        </style>
+                        <div class="header-container">
+                            <div class="header-box">
+                                <strong style="font-weight: 900; color: black; font-size: 20px;">Vehicle Inspection
+                                </strong>
+                            </div>
+                        </div>
+                        <br/>
+                        <!--                        <table style="width: 100%; border: 0px solid white; border-collapse: collapse; font-family: 'Times New Roman', Times, serif;">-->
+                        <!--                            <tr>-->
+                        <!--                                <td style="font-size: 15px; width: 50%; padding: 3px; border: 0px solid white;text-align: right;background-color: #ffffff;">-->
+                        <!--                                    <strong>Date &amp; Time In :</strong>-->
+                        <!--                                    <span t-field="o.cc_vehicle_in"/>-->
+                        <!--                                    <span t-esc="datetime.datetime.now().strftime('%H:%M:%S')"/>-->
+                        <!--                                </td>-->
+                        <!--                            </tr>-->
+                        <!--                        </table>-->
+                        <div class="info-box clearfix"
+                             style="display: flex; justify-content: space-between; font-family: 'Times New Roman', Times, serif;">
+                            <div class="info-left" style="width: 68%; padding-left: 7px; margin-top: -15px;">
+                                <!--  Added padding-left here  -->
+
+                                <p style="margin-right: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                    <strong style="display: inline-block; width: 195px; font-weight: bold; color: black; font-size:14px;">
+                                        Customer Name
+                                    </strong>
+                                    <span style="display: inline-block; width: 10px; color: black;">:</span>
+                                    <span style="display: inline-block; padding-left: 5px; color: black;"
+                                          t-field="o.partner_id.name"/>
+                                </p>
+                                <p>
+                                    <strong style="display: inline-block; width: 195px; font-weight: bold; color: black; font-size:14px; ">
+                                        Mobile
+                                    </strong>
+                                    <span style="display: inline-block; width: 10px; color: black;">:</span>
+                                    <span style="display: inline-block; padding-left: 5px; color: black;"
+                                          t-field="o.cc_partner_mobile"/>
+                                </p>
+                                <p>
+                                    <strong style="display: inline-block; width: 195px; white-space: nowrap; font-weight: bold; color: black; font-size:14px;">
+                                        Email
+                                    </strong>
+                                    <span style="display: inline-block; width: 10px; color: black;">:</span>
+                                    <!-- <span style="display: inline-block; padding-left: 5px; color: black;"
+                                          t-field="o.cc_partner_email"/> -->
+                                </p>
+                                <p>
+                                    <strong style="display: inline-block; width: 195px; white-space: nowrap; font-weight: bold; color: black; font-size:14px;">
+                                        Contact Person Name
+                                    </strong>
+                                    <span style="display: inline-block; width: 10px; color: black;">:</span>
+                                    <!-- <span style="display: inline-block; padding-left: 5px; color: black; white-space: nowrap;"
+                                          t-field="o.contact_person_name"/> -->
+                                </p>
+                                <p>
+                                    <strong style="display: inline-block; width: 195px; white-space: nowrap; font-weight: bold; color: black; font-size:14px;">
+                                        Service Advisor
+                                    </strong>
+                                    <span style="display: inline-block; width: 10px; color: black; color: black;">:
+                                    </span>
+                                    <span style="display: inline-block; padding-left: 5px; font-weight: bold; color: black; font-size: 18px;"
+                                          t-field="o.create_uid.name"/>
+                                </p>
+                            </div>
+                            <!--  ... rest of the code (info-right div) remains unchanged ...  -->
+                            <div class="info-right"
+                                 style="position: absolute; right: 7px; top: 158; width: 48%; padding: 10px; margin-top: -25px;">
+                                <p style="margin-right: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                    <strong style="display: inline-block; width: 140px; font-weight: bold; color: black; font-size:14px;">
+                                        Date &amp; Time In :
+                                    </strong>
+                                    <span style="display: inline-block; width: 10px; color: black;">:</span>
+                                    <!-- <span style="display: inline-block; padding-left: 5px; color: black;"
+                                          t-field="o.cc_vehicle_in"/>
+                                    <span t-esc=" -->datetime.datetime.now().strftime('%H:%M:%S')"/>
+                                </p>
+                                <p>
+                                    <strong style="display: inline-block; width: 140px; white-space: nowrap; font-weight: bold; color: black; font-size:14px;">
+                                        Make &amp; Model
+                                    </strong>
+                                    <span style="display: inline-block; width: 10px; color: black;">:</span>
+                                    <span
+                                            style=" width: 200px;padding-left: 2px; color: black;">
+                                        <t t-if="o.brand"><span
+                                                t-field="o.brand"/>/
+                                        </t>
+                                        <span
+                                                t-field="o.model_id"/>
+                                    </span>
+                                </p>
+                                <p style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: -5px;">
+                                    <strong style="display: inline-block; width: 140px; font-weight: bold; color: black; font-size:14px;">
+                                        Reg No.
+                                    </strong>
+                                    <span style="display: inline-block; width: 10px; color: black;">:</span>
+                                    <span style="display: inline-block; padding-left: 5px; font-weight: bold; color: black; font-size: 18px;"
+                                          t-field="o.vehicle_id"/>
+                                </p>
+                                <p style="margin-top: -5px;">
+                                    <strong style="display: inline-block; width: 140px; white-space: nowrap; font-weight: bold; color: black; font-size:14px;">
+                                        VIN No.
+                                    </strong>
+                                    <span style="display: inline-block; width: 10px; color: black;">:</span>
+                                    <span style="display: inline-block; padding-left: 5px; font-weight: bold; color: black; font-size: 18px;"
+                                          t-field="o.vin"/>
+                                </p>
+                                <p style="    margin-top: -5px;">
+                                    <strong style="display: inline-block; width: 140px; white-space: nowrap; font-weight: bold; color: black; font-size:14px;">
+                                        Color / Trim
+                                    </strong>
+                                    <span style="display: inline-block; width: 10px; color: black;">:</span>
+                                    <span style="display: inline-block; padding-left: 5px; color: black;"
+                                          t-field="o.vehicle_color.name"/>
+                                </p>
+
+                                <p style="display: flex; align-items: flex-start; font-size: 12px; margin-bottom: 25px;">
+                                    <strong style="display: inline-block; width: 140px; white-space: nowrap; padding-top: 5px; font-weight: bold; color: black; font-size:14px;">
+                                        Fuel Gauge
+                                    </strong>
+                                    <span style="display: inline-block; width: 50px; padding-top: 5px; color: black;">
+                                        :
+                                    </span>
+                                    <span style="display: inline-block; position: relative; margin-left: -25px;">
+                                        <span style="font-weight: bold; color: black; display: inline-block; position: relative; width: 160px;">
+                                            <span style="position: absolute; left: -3; top: -25px;">E</span>
+                                            <span style="position: absolute; left: 33px; top: -25px;">1/4</span>
+                                            <span style="position: absolute; left: 72px; top: -25px;">1/2</span>
+                                            <span style="position: absolute; left: 113px; top: -25px;">3/4</span>
+                                            <span style="position: absolute; right: 0; top: -25px;">F</span>
+                                        </span>
+                                        <span style="display: block; width: 160px; height: 20px; border-bottom: 2px solid black;">
+                                            <span style="position: absolute; left: 0; bottom: 0; width: 2px; height: 30px; background-color: black;"/>
+                                            <span style="position: absolute; left: 40px; bottom: 0; width: 2px; height: 30px; background-color: black;"/>
+                                            <span style="position: absolute; left: 80px; bottom: 0; width: 2px; height: 30px; background-color: black;"/>
+                                            <span style="position: absolute; left: 120px; bottom: 0; width: 2px; height: 30px; background-color: black;"/>
+                                            <span style="position: absolute; right: 0; bottom: 0; width: 2px; height: 30px; background-color: black;"/>
+                                        </span>
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                        <br/>
+                        <table class="inspection-table"
+                               style="margin-top: 3px; font-family: 'Times New Roman', Times, serif; width: 100%;">
+                            <tr class="header-row">
+                                <td style="font-size: 16px; width: 3%; text-align: center; position: relative; border-right: none; padding: 5px; vertical-align: middle;">
+                                    <strong style="font-size: 15px; color: black;">Sr</strong>
+                                </td>
+                                <td style="font-size: 16px; width: 44%; position: relative; border-left: none; text-align: center; padding: 5px; vertical-align: middle;">
+                                    <div class="vertical-black-line"/>
+                                    <strong style="font-size: 15px; color: black;">Customer Concerns &amp; Requirements
+                                    </strong>
+                                </td>
+                                <td style="font-size: 16px; width: 53%; background-color: #ffffff; padding: 5px; vertical-align: middle;"
+                                    colspan="4">
+                                    <div class="legend">
+                                        <span class="legend-item" style="padding-top: 5px !important;">
+                                            <span class="legend-letter" style="font-size: 15px;">
+                                                D =
+                                                <br/>
+                                            </span>
+                                            <span class="legend-letter" style="font-size: 15px; font-weight: bold;">
+                                                Dent
+                                            </span>
+                                        </span>
+                                        <span class="legend-spacer"/>
+                                        <span class="legend-item" style="padding-top: 5px !important;">
+                                            <span class="legend-letter" style="font-size: 15px;">
+                                                S =
+                                                <br/>
+                                            </span>
+                                            <span class="legend-letter" style="font-size: 15px; font-weight: bold;">
+                                                Scratch
+                                            </span>
+                                        </span>
+                                        <span class="legend-spacer-two"/>
+                                        <span class="legend-item" style="padding-top: 5px !important;">
+                                            <span class="legend-letter" style="font-size: 15px;">
+                                                G =
+                                                <br/>
+                                            </span>
+                                            <span class="legend-letter" style="font-size: 15px; font-weight: bold;">
+                                                Glass
+                                            </span>
+                                        </span>
+                                        <span class="legend-spacer"/>
+                                        <span class="legend-item" style="padding-top: 5px !important;">
+                                            <span class="legend-letter" style="font-size: 15px;">
+                                                C =
+                                                <br/>
+                                            </span>
+                                            <span class="legend-letter" style="font-size: 15px; font-weight: bold;">
+                                                Crack
+                                            </span>
+                                        </span>
+                                        <span class="legend-spacer-three"/>
+                                    </div>
+                                </td>
+                            </tr>
+                            <t t-set="sl_no" t-value="0"/>
+                            <tr>
+                                <td style="border-right: none; vertical-align: top; padding: 5px;" colspan="2">
+                                    <table width="100%">
+                                        <t t-foreach="o.requested_services_ids" t-as="line">
+                                            <t t-set="sl_no" t-value="sl_no + 1"/>
+                                            <tr>
+                                                <td style="width: 7%; border:1px solid white !important;">
+                                                    <span style="font-size: 15px;">
+                                                        <t t-esc="sl_no"/>
+                                                        <span>.</span>
+                                                    </span>&#160;&#160;&#160;
+                                                    <!--  Sr number content  -->
+                                                </td>
+                                                <td colspan="1"
+                                                    style="background-color:white !important;border:1px solid white !important; position: relative;">
+                                                    <!--  Customer Concerns & Requirements content  -->
+                                                    <span style="font-size: 15px;">
+                                                        <t t-esc="line.product_id.name"/>
+                                                        <span>-</span>
+                                                    </span>&#160;&#160;&#160;
+                                                    <span style="font-size: 15px;">
+                                                        <t t-esc="line.remark"/>
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </table>
+
+                                </td>
+                                <td style="padding: 0px; vertical-align: top;">
+                                    <table style="width: 100%; border-collapse: collapse;">
+                                        <tr>
+                                            <td style="padding: 0px; text-align: center; background-color: #ffffff; width: 5%; ">
+                                                <img src="/vehicle_inspection_report/static/src/img/vertical_dia.png"
+                                                     class="vertical-img" style="width: 100%; height: auto;"/>
+                                            </td>
+                                            <td style="width: 95%; background-color: #ffffff;">
+                                                <div style="border-bottom: 1px solid black; padding: 0px;">
+                                                    <strong style="font-size: 15px;">KM Reading :</strong>
+                                                    <span t-field="o.odometer"
+                                                          style="font-size: 16px; font-weight: bold;"/>
+                                                </div>
+                                                <div style="text-align: right; padding: 5px 0;">
+                                                    <img src="/vehicle_inspection_report/static/src/img/car_diagram.png"
+                                                         alt="Car diagram" class="car-diagram"
+                                                         style="width: 100%; height: auto;"/>
+                                                </div>
+                                                <div class="payment-mode-container" style="margin-top: 10px;">
+                                                    <div class="payment-mode"
+                                                         style="display: flex; align-items: center; font-family: Arial, sans-serif;">
+                                                        <strong style="font-size: 12px; margin-right: 10px;">
+                                                            Mode of
+                                                            Payment :
+                                                        </strong>
+                                                        <span style="border: 1px solid black; padding: 0px 8px; margin-right: 5px; font-size: 12px;">
+                                                            Bank
+                                                        </span>
+                                                        <span style="border: 1px solid black; padding: 0px 8px; margin-right: 5px; font-size: 12px;">
+                                                            Cash
+                                                        </span>
+                                                        <span style="border: 1px solid black; padding: 0px 8px; margin-right: 5px; font-size: 12px;">
+                                                            Chq.
+                                                        </span>
+                                                        <span style="border: 1px solid black; padding: 0px 8px; margin-right: 5px; font-size: 12px;">
+                                                            Card
+                                                        </span>
+                                                        <span style="border: 1px solid black; padding: 0px 8px; font-size: 12px;">
+                                                            LPO
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                        <!--  Terms & Conditions  -->
+                        <div style="margin-top: 0px; font-family: 'Times New Roman', Times, serif;">
+                            <strong style="font-size: 15px; font-weight: bold; color: black;">Customer Declaration:
+                            </strong>
+                        </div>
+                        <p style="font-family: 'Times New Roman', Times, serif; font-size: 10px; margin-top: -2px; margin-bottom: -2px;">
+                            I
+                            authorize the above work to be carried out and the necessary parts supplied. I understand
+                            all estimates furnished by you are only tentative &amp; I agree to pay for the work, parts,
+                            and
+                            materials necessary to be carried out at your customary rates and charges and pay for the
+                            same, cash on delivery. If given estimates are not approved by me, I agree to pay for work
+                            carried out and the parts installed for estimation. Vehicles are driven at the owner's risk.
+                            You will not be responsible for any loss or damage to any property or personal effects left
+                            by me in the event of fire, theft, accident, or other causes beyond our control. I will
+                            decide on the estimates provided by you within a maximum of 24 hours. I will collect the
+                            vehicle within 24 hours of it getting ready. I agree to pay custody charges of AED 100/- per
+                            day thereafter. I understand that Prime Max shall exercise its right to take any and all
+                            legal actions provided under UAE law, which may include confiscation of my vehicle for sale
+                            and collection of proceeds to cover any and all associated costs if I do not collect the
+                            vehicle within 1 month from receiving the estimate.
+                        </p>
+                        <!--                        <p style="font-family: 'Times New Roman', Times, serif; font-size: 10px; margin-top: 2px; margin-bottom: -2px;">-->
+                        <!--                            أُفوض-->
+                        <!--                            تنفيذ العمل المطلوب وتوريد الأجزاء اللازمة. أفهم أن جميع التقديرات المقدمة من قبلكم هي-->
+                        <!--                            تقديرات أولية فقط، وأوافق على دفع ثمن العمل والأجزاء والمواد اللازمة التي سيتم تنفيذها-->
+                        <!--                            بأسعار ورسومكم المعتادة، وأدفعها نقدًا عند التسليم. إذا لم أوافق على التقديرات المقدمة،-->
+                        <!--                            أوافق على دفع تكاليف العمل المنجز والأجزاء المثبتة لأغراض التقدير. يتم قيادة المركبة على-->
+                        <!--                            مسؤولية المالك. لن تكونون مسؤولين عن أي خسارة أو ضرر للممتلكات أو الأغراض الشخصية التي-->
+                        <!--                            أتركها في حالة حدوث حريق أو سرقة أو حادث أو غيرها من الحالات الخارجة عن سيطرتكم. سأقرر بشأن-->
+                        <!--                            التقديرات المقدمة من قبلكم في غضون 24 ساعة كحد أقصى. سأقوم بجمع المركبة في غضون 24 ساعة من-->
+                        <!--                            استعدادها. أوافق على دفع رسوم الحفظ بمقدار 100 درهم إماراتي عن كل يوم تأخير بعد ذلك. أفهم أن-->
+                        <!--                            شركة برايم ماكس ستحتفظ بحقها في اتخاذ أي وجميع الإجراءات القانونية المتاحة بموجب القانون-->
+                        <!--                            الإماراتي، والتي قد تشمل مصادرة مركبتي وبيعها لتحصيل العائدات لتغطية أي وجميع التكاليف-->
+                        <!--                            المرتبطة، إذا لم أجمع المركبة في غضون شهر واحد من استلام التقدير.-->
+                        <!--                        </p>-->
+                        <!--  Signature Area  -->
+                       <!--  <xpath expr="//div[@t-attf-class='footer']" position="inside">
+                             <div class="last-page" style="position:relative;margin-top:0;">
+                                <div class="signature-box clearfix"
+                                     style="padding-top: 10px; font-size: 16px; font-family: 'Times New Roman', Times, serif;">
+                                    <div style="width: 45%; display: inline-block;">
+                                        <p style="font-weight: bold; color: black; font-size:14px;">Name:
+                                            ............................................
+                                        </p>
+                                        <p style="font-weight: bold; color: black; font-size:14px; margin-top: -10px; ">
+                                            User Name:
+                                            <span t-field="o.create_uid.name"/>
+                                        </p>
+                                    </div>
+                                    <div style="width: 45%; display: inline-block; text-align: right;">
+                                        <p style="font-weight: bold; color: black; font-size:14px;">Signature:
+                                            ............................................
+                                        </p>
+                                        <p style="font-weight: bold; color: black; font-size:14px; margin-top: -10px; ">
+                                            Date:
+                                            <span t-field="o.cc_vehicle_in"/>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </xpath> -->
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

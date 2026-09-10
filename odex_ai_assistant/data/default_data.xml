@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ======================= -->
+        <!-- DEFAULT PROMPT TEMPLATES -->
+        <!-- ======================= -->
+
+        <!-- General Templates -->
+        <record id="template_summarize_record" model="odex.ai.prompt.template">
+            <field name="name">Summarize This Record</field>
+            <field name="sequence">1</field>
+            <field name="category">general</field>
+            <field name="icon">fa-file-text</field>
+            <field name="description">Generate a comprehensive summary</field>
+            <field name="prompt_text">Please provide a comprehensive, professional summary of the current record. Include key information, current status, important dates, financial details if applicable, and any notable discussion points from the chatter history. Format the response clearly with sections.</field>
+            <field name="is_system" eval="True"/>
+        </record>
+
+        <record id="template_analyze_and_suggest" model="odex.ai.prompt.template">
+            <field name="name">Analyze &amp; Suggest Next Steps</field>
+            <field name="sequence">2</field>
+            <field name="category">general</field>
+            <field name="icon">fa-lightbulb-o</field>
+            <field name="description">Analyze and recommend actions</field>
+            <field name="prompt_text">Analyze the current record data and recent activity. Identify any issues, risks, or opportunities. Then provide 3-5 specific, actionable next steps to move this forward effectively. Be concise and practical.</field>
+            <field name="is_system" eval="True"/>
+        </record>
+
+        <record id="template_generate_email" model="odex.ai.prompt.template">
+            <field name="name">Draft Professional Email</field>
+            <field name="sequence">3</field>
+            <field name="category">general</field>
+            <field name="icon">fa-envelope</field>
+            <field name="description">Generate a professional email</field>
+            <field name="prompt_text">Based on the current record context and recent discussions, draft a professional email that addresses the key points. The email should be clear, polite, and action-oriented. Include a subject line suggestion.</field>
+            <field name="is_system" eval="True"/>
+        </record>
+
+        <!-- CRM Templates -->
+        <record id="template_crm_analysis" model="odex.ai.prompt.template">
+            <field name="name">Analyze CRM Opportunity</field>
+            <field name="sequence">10</field>
+            <field name="category">crm</field>
+            <field name="applicable_model">crm.lead</field>
+            <field name="icon">fa-trophy</field>
+            <field name="description">Analyze opportunity and win probability</field>
+            <field name="prompt_text">Analyze this CRM opportunity/lead. Assess the win probability based on available data. Identify key factors for success or risk. Suggest the best approach to move this deal forward. What are the competitor risks and how to address them?</field>
+            <field name="is_system" eval="True"/>
+        </record>
+
+        <record id="template_crm_followup" model="odex.ai.prompt.template">
+            <field name="name">Generate Follow-up Plan</field>
+            <field name="sequence">11</field>
+            <field name="category">crm</field>
+            <field name="applicable_model">crm.lead</field>
+            <field name="icon">fa-calendar</field>
+            <field name="description">Create a follow-up schedule</field>
+            <field name="prompt_text">Based on this opportunity, create a detailed follow-up plan for the next 30 days. Include specific touchpoints, communication methods, key messages, and decision milestones. Format as a timeline.</field>
+            <field name="is_system" eval="True"/>
+        </record>
+
+        <!-- Vehicle Management Templates -->
+        <record id="template_vehicle_analysis" model="odex.ai.prompt.template">
+            <field name="name">Vehicle Health Analysis</field>
+            <field name="sequence">20</field>
+            <field name="category">vehicle</field>
+            <field name="icon">fa-car</field>
+            <field name="description">Complete vehicle health assessment</field>
+            <field name="prompt_text">Analyze the complete history of this vehicle. Review maintenance records, repair history, fuel consumption, mileage, and service frequency. Provide a vehicle health score (1-10), identify patterns in repairs, and predict upcoming maintenance requirements. Flag any abnormal repair frequency or unusual patterns.</field>
+            <field name="is_system" eval="True"/>
+        </record>
+
+        <record id="template_vehicle_maintenance" model="odex.ai.prompt.template">
+            <field name="name">Predict Maintenance Requirements</field>
+            <field name="sequence">21</field>
+            <field name="category">vehicle</field>
+            <field name="icon">fa-wrench</field>
+            <field name="description">AI-powered maintenance predictions</field>
+            <field name="prompt_text">Based on the vehicle's service history, current mileage, and age, predict the upcoming maintenance requirements for the next 3-6 months. Include oil changes, brake checks, tire rotations, filter replacements, and any component-specific maintenance. Estimate costs and prioritize by urgency.</field>
+            <field name="is_system" eval="True"/>
+        </record>
+
+        <record id="template_vehicle_cost_analysis" model="odex.ai.prompt.template">
+            <field name="name">Vehicle Cost Analysis</field>
+            <field name="sequence">22</field>
+            <field name="category">vehicle</field>
+            <field name="icon">fa-money</field>
+            <field name="description">Analyze vehicle ownership costs</field>
+            <field name="prompt_text">Analyze the total cost of ownership for this vehicle. Break down expenses by category (fuel, maintenance, repairs, insurance, depreciation). Compare monthly/annual costs, identify the most expensive repair categories, and provide recommendations to reduce operating costs.</field>
+            <field name="is_system" eval="True"/>
+        </record>
+
+        <!-- Job Card Templates -->
+        <record id="template_jobcard_description" model="odex.ai.prompt.template">
+            <field name="name">Auto-Generate Job Description</field>
+            <field name="sequence">30</field>
+            <field name="category">job_card</field>
+            <field name="icon">fa-clipboard</field>
+            <field name="description">Generate detailed job card description</field>
+            <field name="prompt_text">Based on the customer complaint and vehicle history, generate a comprehensive job card description. Include: detailed diagnosis of the issue, recommended repair procedure, parts required, estimated labor time, safety precautions, and quality checkpoints. Use technical but customer-friendly language.</field>
+            <field name="is_system" eval="True"/>
+        </record>
+
+        <record id="template_jobcard_parts" model="odex.ai.prompt.template">
+            <field name="name">Suggest Required Spare Parts</field>
+            <field name="sequence">31</field>
+            <field name="category">job_card</field>
+            <field name="icon">fa-cogs</field>
+            <field name="description">AI spare parts recommendation</field>
+            <field name="prompt_text">Based on the repair work described in this job card and the vehicle's make/model/year, suggest all required spare parts. Include part names, quantities, estimated prices, and alternative options. Also suggest any consumables (oils, fluids, gaskets) that should be replaced as preventive maintenance during this service.</field>
+            <field name="is_system" eval="True"/>
+        </record>
+
+        <record id="template_jobcard_delivery_note" model="odex.ai.prompt.template">
+            <field name="name">Generate Delivery Note</field>
+            <field name="sequence">32</field>
+            <field name="category">job_card</field>
+            <field name="icon">fa-check-circle</field>
+            <field name="description">Customer-friendly delivery summary</field>
+            <field name="prompt_text">Generate a professional, customer-friendly delivery note summarizing all work completed on this vehicle. Include: work performed, parts replaced, any warranty information, next service recommendations, and important notes for the customer. Keep the language simple and avoid technical jargon.</field>
+            <field name="is_system" eval="True"/>
+        </record>
+
+        <!-- Inspection Templates -->
+        <record id="template_inspection_report" model="odex.ai.prompt.template">
+            <field name="name">Generate Inspection Report</field>
+            <field name="sequence">40</field>
+            <field name="category">inspection</field>
+            <field name="icon">fa-search</field>
+            <field name="description">Comprehensive inspection analysis</field>
+            <field name="prompt_text">Analyze the inspection checklist results and generate a comprehensive inspection report. Identify critical issues that require immediate attention, items that need monitoring, and items in good condition. Provide a roadworthiness assessment, estimated repair costs for critical items, and prioritized recommendations.</field>
+            <field name="is_system" eval="True"/>
+        </record>
+
+        <!-- Accounting Templates -->
+        <record id="template_invoice_analysis" model="odex.ai.prompt.template">
+            <field name="name">Analyze Invoice</field>
+            <field name="sequence">50</field>
+            <field name="category">accounting</field>
+            <field name="applicable_model">account.move</field>
+            <field name="icon">fa-file-text-o</field>
+            <field name="description">Invoice analysis and insights</field>
+            <field name="prompt_text">Analyze this invoice and provide insights on: invoice accuracy, payment terms assessment, comparison with typical pricing, any unusual items, and payment follow-up strategy if unpaid. For vendor bills, assess if the pricing is competitive and identify any discrepancies.</field>
+            <field name="is_system" eval="True"/>
+        </record>
+
+        <!-- Workshop Templates -->
+        <record id="template_workshop_summary" model="odex.ai.prompt.template">
+            <field name="name">Daily Workshop Summary</field>
+            <field name="sequence">60</field>
+            <field name="category">workshop</field>
+            <field name="icon">fa-industry</field>
+            <field name="description">Generate workshop daily summary</field>
+            <field name="prompt_text">Generate a comprehensive daily workshop summary. Include: number of vehicles serviced, jobs completed vs pending, technician productivity, revenue generated, customer satisfaction highlights, and any operational issues. Provide recommendations for improving workshop efficiency.</field>
+            <field name="is_system" eval="True"/>
+        </record>
+
+        <!-- ====================== -->
+        <!-- DEFAULT SMART ACTIONS  -->
+        <!-- ====================== -->
+
+        <record id="smart_action_summarize" model="odex.ai.smart.action">
+            <field name="name">AI Summarize</field>
+            <field name="sequence">1</field>
+            <field name="description">Generate AI summary of this record</field>
+            <field name="icon">fa-magic</field>
+            <field name="color">#875A7B</field>
+            <field name="action_type">post_chatter</field>
+            <field name="view_type">form</field>
+            <field name="action_prompt">Provide a comprehensive summary of this {model_name} record. Include all key information, current status, and important notes.\n\n{record_data}</field>
+            <field name="is_system" eval="True"/>
+        </record>
+
+        <record id="smart_action_next_steps" model="odex.ai.smart.action">
+            <field name="name">Suggest Next Steps</field>
+            <field name="sequence">2</field>
+            <field name="description">Get AI recommendations for next actions</field>
+            <field name="icon">fa-lightbulb-o</field>
+            <field name="color">#17a2b8</field>
+            <field name="action_type">show_popup</field>
+            <field name="view_type">form</field>
+            <field name="action_prompt">Analyze this {model_name} and suggest 3-5 specific next steps to move it forward effectively.\n\n{record_data}</field>
+            <field name="is_system" eval="True"/>
+        </record>
+
+        <record id="smart_action_draft_email" model="odex.ai.smart.action">
+            <field name="name">Draft Email</field>
+            <field name="sequence">3</field>
+            <field name="description">Generate a professional email draft</field>
+            <field name="icon">fa-envelope</field>
+            <field name="color">#28a745</field>
+            <field name="action_type">show_popup</field>
+            <field name="view_type">form</field>
+            <field name="action_prompt">Draft a professional email based on this {model_name} context. Include a suggested subject line.\n\n{record_data}</field>
+            <field name="is_system" eval="True"/>
+        </record>
+
+        <record id="smart_action_vehicle_health" model="odex.ai.smart.action">
+            <field name="name">Vehicle Health Score</field>
+            <field name="sequence">10</field>
+            <field name="description">AI vehicle health assessment</field>
+            <field name="icon">fa-heartbeat</field>
+            <field name="color">#dc3545</field>
+            <field name="action_type">show_popup</field>
+            <field name="view_type">form</field>
+            <field name="action_prompt">Analyze this vehicle's complete history and provide a health score (1-10) with detailed reasoning, maintenance predictions, and recommendations.\n\n{record_data}</field>
+            <field name="is_system" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

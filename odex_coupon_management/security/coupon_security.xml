@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Security Groups -->
+    <record id="module_category_coupon" model="ir.module.category">
+        <field name="name">Coupon Management</field>
+        <field name="description">Coupon and Service Package Management for Automotive Workshop</field>
+        <field name="sequence">100</field>
+    </record>
+
+    <record id="group_coupon_user" model="res.groups">
+        <field name="name">Coupon User</field>
+        <field name="category_id" ref="module_category_coupon"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <record id="group_coupon_manager" model="res.groups">
+        <field name="name">Coupon Manager</field>
+        <field name="category_id" ref="module_category_coupon"/>
+        <field name="implied_ids" eval="[(4, ref('group_coupon_user'))]"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+
+    <!-- Record Rules -->
+    <record id="rule_coupon_master_user" model="ir.rule">
+        <field name="name">Coupon Master: User</field>
+        <field name="model_id" ref="model_coupon_master"/>
+        <field name="groups" eval="[(4, ref('group_coupon_user'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_customer_coupon_user" model="ir.rule">
+        <field name="name">Customer Coupon: User</field>
+        <field name="model_id" ref="model_customer_coupon"/>
+        <field name="groups" eval="[(4, ref('group_coupon_user'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+</odoo>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form_mulkiya" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.mulkiya</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Mulkiya Scan" string="Mulkiya Scan" name="odex_mulkiya_scan"
+                     groups="odex_mulkiya_scan.group_mulkiya_admin">
+                    <block title="Mulkiya OCR Configuration" name="mulkiya_ocr_block">
+                        <setting id="mulkiya_enable" string="Enable OCR"
+                                 help="Turn the Mulkiya OCR processing on or off.">
+                            <field name="mulkiya_ocr_enabled"/>
+                        </setting>
+                        <setting id="mulkiya_provider" string="OCR Provider"
+                                 help="The engine used to read the Mulkiya. Credentials stay on the server."
+                                 invisible="not mulkiya_ocr_enabled">
+                            <div class="content-group mt-2">
+                                <field name="mulkiya_ocr_provider" class="o_light_label w-75"/>
+                                <div class="mt-2">
+                                    <label for="mulkiya_api_url" class="o_light_label"/>
+                                    <field name="mulkiya_api_url" placeholder="Provider default"/>
+                                </div>
+                                <div class="mt-2">
+                                    <label for="mulkiya_api_model" class="o_light_label"/>
+                                    <field name="mulkiya_api_model" placeholder="Provider default"/>
+                                </div>
+                                <div class="mt-2">
+                                    <label for="mulkiya_api_key" class="o_light_label"/>
+                                    <field name="mulkiya_api_key" password="True"/>
+                                </div>
+                                <div class="mt-2">
+                                    <label for="mulkiya_api_secret" class="o_light_label"/>
+                                    <field name="mulkiya_api_secret" password="True"/>
+                                </div>
+                                <div class="mt-3">
+                                    <button name="action_mulkiya_test_connection" type="object"
+                                            string="Check Configuration" class="btn btn-secondary"/>
+                                </div>
+                            </div>
+                        </setting>
+                        <setting id="mulkiya_threshold" string="Confidence Threshold"
+                                 help="Fields extracted below this confidence are highlighted for verification."
+                                 invisible="not mulkiya_ocr_enabled">
+                            <div class="content-group mt-2">
+                                <field name="mulkiya_confidence_threshold" class="o_light_label"/> %
+                            </div>
+                        </setting>
+                    </block>
+                    <block title="Processing Limits" name="mulkiya_limits_block">
+                        <setting id="mulkiya_timeout" string="Timeout"
+                                 help="Maximum time to wait for the OCR provider.">
+                            <field name="mulkiya_timeout"/> seconds
+                        </setting>
+                        <setting id="mulkiya_dimension" string="Image Optimisation"
+                                 help="Large images are downscaled before being sent to the provider.">
+                            <div class="content-group mt-2">
+                                <label for="mulkiya_max_dimension" class="o_light_label"/>
+                                <field name="mulkiya_max_dimension"/> px
+                                <div class="mt-2">
+                                    <label for="mulkiya_max_file_mb" class="o_light_label"/>
+                                    <field name="mulkiya_max_file_mb"/> MB
+                                </div>
+                            </div>
+                        </setting>
+                    </block>
+                    <block title="Integration" name="mulkiya_integration_block">
+                        <setting id="mulkiya_api" string="Scan Endpoint"
+                                 help="Expose /api/mulkiya/scan to authenticated integration users.">
+                            <field name="mulkiya_api_enabled"/>
+                        </setting>
+                        <setting id="mulkiya_rules" string="Master Data Matching"
+                                 help="Link extracted values to your Odoo master data.">
+                            <div class="mt-2">
+                                <button name="%(odex_mulkiya_scan.action_mulkiya_match_rule)d"
+                                        type="action" string="Matching Rules"
+                                        class="btn-link" icon="fa-arrow-right"/>
+                            </div>
+                            <div>
+                                <button name="%(odex_mulkiya_scan.action_mulkiya_alias)d"
+                                        type="action" string="Value Aliases"
+                                        class="btn-link" icon="fa-arrow-right"/>
+                            </div>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_mulkiya_settings" model="ir.actions.act_window">
+        <field name="name">Settings</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+        <field name="context">{'module': 'odex_mulkiya_scan'}</field>
+    </record>
+
+</odoo>

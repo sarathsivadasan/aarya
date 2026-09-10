@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ai_mail_gt.AiPromptTemplateCards">
+        <div t-if="templates.length" class="o-mail-AiPromptTemplateCards d-flex flex-column align-items-center w-100">
+            <p class="o-mail-AiPromptTemplateCards__hint text-muted fst-italic">
+                Type your message below, or pick a template to get started — then add your details before sending. Type % anytime to browse templates.
+            </p>
+            <div class="o-mail-AiPromptTemplateCards__list d-flex flex-wrap justify-content-center gap-2">
+                <button
+                    t-foreach="templates"
+                    t-as="template"
+                    t-key="template.id"
+                    class="btn btn-outline-secondary text-start o-mail-AiPromptTemplateCard"
+                    t-att-class="{ active: state.selectedId === template.id }"
+                    t-on-click="() => this.onClickTemplate(template)"
+                >
+                    <div class="o-mail-AiPromptTemplateCard__name fw-semibold text-truncate">
+                        <t t-esc="template.name"/>
+                    </div>
+                    <div class="o-mail-AiPromptTemplateCard__preview text-muted text-truncate">
+                        <t t-esc="template.preview"/>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </t>
+</templates>

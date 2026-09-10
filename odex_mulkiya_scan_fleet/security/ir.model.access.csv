@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_mulkiya_fleet_mapping_user,mulkiya.fleet.mapping.user,model_odex_mulkiya_fleet_mapping,odex_mulkiya_scan.group_mulkiya_user,1,0,0,0
+access_mulkiya_fleet_mapping_admin,mulkiya.fleet.mapping.admin,model_odex_mulkiya_fleet_mapping,odex_mulkiya_scan.group_mulkiya_admin,1,1,1,1

@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_employee_asset_assignment_list" model="ir.ui.view">
+        <field name="name">employee.asset.assignment.list</field>
+        <field name="model">employee.asset.assignment</field>
+        <field name="arch" type="xml">
+            <list string="Assigned Assets" multi_edit="1" sample="1">
+                <field name="employee_id" optional="show"/>
+                <field name="department_id" optional="hide"/>
+                <field name="asset_id" string="Asset Name"/>
+                <field name="serial_number"/>
+                <field name="assign_date"/>
+                <field name="return_date"/>
+                <field name="condition_note" string="Note for Health Condition" optional="show"/>
+                <field name="notes" optional="hide"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'assigned'"
+                       decoration-muted="state == 'returned'"/>
+                <button name="action_return_asset" type="object"
+                        string="Return" icon="fa-undo"
+                        title="Return Asset"
+                        invisible="state != 'assigned'"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_employee_asset_assignment_form" model="ir.ui.view">
+        <field name="name">employee.asset.assignment.form</field>
+        <field name="model">employee.asset.assignment</field>
+        <field name="arch" type="xml">
+            <form string="Asset Assignment">
+                <header>
+                    <button name="action_return_asset" type="object"
+                            string="Return Asset" class="btn-primary"
+                            invisible="state != 'assigned'"/>
+                    <button name="action_set_to_assigned" type="object"
+                            string="Set Back to Assigned"
+                            groups="hr.group_hr_manager"
+                            invisible="state != 'returned'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="assigned,returned"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="asset_id" placeholder="Select an asset..."
+                                   options="{'no_create': True}"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group name="assignment_details">
+                            <field name="employee_id"
+                                   options="{'no_create': True}"/>
+                            <field name="department_id"/>
+                            <field name="serial_number"
+                                   placeholder="Scan or type the barcode..."/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group name="assignment_dates">
+                            <field name="assign_date"/>
+                            <field name="return_date"/>
+                            <field name="asset_category_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Health Condition" name="condition">
+                            <field name="condition_note"
+                                   placeholder="Physical condition of the asset, e.g. Good condition, minor scratches on back cover..."/>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="notes"
+                                   placeholder="Additional notes..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_employee_asset_assignment_search" model="ir.ui.view">
+        <field name="name">employee.asset.assignment.search</field>
+        <field name="model">employee.asset.assignment</field>
+        <field name="arch" type="xml">
+            <search string="Employee Assets">
+                <field name="employee_id"/>
+                <field name="asset_id" string="Asset"/>
+                <field name="serial_number" string="Serial Number / Barcode"
+                       filter_domain="[('serial_number', 'ilike', self)]"/>
+                <field name="department_id"/>
+                <filter name="filter_assigned" string="Assigned"
+                        domain="[('state', '=', 'assigned')]"/>
+                <filter name="filter_returned" string="Returned"
+                        domain="[('state', '=', 'returned')]"/>
+                <separator/>
+                <filter name="filter_assign_date" string="Assign Date"
+                        date="assign_date"/>
+                <filter name="filter_return_date" string="Return Date"
+                        date="return_date"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_by_employee" string="Employee"
+                            context="{'group_by': 'employee_id'}"/>
+                    <filter name="group_by_department" string="Department"
+                            context="{'group_by': 'department_id'}"/>
+                    <filter name="group_by_asset" string="Asset"
+                            context="{'group_by': 'asset_id'}"/>
+                    <filter name="group_by_state" string="Status"
+                            context="{'group_by': 'state'}"/>
+                    <filter name="group_by_assign_date" string="Assign Date"
+                            context="{'group_by': 'assign_date'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_employee_asset_assignment" model="ir.actions.act_window">
+        <field name="name">Employee Assets</field>
+        <field name="res_model">employee.asset.assignment</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_employee_asset_assignment_search"/>
+        <field name="context">{'search_default_filter_assigned': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Assign your first asset to an employee
+            </p>
+            <p>
+                Track laptops, phones, vehicles and any other company asset
+                handed over to your employees, together with their serial
+                number, condition and return date.
+            </p>
+        </field>
+    </record>
+
+</odoo>

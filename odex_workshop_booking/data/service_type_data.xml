@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="service_general" model="odex.booking.service.type">
+        <field name="name">General Service</field><field name="sequence">1</field>
+        <field name="icon">fa-wrench</field>
+    </record>
+    <record id="service_major" model="odex.booking.service.type">
+        <field name="name">Major Service</field><field name="sequence">2</field>
+        <field name="icon">fa-cogs</field>
+    </record>
+    <record id="service_oil" model="odex.booking.service.type">
+        <field name="name">Oil Change</field><field name="sequence">3</field>
+        <field name="icon">fa-tint</field>
+    </record>
+    <record id="service_brake" model="odex.booking.service.type">
+        <field name="name">Brake Service</field><field name="sequence">4</field>
+        <field name="icon">fa-dot-circle-o</field>
+    </record>
+    <record id="service_ac" model="odex.booking.service.type">
+        <field name="name">AC Repair</field><field name="sequence">5</field>
+        <field name="icon">fa-snowflake-o</field>
+    </record>
+    <record id="service_electrical" model="odex.booking.service.type">
+        <field name="name">Electrical</field><field name="sequence">6</field>
+        <field name="icon">fa-bolt</field>
+    </record>
+    <record id="service_mechanical" model="odex.booking.service.type">
+        <field name="name">Mechanical</field><field name="sequence">7</field>
+        <field name="icon">fa-gears</field>
+    </record>
+    <record id="service_suspension" model="odex.booking.service.type">
+        <field name="name">Suspension</field><field name="sequence">8</field>
+        <field name="icon">fa-car</field>
+    </record>
+    <record id="service_battery" model="odex.booking.service.type">
+        <field name="name">Battery</field><field name="sequence">9</field>
+        <field name="icon">fa-battery-three-quarters</field>
+    </record>
+    <record id="service_tyres" model="odex.booking.service.type">
+        <field name="name">Tyres</field><field name="sequence">10</field>
+        <field name="icon">fa-circle-o</field>
+    </record>
+    <record id="service_body" model="odex.booking.service.type">
+        <field name="name">Body Repair</field><field name="sequence">11</field>
+        <field name="icon">fa-car</field>
+    </record>
+    <record id="service_paint" model="odex.booking.service.type">
+        <field name="name">Painting</field><field name="sequence">12</field>
+        <field name="icon">fa-paint-brush</field>
+    </record>
+    <record id="service_inspection" model="odex.booking.service.type">
+        <field name="name">Inspection</field><field name="sequence">13</field>
+        <field name="icon">fa-search</field>
+    </record>
+    <record id="service_other" model="odex.booking.service.type">
+        <field name="name">Other</field><field name="sequence">99</field>
+        <field name="icon">fa-ellipsis-h</field>
+    </record>
+</odoo>

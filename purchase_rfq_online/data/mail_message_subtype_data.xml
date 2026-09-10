@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo noupdate="1">
+    <record id="mt_rfq_signed" model="mail.message.subtype">
+        <field name="name">RFQ Signed</field>
+        <field name="res_model">purchase.order</field>
+        <field name="default" eval="False" />
+    </record>
+    <record id="mt_rfq_declined" model="mail.message.subtype">
+        <field name="name">RFQ Declined</field>
+        <field name="res_model">purchase.order</field>
+        <field name="default" eval="False" />
+    </record>
+</odoo>

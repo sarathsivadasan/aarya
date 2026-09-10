@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Default mapping between the OCR result and fleet.vehicle.
+             Mappings whose target field does not exist on this database are
+             skipped at runtime, so a standard Fleet and a customised Fleet
+             both work without a code change. -->
+
+        <record id="mapping_engine_no" model="odex.mulkiya.fleet.mapping">
+            <field name="field_key">engine_no</field>
+            <field name="field_name">engin_no</field>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="mapping_vin" model="odex.mulkiya.fleet.mapping">
+            <field name="field_key">vin_sn</field>
+            <field name="field_name">vin_sn</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <record id="mapping_license_plate" model="odex.mulkiya.fleet.mapping">
+            <field name="field_key">license_plate</field>
+            <field name="field_name">license_plate</field>
+            <field name="sequence">30</field>
+        </record>
+
+        <record id="mapping_plate_code" model="odex.mulkiya.fleet.mapping">
+            <field name="field_key">plate_code</field>
+            <field name="field_name">fleet_code_id</field>
+            <field name="use_matched_record" eval="True"/>
+            <field name="sequence">40</field>
+        </record>
+
+        <record id="mapping_emirate" model="odex.mulkiya.fleet.mapping">
+            <field name="field_key">registration_emirate</field>
+            <field name="field_name">fleet_emirate_id</field>
+            <field name="use_matched_record" eval="True"/>
+            <field name="sequence">50</field>
+        </record>
+
+        <record id="mapping_make" model="odex.mulkiya.fleet.mapping">
+            <field name="field_key">make</field>
+            <field name="field_name">vehicle_make_id</field>
+            <field name="use_matched_record" eval="True"/>
+            <field name="sequence">60</field>
+        </record>
+
+        <record id="mapping_model" model="odex.mulkiya.fleet.mapping">
+            <field name="field_key">model</field>
+            <field name="field_name">model_id</field>
+            <field name="use_matched_record" eval="True"/>
+            <field name="sequence">70</field>
+        </record>
+
+        <record id="mapping_model_year" model="odex.mulkiya.fleet.mapping">
+            <field name="field_key">model_year</field>
+            <field name="field_name">model_year</field>
+            <field name="sequence">80</field>
+        </record>
+
+        <record id="mapping_color" model="odex.mulkiya.fleet.mapping">
+            <field name="field_key">color</field>
+            <field name="field_name">color_id</field>
+            <field name="use_matched_record" eval="True"/>
+            <field name="sequence">90</field>
+        </record>
+
+        <record id="mapping_fuel_type" model="odex.mulkiya.fleet.mapping">
+            <field name="field_key">fuel_type</field>
+            <field name="field_name">fuel_type</field>
+            <field name="sequence">100</field>
+        </record>
+
+        <record id="mapping_cylinders" model="odex.mulkiya.fleet.mapping">
+            <field name="field_key">cylinder_count</field>
+            <field name="field_name">cylinder_count</field>
+            <field name="sequence">110</field>
+        </record>
+
+    </data>
+</odoo>

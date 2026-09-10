@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <record id="view_order_form_inherit" model="ir.ui.view">
+        <field name="name">sale.order.form.inherit</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <field name="tag_ids" position="after">
+                <field name="inspection_id" readonly="1"/>
+                <!-- <field name="fleet_service_id"/> -->
+            </field>
+            <xpath expr="//field[@name='order_line']/list" position="inside">
+                <field name="vendor_id" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

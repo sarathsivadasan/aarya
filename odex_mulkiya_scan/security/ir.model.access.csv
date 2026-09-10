@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_mulkiya_scan_user,mulkiya.scan.user,model_odex_mulkiya_scan,group_mulkiya_user,1,1,1,1
+access_mulkiya_scan_manager,mulkiya.scan.manager,model_odex_mulkiya_scan,group_mulkiya_manager,1,1,1,1
+access_mulkiya_match_rule_user,mulkiya.match.rule.user,model_odex_mulkiya_match_rule,group_mulkiya_user,1,0,0,0
+access_mulkiya_match_rule_admin,mulkiya.match.rule.admin,model_odex_mulkiya_match_rule,group_mulkiya_admin,1,1,1,1
+access_mulkiya_alias_user,mulkiya.alias.user,model_odex_mulkiya_alias,group_mulkiya_user,1,0,0,0
+access_mulkiya_alias_manager,mulkiya.alias.manager,model_odex_mulkiya_alias,group_mulkiya_manager,1,1,1,1

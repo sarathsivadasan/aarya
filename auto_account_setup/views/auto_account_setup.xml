@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_auto_account_setup_tree" model="ir.ui.view">
+            <field name="name">account.setup.purchase.list</field>
+            <field name="model">account.setup</field>
+            <field name="arch" type="xml">
+                <list string="Assets" decoration-info="(id == 'draft')" decoration-muted="(id == 'close')">
+                    <field name="name"/>
+                    <field name="debit_account"/>
+                    <field name="credit_account"/>
+                    <field name="journal_id"/>
+                </list>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_auto_account_setup_form">
+            <field name="name">account.setup.form</field>
+            <field name="model">account.setup</field>
+            <field name="arch" type="xml">
+                <form string="Type Name">
+                    <sheet>
+                        <div class="oe_title" name="">
+                            <label for="name" string="Type Name"/>
+                            <h1>
+                                <field name="name" placeholder="Type Name" class="mb-2"/>
+                            </h1>
+                        </div>
+                        <hr/>
+
+                        <group>
+                            <group>
+                                <div colspan="2" class="">
+                                    <label for="debit_account"/>
+                                    <field name="debit_account" widget="many2one"/>
+                                </div>
+                                <div colspan="2" class="">
+                                    <label for="credit_account"/>
+                                    <field name="credit_account" widget="many2one"/>
+                                </div>
+                                <div colspan="2" class="">
+                                    <label for="journal_id"/>
+                                    <field name="journal_id" widget="many2one"/>
+                                </div>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_auto_account_setup">
+            <field name="name">Auto Account Setup</field>
+            <field name="res_model">account.setup</field>
+            <field name="view_mode">list,form</field>
+            <field name="view_id" ref="view_auto_account_setup_tree"/>
+            <field name="domain"></field>
+
+        </record>
+
+        <menuitem id="menu_auto_account_setup"
+                  parent="account.account_account_menu"
+                  action="action_auto_account_setup"
+                  sequence="1"/>
+
+
+
+
+
+    </data>
+</odoo>

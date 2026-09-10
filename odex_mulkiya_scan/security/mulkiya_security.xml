@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="module_category_mulkiya" model="ir.module.category">
+        <field name="name">Odex Mulkiya Scan</field>
+        <field name="description">Access rights for the Mulkiya OCR application.</field>
+        <field name="sequence">30</field>
+    </record>
+
+    <record id="group_mulkiya_user" model="res.groups">
+        <field name="name">Mulkiya Scan User</field>
+        <field name="category_id" ref="module_category_mulkiya"/>
+        <field name="comment">Create scans, upload documents, run OCR and verify their own scans.</field>
+    </record>
+
+    <record id="group_mulkiya_manager" model="res.groups">
+        <field name="name">Mulkiya Scan Manager</field>
+        <field name="category_id" ref="module_category_mulkiya"/>
+        <field name="implied_ids" eval="[(4, ref('group_mulkiya_user'))]"/>
+        <field name="comment">View and manage every scan, retry failed scans and access statistics.</field>
+    </record>
+
+    <record id="group_mulkiya_admin" model="res.groups">
+        <field name="name">Mulkiya Scan Administrator</field>
+        <field name="category_id" ref="module_category_mulkiya"/>
+        <field name="implied_ids" eval="[(4, ref('group_mulkiya_manager'))]"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+        <field name="comment">Configure the OCR providers, credentials, matching rules and integrations.</field>
+    </record>
+
+    <record id="rule_mulkiya_scan_own" model="ir.rule">
+        <field name="name">Mulkiya Scan: own scans only</field>
+        <field name="model_id" ref="model_odex_mulkiya_scan"/>
+        <field name="domain_force">[('create_uid', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_mulkiya_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <record id="rule_mulkiya_scan_all" model="ir.rule">
+        <field name="name">Mulkiya Scan: all scans</field>
+        <field name="model_id" ref="model_odex_mulkiya_scan"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_mulkiya_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <record id="rule_mulkiya_scan_company" model="ir.rule">
+        <field name="name">Mulkiya Scan: multi-company</field>
+        <field name="model_id" ref="model_odex_mulkiya_scan"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+        <field name="global" eval="True"/>
+    </record>
+
+</odoo>

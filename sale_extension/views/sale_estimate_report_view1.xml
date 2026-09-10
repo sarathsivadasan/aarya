@@ -1,0 +1,192 @@
+<template id="sale_estimate_report">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-set="lang" t-value="o.partner_id.lang"/>
+                <t t-call="sale_extension.sale_estimate_report_document" t-lang="lang"/>
+            </t>
+        </t>
+    </template>
+
+    <template id="sale_estimate_report_document">
+        <t t-call="sale_extension.external_layout_estimate">
+            <div class="page">
+                <style>
+                    .borderless td, .borderless th {
+                    border: none;
+                    }
+                    .title {
+                    border-top: 2px solid black;
+                    border-bottom: 2px solid black;
+                    }
+
+                </style>
+                <!-- Is there a discount on at least one line? -->
+                <t t-set="total_discount" t-value="0"/>
+                <t t-set="display_discount" t-value="any(l.discount for l in o.order_line)"/>
+                <t t-set="job_cost_sheet_lines" t-value="o.separate_order_lines()"/>
+
+                <!-- Cost Sheet Lines -->
+                <div class="row">
+                    <table style="width:100%; border: 1px solid black;">
+                        <thead>
+                            <tr style="border: 1px solid black;">
+                                <th style="width: 8%; border: 1px solid black;" class="text-center">
+                                    <strong>S.No.</strong>
+                                </th>
+                                <th style="border: 1px solid black;" class="text-center">
+                                    <strong>
+                                        Description
+                                    </strong>
+                                </th>
+                                <th style="width: 12%; border: 1px solid black;" class="text-center">
+                                    <strong>QTY</strong>
+                                </th>
+                                <!-- <th style="width: 8%; border: 1px solid black;" class="text-center">
+                                    <strong>VAT</strong>
+                                </th> -->
+                                <th style="width: 15%;border: 1px solid black;" class="text-center">
+                                    <strong>Rate</strong>
+                                </th>
+                                <th t-if="display_discount" style="width: 8%; border: 1px solid black;"
+                                    class="text-center">
+                                    <strong>Discount</strong>
+                                </th>
+                                <th style="width: 14%; border: 1px solid black;" class="text-center">
+                                    <strong>Value AED</strong>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="job_cost_sheet_lines" t-as="job_cost_sheet_line">
+                                <t t-if="job_cost_sheet_line[0] == 1">
+                                    <tr style="border: 1px solid black;">
+                                        <td colspan="5" style="padding-left: 5px; border: 1px solid black;">
+                                            <strong>Spare Parts</strong>
+                                        </td>
+                                    </tr>
+                                </t>
+                                <t t-else="">
+                                    <tr style="border: 1px solid black;">
+                                        <td colspan="5" style="padding-left: 5px; border: 1px solid black;">
+                                            <strong>
+                                                <t t-esc="(job_cost_sheet_line[-1][0].cost_type.title()).replace('_', ' ')"/>
+                                            </strong>
+                                        </td>
+                                    </tr>
+                                </t>
+                                <t t-set="line_total_amount" t-value="0"/>
+                                <t t-set="count" t-value="0"/>
+                                <t t-foreach="job_cost_sheet_line[-1]" t-as="cost_sheet_line">
+                                    <t t-set="total_discount" t-value="cost_sheet_line.discount + total_discount"/>
+                                    <t t-set="line_total_amount"
+                                       t-value="cost_sheet_line.price_subtotal + line_total_amount"/>
+                                    <tr style="border: 1px solid black;">
+                                        <t t-set="count" t-value="count + 1"/>
+                                        <td style="width: 8%; border: 1px solid black;" class="text-center">
+                                            <span t-esc="count"/>
+                                        </td>
+                                        <td class="text-left" style="padding-left: 5px;">
+                                            <span t-field="cost_sheet_line.name"/>
+                                        </td>
+                                        <td style="width: 12%; border: 1px solid black;" class="text-center">
+                                            <span t-field="cost_sheet_line.product_uom_qty"/>
+                                        </td>
+                                        <!-- <td style="width: 8%" class="text-center">
+                                            <span t-esc="', '.join(map(lambda x: (x.description or x.name), cost_sheet_line.tax_id))"/>
+                                        </td> -->
+                                        <td style="width: 15%; border: 1px solid black;" class="text-center">
+                                            <t t-if="not estimate_ct">
+                                                <span t-field="cost_sheet_line.price_unit"/>
+                                            </t>
+                                        </td>
+                                        <td t-if="display_discount" style="width: 8%; border: 1px solid black;"
+                                            class="text-center">
+                                            <span t-field="cost_sheet_line.discount"/>
+                                        </td>
+                                        <td style="width: 14%; border: 1px solid black; padding-right: 5px;"
+                                            class="text-right">
+                                            <t t-if="not estimate_ct">
+                                                <span t-field="cost_sheet_line.price_subtotal"
+                                                      t-options='{"widget":"float", "precision":2}'/>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                </t>
+                                <tr style="border: 1px solid black;">
+                                    <td colspan="2" style="border: 1px solid black;"/>
+                                    <td colspan="2" style="padding-left: 5px; border: 1px solid black;">
+                                        <t t-if="job_cost_sheet_line[0] == 1">
+                                            <strong>Cost Estimation - Parts</strong>
+                                        </t>
+                                        <t t-else="">
+                                            <strong>Cost Estimation -
+                                                <t t-esc="(job_cost_sheet_line[-1][0].cost_type.title()).replace('_', ' ')"/>
+                                            </strong>
+                                        </t>
+                                    </td>
+                                    <td style="border: 1px solid black; padding-right: 5px;" class="text-right">
+                                        <t t-if='not estimate_gt'>
+                                            <strong>
+                                                <span t-esc="line_total_amount"
+                                                      t-options='{"widget":"float", "precision":2}'/>
+                                            </strong>
+                                        </t>
+                                    </td>
+                                </tr>
+                            </t>
+                            <tr style="border: 1px solid black;">
+                                <td colspan="2" rowspan="3" style="border: 1px solid black;">
+                                    <p style="margin-bottom: 0px; padding-left: 5px;">
+                                        <b>Amount In Words:</b>
+                                        <span t-field="o.num_word"/>
+                                    </p>
+                                </td>
+                                <td colspan="2" style="border: 1px solid black; padding-left: 5px;">
+                                    <strong>Gross Amount in AED</strong>
+                                </td>
+                                <td class="text-right" style="border: 1px solid black; padding-right: 5px;">
+                                    <strong>
+                                        <span t-field="o.amount_untaxed" t-options='{"widget":"float", "precision":2}'/>
+                                    </strong>
+                                </td>
+                            </tr>
+                            <tr style="border: 1px solid black;">
+                                <td colspan="2" style="border: 1px solid black; padding-left: 5px;">
+                                    <strong>5% VAT:</strong>
+                                </td>
+                                <td class="text-right" style="border: 1px solid black; padding-right: 5px;">
+                                    <strong>
+                                        <span t-field="o.amount_tax" t-options='{"widget":"float", "precision":2}'/>
+                                    </strong>
+                                </td>
+                            </tr>
+                            <tr style="border: 1px solid black;">
+                                <td colspan="2" style="border: 1px solid black; padding-left: 5px;">
+                                    <strong>Net Amount in AED</strong>
+                                </td>
+                                <td class="text-right" style="border: 1px solid black; padding-right: 5px;">
+                                    <strong>
+                                        <span t-esc="o.amount_total" t-options='{"widget":"float", "precision":2}'/>
+                                    </strong>
+                                </td>
+                            </tr>
+                            <tr style="border: 1px solid black;">
+                                <td colspan="5" style="border: 1px solid black; padding-left: 5px;">
+                                    <strong>Remarks:</strong>
+                                    <!-- <span t-field="o.remarks"/> -->
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <br/>
+                <br/>
+                <div class="row" t-if="o.note">
+                    <div class="col-12" style="text-align: justify;">
+                        <br/>
+                        <span t-esc="o.note"/>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>

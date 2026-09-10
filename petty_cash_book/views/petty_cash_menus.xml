@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+        <!-- ==================== PETTY CASH MENUS ==================== -->
+
+        <menuitem id="menu_petty_cash_root"
+                  name="Petty Cash"
+                  parent="account.menu_finance"
+                  sequence="99"
+                  groups="petty_cash_book.group_petty_cash_user"/>
+                  <!-- web_icon="petty_cash_book,static/description/icon.png"/> -->
+
+        <menuitem id="menu_petty_cash_dashboard"
+                  name="Dashboard"
+                  parent="menu_petty_cash_root"
+                  action="action_petty_cash_dashboard"
+                  sequence="10"
+                  groups="petty_cash_book.group_petty_cash_user"/>
+
+        <menuitem id="menu_petty_cash_received"
+                  name="Cash Received"
+                  parent="menu_petty_cash_root"
+                  action="action_petty_cash_received"
+                  sequence="20"
+                  groups="petty_cash_book.group_petty_cash_user"/>
+
+        <menuitem id="menu_petty_cash_expense"
+                  name="Expenses"
+                  parent="menu_petty_cash_root"
+                  action="action_petty_cash_expense"
+                  sequence="30"
+                  groups="petty_cash_book.group_petty_cash_user"/>
+
+        <menuitem id="menu_petty_cash_reports"
+                  name="Reports"
+                  parent="menu_petty_cash_root"
+                  sequence="40"
+                  groups="petty_cash_book.group_petty_cash_user"/>
+
+        <menuitem id="menu_petty_cash_book_report"
+                  name="Petty Cash Book"
+                  parent="menu_petty_cash_reports"
+                  action="action_petty_cash_report_wizard"
+                  sequence="10"
+                  groups="petty_cash_book.group_petty_cash_user"/>
+
+        <menuitem id="menu_petty_cash_config"
+                  name="Configuration"
+                  parent="menu_petty_cash_root"
+                  sequence="50"
+                  groups="petty_cash_book.group_petty_cash_manager"/>
+
+        <menuitem id="menu_petty_cash_expense_categories"
+                  name="Expense Categories"
+                  parent="menu_petty_cash_config"
+                  action="action_petty_cash_expense_category"
+                  sequence="10"
+                  groups="petty_cash_book.group_petty_cash_manager"/>
+
+<!--         <menuitem id="menu_petty_cash_settings"
+                  name="Settings"
+                  parent="menu_petty_cash_config"
+                  action="base_setup.action_general_configuration"
+                  sequence="20"
+                  groups="petty_cash_book.group_petty_cash_manager"/> -->
+</odoo>
+

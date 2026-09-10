@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="module_odex_petty_cash" model="ir.module.category">
+            <field name="name">ODEX Petty Cash</field>
+            <field name="sequence">30</field>
+        </record>
+
+        <!-- Employee: own records only -->
+        <record id="group_petty_cash_employee" model="res.groups">
+            <field name="name">Employee</field>
+            <field name="category_id" ref="module_odex_petty_cash"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <!-- Manager: approve, view team -->
+        <record id="group_petty_cash_manager" model="res.groups">
+            <field name="name">Petty Cash Manager</field>
+            <field name="category_id" ref="module_odex_petty_cash"/>
+            <field name="implied_ids" eval="[(4, ref('group_petty_cash_employee'))]"/>
+        </record>
+
+        <!-- Finance Admin: full access -->
+        <record id="group_petty_cash_finance_admin" model="res.groups">
+            <field name="name">Finance Admin</field>
+            <field name="category_id" ref="module_odex_petty_cash"/>
+            <field name="implied_ids" eval="[(4, ref('group_petty_cash_manager'))]"/>
+            <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+        </record>
+    </data>
+</odoo>

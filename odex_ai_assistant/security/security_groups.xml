@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Security Category -->
+        <record id="module_category_ai_assistant" model="ir.module.category">
+            <field name="name">ODEX AI Assistant</field>
+            <field name="description">Manage access to ODEX AI Assistant features</field>
+            <field name="sequence">100</field>
+        </record>
+
+        <!-- User Group: Basic AI Access -->
+        <record id="group_ai_user" model="res.groups">
+            <field name="name">AI User</field>
+            <field name="category_id" ref="module_category_ai_assistant"/>
+            <field name="comment">Can use the AI Assistant chat interface</field>
+            <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+        </record>
+
+        <!-- Manager Group: Full AI Access + Settings -->
+        <record id="group_ai_manager" model="res.groups">
+            <field name="name">AI Manager</field>
+            <field name="category_id" ref="module_category_ai_assistant"/>
+            <field name="implied_ids" eval="[(4, ref('group_ai_user'))]"/>
+            <field name="comment">Can manage AI settings, templates, and view analytics</field>
+            <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+        </record>
+
+    </data>
+</odoo>

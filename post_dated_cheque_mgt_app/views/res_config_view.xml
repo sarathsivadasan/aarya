@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+		<!-- set default pdc account from configuration -->
+	    <record id="res_config_setting_inherit" model="ir.ui.view">
+				<field name="name">RES config inehrit</field>
+				<field name="model">res.config.settings</field>
+				<field name="inherit_id" ref="account.res_config_settings_view_form"/>
+				<field name="arch" type="xml">
+					<field name="has_accounting_entries" position="after">
+						<h2> Configure PDC Account </h2>
+						<div class="row mt16 o_settings_container">
+							<div class="col-12 col-lg-6 o_setting_box">
+								<div class="o_setting_left_pane"/>
+                                <div class="o_setting_right_pane">
+									<label for="pdc_account_id" string="PDC Receivable Account"/>
+									<div class="text-muted">
+                                            Default PDC Account applied to PDC payment Entries.
+                                        </div>
+                                        <field name="pdc_account_id"/>
+                            	</div>
+							</div>
+							<div class="col-12 col-lg-6 o_setting_box">
+								<div class="o_setting_left_pane"/>
+								<div class="o_setting_right_pane">
+									<label for="pdc_account_creditors_id" string="PDC Payable Account"/>
+									<div class="text-muted">
+                                            Default PDC Account applied to PDC payment Entries.
+                                        </div>
+                                        <field name="pdc_account_creditors_id"/>
+                                </div>
+                            </div>
+						</div>
+						<h2> Configure PDC Cheque Date Notification</h2>
+						<div class="row mt16 o_settings_container">
+							<div class="col-12 col-lg-6 o_setting_box">
+								<div class="o_setting_left_pane">
+                                    <field name="user_notify_check"/>
+								</div>
+                                <div class="o_setting_right_pane">
+									<label for="user_notify_check" />
+									<div class="text-muted" invisible="user_notify_check == False">
+                                        <field name="post_user_ids" widget="many2many_tags" invisible="user_notify_check == False" required="user_notify_check == True"/>
+
+                                    </div>
+                            	</div>
+							</div>
+						</div>
+						<div class="row mt16 o_settings_container">
+							<div class="col-12 col-lg-6 o_setting_box">
+								<div class="o_setting_left_pane">
+                                    <field name="customer_notify_check"/>
+								</div>
+                                <div class="o_setting_right_pane">
+									<label for="customer_notify_check" />
+									<div class="text-muted" invisible="customer_notify_check == False">
+                                        <field name="partner_ids" widget="many2many_tags" invisible="customer_notify_check == False" required="customer_notify_check == True"/>
+                                    </div>
+                            	</div>
+							</div>
+						</div>
+						<div class="row mt16 o_settings_container">
+							<div class="col-12 col-lg-6 o_setting_box">
+								<div class="o_setting_left_pane">
+                                    <field name="vendor_notify_check"/>
+								</div>
+                                <div class="o_setting_right_pane">
+									<label for="vendor_notify_check" />
+									<div class="text-muted" invisible="vendor_notify_check == False">
+                                        <field name="ven_partner_ids" widget="many2many_tags" invisible="vendor_notify_check == False" required="vendor_notify_check == True"/>
+                                    </div>
+                            	</div>
+							</div>
+						</div>
+
+						<!-- No Of Days -->
+
+						<div class="row mt16 o_settings_container">
+							<div class="col-12 col-lg-6 o_setting_box">
+								<div class="o_setting_left_pane" />
+                                <div class="o_setting_right_pane">
+									<label for="notify_opt_first" />
+                                    <field name="notify_opt_first" required="1"/>
+                            	</div>
+							</div>
+						</div>
+
+						<div class="row mt16 o_settings_container">
+							<div class="col-12 col-lg-6 o_setting_box">
+								<div class="o_setting_left_pane" />
+                                <div class="o_setting_right_pane">
+									<label for="notify_opt_second" />
+                                    <field name="notify_opt_second" required="1"/>
+                            	</div>
+							</div>
+						</div>
+						<div class="row mt16 o_settings_container">
+							<div class="col-12 col-lg-6 o_setting_box">
+								<div class="o_setting_left_pane" />
+                                <div class="o_setting_right_pane">
+									<label for="notify_opt_thired" />
+                                    <field name="notify_opt_thired" required="1"/>
+                            	</div>
+							</div>
+						</div>						
+					</field>
+				</field>
+		</record>
+
+	</data>
+</odoo>

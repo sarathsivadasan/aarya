@@ -1,0 +1,11 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_petty_cash_received_user,petty.cash.received.user,model_petty_cash_received,petty_cash_book.group_petty_cash_user,1,1,1,0
+access_petty_cash_received_manager,petty.cash.received.manager,model_petty_cash_received,petty_cash_book.group_petty_cash_manager,1,1,1,1
+access_petty_cash_expense_user,petty.cash.expense.user,model_petty_cash_expense,petty_cash_book.group_petty_cash_user,1,1,1,0
+access_petty_cash_expense_manager,petty.cash.expense.manager,model_petty_cash_expense,petty_cash_book.group_petty_cash_manager,1,1,1,1
+access_petty_cash_expense_category_user,petty.cash.expense.category.user,model_petty_cash_expense_category,petty_cash_book.group_petty_cash_user,1,0,0,0
+access_petty_cash_expense_category_manager,petty.cash.expense.category.manager,model_petty_cash_expense_category,petty_cash_book.group_petty_cash_manager,1,1,1,1
+access_petty_cash_dashboard_user,petty.cash.dashboard.user,model_petty_cash_dashboard,petty_cash_book.group_petty_cash_user,1,1,1,1
+access_petty_cash_dashboard_manager,petty.cash.dashboard.manager,model_petty_cash_dashboard,petty_cash_book.group_petty_cash_manager,1,1,1,1
+access_petty_cash_report_wizard_user,petty.cash.report.wizard.user,model_petty_cash_report_wizard,petty_cash_book.group_petty_cash_user,1,1,1,1
+access_petty_cash_report_wizard_manager,petty.cash.report.wizard.manager,model_petty_cash_report_wizard,petty_cash_book.group_petty_cash_manager,1,1,1,1

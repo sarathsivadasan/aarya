@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="odex_garage_technician_portal.QcTab">
+        <div class="o_tp_qc_tab">
+            <table class="table">
+                <thead>
+                    <tr><th>Checklist</th><th>Pass</th><th>Description</th></tr>
+                </thead>
+                <tbody>
+                    <tr t-foreach="state.lines" t-as="line" t-key="line.id">
+                        <td t-esc="line.checklist"/>
+                        <td>
+                            <input type="checkbox" t-att-checked="line.check_mark"
+                                   t-on-change="() => this.toggleCheck(line)"/>
+                        </td>
+                        <td>
+                            <input type="text" class="form-control form-control-sm"
+                                   t-att-value="line.description" t-on-blur="(ev) => this.onDescriptionBlur(line, ev)"/>
+                        </td>
+                    </tr>
+                    <tr t-if="!state.lines.length">
+                        <td colspan="3" class="text-muted">No QC checklist items configured for this job.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </t>
+</templates>

@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ═══════════════════════════════════════════════
+         COUPON MASTER FORM VIEW
+         Matches screenshot: clean two-column layout,
+         Allowed Services One2many tab with columns
+         #  |  Service  |  Description  |  Unit Price  |  Type
+    ═══════════════════════════════════════════════ -->
+    <record id="view_coupon_master_form" model="ir.ui.view">
+        <field name="name">coupon.master.form</field>
+        <field name="model">coupon.master</field>
+        <field name="arch" type="xml">
+            <form string="Coupon Type">
+                <sheet>
+                    <!-- Archive ribbon -->
+                    <widget name="web_ribbon" title="Archived"
+                            bg_color="text-bg-danger"
+                            invisible="active"/>
+
+                    <!-- Active stat button -->
+                    <div class="oe_button_box" name="button_box">
+                        <button name="toggle_active" type="object"
+                                class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button"
+                                   options="{'terminology': 'archive'}"/>
+                        </button>
+                    </div>
+
+                    <!-- Title row -->
+                    <div class="oe_title">
+                        <label for="name" string="Coupon Name"/>
+                        <h1>
+                            <field name="name"
+                                   placeholder="e.g. Yearly Service Package"
+                                   required="1"/>
+                        </h1>
+                    </div>
+
+                    <!-- Two-column main fields -->
+                    <group>
+                        <group>
+                            <field name="coupon_type" required="1"/>
+                            <field name="duration_days" string="Duration (Days)">
+                                <span class="o_field_suffix">days</span>
+                            </field>
+                            <field name="amount" required="1"/>
+                            <field name="currency_id" options="{'no_create': True}"/>
+                            <field name="allowed_services_count" />
+                        </group>
+                        <group>
+                            <field name="code" readonly="1"/>
+                            <field name="description" rows="4"/>
+                            <field name="auto_expiry"
+                                   string="Auto Expiry"
+                                   help="Auto set expiry date based on duration"/>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                    </group>
+
+                    <!-- Notebook -->
+                    <notebook>
+                        <page string="Allowed Services" name="allowed_services">
+                            <field name="allowed_service_line_ids">
+                                <list string="Allowed Services" editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="product_id" string="Service"
+                                           required="1"
+                                           domain="[('type', 'in', ['service', 'consu'])]"/>
+                                    <field name="description" string="Description"
+                                           optional="show"/>
+                                    <field name="unit_price" string="Unit Price"
+                                           optional="show"/>
+                                    <field name="product_type" string="Type"
+                                           optional="show"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="notes" placeholder="Internal notes..."/>
+                        </page>
+                    </notebook>
+
+                    <!-- Hidden computed fields -->
+                    <field name="allowed_service_ids" invisible="1"/>
+                    <field name="allowed_services_count" invisible="1"/>
+
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ═══════════════════════════════════════════════
+         COUPON MASTER LIST VIEW
+         Matches screenshot columns exactly
+    ═══════════════════════════════════════════════ -->
+    <record id="view_coupon_master_list" model="ir.ui.view">
+        <field name="name">coupon.master.list</field>
+        <field name="model">coupon.master</field>
+        <field name="arch" type="xml">
+            <list string="Coupon Types">
+                <field name="name" string="Coupon Name"/>
+                <field name="code" string="Code"/>
+                <field name="coupon_type" string="Coupon Type"/>
+                <field name="duration_days" string="Duration (Days)"/>
+                <field name="amount" string="Amount"/>
+                <field name="currency_id" string="Currency"/>
+                <field name="allowed_services_count"
+                       string="Allowed"/>
+
+            </list>
+        </field>
+    </record>
+
+    <!-- ═══════════════════════════════════════════════
+         COUPON MASTER SEARCH VIEW
+    ═══════════════════════════════════════════════ -->
+    <record id="view_coupon_master_search" model="ir.ui.view">
+        <field name="name">coupon.master.search</field>
+        <field name="model">coupon.master</field>
+        <field name="arch" type="xml">
+            <search string="Search Coupon Types">
+                <field name="name" string="Coupon Name"/>
+                <field name="code" string="Code"/>
+                <separator/>
+                <filter string="Monthly" name="filter_monthly"
+                        domain="[('coupon_type','=','monthly')]"/>
+                <filter string="Quarterly" name="filter_quarterly"
+                        domain="[('coupon_type','=','quarterly')]"/>
+                <filter string="Yearly" name="filter_yearly"
+                        domain="[('coupon_type','=','yearly')]"/>
+                <separator/>
+                <filter string="Active" name="filter_active"
+                        domain="[('active','=',True)]"/>
+                <filter string="Archived" name="filter_archived"
+                        domain="[('active','=',False)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Coupon Type" name="group_coupon_type"
+                            context="{'group_by': 'coupon_type'}"/>
+                    <filter string="Currency" name="group_currency"
+                            context="{'group_by': 'currency_id'}"/>
+                </group>
+                <searchpanel>
+                    <field name="coupon_type" string="Type"
+                           icon="fa-tag" enable_counters="1"/>
+                </searchpanel>
+            </search>
+        </field>
+    </record>
+
+    <!-- ═══════════════════════════════════════════════
+         COUPON MASTER ACTION
+    ═══════════════════════════════════════════════ -->
+    <record id="action_coupon_master" model="ir.actions.act_window">
+        <field name="name">Coupon Types</field>
+        <field name="res_model">coupon.master</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_coupon_master_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first Coupon Type
+            </p>
+            <p>
+                Define reusable coupon and service package templates for your customers.
+            </p>
+        </field>
+    </record>
+
+</odoo>

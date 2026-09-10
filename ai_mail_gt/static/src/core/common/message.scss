@@ -1,0 +1,30 @@
+.o-mail-Message-body {
+    & > ol:last-child, .o-mail-Message-richBody > ol:last-child,
+    & > ul:last-child, .o-mail-Message-richBody > ul:last-child,
+    & > dl:last-child, .o-mail-Message-richBody > dl:last-child {
+        margin-bottom: 0 !important;
+    }
+
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        margin: 0.5rem 0;
+        font-size: 0.875em;
+
+        th, td {
+            border: $table-border-width solid rgba($info, 0.4);
+            padding: $table-cell-padding-y-sm $table-cell-padding-x-sm;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        thead th {
+            background-color: rgba($info, 0.18);
+            font-weight: $headings-font-weight;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: rgba($info, 0.06);
+        }
+    }
+}

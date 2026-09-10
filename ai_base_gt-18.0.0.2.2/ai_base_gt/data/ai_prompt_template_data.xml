@@ -1,0 +1,61 @@
+<odoo noupdate="1">
+
+    <!-- General Assistant Prompt Templates -->
+
+    <record id="template_draft_email" model="ai.prompt.template">
+        <field name="name">Draft Email</field>
+        <field name="code">draft-email</field>
+        <field name="sequence">10</field>
+        <field name="assistant_ids" eval="[(4, ref('general_assistant'))]"/>
+        <field name="template_content">Draft a professional email.
+
+If the request references an Odoo record, read that record first, then read its conversation history to understand what has already been communicated before drafting.
+Write a clear subject line, a concise body (no filler), and an appropriate sign-off.
+Match the tone to the context: formal for clients or suppliers, friendly for internal colleagues.
+
+Request: {prompt}</field>
+    </record>
+
+    <record id="template_summarize" model="ai.prompt.template">
+        <field name="name">Summarize</field>
+        <field name="code">summarize</field>
+        <field name="sequence">20</field>
+        <field name="assistant_ids" eval="[(4, ref('general_assistant'))]"/>
+        <field name="template_content">Summarize the content below concisely.
+
+If the content references an Odoo record, read that record first, then read its conversation history — the discussion thread is often the most important part to summarize.
+Use bullet points for key information.
+Highlight decisions made and action items (with owners if mentioned).
+Keep it under 150 words unless the content is very long.
+
+Content: {prompt}</field>
+    </record>
+
+    <record id="template_translate" model="ai.prompt.template">
+        <field name="name">Translate</field>
+        <field name="code">translate</field>
+        <field name="sequence">30</field>
+        <field name="assistant_ids" eval="[(4, ref('general_assistant'))]"/>
+        <field name="template_content">Translate the text below. If no target language is specified, translate to English.
+
+If the input references an Odoo record, read the record first and translate its most relevant text field (description, notes, or body).
+Preserve the original meaning, tone, and formatting exactly. Do not add comments or explanations.
+
+Text: {prompt}</field>
+    </record>
+
+    <record id="template_proofread" model="ai.prompt.template">
+        <field name="name">Proofread</field>
+        <field name="code">proofread</field>
+        <field name="sequence">40</field>
+        <field name="assistant_ids" eval="[(4, ref('general_assistant'))]"/>
+        <field name="template_content">Proofread and improve the text below.
+
+If the input references an Odoo record, read the record first and proofread its most relevant text field (description, notes, or body).
+Fix grammar, spelling, and punctuation. Improve clarity and flow where needed.
+Preserve the original meaning and voice. Output the improved version only — no explanations.
+
+Text: {prompt}</field>
+    </record>
+
+</odoo>

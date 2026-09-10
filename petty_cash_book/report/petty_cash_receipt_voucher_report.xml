@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ==================== CASH RECEIPT VOUCHER REPORT ==================== -->
+
+    <record id="action_petty_cash_receipt_voucher_report" model="ir.actions.report">
+        <field name="name">Cash Receipt Voucher</field>
+        <field name="model">petty.cash.received</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">petty_cash_book.report_petty_cash_receipt_voucher</field>
+        <field name="report_file">petty_cash_book.report_petty_cash_receipt_voucher</field>
+        <field name="binding_model_id" ref="model_petty_cash_received"/>
+        <field name="binding_type">report</field>
+        <!-- <field name="paperformat_id" ref="base.paperformat_a4"/> -->
+    </record>
+
+    <template id="report_petty_cash_receipt_voucher">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <!-- Header -->
+                        <div style="text-align:center; margin-bottom:24px; border-bottom:2px solid #2e7d32; padding-bottom:12px;">
+                            <h2 style="color:#2e7d32; font-size:1.3rem; font-weight:700; margin:0 0 4px 0;">CASH RECEIPT VOUCHER</h2>
+                            <p style="color:#546e7a; font-size:0.8rem; margin:0;">
+                                Ref: <strong><t t-esc="doc.reference"/></strong>
+                            </p>
+                        </div>
+
+                        <!-- Details -->
+                        <table style="width:100%; font-size:0.85rem; margin-bottom:20px; border-collapse:collapse;">
+                            <tr>
+                                <td style="padding:6px 0; width:30%; color:#546e7a; font-weight:600;">Date:</td>
+                                <td style="padding:6px 0;"><t t-esc="doc.date"/></td>
+                                <td style="padding:6px 0; width:30%; color:#546e7a; font-weight:600;">Reference:</td>
+                                <td style="padding:6px 0;"><t t-esc="doc.reference"/></td>
+                            </tr>
+                            <tr>
+                                <td style="padding:6px 0; color:#546e7a; font-weight:600;">Received From:</td>
+                                <td style="padding:6px 0;"><t t-esc="doc.partner_id.name or 'N/A'"/></td>
+                                <td style="padding:6px 0; color:#546e7a; font-weight:600;">Received By:</td>
+                                <td style="padding:6px 0;"><t t-esc="doc.received_by.name or ''"/></td>
+                            </tr>
+                            <tr>
+                                <td style="padding:6px 0; color:#546e7a; font-weight:600;">Description:</td>
+                                <td colspan="3" style="padding:6px 0;"><t t-esc="doc.description"/></td>
+                            </tr>
+                            <tr>
+                                <td style="padding:6px 0; color:#546e7a; font-weight:600;">Journal:</td>
+                                <td style="padding:6px 0;"><t t-esc="doc.journal_id.name or ''"/></td>
+                                <td style="padding:6px 0; color:#546e7a; font-weight:600;">Status:</td>
+                                <td style="padding:6px 0;"><t t-esc="dict(doc._fields['state'].selection).get(doc.state, doc.state)"/></td>
+                            </tr>
+                        </table>
+
+                        <!-- Amount Box -->
+                        <div style="background:#e8f5e9; border:2px solid #4caf50; border-radius:8px; padding:16px; text-align:center; margin:20px 0;">
+                            <div style="color:#388e3c; font-size:0.8rem; font-weight:600; text-transform:uppercase; margin-bottom:4px;">Amount Received</div>
+                            <div style="font-size:1.8rem; font-weight:700; color:#2e7d32;">
+                                <t t-esc="doc.currency_id.symbol"/>
+                                <t t-esc="'{:,.2f}'.format(doc.amount)"/>
+                            </div>
+                            <div style="color:#546e7a; font-size:0.75rem; margin-top:4px;">
+                                (<t t-esc="doc.currency_id.name"/>)
+                            </div>
+                        </div>
+
+                        <!-- Notes -->
+                        <t t-if="doc.notes">
+                            <div style="margin:16px 0; padding:10px; background:#f5f5f5; border-radius:4px; font-size:0.8rem; color:#546e7a;">
+                                <strong>Notes:</strong> <t t-esc="doc.notes"/>
+                            </div>
+                        </t>
+
+                        <!-- Signature -->
+                        <table style="width:100%; margin-top:50px; font-size:0.8rem; color:#546e7a;">
+                            <tr>
+                                <td style="width:50%; text-align:center; padding:10px;">
+                                    <div style="border-top:1px solid #90a4ae; padding-top:6px; margin-top:40px;">Received By</div>
+                                </td>
+                                <td style="width:50%; text-align:center; padding:10px;">
+                                    <div style="border-top:1px solid #90a4ae; padding-top:6px; margin-top:40px;">Authorized Signature</div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

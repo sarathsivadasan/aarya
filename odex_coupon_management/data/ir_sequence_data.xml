@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Coupon Master Sequence -->
+    <record id="seq_coupon_master" model="ir.sequence">
+        <field name="name">Coupon Master</field>
+        <field name="code">coupon.master</field>
+        <field name="prefix">CPN-</field>
+        <field name="padding">3</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <!-- Customer Coupon Sequence -->
+    <record id="seq_customer_coupon" model="ir.sequence">
+        <field name="name">Customer Coupon</field>
+        <field name="code">customer.coupon</field>
+        <field name="prefix">COP</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <!-- Customer Coupon Payment Sequence -->
+    <record id="seq_customer_coupon_payment" model="ir.sequence">
+        <field name="name">Customer Coupon Payment</field>
+        <field name="code">customer.coupon.payment</field>
+        <field name="prefix">CPP-</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <!-- Customer Coupon Usage Sequence -->
+    <record id="seq_customer_coupon_usage" model="ir.sequence">
+        <field name="name">Customer Coupon Usage</field>
+        <field name="code">customer.coupon.usage</field>
+        <field name="prefix">CPU-</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+</odoo>

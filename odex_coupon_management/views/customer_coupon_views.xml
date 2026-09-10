@@ -1,0 +1,443 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ═══════════════════════════════════════════════
+         CUSTOMER COUPON FORM VIEW
+    ═══════════════════════════════════════════════ -->
+    <record id="view_customer_coupon_form" model="ir.ui.view">
+        <field name="name">customer.coupon.form</field>
+        <field name="model">customer.coupon</field>
+        <field name="arch" type="xml">
+            <form string="Customer Coupon">
+                <header>
+                    <button name="action_confirm"
+                            string="Confirm Coupon"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_print_coupon"
+                            string="Print"
+                            type="object"
+                            icon="fa-print"
+                            invisible="state == 'draft'"/>
+                    <button name="action_pdc_payment"
+                            string="PDC Payment"
+                            type="object"
+                            icon="fa-calendar-check-o"
+                            invisible="state not in ('confirmed','posted','partially_used')"/>
+                    <button name="action_pay"
+                            string="Pay"
+                            type="object"
+                            icon="fa-credit-card"
+                            invisible="state not in ('confirmed','posted','partially_used')"/>
+                    <button name="action_reset_draft"
+                            string="Reset to Draft"
+                            type="object"
+                            invisible="state not in ('confirmed','cancelled')"/>
+                    <button name="action_cancel"
+                            string="Cancel"
+                            type="object"
+                            class="btn-danger"
+                            invisible="state in ('used','expired','cancelled')"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,confirmed,posted,partially_used,used"/>
+                </header>
+
+                <sheet>
+                    <!-- Smart buttons -->
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_invoices"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-file-text-o"
+                                invisible="invoice_count == 0">
+                            <field name="invoice_count" widget="statinfo" string="Invoices"/>
+                        </button>
+                        <button name="action_view_journal_entries"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-book"
+                                invisible="journal_entry_count == 0">
+                            <field name="journal_entry_count" widget="statinfo" string="Entries"/>
+                        </button>
+                        <button name="action_view_coupon_pdc_payments"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-money">
+                            <field name="pdc_count" widget="statinfo" string="PDC Payments"/>
+                        </button>
+                    </div>
+
+                    <!-- Coupon number title -->
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+
+                    <!-- Outstanding credits alert -->
+                    <div class="alert alert-info d-flex align-items-center gap-2 mb-3"
+                         role="alert"
+                         invisible="not has_outstanding_credits">
+                        <i class="fa fa-info-circle fa-lg"/>
+                        <span>You have outstanding credits listed below for this customer.</span>
+                    </div>
+
+                    <!-- ── CUSTOMER  /  VEHICLE ── -->
+                    <div class="row">
+                        <div class="col-lg-6 mb-3">
+                            <div class="o_coupon_card h-100">
+                                <div class="o_coupon_card_header">
+                                    <i class="fa fa-user-circle"/>CUSTOMER DETAILS
+                                </div>
+                                <div class="o_coupon_card_body">
+                                    <group>
+                                        <field name="customer_id"
+                                               string="Customer Name"
+                                               required="1"
+                                               options="{'no_create_edit': True}"/>
+                                        <field name="mobile" string="Contact Number"/>
+                                        <field name="alternate_mobile" string="Alternate Number"/>
+                                        <field name="tag_ids" string="Tags"
+                                               widget="many2many_tags"
+                                               options="{'color_field': 'color'}"/>
+                                    </group>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6 mb-3">
+                            <div class="o_coupon_card h-100">
+                                <div class="o_coupon_card_header">
+                                    <i class="fa fa-car"/>VEHICLE DETAILS
+                                </div>
+                                <div class="o_coupon_card_body">
+                                    <group>
+                                        <field name="vehicle_id" string="Vehicle"
+                                               options="{'no_create_edit': True}" default_focus="1"/>
+                                        <field name="plate_number" string="License Plate"/>
+                                        <field name="vehicle_make_id" string="Vehicle Make"/>
+                                        <field name="vehicle_model_id" string="Model"/>
+                                        <field name="chassis_no" string="Chassis No."/>
+                                        <field name="colour" string="Colour"/>
+                                        <field name="engine_no" string="Engine No."/>
+                                        <field name="year" string="Year"/>
+                                        <field name="odometer" string="Odometer Reading"/>
+                                    </group>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ── COUPON / PACKAGE DETAILS ── -->
+                    <div class="o_coupon_card mb-3">
+                        <div class="o_coupon_card_header">
+                            <i class="fa fa-tags"/>COUPON / PACKAGE DETAILS
+                        </div>
+                        <div class="o_coupon_card_body">
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <group>
+                                        <field name="coupon_type" string="Coupon Type"/>
+                                        <field name="coupon_master_id" string="Coupon Master"
+                                               options="{'no_create': True}"/>
+                                        <field name="description" string="Description" rows="3"/>
+                                    </group>
+                                </div>
+                                <div class="col-lg-4">
+                                    <group>
+                                        <field name="start_date" string="Start Date"/>
+                                        <field name="expiry_date" string="Expiry Date"/>
+                                        <field name="validity_days"
+                                               string="Validity (Days)" readonly="1"/>
+                                        <field name="service_count" readonly="1" force_save="1"/>
+                                        <field name="usage_count" readonly="1" force_save="1"/>
+                                    </group>
+                                </div>
+                                <div class="col-lg-4">
+                                    <group>
+                                        <field name="coupon_amount" string="Coupon Amount"/>
+                                        <field name="currency_id" options="{'no_create': True}"/>
+                                        <field name="remaining_amount"
+                                               string="Remaining Amount" readonly="1"/>
+                                        <field name="utilized_amount"
+                                               string="Utilized Amount" readonly="1"/>
+                                        <field name="allowed_service_ids"
+                                               string="Allowed Services"
+                                               widget="many2many_tags"/>
+                                    </group>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ── NOTEBOOK + PAYMENT SUMMARY ── -->
+                    <div class="row">
+
+                        <!-- Notebook (9 cols) -->
+                        <div class="col-lg-9">
+                            <notebook>
+
+                                <page string="Payments" name="payments" icon="fa-money">
+                                    <field name="payment_ids">
+                                        <list string="Payments" editable="bottom"
+                                              decoration-muted="state == 'cancelled'">
+                                            <field name="payment_date" string="Payment Date"/>
+                                            <field name="payment_method" string="Payment Method"
+                                                   widget="badge"/>
+                                            <field name="journal_id" string="Journal"/>
+                                            <field name="reference" string="Reference"
+                                                   optional="show"/>
+                                            <field name="amount" string="Amount"/>
+                                            <field name="state" string="Status"
+                                                   widget="badge"
+                                                   decoration-success="state == 'posted'"
+                                                   decoration-warning="state == 'draft'"
+                                                   decoration-danger="state == 'cancelled'"/>
+                                            <button name="action_post" string="Post"
+                                                    type="object" icon="fa-check"
+                                                    invisible="state != 'draft'"
+                                                    class="btn-sm btn-primary"/>
+                                        </list>
+                                    </field>
+                                </page>
+
+                                <page string="PDC Payments" name="pdc_payments"
+                                      icon="fa-calendar">
+                                    <field name="pdc_payment_ids"
+                                           context="{'default_payment_type': 'pdc',
+                                                     'default_payment_method': 'pdc'}">
+                                        <list string="PDC Payments" editable="bottom"
+                                              decoration-muted="state == 'cancelled'">
+                                            <field name="payment_date" string="Payment Date"/>
+                                            <field name="cheque_number" string="Cheque No."/>
+                                            <field name="cheque_date" string="Cheque Date"/>
+                                            <field name="bank_name" string="Bank"
+                                                   optional="show"/>
+                                            <field name="journal_id" string="Journal"/>
+                                            <field name="amount" string="Amount"/>
+                                            <field name="state" string="Status"
+                                                   widget="badge"
+                                                   decoration-success="state == 'posted'"
+                                                   decoration-warning="state == 'draft'"
+                                                   decoration-danger="state == 'cancelled'"/>
+                                            <button name="action_post" string="Post"
+                                                    type="object" icon="fa-check"
+                                                    invisible="state != 'draft'"
+                                                    class="btn-sm btn-primary"/>
+                                        </list>
+                                    </field>
+                                </page>
+
+                                <page string="Invoice History" name="invoice_history"
+                                      icon="fa-file-text">
+                                    <field name="invoice_ids" readonly="1">
+                                        <list string="Invoices">
+                                            <field name="name" string="Invoice"/>
+                                            <field name="invoice_date" string="Date"/>
+                                            <field name="partner_id" string="Customer"/>
+                                            <field name="amount_untaxed" string="Untaxed"/>
+                                            <field name="amount_tax" string="Tax"/>
+                                            <field name="amount_total" string="Total"/>
+                                            <field name="coupon_amount_used"
+                                                   string="Coupon Used"/>
+                                            <field name="payment_state" string="Payment"
+                                                   widget="badge"/>
+                                            <field name="state" string="Status"
+                                                   widget="badge"
+                                                   decoration-success="state == 'posted'"
+                                                   decoration-warning="state == 'draft'"/>
+                                        </list>
+                                    </field>
+                                </page>
+
+                                <page string="Usage History" name="usage_history"
+                                      icon="fa-history">
+                                    <field name="usage_ids">
+                                        <list string="Usage History">
+                                            <field name="name" string="Reference"/>
+                                            <field name="usage_date" string="Usage Date"/>
+                                            <field name="service_id" string="Service"/>
+                                            <field name="invoice_id" string="Invoice"/>
+                                            <field name="amount" string="Amount Used"/>
+                                            <field name="notes" string="Notes"
+                                                   optional="show"/>
+                                        </list>
+                                    </field>
+                                </page>
+
+                                <page string="Journal Entries" name="journal_entries"
+                                      icon="fa-book">
+                                    <field name="move_ids" readonly="1">
+                                        <list string="Journal Entries">
+                                            <field name="name" string="Entry"/>
+                                            <field name="date" string="Date"/>
+                                            <field name="journal_id" string="Journal"/>
+                                            <field name="ref" string="Reference"/>
+                                            <field name="amount_total" string="Amount"/>
+                                            <field name="state" string="Status"
+                                                   widget="badge"
+                                                   decoration-success="state == 'posted'"
+                                                   decoration-warning="state == 'draft'"/>
+                                        </list>
+                                    </field>
+                                </page>
+
+                            </notebook>
+                        </div>
+
+                        <!-- Payment Summary Widget (3 cols) -->
+                        <div class="col-lg-3">
+                            <div class="o_coupon_payment_summary">
+                                <h6 class="text-muted mb-3"
+                                    style="font-size:11px;text-transform:uppercase;letter-spacing:0.5px;font-weight:700;">
+                                    Payment Summary
+                                </h6>
+                                <div class="o_payment_summary_row">
+                                    <span class="o_summary_label">Total Coupon Amount</span>
+                                    <span class="o_summary_value">
+                                        <field name="coupon_amount" readonly="1" nolabel="1"/>
+                                        <field name="currency_id" readonly="1" nolabel="1"/>
+                                    </span>
+                                </div>
+                                <div class="o_payment_summary_row">
+                                    <span class="o_summary_label">Total Paid Amount</span>
+                                    <span class="o_summary_value">
+                                        <field name="total_paid_amount" readonly="1" nolabel="1"/>
+                                        <field name="currency_id" readonly="1" nolabel="1"/>
+                                    </span>
+                                </div>
+                                <div class="o_payment_summary_row"
+                                     style="padding-top:10px;border-top:2px solid #dee2e6;margin-top:4px;">
+                                    <span class="o_summary_label" style="font-weight:700;">
+                                        Balance Amount
+                                    </span>
+                                    <span class="o_summary_value_balance">
+                                        <field name="balance_amount" readonly="1" nolabel="1"/>
+                                        <field name="currency_id" readonly="1" nolabel="1"/>
+                                    </span>
+                                </div>
+                                <button name="action_pay"
+                                        string="Pay Now"
+                                        type="object"
+                                        class="btn btn-primary w-100 mt-3"
+                                        invisible="state not in ('confirmed','posted','partially_used')"/>
+                            </div>
+                        </div>
+
+                    </div><!-- /row -->
+
+                    <!-- Hidden technical fields -->
+                    <field name="company_id" invisible="1"/>
+                    <field name="has_outstanding_credits" invisible="1"/>
+
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ═══════════════════════════════════════════════
+         CUSTOMER COUPON LIST VIEW
+    ═══════════════════════════════════════════════ -->
+    <record id="view_customer_coupon_list" model="ir.ui.view">
+        <field name="name">customer.coupon.list</field>
+        <field name="model">customer.coupon</field>
+        <field name="arch" type="xml">
+            <list string="Customer Coupons"
+                  decoration-danger="state == 'expired'"
+                  decoration-muted="state == 'cancelled'">
+                <field name="name" string="Coupon Number"/>
+                <field name="customer_id" string="Customer"/>
+                <field name="plate_number" string="Vehicle" optional="show"/>
+                <field name="coupon_type" string="Coupon Type" optional="show"/>
+                <field name="coupon_master_id" string="Coupon Master" optional="show"/>
+                <field name="coupon_amount" string="Coupon Amount" sum="Total Coupon Amount"/>
+                <field name="remaining_amount" string="Remaining Amount" sum="Total Remaining"
+                       decoration-success="remaining_amount > 0"
+                       decoration-danger="remaining_amount == 0"
+                       decoration-warning="remaining_amount &gt; 0 and remaining_amount &lt; coupon_amount"/>
+                <field name="state" string="Status"
+                       widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-primary="state == 'confirmed'"
+                       decoration-success="state == 'posted'"
+                       decoration-warning="state == 'partially_used'"
+                       decoration-danger="state in ('expired','cancelled')"
+                       decoration-muted="state == 'used'"/>
+                <field name="start_date" string="Start Date" optional="show"/>
+                <field name="expiry_date" string="Expiry Date" optional="show"/>
+                <field name="payment_status" string="Payment Status"
+                       widget="badge"
+                       decoration-success="payment_status == 'paid'"
+                       decoration-danger="payment_status == 'unpaid'"
+                       decoration-warning="payment_status == 'partial'"
+                       optional="show"/>
+                <field name="currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ═══════════════════════════════════════════════
+         SEARCH VIEW
+    ═══════════════════════════════════════════════ -->
+    <record id="view_customer_coupon_search" model="ir.ui.view">
+        <field name="name">customer.coupon.search</field>
+        <field name="model">customer.coupon</field>
+        <field name="arch" type="xml">
+            <search string="Search Customer Coupons">
+                <field name="name" string="Coupon Number"/>
+                <field name="customer_id" string="Customer"/>
+                <field name="plate_number" string="License Plate"/>
+                <field name="coupon_master_id" string="Coupon Master"/>
+                <separator/>
+                <filter string="Draft" name="filter_draft"
+                        domain="[('state','=','draft')]"/>
+                <filter string="Confirmed" name="filter_confirmed"
+                        domain="[('state','=','confirmed')]"/>
+                <filter string="Posted" name="filter_posted"
+                        domain="[('state','=','posted')]"/>
+                <filter string="Partially Used" name="filter_partially_used"
+                        domain="[('state','=','partially_used')]"/>
+                <filter string="Used" name="filter_used"
+                        domain="[('state','=','used')]"/>
+                <filter string="Expired" name="filter_expired"
+                        domain="[('state','=','expired')]"/>
+                <separator/>
+                <filter string="Unpaid" name="filter_unpaid"
+                        domain="[('payment_status','=','unpaid')]"/>
+                <filter string="Paid" name="filter_paid"
+                        domain="[('payment_status','=','paid')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Customer" name="group_customer"
+                            context="{'group_by': 'customer_id'}"/>
+                    <filter string="Status" name="group_state"
+                            context="{'group_by': 'state'}"/>
+                    <filter string="Payment Status" name="group_payment_status"
+                            context="{'group_by': 'payment_status'}"/>
+                    <filter string="Coupon Type" name="group_coupon_type"
+                            context="{'group_by': 'coupon_type'}"/>
+                    <filter string="Coupon Master" name="group_coupon_master"
+                            context="{'group_by': 'coupon_master_id'}"/>
+                    <filter string="Start Date" name="group_start_date"
+                            context="{'group_by': 'start_date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ═══════════════════════════════════════════════
+         ACTION
+    ═══════════════════════════════════════════════ -->
+    <record id="action_customer_coupon" model="ir.actions.act_window">
+        <field name="name">Customer Coupons</field>
+        <field name="res_model">customer.coupon</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_customer_coupon_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create your first Customer Coupon</p>
+            <p>Assign service packages and coupons to your customers and vehicles.</p>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<odoo>
+    <record model="ir.ui.view" id="job_card_bay_form_view">
+        <field name="name">job.card.bay.form.view</field>
+        <field name="model">job.card.bay</field>
+        <field name="arch" type="xml">
+            <form string="Job Card Bay">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="is_occupied"/>
+                        </group>
+                        <group>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    
+    <record id="job_card_bay_tree_view" model="ir.ui.view">
+        <field name="name">job.card.bay.list.view</field>
+        <field name="model">job.card.bay</field>
+        <field name="arch" type="xml">
+            <list string="Job Card Bay">
+                <field name="name"/>
+                <field name="is_occupied"/>
+            </list>
+        </field>
+    </record>
+    
+    <record id="action_view_job_card_bay" model="ir.actions.act_window">
+        <field name="name">Job Card Bay</field>
+        <field name="res_model">job.card.bay</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem 
+            action="action_view_job_card_bay"
+            id="menu_job_card_bay"
+            parent="job_card.menu_job_card_setting"
+            sequence="21" />
+</odoo>

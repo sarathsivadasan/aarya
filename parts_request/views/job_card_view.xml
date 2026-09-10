@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_task_form2_part_requisition_inherit" model="ir.ui.view">
+            <field name="name">Project Task form Inherit Job Card Extension</field>
+            <field name="model">project.task</field>
+            <field name="inherit_id" ref="job_card.view_task_form2_inherit_job"/>
+            <field name="priority" eval="101"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='job_cost_sheet_ids']/list/field[@name='quantity']" position="after">
+                    <field name="qty_approve" readonly="1"/>
+                </xpath>
+                <xpath expr="//field[@name='job_cost_sheet_ids']/list" position="inside">
+                    <button name="create_jobcard_requisition" string="Part Request" type="object" class="oe_highlight" invisible="request_sent or cost_type not in ['spare_parts', 'material', 'consumables', 'paint_material', 'sublet']"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

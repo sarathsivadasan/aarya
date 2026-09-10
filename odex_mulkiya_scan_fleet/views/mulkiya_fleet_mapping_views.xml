@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_mulkiya_fleet_mapping_list" model="ir.ui.view">
+        <field name="name">odex.mulkiya.fleet.mapping.list</field>
+        <field name="model">odex.mulkiya.fleet.mapping</field>
+        <field name="arch" type="xml">
+            <list string="Fleet Field Mapping" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="field_key"/>
+                <field name="field_name"/>
+                <field name="field_type" readonly="1"/>
+                <field name="use_matched_record" widget="boolean_toggle"/>
+                <field name="overwrite" widget="boolean_toggle"/>
+                <field name="field_available" string="Available" widget="boolean_toggle" readonly="1"/>
+                <field name="active" widget="boolean_toggle" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_mulkiya_fleet_mapping" model="ir.actions.act_window">
+        <field name="name">Fleet Field Mapping</field>
+        <field name="res_model">odex.mulkiya.fleet.mapping</field>
+        <field name="view_mode">list</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Map the OCR result onto your vehicles</p>
+            <p>Each line writes one extracted field onto one field of fleet.vehicle.
+               Lines pointing at a field that does not exist on this database are
+               skipped automatically.</p>
+        </field>
+    </record>
+
+    <menuitem id="menu_mulkiya_fleet_mapping"
+              name="Fleet Field Mapping"
+              parent="odex_mulkiya_scan.menu_mulkiya_configuration"
+              action="action_mulkiya_fleet_mapping"
+              sequence="40"/>
+
+</odoo>

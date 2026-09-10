@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_ai_chatter_wizard_form" model="ir.ui.view">
+            <field name="name">odex.ai.chatter.wizard.form</field>
+            <field name="model">odex.ai.chatter.wizard</field>
+            <field name="arch" type="xml">
+                <form string="ODEX AI Assistant">
+                    <sheet>
+                        <div class="o_form_sheet_bg" style="padding: 0;">
+                            <div style="background: linear-gradient(135deg, #875A7B 0%, #6f4e7c 100%); padding: 20px; border-radius: 8px 8px 0 0; color: white; margin-bottom: 16px;">
+                                <div class="d-flex align-items-center">
+                                    <i class="fa fa-robot fa-2x me-3"/>
+                                    <div>
+                                        <h4 class="mb-0 text-white">ODEX AI Assistant</h4>
+                                        <small class="text-white-50">
+                                            Powered by Groq AI — Record: <field name="res_name" readonly="1" class="d-inline text-white"/>
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="action_type" widget="radio"/>
+                            </group>
+                            <group>
+                                <field name="template_id"
+                                       domain="[('active', '=', True)]"
+                                       options="{'no_create': True}"
+                                       placeholder="Optional: use a template"/>
+                                <field name="post_type"/>
+                            </group>
+                        </group>
+                        <group string="Custom Prompt" invisible="action_type != 'custom'">
+                            <field name="custom_prompt"
+                                   nolabel="1"
+                                   placeholder="Enter your custom prompt here..."
+                                   style="min-height: 80px;"/>
+                        </group>
+                        <div invisible="not ai_response" class="mt8">
+                            <h4 class="mb-2">
+                                <i class="fa fa-magic me-2 text-primary"/>
+                                AI Response:
+                            </h4>
+                            <div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 16px; max-height: 400px; overflow-y: auto;">
+                                <field name="ai_response" nolabel="1"/>
+                            </div>
+                        </div>
+                        <field name="res_model" invisible="1"/>
+                        <field name="res_id" invisible="1"/>
+                    </sheet>
+                    <footer>
+                        <button name="action_generate"
+                                string="✨ Generate with AI"
+                                type="object"
+                                class="btn-primary"
+                                data-hotkey="g"/>
+                        <button name="action_post_to_chatter"
+                                string="📌 Post to Chatter"
+                                type="object"
+                                class="btn-success"
+                                invisible="not ai_response"
+                                data-hotkey="p"/>
+                        <button string="Close"
+                                class="btn-secondary"
+                                special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_ai_chatter_wizard" model="ir.actions.act_window">
+            <field name="name">AI Assistant</field>
+            <field name="res_model">odex.ai.chatter.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="binding_model_id" eval="False"/>
+        </record>
+
+    </data>
+</odoo>

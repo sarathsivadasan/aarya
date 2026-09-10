@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="odex_garage_technician_portal.PartsPhotosTab">
+        <div class="o_tp_parts_photos_tab">
+            <div class="o_tp_add_line">
+                <input type="text" placeholder="Part / Product reference" t-model="state.newPhoto.part_reference"/>
+                <input type="text" placeholder="Description" t-model="state.newPhoto.description"/>
+                <button class="btn btn-outline-primary" t-on-click="triggerUpload">
+                    <i class="fa fa-camera"/> Add Part Photo</button>
+                <span t-if="state.uploading" class="o_tp_uploading">Uploading...</span>
+                <input type="file" accept="image/*" class="d-none" t-ref="fileInput" t-on-change="onFileSelected"/>
+            </div>
+            <div class="o_tp_photo_grid">
+                <div t-foreach="state.photos" t-as="photo" t-key="photo.id" class="o_tp_photo_item">
+                    <img t-att-src="photo.url"/>
+                    <div class="o_tp_photo_meta">
+                        <span t-esc="photo.part_reference || photo.description || 'Part photo'"/>
+                        <i class="fa fa-trash" t-on-click="() => this.deletePhoto(photo.id)"/>
+                    </div>
+                </div>
+                <div t-if="!state.photos.length" class="text-muted">No part photos yet.</div>
+            </div>
+        </div>
+    </t>
+</templates>

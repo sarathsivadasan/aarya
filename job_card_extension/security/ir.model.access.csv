@@ -1,0 +1,11 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_repair_sub_category,repair.sub.category.user,model_repair_sub_category_custom,base.group_user,1,1,1,1
+access_job_card_warranty,job.card.warranty.user,model_job_card_warranty,project.group_project_manager,1,1,1,1
+access_job_card_stage,job.card.stage.user,model_job_card_stage,project.group_project_manager,1,1,1,1
+access_job_requested_service,job.requested.service.user,model_job_requested_service,,1,1,1,1
+job_card_extension.access_jobcard_advance_payment_wizard,access_jobcard_advance_payment_wizard,job_card_extension.model_jobcard_advance_payment_wizard,base.group_user,1,1,1,1
+job_card_extension.access_job_card_bay,access_job_card_bay,job_card_extension.model_job_card_bay,base.group_user,1,1,1,1
+job_card_extension.access_job_card_bay_log,access_job_card_bay_log,job_card_extension.model_job_card_bay_log,base.group_user,1,1,1,1
+job_card_extension.access_vehicle_inspection_part,access_vehicle_inspection_part,job_card_extension.model_vehicle_inspection_part,base.group_user,1,1,1,1
+
+

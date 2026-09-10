@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/tus_many2many_attachment_previewcss/main.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.1/js/bootstrap.min.js"></script>
+    <title>Page Title</title>
+</head>
+
+<body>
+<section style="margin: 50px 0;">
+    <div style="margin: 0 auto;height: 100%;width: 100%;">
+        <div class="position-relative">
+            <img class="position-absolute" style="border: 1px solid transparent;border-radius: 20px;bottom: 0;"
+                 src="bg.png" alt="image" width="100%"
+                 height="100%">
+            <div class="position-relative" style="z-index: 1;padding:40px 0;">
+                <div class="d-flex justify-content-between w-100" style="padding: 0px 30px;">
+
+
+                    <div class="col-lg-8">
+                        <!-- Partner Badges -->
+                        <div style="background-color: white; padding: 15px; border-radius: 15px; display: inline-flex; align-items: center !important; gap: 25px !important; box-shadow: inset 0 0 10px rgba(0,0,0,0.1) !important;">
+                            <div style="text-align: center;">
+                                <img src="company_logos.png" style="height: 60px;">
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-lg-4 text-center text-lg-end mt-3 mt-lg-0">
+                        <div class="d-flex justify-content-center justify-content-lg-end" style="gap: 10px !important;">
+                            <div style="text-align: center;">
+                                <img src="all.png" style="height: 35px;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr style="width: 100%;border-radius: 7px;margin: 10px 30px;border: 1px solid white;">
+                <div style="margin:20px 30px; display: flex; color: white; padding-right: 20px;">
+                    <div style="margin-right: inherit;">
+                        <h3 style="color: white;">
+                            Odoo Portal Quotation Editor | Edit Quantity & Delete Sale Order Lines
+                        </h3>
+                        <hr style="border-radius: 7px;border: 1px solid white;"/>
+                        <p style="padding-right: 20px;  text-align: justify;">
+                            Odoo Portal Quotation Editor allows customers and portal users to modify sales quotations
+                            directly from the customer portal. Portal users can update product quantities and remove
+                            quotation lines before confirming an order, giving them more flexibility during the
+                            quotation review process.<br/>
+
+                            The module updates the related backend sale order automatically, so sales teams always see
+                            the latest customer changes. Quantity changes recalculate the quotation amount, and deleted
+                            lines are removed from the quotation after confirmation.<br/>
+
+                            Editing is available only for draft and sent quotations, helping businesses keep confirmed
+                            sale orders protected. The module also validates portal access and ensures that users can
+                            only update lines that belong to the correct quotation.
+
+                        </p>
+                        <p style="padding-right: 20px;  text-align: justify;">
+                            This app is useful for B2B sales, wholesale portals, distributors, service businesses, and
+                            any company that wants customers to adjust quotation requirements online without repeatedly
+                            contacting the sales team.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="text-center d-flex flex-column justify-content-center align-items-center"
+                     style="margin-top: 33px;">
+                    <img src="wp.png" width="100%" style="
+                    height: 114px;
+                    width: 126px;
+                object-fit: contain;
+                    ">
+                </div>
+                <div class="text-center " style="margin-top: 31px;">
+                    <a href="mailto:support@techultra.in" target="_blank"
+                       style="background-color:#27AAE1 !important; border-radius:35px; display:inline-block; padding:7px 33px; font-weight:600; border:1px solid #27AAE1 !important;width: 140px;"
+                       class="mx-1 mb-2">
+                        <span class="pl-2" style="font-family: Montserrat;color:#fff; font-size:16px">Email Us</span>
+                    </a>
+                    <a href="https://www.techultrasolutions.com/" target="_blank"
+                       style="background-color:#27AAE1 !important; border-radius:35px; display:inline-block; padding:7px 33px; font-weight:600; border:1px solid #27AAE1 !important;width: 140px;"
+                       class="mx-1 mb-2 ">
+                        <span class="pl-2"
+                              style="font-family: Montserrat;color:#fff; font-size:16px;">TUS</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section style="margin: 80px 0;">
+    <div style="margin: 0 auto;height: 100%;width: 100%;">
+        <div style="padding: 16px;text-align: center;background-color: #1388ee;border-radius: 20px;">
+            <h2 style="color:white; padding-top: 20px;">
+                Odoo Portal Quotation Editor | Edit Quantity & Delete Sale Order Lines
+            </h2>
+            <hr/>
+
+            <div class="align-items-center" style="margin-top: 40px;">
+
+                <h4 style="color: white; font-weight: 700; margin-bottom: 25px;">Product Overview</h4>
+                <!--                <div style="background: #000; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.3); border: 4px solid #fff;">-->
+                <!--                    <img src="main_screen.gif" style="width: 100%; display: block;" alt="Demo GIF">-->
+                <!--                </div>-->
+
+                <!-- ═══════════════════════════════════════════ -->
+                <!--           YOUTUBE VIDEO SECTION             -->
+                <!-- ═══════════════════════════════════════════ -->
+                <div style="margin: 40px 40px 40px 40px; padding: 30px 20px; background-color: #549edfdb !important; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.08) !important; text-align: center;">
+
+                    <h4 style="font-family: Montserrat; font-size: 22px; font-weight: 700; color: #212121; margin-bottom: 6px; letter-spacing: 0.5px;">
+                        &#9654;&nbsp; Watch Module Demo
+                    </h4>
+                    <p style="font-family: Montserrat; font-size: 15px; color: #212121; margin-bottom: 24px; line-height: 1.6;">
+                        See how Odoo Portal Quotation Editor | Edit Quantity & Delete Sale Order Lines works.
+                    </p>
+
+                    <!-- Clickable YouTube Thumbnail -->
+                    <a href="https://www.youtube.com/watch?v=3VO3iU_j-8k" target="_blank"
+                       style="display: block; max-width: 820px; margin: 0 auto; border-radius: 12px; overflow: hidden !important; box-shadow: 0 8px 30px rgba(0,0,0,0.15) !important; text-decoration: none; position: relative !important;">
+
+                        <img src="https://img.youtube.com/vi/3VO3iU_j-8k/maxresdefault.jpg"
+                             alt="Watch Module Demo on YouTube"
+                             style="width: 100%; display: block; border-radius: 10px;">
+
+                        <!-- Play button overlay -->
+                        <div style="position: absolute !important; top: 0 !important; left: 0 !important; width: 100%; height: 100%; display: flex; align-items: center !important; justify-content: center !important; background: rgba(0,0,0,0.18) !important; border-radius: 10px;">
+                            <div style="width: 72px; height: 72px; background: #ff0000 !important; border-radius: 50%; display: flex; align-items: center !important; justify-content: center !important; box-shadow: 0 4px 20px rgba(0,0,0,0.4) !important;">
+                                <div style="width: 0; height: 0; border-top: 18px solid transparent; border-bottom: 18px solid transparent; border-left: 30px solid #ffffff !important; margin-left: 5px;"></div>
+                            </div>
+                        </div>
+
+                    </a>
+
+                    <!-- Watch on YouTube button matching page style -->
+                    <div style="margin-top: 20px;">
+                        <a href="https://www.youtube.com/watch?v=3VO3iU_j-8k" target="_blank"
+                           style="background-color: #27AAE1; border-radius: 35px; display: inline-block; padding: 9px 30px; font-weight: 600; border: 1px solid #27AAE1; text-decoration: none;">
+                            <span style="font-family: Montserrat; color: #fff; font-size: 15px;">&#9654;&nbsp; Watch on YouTube</span>
+                        </a>
+                    </div>
+
+                </div>
+                <!-- ═══════════════════════════════════════════ -->
+                <!--         END YOUTUBE VIDEO SECTION           -->
+                <!-- ═══════════════════════════════════════════ -->
+
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<section style="margin-top: 30px;">
+    <div style="margin: 0 auto;height: 100%;width: 100%;">
+        <section class="oe_container mt32 mb32" style="background-color: transparent !important;">
+            <div id="feature_tabs" class="row shadow"
+                 style="max-width:1540px; margin:0 auto; padding-bottom:64px; border-radius:20px">
+
+
+                <div class="container-fluid">
+                    <div class="tab-content container p-0">
+                        <div class="container my-5">
+                            <h2 class="text-center mb-5"><b>Features</b></h2>
+
+                            <div class="row mt-5 justify-content-center">
+
+                                <!-- Card 1 -->
+                                <div class="col-lg-6 mb-4">
+                                    <div class="d-flex h-100"
+                                         style="border-radius: 15px; border: 1px solid #f0f0f0; padding: 12px;margin-left: 40px; box-shadow: 0 5px 15px rgba(0,0,0,0.03);">
+                                        <span style="margin-right: 7px;">
+                                            <img src="image/icons/Discount-on-All-Order-Lines.png" style="width:50px;">
+                                        </span>
+                                        <div>
+                                            <span style="font-weight: bold; color: black; font-size: 18px;">Portal Quantity Editing</span>
+                                            <p>Customers can update product quantities directly from the Odoo quotation
+                                                portal page. Once the quantity is changed, the backend sale order is
+                                                updated automatically.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Card 2 -->
+                                <div class="col-lg-6 mb-4">
+                                    <div class="d-flex h-100"
+                                         style="border-radius: 15px; border: 1px solid #f0f0f0; padding: 12px; margin-right: 40px; box-shadow: 0 5px 15px rgba(0,0,0,0.03);">
+                                        <span style="margin-right: 7px;">
+                                            <img src="image/icons/Show_Only_Relevant_Variants.png" style="width:50px;">
+                                        </span>
+                                        <div>
+                                            <span style="font-weight: bold; color: black; font-size: 18px;">Delete Quotation Lines </span>
+                                            <p>Portal users can remove unwanted products or services from a quotation
+                                                before confirming the order. A confirmation popup helps avoid accidental
+                                                deletion.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Card 3 -->
+                                <div class="col-lg-6 mb-4">
+                                    <div class="d-flex h-100"
+                                         style="border-radius: 15px; border: 1px solid #f0f0f0; padding: 12px;margin-left: 40px; box-shadow: 0 5px 15px rgba(0,0,0,0.03);">
+                                        <span style="margin-right: 7px;">
+                                            <img src="image/icons/ideal.png" style="width:50px;">
+                                        </span>
+                                        <div>
+                                            <span style="font-weight: bold; color: black; font-size: 18px;">Backend Sale Order Sync</span>
+                                            <p>
+                                                Every portal-side change is reflected in the related sale order, keeping
+                                                customer-facing and backend quotation data aligned.
+                                            </p>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Card 4 -->
+                                <div class="col-lg-6 mb-4">
+                                    <div class="d-flex h-100"
+                                         style="border-radius: 15px; border: 1px solid #f0f0f0; padding: 12px; margin-right: 40px; box-shadow: 0 5px 15px rgba(0,0,0,0.03);">
+                                        <span style="margin-right: 7px;">
+                                            <img src="image/icons/no_impact_on_Core-Data.png" style="width:50px;">
+                                        </span>
+                                        <div>
+                                            <span style="font-weight: bold; color: black; font-size: 18px;">Draft Quotation Protection</span>
+                                            <p>Portal editing is allowed only while the quotation is in draft or sent
+                                                state. Confirmed orders stay protected from customer-side
+                                                modification.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Card 5 -->
+                                <div class="col-lg-6 mb-4">
+                                    <div class="d-flex h-100"
+                                         style="border-radius: 15px; border: 1px solid #f0f0f0; padding: 12px;margin-left: 40px; box-shadow: 0 5px 15px rgba(0,0,0,0.03);">
+                                        <span style="margin-right: 7px;">
+                                            <img src="image/icons/enhance.png"
+                                                 style="width:50px;">
+                                        </span>
+                                        <div>
+                                            <span style="font-weight: bold; color: black; font-size: 18px;">Secure Portal Access</span>
+                                            <p>The module checks quotation access before allowing updates and verifies
+                                                that the selected line belongs to the correct quotation.</p>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Card 6 -->
+                                <div class="col-lg-6 mb-4">
+                                    <div class="d-flex h-100"
+                                         style="border-radius: 15px; border: 1px solid #f0f0f0; padding: 12px; margin-right: 40px; box-shadow: 0 5px 15px rgba(0,0,0,0.03);">
+                                        <span style="margin-right: 7px;">
+                                            <img src="image/icons/Universal-Compatibilit.png" style="width:50px;">
+                                        </span>
+                                        <div>
+                                            <span style="font-weight: bold; color: black; font-size: 18px;">Better Customer Self-Service</span>
+                                            <p>Customers can adjust quotation requirements online without waiting for
+                                                manual updates from the sales team.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                        <style>
+                            .feature-box {
+                                gap: 15px;
+                                padding: 15px;
+                                border-radius: 12px;
+                                transition: 0.3s;
+                            }
+
+                            .feature-box:hover {
+                                background: #f8f9ff;
+                                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+                                transform: translateY(-3px);
+                            }
+
+                            .icon-box {
+                                width: 50px;
+                                height: 50px;
+                                background: #eef2ff;
+                                border-radius: 12px;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                padding: 15px;
+                            }
+
+                            .icon-box i {
+                                font-size: 20px;
+                                color: #4f46e5;
+                            }
+
+                            .feature-box h5 {
+                                margin-bottom: 5px;
+                                font-weight: 600;
+                            }
+
+                            .feature-box p {
+                                margin: 0;
+                                color: #555;
+                            }
+                        </style>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</section>
+
+<section style="margin-top: 30px;">
+    <div style="margin: 0 auto;height: 100%;width: 100%;">
+        <section class="oe_container mt32 mb32" style="background-color: transparent !important;">
+            <div id="loempia_tabs" class="row shadow"
+                 style="padding: 45px;max-width:1540px; margin:0 auto; padding-bottom:64px; border-radius:20px; background-color: #E5F2FF; !important;">
+
+
+                <ul role="tablist" class="nav nav-tabs justify-content-center" data-tabs="tabs"
+                    style="border:none; background-color:unset; margin:0 auto;">
+
+                    <!-- Tab 1: Configuration (default active) -->
+                    <li class="nav-item"
+                        style="border-radius: 15px; display: flex; align-items: center; justify-content: center;
+               background-color: #8bbbe9 !important; margin-right:10px; border:1px solid #ddd; border-bottom:0"
+                        id="li_configuration">
+                        <a href="#tus_screens" data-bs-toggle="tab" aria-expanded="true" class="nav-link active show"
+                           style="font-family: Montserrat;  font-weight:600; font-size:15px;
+                  letter-spacing:1px; padding:11px 20px; color:#000; border:1px solid #8bbbe9; background:transparent; border-radius: 15px !important;"
+                           onclick="
+             document.getElementById('li_configuration').style.backgroundColor='#2a7ab5';
+             document.getElementById('li_support').style.backgroundColor='#8bbbe9';
+             document.getElementById('li_faq').style.backgroundColor='#8bbbe9';
+             document.getElementById('li_configuration').style.setProperty('background-color','#2a7ab5','important');
+             document.getElementById('li_support').style.setProperty('background-color','#8bbbe9','important');
+             document.getElementById('li_faq').style.setProperty('background-color','#8bbbe9','important');
+           ">
+                            <img src="setup.png"
+                                 style="width:18px; margin-top:-4px; margin-right:6px">Configuration
+                        </a>
+                    </li>
+
+                    <!-- Tab 2: Support -->
+                    <li class="nav-item"
+                        style="border-radius: 15px; display: flex; align-items: center; justify-content: center;
+               background-color: #8bbbe9 !important; margin-right:10px; border:1px solid #ddd; border-bottom:0"
+                        id="li_support">
+                        <a href="#tus_support" data-bs-toggle="tab" aria-expanded="true" class="nav-link show"
+                           style="font-family: Montserrat;  font-weight:600; font-size:15px;
+                  letter-spacing:1px; padding:11px 20px; color:#000; border: 1px solid #8bbbe9; background:transparent;border-radius: 15px !important;"
+                           onclick="
+             document.getElementById('li_configuration').style.setProperty('background-color','#8bbbe9','important');
+             document.getElementById('li_support').style.setProperty('background-color','#2a7ab5','important');
+             document.getElementById('li_faq').style.setProperty('background-color','#8bbbe9','important');
+           ">
+                            <img src="technical-support.png"
+                                 style="width:18px; margin-top:-4px; margin-right:6px">Support
+                        </a>
+                    </li>
+
+                    <!-- Tab 3: FAQs -->
+                    <li class="nav-item"
+                        style="border-radius: 15px; display: flex; align-items: center; justify-content: center;
+               background-color: #8bbbe9 !important; margin-right:10px; border:1px solid #ddd; border-bottom:0"
+                        id="li_faq">
+                        <a href="#tus_faq" data-bs-toggle="tab" aria-expanded="true" class="nav-link show"
+                           style="font-family: Montserrat;  font-weight:600; font-size:15px;
+                  letter-spacing:1px; padding:11px 20px; color:#000; border: 1px solid #8bbbe9; background:transparent;border-radius: 15px !important;"
+                           onclick="
+             document.getElementById('li_configuration').style.setProperty('background-color','#8bbbe9','important');
+             document.getElementById('li_support').style.setProperty('background-color','#8bbbe9','important');
+             document.getElementById('li_faq').style.setProperty('background-color','#2a7ab5','important');
+           ">
+                            <img src="chat.png"
+                                 style="width:18px; margin-top:-4px; margin-right:6px">FAQs
+                        </a>
+                    </li>
+                </ul>
+
+
+                <div class="container-fluid" style="border-top: 1px solid #c2c2c2;">
+                    <div class="tab-content container p-0" id="tabs_content">
+
+                        <div class="tab-pane active" id="tus_screens">
+                            <div class="tab-content tab-content-2 typography mt-5">
+                                <div class="row">
+                                    <div class="col-lg-3">
+
+                                        <ul role="tablist" class="nav nav-tabs justify-content-center" data-tabs="tabs"
+                                            style="border:none; background-color:unset; margin:0 auto;">
+
+                                            <!-- Tab 1: (default active) -->
+                                            <li class="nav-item d-flex justify-content-center"
+                                                style="width: 100% !important;margin-bottom: 10px !important;border-radius: 15px;
+               background-color: #8bbbe9 !important; margin-right:10px; border:1px solid #ddd; border-bottom:0;"
+                                                id="li_1">
+                                                <a href="#s_rule" data-bs-toggle="tab" aria-expanded="true"
+                                                   class="nav-link active show w-100 d-flex justify-content-center align-items-center"
+                                                   style="border-radius: 10px !important;align-items: center !important;font-family: Montserrat;  font-weight:600; font-size:15px;
+                  letter-spacing:1px; color:#000; border:1px solid transparent; background:transparent;"
+                                                   onclick="
+             document.getElementById('li_1').style.backgroundColor='#2a7ab5';
+             document.getElementById('li_2').style.backgroundColor='#8bbbe9';
+             document.getElementById('li_3').style.backgroundColor='#8bbbe9';
+             document.getElementById('li_4').style.backgroundColor='#8bbbe9';
+             document.getElementById('li_5').style.backgroundColor='#8bbbe9';
+             document.getElementById('li_6').style.backgroundColor='#8bbbe9';
+             document.getElementById('li_1').style.setProperty('background-color','#2a7ab5','important');
+             document.getElementById('li_2').style.setProperty('background-color','#8bbbe9','important');
+             document.getElementById('li_3').style.setProperty('background-color','#8bbbe9','important');
+             document.getElementById('li_4').style.setProperty('background-color','#8bbbe9','important');
+             document.getElementById('li_5').style.setProperty('background-color','#8bbbe9','important');
+             document.getElementById('li_6').style.setProperty('background-color','#8bbbe9','important');
+           "> Options for Updating Quantities & Deleting Product Lines.</a>
+                                            </li>
+
+                                            <!-- Tab 2:  -->
+                                            <li class="nav-item d-flex justify-content-center"
+                                                style="width: 100% !important;margin-bottom: 10px !important; border-radius: 15px;
+               background-color: #8bbbe9 !important; margin-right:10px; border:1px solid #ddd; border-bottom:0;"
+                                                id="li_2">
+                                                <a href="#s_form" data-bs-toggle="tab" aria-expanded="true"
+                                                   class="nav-link show w-100 d-flex justify-content-center align-items-center"
+                                                   style="border-radius: 10px !important;align-items: center !important;font-family: Montserrat;  font-weight:600; font-size:15px;
+                  letter-spacing:1px; color:#000; border:1px solid transparent; background:transparent;"
+                                                   onclick="
+             document.getElementById('li_1').style.setProperty('background-color','#8bbbe9','important');
+             document.getElementById('li_2').style.setProperty('background-color','#2a7ab5','important');
+             document.getElementById('li_3').style.setProperty('background-color','#8bbbe9','important');
+             document.getElementById('li_4').style.setProperty('background-color','#8bbbe9','important');
+             document.getElementById('li_5').style.setProperty('background-color','#8bbbe9','important');
+             document.getElementById('li_6').style.setProperty('background-color','#8bbbe9','important');
+           "> Quantity Updated from Portal </a>
+                                            </li>
+
+                                            <!-- Tab 3:  -->
+                                            <li class="nav-item d-flex justify-content-center"
+                                                style="width: 100% !important;margin-bottom: 10px !important;border-radius: 15px;
+               background-color: #8bbbe9 !important; margin-right:10px; border:1px solid #ddd; border-bottom:0;"
+                                                id="li_3">
+                                                <a href="#s_menu" data-bs-toggle="tab" aria-expanded="true"
+                                                   class="nav-link show w-100 d-flex justify-content-center align-items-center"
+                                                   style="border-radius: 10px !important;align-items: center !important;font-family: Montserrat;  font-weight:600; font-size:15px;
+                  letter-spacing:1px; color:#000; border:1px solid transparent; background:transparent;"
+                                                   onclick="
+             document.getElementById('li_1').style.setProperty('background-color','#8bbbe9','important');
+             document.getElementById('li_2').style.setProperty('background-color','#8bbbe9','important');
+             document.getElementById('li_3').style.setProperty('background-color','#2a7ab5','important');
+             document.getElementById('li_4').style.setProperty('background-color','#8bbbe9','important');
+             document.getElementById('li_5').style.setProperty('background-color','#8bbbe9','important');
+             document.getElementById('li_6').style.setProperty('background-color','#8bbbe9','important');
+           ">Deleting Product line from Portal</a>
+                                            </li>
+
+                                            <!-- Tab 4:  -->
+                                            <li class="nav-item d-flex justify-content-center"
+                                                style="width: 100% !important;margin-bottom: 10px !important; border-radius: 15px;
+               background-color: #8bbbe9 !important; margin-right:10px; border:1px solid #ddd; border-bottom:0;"
+                                                id="li_4">
+                                                <a href="#s_menu1" data-bs-toggle="tab" aria-expanded="true"
+                                                   class="nav-link show w-100 d-flex justify-content-center align-items-center"
+                                                   style="border-radius: 10px !important;align-items: center !important;font-family: Montserrat;  font-weight:600; font-size:15px;
+                  letter-spacing:1px; color:#000; border:1px solid transparent; background:transparent;"
+                                                   onclick="
+             document.getElementById('li_1').style.setProperty('background-color','#8bbbe9','important');
+             document.getElementById('li_2').style.setProperty('background-color','#8bbbe9','important');
+             document.getElementById('li_3').style.setProperty('background-color','#8bbbe9','important');
+             document.getElementById('li_4').style.setProperty('background-color','#2a7ab5','important');
+             document.getElementById('li_5').style.setProperty('background-color','#8bbbe9','important');
+             document.getElementById('li_6').style.setProperty('background-color','#8bbbe9','important');
+           "> Product Updated in Backend </a>
+                                            </li>
+
+
+
+                                        </ul>
+
+                                    </div>
+                                    <div class="col-lg-9 mt-4 mt-lg-0">
+                                        <div class="tab-content">
+                                            <div class="tab-pane fade show active" id="s_rule">
+                                                <h3><b>Options for Updating Quantities &amp; Deleting Product Lines </b></h3>
+                                                <p>
+                                                    After installing the module, you will be able to see options for
+                                                    updating quantities and deleting product lines.
+                                                </p>
+                                                <img src="image/before-update-quantity-and-delete-line.png" alt="" width="100%"
+                                                     style="border-radius: 10px; margin: 10px 0; border: 1px solid #faad18;">
+                                                <hr/>
+                                                <br/>
+                                            </div>
+
+                                            <div class="tab-pane fade" id="s_form">
+
+                                                <h3><b>Quantity Updated from Portal </b></h3>
+                                                <p>
+                                                    Here, you can see that we&apos;ve updated the quantity of the office chair
+                                                    from 2 to 4, and both the amount and total have been adjusted accordingly.
+                                                </p>
+                                                <img src="image/updated_quantity.png" alt="" width="100%"
+                                                     style="border-radius: 10px; margin: 10px 0; border: 1px solid #faad18;">
+
+                                                <hr/>
+                                                <br/>
+
+                                            </div>
+
+                                            <div class="tab-pane fade" id="s_menu">
+
+                                                <h3><b> Deleting a Product line </b></h3>
+                                                <p>
+                                                    Once you click the delete icon, the system will prompt you with a
+                                                    confirmation message before removing the product from the quotation.
+                                                </p>
+
+                                                <img src="image/deleting-line.png" alt="" width="100%"
+                                                     style="border-radius: 10px; margin: 10px 0; border: 1px solid #faad18;">
+                                                <hr/>
+                                                <br/>
+
+                                                <h3><b> Product Line Deleted Successfully</b></h3>
+                                                <p>
+                                                    Here, you can see that the product has been removed from the portal.
+
+                                                </p>
+                                                <img src="image/deleted-line.png" alt="" width="100%"
+                                                     style="border-radius: 10px; margin: 10px 0; border: 1px solid #faad18;">
+                                                <hr/>
+                                                <br/>
+
+                                            </div>
+
+                                            <div class="tab-pane fade" id="s_menu1">
+
+                                                <h3><b> Product Updated in Backend </b></h3>
+                                                <p>
+                                                    Here, you can see that in the backend, the product is updated whenever
+                                                    you change the quantity or delete the product.
+                                                </p>
+                                                <img src="image/backend-product-view.png" alt="" width="100%"
+                                                     style="border-radius: 10px; margin: 10px 0; border: 1px solid #faad18;">
+                                                <hr/>
+                                                <br/>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Support Tabs -->
+                        <div class="tab-pane" id="tus_support">
+                            <div class="container">
+                                <div class="mt-3 tab-content tab-content-last typography">
+                                    <ul style="padding:0">
+                                        <li class="shadow rounded"
+                                            style="font-family:Montserrat; padding:20px; margin-bottom:20px; font-size:16px; color:#212121; font-weight:600; letter-spacing:1px; display:block; border-radius:0.25rem !important">
+                                        <span class="fa fa-check-circle"
+                                              style="color:#3363c1; font-weight:600; font-size:18px; padding-right:10px"></span>
+                                            We provide 90 days bug-free support related to our module.
+                                        </li>
+                                        <li class="shadow rounded"
+                                            style="font-family:Montserrat; padding:20px; margin-bottom:20px; font-size:16px; color:#212121; font-weight:600; letter-spacing:1px; display:block; border-radius:0.25rem !important">
+                                        <span class="fa fa-check-circle"
+                                              style="color:#3363c1; font-weight:600; font-size:18px; padding-right:10px"></span>
+                                            We provide 5 hours of free configuration support. Additional
+                                            configuration
+                                            or customization is billable.
+                                        </li>
+                                        <li class="shadow rounded"
+                                            style="font-family:Montserrat; padding:20px; margin-bottom:20px; font-size:16px; color:#212121; font-weight:600; letter-spacing:1px; display:block; border-radius:0.25rem !important">
+                                        <span class="fa fa-check-circle"
+                                              style="color:#3363c1; font-weight:600; font-size:18px; padding-right:10px"></span>
+                                            The support team is available from Monday to Friday 10:00 AM to 07:00 PM
+                                            (IST).
+                                        </li>
+                                        <li class="shadow rounded"
+                                            style="font-family:Montserrat; padding:20px; margin-bottom:20px; font-size:16px; color:#212121; font-weight:600; letter-spacing:1px; display:block; border-radius:0.25rem !important">
+                                        <span class="fa fa-check-circle"
+                                              style="color:#3363c1; font-weight:600; font-size:18px; padding-right:10px"></span>
+                                            To create a ticket, send an email to support@techultra.in.
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- FAQ Tabs -->
+                        <div class="tab-pane" id="tus_faq">
+                            <div class="container" style="margin-top: 20px;">
+                                <div id="accordion">
+                                        <div class="card"
+                                             style="border-bottom:1px solid #969696 !important; border:0px;background-color: transparent;">
+                                            <div class="card-header pl-0 position-relative align-items-center d-flex"
+                                                 style="border:none; padding-bottom:0.3rem; padding-top:0.3rem;background-color: transparent;">
+                                                <a class="card-link collapsed d-flex justify-content-center align-items-center"
+                                                   data-bs-toggle="collapse" href="#faq1"
+                                                   style="width:25px; height:25px; line-height:11px; border-radius:2px; padding:0; font-size:24px"
+                                                   aria-expanded="false">
+                                                    <i class="fa fa-plus"
+                                                       style="font-size:16px; font-weight:300; color:#646464"></i>
+                                                </a>
+                                                <p class="pr-5 pl-3"
+                                                   style="font-family: Montserrat;margin:0; font-weight:300; color:#646464; font-size:16px">
+                                                   What is the purpose of the Portal Quotation Customize module?
+                                                </p>
+                                            </div>
+                                            <div id="faq1" class="collapse" data-parent="#accordion" style="">
+                                                <div class="card-body pt-0 pl-4">
+                                                    <p class="pl-5 font-italic"
+                                                       style="font-family: Montserrat; font-weight:300; color:#646464; font-size:16px">
+                                                        The Portal Quotation Customize module allows portal users to edit
+                                                        product quantities and delete order lines directly within a
+                                                        quotation. These changes are automatically reflected in the
+                                                        backend sale order, streamlining the quotation and sales order
+                                                        process.
+                                                     </p>
+                                                </div>
+                                            </div>
+
+                                            <div class="card-header pl-0 position-relative align-items-center d-flex"
+                                                 style="border:none; padding-bottom:0.3rem; padding-top:0.3rem;background-color: transparent;">
+                                                <a class="card-link collapsed d-flex justify-content-center align-items-center"
+                                                   data-bs-toggle="collapse" href="#faq2"
+                                                   style="width:25px; height:25px; line-height:11px; border-radius:2px; padding:0; font-size:24px"
+                                                   aria-expanded="false">
+                                                    <i class="fa fa-plus"
+                                                       style="font-size:16px; font-weight:300; color:#646464"></i>
+                                                </a>
+                                                <p class="pr-5 pl-3"
+                                                   style="font-family: Montserrat;margin:0; font-weight:300; color:#646464; font-size:16px">
+                                                    What can users edit in a quotation?
+                                                </p>
+                                            </div>
+                                            <div id="faq2" class="collapse" data-parent="#accordion" style="">
+                                                <div class="card-body pt-0 pl-4">
+                                                    <p class="pl-5 font-italic"
+                                                       style="font-family: Montserrat; font-weight:300; color:#646464; font-size:16px">
+                                                        Users can edit product quantities on quotation lines, allowing
+                                                        them to adjust the number of items in their order. They can also
+                                                        delete entire order lines from the quotation if they no longer
+                                                        wish to purchase specific products or services.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="card-header pl-0 position-relative align-items-center d-flex"
+                                                 style="border:none; padding-bottom:0.3rem; padding-top:0.3rem;background-color: transparent;">
+                                                <a class="card-link collapsed d-flex justify-content-center align-items-center"
+                                                   data-bs-toggle="collapse" href="#faq5"
+                                                   style="width:25px; height:25px; line-height:11px; border-radius:2px; padding:0; font-size:24px"
+                                                   aria-expanded="false">
+                                                    <i class="fa fa-plus"
+                                                       style="font-size:16px; font-weight:300; color:#646464"></i>
+                                                </a>
+                                                <p class="pr-5 pl-3"
+                                                   style="font-family: Montserrat;margin:0; font-weight:300; color:#646464; font-size:16px">
+                                                    Who can edit or delete quotation lines?
+                                                </p>
+                                            </div>
+                                            <div id="faq5" class="collapse" data-parent="#accordion" style="">
+                                                <div class="card-body pt-0 pl-4">
+                                                    <p class="pl-5 font-italic"
+                                                       style="font-family: Montserrat; font-weight:300; color:#646464; font-size:16px">
+                                                        Any user can edit quotation product quantities and delete lines.
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            <div class="card-header pl-0 position-relative align-items-center d-flex"
+                                                 style="border:none; padding-bottom:0.3rem; padding-top:0.3rem;background-color: transparent;">
+                                                <a class="card-link collapsed d-flex justify-content-center align-items-center"
+                                                   data-bs-toggle="collapse" href="#faq3"
+                                                   style="width:25px; height:25px; line-height:11px; border-radius:2px; padding:0; font-size:24px"
+                                                   aria-expanded="false">
+                                                    <i class="fa fa-plus"
+                                                       style="font-size:16px; font-weight:300; color:#646464"></i>
+                                                </a>
+                                                <p class="pr-5 pl-3"
+                                                   style="font-family: Montserrat;margin:0; font-weight:300; color:#646464; font-size:16px">
+                                                    How are changes made in the portal reflected in the backend?
+                                                </p>
+                                            </div>
+                                            <div id="faq3" class="collapse" data-parent="#accordion" style="">
+                                                <div class="card-body pt-0 pl-4">
+                                                    <p class="pl-5 font-italic"
+                                                       style="font-family: Montserrat; font-weight:300; color:#646464; font-size:16px">
+                                                        Any changes made to the quotation, such as editing quantities or
+                                                        deleting lines, are automatically synchronized with the backend
+                                                        sale order in real time. This ensures consistency information in
+                                                        the system, eliminating the need for manual updates.
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            <div class="card-header pl-0 position-relative align-items-center d-flex"
+                                                 style="border:none; padding-bottom:0.3rem; padding-top:0.3rem;background-color: transparent;">
+                                                <a class="card-link collapsed d-flex justify-content-center align-items-center"
+                                                   data-bs-toggle="collapse" href="#faq4"
+                                                   style="width:25px; height:25px; line-height:11px; border-radius:2px; padding:0; font-size:24px"
+                                                   aria-expanded="false">
+                                                    <i class="fa fa-plus"
+                                                       style="font-size:16px; font-weight:300; color:#646464"></i>
+                                                </a>
+                                                <p class="pr-5 pl-3"
+                                                   style="font-family: Montserrat;margin:0; font-weight:300; color:#646464; font-size:16px">
+                                                    Can users modify the price or apply discounts on the quotation?
+                                                </p>
+                                            </div>
+                                            <div id="faq4" class="collapse" data-parent="#accordion" style="">
+                                                <div class="card-body pt-0 pl-4">
+                                                    <p class="pl-5 font-italic"
+                                                       style="font-family: Montserrat; font-weight:300; color:#646464; font-size:16px">
+                                                        While the module primarily focuses on modifying quantities and
+                                                        deleting lines, pricing and discounts are typically governed by
+                                                        pre-set rules and business logic in the system. If the system is
+                                                        configured to allow it, prices may adjust automatically based on
+                                                        the quantity changes or specific discounts.
+                                                     </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</section>
+
+<style>
+    @media (min-width: 576px) {
+        .icon-box1 {
+            flex-basis: calc(50% - 20px);
+            /* Adjust based on padding and gap */
+        }
+    }
+
+    @media (max-width: 576px) {
+        h1 {
+            font-size: 30px !important;
+            margin: 20px 0 !important;
+        }
+    }
+</style>
+
+<section style="margin-top: 40px;">
+    <div style="margin: 0 auto;height: 100%;width: 100%;">
+        <div class="px-md-5 py-md-4 p-2 mt-5 mb-4 shadow "
+             style="background-color: transparent;margin-top: 41px;border-radius:20px; font-family: Montserrat;">
+            <section class="oe_container" style="background-color: transparent;">
+                <div class="heading" style="font-family: Montserrat;text-align: center;">
+                    <br/>
+                    <h1>
+                        <b>
+                            <br/>Related Products </b>
+                    </h1>
+                    <div class="section-heading-line"></div>
+                    <style>
+                        .section-heading-line {
+                            content: '';
+                            display: block;
+                            width: 224px;
+                            height: 3px;
+                            background: #3e4095;
+                            border-radius: 25%;
+
+
+                            margin-top: 15px;
+                            margin-bottom: 5px;
+                            font-family: Montserrat;
+                        }
+                    </style>
+                </div>
+            </section>
+            <br>
+            <section style="margin-top: 40px;">
+                <div style="margin: 0 auto;height: 100%;width: 100%;">
+                    <div class="px-md-5 py-md-4 p-2 mt-5 mb-4 shadow "
+                         style="background-color:transparent; margin-top:41px; border-radius:20px; font-family:Montserrat">
+                        <section class="oe_container" style="background-color:transparent">
+                            <div id="tus_carousel" class="container carousel slide mb32 mt60">
+                                <div class="carousel-inner">
+                                    <div class="carousel-item active">
+                                        <div class="row">
+                                            <div class="col-md-3 col-sm-3 col-xs-12 mt16 mb16 text-center">
+                                                <a href="https://apps.odoo.com/apps/modules/18.0/hdfc_vendor_payment"
+                                                   target="_blank">
+                                                    <div>
+                                                        <img class="img img-responsive"
+                                                             src="sliders/hdfc_vendor_payment.gif"
+                                                             style="height: 100px;">
+                                                        <div class="mt8"
+                                                             style="color: #27AAE1 !important;font-family: Montserrat;font-size:20px;">
+                                                            HDFC Vendor Payment Integration
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            <div class="col-md-3 col-sm-3 col-xs-12 mt16 mb16 text-center">
+                                                <a href="https://apps.odoo.com/apps/modules/19.0/tus_product_personalizer"
+                                                   target="_blank">
+                                                    <div>
+                                                        <img class="img img-responsive"
+                                                             src="sliders/tus_product_personalizer.gif"
+                                                             style="height: 100px;">
+                                                        <div class="mt8"
+                                                             style="color: #27AAE1 !important;font-family: Montserrat;font-size:20px;">
+                                                            Odoo Product Personalizer | Web-to-Print Studio | Product
+                                                            Editor, Designer & Customizer | Web2Print
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            <div class="col-md-3 col-sm-3 col-xs-12 mt16 mb16 text-center">
+                                                <a href="https://apps.odoo.com/apps/modules/19.0/ringcentral_integration"
+                                                   target="_blank">
+                                                    <div>
+                                                        <img class="img img-responsive"
+                                                             src="sliders/ringcentral_integration.gif"
+                                                             style="height: 100px;">
+                                                        <div class="mt8"
+                                                             style="color: #27AAE1 !important;font-family: Montserrat;font-size:20px;">
+                                                            RingCentral Integration
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            <div class="col-md-3 col-sm-3 col-xs-12 mt16 mb16 text-center">
+                                                <a href="https://apps.odoo.com/apps/modules/19.0/tus_printnode"
+                                                   target="_blank">
+                                                    <div>
+                                                        <img class="img img-responsive"
+                                                             src="sliders/tus_printnode.gif"
+                                                             style="height: 100px;">
+                                                        <div class="mt8"
+                                                             style="color: #27AAE1 !important;font-family: Montserrat;font-size:20px;">
+                                                            Odoo Direct Print via Printnode
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            <div class="col-md-3 col-sm-3 col-xs-12 mt16 mb16 text-center">
+                                                <a href="https://apps.odoo.com/apps/modules/19.0/hr_attendance_face_detection"
+                                                   target="_blank">
+                                                    <div>
+                                                        <img class="img img-responsive"
+                                                             src="sliders/hr_attendance_face_detection.gif"
+                                                             style="height: 100px;">
+                                                        <div class="mt8"
+                                                             style="color: #27AAE1 !important;font-family: Montserrat;font-size:20px;">
+                                                            Face Recognition Attendance System
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            <div class="col-md-3 col-sm-3 col-xs-12 mt16 mb16 text-center">
+                                                <a href="https://apps.odoo.com/apps/modules/18.0/website_portal_chat"
+                                                   target="_blank">
+                                                    <div>
+                                                        <img class="img img-responsive"
+                                                             src="sliders/website_portal_chat.gif"
+                                                             style="height: 100px;">
+                                                        <div class="mt8"
+                                                             style="color: #27AAE1 !important;font-family: Montserrat;font-size:20px;">
+                                                            Portal User Chatter
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            <div class="col-md-3 col-sm-3 col-xs-12 mt16 mb16 text-center">
+                                                <a href="https://apps.odoo.com/apps/modules/19.0/odoo_linkedin"
+                                                   target="_blank">
+                                                    <div>
+                                                        <img class="img img-responsive"
+                                                             src="sliders/odoo_linkedin_.gif"
+                                                             style="height: 100px;">
+                                                        <div class="mt8"
+                                                             style="color: #27AAE1 !important;font-family: Montserrat;font-size:20px;">
+                                                            LinkedIn Integration
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            <div class="col-md-3 col-sm-3 col-xs-12 mt16 mb16 text-center">
+                                                <a href="https://apps.odoo.com/apps/modules/19.0/ai_inventory_forecast"
+                                                   target="_blank">
+                                                    <div>
+                                                        <img class="img img-responsive"
+                                                             src="sliders/ai_inventory_forecast.gif"
+                                                             style="height: 100px;">
+                                                        <div class="mt8"
+                                                             style="color: #27AAE1 !important;font-family: Montserrat;font-size:20px;">
+                                                            AI Inventory Forecast | Odoo V19 Enterprise & Community
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="carousel-item">
+                                        <div class="row">
+                                            <div class="col-md-3 col-sm-3 col-xs-12 mt16 mb16 text-center">
+                                                <a href="https://apps.odoo.com/apps/modules/19.0/tus_screenshort_by_attendence"
+                                                   target="_blank">
+                                                    <div>
+                                                        <img class="img img-responsive"
+                                                             src="sliders/tus_screenshort_by_attendence_.gif"
+                                                             style="height: 100px;">
+                                                        <div class="mt8"
+                                                             style="color: #27AAE1 !important;font-family: Montserrat;font-size:20px;">
+                                                            Face Capture On Attendance System
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            <div class="col-md-3 col-sm-3 col-xs-12 mt16 mb16 text-center">
+                                                <a href="https://apps.odoo.com/apps/modules/19.0/external_archive_manager"
+                                                   target="_blank">
+                                                    <div>
+                                                        <img class="img img-responsive"
+                                                             src="sliders/external_archive_manager.gif"
+                                                             style="height: 100px;">
+                                                        <div class="mt8"
+                                                             style="color: #27AAE1 !important;font-family: Montserrat;font-size:20px;">
+                                                            Data Offload / External Archive Manager
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            <div class="col-md-3 col-sm-3 col-xs-12 mt16 mb16 text-center">
+                                                <a href="https://apps.odoo.com/apps/modules/19.0/odoo_json_rpc"
+                                                   target="_blank">
+                                                    <div>
+                                                        <img class="img img-responsive"
+                                                             src="sliders/odoo_json_rpc_.gif"
+                                                             style="height: 100px;">
+                                                        <div class="mt8"
+                                                             style="color: #27AAE1 !important;font-family: Montserrat;font-size:20px;">
+                                                            ODOO JSON RPC
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            <div class="col-md-3 col-sm-3 col-xs-12 mt16 mb16 text-center">
+                                                <a href="https://apps.odoo.com/apps/modules/16.0/tus_discuss_search"
+                                                   target="_blank">
+                                                    <div>
+                                                        <img class="img img-responsive"
+                                                             src="sliders/tus_discuss_search.gif"
+                                                             style="height: 100px;">
+                                                        <div class="mt8"
+                                                             style="color: #27AAE1 !important;font-family: Montserrat;font-size:20px;">
+                                                            Discuss Search
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            <div class="col-md-3 col-sm-3 col-xs-12 mt16 mb16 text-center">
+                                                <a href="https://apps.odoo.com/apps/modules/19.0/show_hide_send_message_button"
+                                                   target="_blank">
+                                                    <div>
+                                                        <img class="img img-responsive"
+                                                             src="sliders/show_hide_send_message_button.gif"
+                                                             style="height: 100px;">
+                                                        <div class="mt8"
+                                                             style="color: #27AAE1 !important;font-family: Montserrat;font-size:20px;">
+                                                            Show Hide Send Message Button
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            <div class="col-md-3 col-sm-3 col-xs-12 mt16 mb16 text-center">
+                                                <a href="https://apps.odoo.com/apps/modules/19.0/stock_inventory_count_tus"
+                                                   target="_blank">
+                                                    <div>
+                                                        <img class="img img-responsive"
+                                                             src="sliders/stock_inventory_count_tus.gif"
+                                                             style="height: 100px;">
+                                                        <div class="mt8"
+                                                             style="color: #27AAE1 !important;font-family: Montserrat;font-size:20px;">
+                                                            Stock Inventory Counting
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            <div class="col-md-3 col-sm-3 col-xs-12 mt16 mb16 text-center">
+                                                <a href="https://apps.odoo.com/apps/modules/19.0/odoo_pos_orderline_location"
+                                                   target="_blank">
+                                                    <div>
+                                                        <img class="img img-responsive"
+                                                             src="sliders/odoo_pos_orderline_location.gif"
+                                                             style="height: 100px;">
+                                                        <div class="mt8"
+                                                             style="color: #27AAE1 !important;font-family: Montserrat;font-size:20px;">
+                                                            Odoo Pos Select Product Location
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            <div class="col-md-3 col-sm-3 col-xs-12 mt16 mb16 text-center">
+                                                <a href="https://apps.odoo.com/apps/modules/19.0/tus_list_column_reorder"
+                                                   target="_blank">
+                                                    <div>
+                                                        <img class="img img-responsive"
+                                                             src="sliders/tus_list_column_reorder.gif"
+                                                             style="height: 100px;">
+                                                        <div class="mt8"
+                                                             style="color: #27AAE1 !important;font-family: Montserrat;font-size:20px;">
+                                                            List Column Reorder (Per User)
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="carousel-item">
+                                        <div class="row">
+                                            <div class="col-md-3 col-sm-3 col-xs-12 mt16 mb16 text-center">
+                                                <a href="https://apps.odoo.com/apps/modules/19.0/custom_multi_company_selector"
+                                                   target="_blank">
+                                                    <div>
+                                                        <img class="img img-responsive"
+                                                             src="sliders/custom_multi_company_selector.gif"
+                                                             style="height: 100px;">
+                                                        <div class="mt8"
+                                                             style="color: #27AAE1 !important;font-family: Montserrat;font-size:20px;">
+                                                            Web Select All Companies
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            <div class="col-md-3 col-sm-3 col-xs-12 mt16 mb16 text-center">
+                                                <a href="https://apps.odoo.com/apps/modules/19.0/tus_show_optional_columns"
+                                                   target="_blank">
+                                                    <div>
+                                                        <img class="img img-responsive"
+                                                             src="sliders/tus_show_optional_columns.gif"
+                                                             style="height: 100px;">
+                                                        <div class="mt8"
+                                                             style="color: #27AAE1 !important;font-family: Montserrat;font-size:20px;">
+                                                            Show Optional Columns
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            <div class="col-md-3 col-sm-3 col-xs-12 mt16 mb16 text-center">
+                                                <a href="https://apps.odoo.com/apps/modules/19.0/tus_add_bulk_order"
+                                                   target="_blank">
+                                                    <div>
+                                                        <img class="img img-responsive"
+                                                             src="sliders/tus_add_bulk_order.gif"
+                                                             style="height: 100px;">
+                                                        <div class="mt8"
+                                                             style="color: #27AAE1 !important;font-family: Montserrat;font-size:20px;">
+                                                            Add Bulk Products in SaleOrder
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            <div class="col-md-3 col-sm-3 col-xs-12 mt16 mb16 text-center">
+                                                <a href="https://apps.odoo.com/apps/modules/19.0/employee_image_exporter"
+                                                   target="_blank">
+                                                    <div>
+                                                        <img class="img img-responsive"
+                                                             src="sliders/employee_image_exporter_-.gif"
+                                                             style="height: 100px;">
+                                                        <div class="mt8"
+                                                             style="color: #27AAE1 !important;font-family: Montserrat;font-size:20px;">
+                                                            Advanced Employee Image Exporter
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            <div class="col-md-3 col-sm-3 col-xs-12 mt16 mb16 text-center">
+                                                <a href="https://apps.odoo.com/apps/modules/19.0/advanced_many2many_binary_upload"
+                                                   target="_blank">
+                                                    <div>
+                                                        <img class="img img-responsive"
+                                                             src="sliders/advanced_many2many_binary_upload.gif"
+                                                             style="height: 100px;">
+                                                        <div class="mt8"
+                                                             style="color: #27AAE1 !important;font-family: Montserrat;font-size:20px;">
+                                                            Advanced Many2Many Binary Upload
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            <div class="col-md-3 col-sm-3 col-xs-12 mt16 mb16 text-center">
+                                                <a href="https://apps.odoo.com/apps/modules/19.0/tus_product_image_bulk_import"
+                                                   target="_blank">
+                                                    <div>
+                                                        <img class="img img-responsive"
+                                                             src="sliders/tus_product_image_bulk_import.gif"
+                                                             style="height: 100px;">
+                                                        <div class="mt8"
+                                                             style="color: #27AAE1 !important;font-family: Montserrat;font-size:20px;">
+                                                            Product Image Import
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            <div class="col-md-3 col-sm-3 col-xs-12 mt16 mb16 text-center">
+                                                <a href="https://apps.odoo.com/apps/modules/19.0/portal_quotation_customize"
+                                                   target="_blank">
+                                                    <div>
+                                                        <img class="img img-responsive"
+                                                             src="sliders/portal_quotation_customize.gif"
+                                                             style="height: 100px;">
+                                                        <div class="mt8"
+                                                             style="color: #27AAE1 !important;font-family: Montserrat;font-size:20px;">
+                                                            Portal User Edit QTY and Delete Lines on Quotations
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            <div class="col-md-3 col-sm-3 col-xs-12 mt16 mb16 text-center">
+                                                <a href="https://apps.odoo.com/apps/modules/19.0/chatter_restrict_edit_delete"
+                                                   target="_blank">
+                                                    <div>
+                                                        <img class="img img-responsive"
+                                                             src="sliders/chatter_restrict_edit_delete.gif"
+                                                             style="height: 100px;">
+                                                        <div class="mt8"
+                                                             style="color: #27AAE1 !important;font-family: Montserrat;font-size:20px;">
+                                                            Restrict chatter Edit and Delete
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="carousel-item">
+                                        <div class="row">
+                                            <div class="col-md-3 col-sm-3 col-xs-12 mt16 mb16 text-center">
+                                                <a href="https://apps.odoo.com/apps/modules/16.0/tus_meta_whatsapp_base/"
+                                                   target="_blank">
+                                                    <div>
+                                                        <img class="img img-responsive"
+                                                             src="sliders/tus_meta_whatsapp_base.gif"
+                                                             style="height: 100px;">
+                                                        <div class="mt8"
+                                                             style="color: #27AAE1 !important;font-family: Montserrat;font-size:20px;">
+                                                            Odoo Meta WhatsApp Base
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            <div class="col-md-3 col-sm-3 col-xs-12 mt16 mb16 text-center">
+                                                <a href="https://apps.odoo.com/apps/modules/16.0/tus_meta_whatsapp_base/"
+                                                   target="_blank">
+                                                    <div>
+                                                        <img class="img img-responsive"
+                                                             src="sliders/instaFbBidiraction.gif"
+                                                             style="height: 100px;">
+                                                        <div class="mt8"
+                                                             style="color: #27AAE1 !important;font-family: Montserrat;font-size:20px;">
+                                                            Odoo Facebook Instagram Messenger
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            <div class="col-md-3 col-sm-3 col-xs-12 mt16 mb16 text-center">
+                                                <a href="https://apps.odoo.com/apps/modules/16.0/tus_meta_wa_discuss/"
+                                                   target="_blank">
+                                                    <div>
+                                                        <img class="img img-responsive"
+                                                             src="sliders/tus_meta_wa_discuss.gif"
+                                                             style="height: 100px;">
+                                                        <div class="mt8"
+                                                             style="color: #27AAE1 !important;font-family: Montserrat;font-size:20px;">
+                                                            Odoo Meta WhatsApp Discuss
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            <div class="col-md-3 col-sm-3 col-xs-12 mt16 mb16 text-center">
+                                                <a href="https://apps.odoo.com/apps/modules/16.0/tus_meta_wa_marketing/"
+                                                   target="_blank">
+                                                    <div>
+                                                        <img class="img img-responsive"
+                                                             src="sliders/tus_meta_wa_marketing.gif"
+                                                             style="height: 100px;">
+                                                        <div class="mt8"
+                                                             style="color: #27AAE1 !important;font-family: Montserrat;font-size:20px;">
+                                                            Odoo Meta WhatsApp Marketing
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            <div class="col-md-3 col-sm-3 col-xs-12 mt16 mb16 text-center">
+                                                <a href="https://apps.odoo.com/apps/modules/16.0/tus_meta_wa_crm/"
+                                                   target="_blank">
+                                                    <div>
+                                                        <img class="img img-responsive"
+                                                             src="sliders/tus_meta_wa_crm.gif"
+                                                             style="height: 100px;">
+                                                        <div class="mt8"
+                                                             style="color: #27AAE1 !important;font-family: Montserrat;font-size:20px;">
+                                                            Odoo Meta WhatsApp CRM
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            <div class="col-md-3 col-sm-3 col-xs-12 mt16 mb16 text-center">
+                                                <a href="https://apps.odoo.com/apps/modules/18.0/all_in_one_whatsapp_odoo_community"
+                                                   target="_blank">
+                                                    <div>
+                                                        <img class="img img-responsive"
+                                                             src="sliders/all_in_one_whatsapp_odoo_community.gif"
+                                                             style="height: 100px;">
+                                                        <div class="mt8"
+                                                             style="color: #27AAE1 !important;font-family: Montserrat;font-size:20px;">
+                                                            All In One Odoo WhatsApp Integration
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            <div class="col-md-3 col-sm-3 col-xs-12 mt16 mb16 text-center">
+                                                <a href="https://apps.odoo.com/apps/modules/16.0/tus_meta_wa_sale/"
+                                                   target="_blank">
+                                                    <div>
+                                                        <img class="img img-responsive"
+                                                             src="sliders/tus_meta_wa_sale.gif"
+                                                             style="height: 100px;">
+                                                        <div class="mt8"
+                                                             style="color: #27AAE1 !important;font-family: Montserrat;font-size:20px;">
+                                                            Odoo Meta WhatsApp Sale
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            <div class="col-md-3 col-sm-3 col-xs-12 mt16 mb16 text-center">
+                                                <a href="https://apps.odoo.com/apps/modules/18.0/tus_meta_wa_invoice"
+                                                   target="_blank">
+                                                    <div>
+                                                        <img class="img img-responsive"
+                                                             src="sliders/tus_meta_wa_invoice.gif"
+                                                             style="height: 100px;">
+                                                        <div class="mt8"
+                                                             style="color: #27AAE1 !important;font-family: Montserrat;font-size:20px;">
+                                                            Odoo WhatsApp Invoice
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="carousel-item">
+                                        <div class="row">
+                                            <div class="col-md-3 col-sm-3 col-xs-12 mt16 mb16 text-center">
+                                                <a href="https://apps.odoo.com/apps/modules/19.0/tus_fsm_multi_worksheet"
+                                                   target="_blank">
+                                                    <div>
+                                                        <img class="img img-responsive"
+                                                             src="sliders/tus_fsm_multi_worksheet.gif"
+                                                             style="height: 100px;">
+                                                        <div class="mt8"
+                                                             style="color: #27AAE1 !important;font-family: Montserrat;font-size:20px;">
+                                                            Field Service Multi Worksheet
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            <div class="col-md-3 col-sm-3 col-xs-12 mt16 mb16 text-center">
+                                                <a href="https://apps.odoo.com/apps/modules/19.0/tus_custom_currency_rate"
+                                                   target="_blank">
+                                                    <div>
+                                                        <img class="img img-responsive"
+                                                             src="sliders/tus_custom_currency_rate.gif"
+                                                             style="height: 100px;">
+                                                        <div class="mt8"
+                                                             style="color: #27AAE1 !important;font-family: Montserrat;font-size:20px;">
+                                                            Manual Currency Rate for Sale Order, Purchase Order,
+                                                            Invoice, Bill & Payment
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            <div class="col-md-3 col-sm-3 col-xs-12 mt16 mb16 text-center">
+                                                <a href="https://apps.odoo.com/apps/modules/19.0/pos_close_session_from_bakcend"
+                                                   target="_blank">
+                                                    <div>
+                                                        <img class="img img-responsive"
+                                                             src="sliders/pos_close_session_from_bakcend_.gif"
+                                                             style="height: 100px;">
+                                                        <div class="mt8"
+                                                             style="color: #27AAE1 !important;font-family: Montserrat;font-size:20px;">
+                                                            POS Close Session From Backend
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            <div class="col-md-3 col-sm-3 col-xs-12 mt16 mb16 text-center">
+                                                <a href="https://apps.odoo.com/apps/modules/19.0/tus_email_cc"
+                                                   target="_blank">
+                                                    <div>
+                                                        <img class="img img-responsive" src="sliders/tus_email_cc_.gif"
+                                                             style="height: 100px;">
+                                                        <div class="mt8"
+                                                             style="color: #27AAE1 !important;font-family: Montserrat;font-size:20px;">
+                                                            Email Cc
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            <div class="col-md-3 col-sm-3 col-xs-12 mt16 mb16 text-center">
+                                                <a href="https://apps.odoo.com/apps/modules/19.0/account_print_unfold_record"
+                                                   target="_blank">
+                                                    <div>
+                                                        <img class="img img-responsive"
+                                                             src="sliders/account_print_unfold_record.gif"
+                                                             style="height: 100px;">
+                                                        <div class="mt8"
+                                                             style="color: #27AAE1 !important;font-family: Montserrat;font-size:20px;">
+                                                            Export Partner Ledger Report
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            <div class="col-md-3 col-sm-3 col-xs-12 mt16 mb16 text-center">
+                                                <a href="https://apps.odoo.com/apps/modules/19.0/odoo_split_view"
+                                                   target="_blank">
+                                                    <div>
+                                                        <img class="img img-responsive"
+                                                             src="sliders/odoo_split_view.gif"
+                                                             style="height: 100px;">
+                                                        <div class="mt8"
+                                                             style="color: #27AAE1 !important;font-family: Montserrat;font-size:20px;">
+                                                            Odoo Split View
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            <div class="col-md-3 col-sm-3 col-xs-12 mt16 mb16 text-center">
+                                                <a href="https://apps.odoo.com/apps/modules/19.0/pdf_split_and_merge"
+                                                   target="_blank">
+                                                    <div>
+                                                        <img class="img img-responsive"
+                                                             src="sliders/pdf_split_and_merge.gif"
+                                                             style="height: 100px;">
+                                                        <div class="mt8"
+                                                             style="color: #27AAE1 !important;font-family: Montserrat;font-size:20px;">
+                                                            PDF Split and Merge
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            <div class="col-md-3 col-sm-3 col-xs-12 mt16 mb16 text-center">
+                                                <a href="https://apps.odoo.com/apps/modules/19.0/outgoing_mail_by_multi_company_or_user"
+                                                   target="_blank">
+                                                    <div>
+                                                        <img class="img img-responsive"
+                                                             src="sliders/outgoing_mail_by_multi_company_or_user.gif"
+                                                             style="height: 100px;">
+                                                        <div class="mt8"
+                                                             style="color: #27AAE1 !important;font-family: Montserrat;font-size:20px;">
+                                                            Outgoing Mail by Multi Company or User
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <a class="carousel-control-prev" href="#tus_carousel" data-bs-slide="prev"
+                                   style="width:35px; color:#000; margin-left:-30px">
+                <span class="carousel-control-prev-icon"
+                      style="font-size:25px; font-family:Montserrat; color:#000000; margin-top:-50px">
+                  <i class="fa fa-chevron-left" aria-hidden="false"></i>
+                </span>
+                                </a>
+                                <a class="carousel-control-next" href="#tus_carousel" data-bs-slide="next"
+                                   style="width:35px; color:#000; margin-right:-30px">
+                <span class="carousel-control-next-icon"
+                      style="font-size:25px; font-family:Montserrat; color:#000000; margin-top:-50px">
+                  <i class="fa fa-chevron-right" aria-hidden="false"></i>
+                </span>
+                                </a>
+                            </div>
+                        </section>
+                    </div>
+
+
+                </div>
+            </section>
+        </div>
+        <div class="px-md-5 py-md-4 p-2 mb-4 shadow "
+             style="background-color: #2575eb0d;border-radius:20px; font-family: Montserrat;">
+            <div class="bgColor mt-4 mb-4" style="width: 100% !important;max-width: 100% !important;">
+                <img src="OurServices_.png" width="100%" style="border-radius: 10px;"/>
+            </div>
+            <div class="sh_center text-center justify-content-center my-5 row" style="display: flex;
+    justify-content: center;
+    align-items: center;">
+                <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+                    <a class="shadow rounded py-3 px-4 mb-2 d-flex align-items-center justify-content-center"
+                       style="border-width:1px; border-style:solid; color:#fff; text-decoration:none; border-radius:0.25rem !important; display:inline-block; font-size:20px; font-weight:bold; width:100%; background-color: #27AAE1 !important;border-radius:20px !important;"
+                       href="https://apps.odoo.com/apps/modules/browse?search=Techultra+Solutions" target="_blank">
+                        <span class="fa fa-cube mr-3"
+                              style="margin-right: 11px;border-radius:20px !important;font-size:20px; color:#fff"></span>
+                        <span class="align-middle">Our Apps</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="mb-4 mt-3 shadow " style="background-color: #2575eb0d;border-radius:20px; font-family: Montserrat;">
+            <div class="col-12" style="padding: 0;">
+                <div>
+                    <img src="file.gif" width="100%" style="box-shadow: 0 0 4px 3px #e1e1e1;border-radius: 20px;">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+
+</html>

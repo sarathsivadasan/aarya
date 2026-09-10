@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- Demo Service Products -->
+    <record id="product_general_service" model="product.product">
+        <field name="name">General Service</field>
+        <field name="type">service</field>
+        <field name="lst_price">500.00</field>
+        <field name="description_sale">General checkup and complete service</field>
+    </record>
+
+    <record id="product_oil_change" model="product.product">
+        <field name="name">Oil Change</field>
+        <field name="type">service</field>
+        <field name="lst_price">200.00</field>
+        <field name="description_sale">Engine oil change</field>
+    </record>
+
+    <record id="product_periodic_maintenance" model="product.product">
+        <field name="name">Periodic Maintenance</field>
+        <field name="type">service</field>
+        <field name="lst_price">300.00</field>
+        <field name="description_sale">Periodic maintenance service</field>
+    </record>
+
+    <record id="product_filter_replacement" model="product.product">
+        <field name="name">Filter Replacement</field>
+        <field name="type">service</field>
+        <field name="lst_price">150.00</field>
+        <field name="description_sale">Air and oil filter replacement</field>
+    </record>
+
+    <record id="product_brake_service" model="product.product">
+        <field name="name">Brake Service</field>
+        <field name="type">service</field>
+        <field name="lst_price">400.00</field>
+        <field name="description_sale">Complete brake inspection and service</field>
+    </record>
+
+    <!-- ─── Coupon Masters ─────────────────────────────────── -->
+    <record id="coupon_master_monthly_service" model="coupon.master">
+        <field name="name">Monthly Service Package</field>
+        <field name="coupon_type">monthly</field>
+        <field name="duration_days">30</field>
+        <field name="amount">1000.00</field>
+        <field name="description">Monthly service package covering basic services for 30 days.</field>
+        <field name="auto_expiry">True</field>
+        <field name="active">True</field>
+        <field name="allowed_service_ids" eval="[(4, ref('product_general_service')),
+                                                  (4, ref('product_oil_change')),
+                                                  (4, ref('product_filter_replacement'))]"/>
+    </record>
+
+    <record id="coupon_master_quarterly_service" model="coupon.master">
+        <field name="name">Quarterly Service Package</field>
+        <field name="coupon_type">quarterly</field>
+        <field name="duration_days">90</field>
+        <field name="amount">2500.00</field>
+        <field name="description">Quarterly service package covering all standard services for 90 days.</field>
+        <field name="auto_expiry">True</field>
+        <field name="active">True</field>
+        <field name="allowed_service_ids" eval="[(4, ref('product_general_service')),
+                                                  (4, ref('product_oil_change')),
+                                                  (4, ref('product_periodic_maintenance')),
+                                                  (4, ref('product_filter_replacement'))]"/>
+    </record>
+
+    <record id="coupon_master_yearly_service" model="coupon.master">
+        <field name="name">Yearly Service Package</field>
+        <field name="coupon_type">yearly</field>
+        <field name="duration_days">365</field>
+        <field name="amount">5000.00</field>
+        <field name="description">This coupon can be used for all general services, oil change and periodic maintenance for 1 year.</field>
+        <field name="auto_expiry">True</field>
+        <field name="active">True</field>
+        <field name="allowed_service_ids" eval="[(4, ref('product_general_service')),
+                                                  (4, ref('product_oil_change')),
+                                                  (4, ref('product_periodic_maintenance'))]"/>
+    </record>
+
+    <record id="coupon_master_monthly_oil" model="coupon.master">
+        <field name="name">Monthly Oil Change Package</field>
+        <field name="coupon_type">monthly</field>
+        <field name="duration_days">30</field>
+        <field name="amount">600.00</field>
+        <field name="description">Monthly oil change package.</field>
+        <field name="auto_expiry">True</field>
+        <field name="active">True</field>
+        <field name="allowed_service_ids" eval="[(4, ref('product_oil_change'))]"/>
+    </record>
+
+    <record id="coupon_master_quarterly_maintenance" model="coupon.master">
+        <field name="name">Quarterly Maintenance Package</field>
+        <field name="coupon_type">quarterly</field>
+        <field name="duration_days">90</field>
+        <field name="amount">1800.00</field>
+        <field name="description">Quarterly maintenance package.</field>
+        <field name="auto_expiry">True</field>
+        <field name="active">True</field>
+        <field name="allowed_service_ids" eval="[(4, ref('product_periodic_maintenance')),
+                                                  (4, ref('product_filter_replacement'))]"/>
+    </record>
+
+    <record id="coupon_master_yearly_premium" model="coupon.master">
+        <field name="name">Yearly Premium Package</field>
+        <field name="coupon_type">yearly</field>
+        <field name="duration_days">365</field>
+        <field name="amount">8000.00</field>
+        <field name="description">Premium yearly service package covering all services.</field>
+        <field name="auto_expiry">True</field>
+        <field name="active">True</field>
+        <field name="allowed_service_ids" eval="[(4, ref('product_general_service')),
+                                                  (4, ref('product_oil_change')),
+                                                  (4, ref('product_periodic_maintenance')),
+                                                  (4, ref('product_filter_replacement')),
+                                                  (4, ref('product_brake_service'))]"/>
+    </record>
+
+    <record id="coupon_master_monthly_checkup" model="coupon.master">
+        <field name="name">Monthly General Checkup</field>
+        <field name="coupon_type">monthly</field>
+        <field name="duration_days">30</field>
+        <field name="amount">750.00</field>
+        <field name="description">Monthly general checkup package.</field>
+        <field name="auto_expiry">True</field>
+        <field name="active">True</field>
+        <field name="allowed_service_ids" eval="[(4, ref('product_general_service'))]"/>
+    </record>
+
+    <record id="coupon_master_quarterly_roadside" model="coupon.master">
+        <field name="name">Quarterly Roadside Assistance</field>
+        <field name="coupon_type">quarterly</field>
+        <field name="duration_days">90</field>
+        <field name="amount">1200.00</field>
+        <field name="description">Quarterly roadside assistance package.</field>
+        <field name="auto_expiry">True</field>
+        <field name="active">True</field>
+        <field name="allowed_service_ids" eval="[(4, ref('product_general_service')),
+                                                  (4, ref('product_brake_service'))]"/>
+    </record>
+
+</odoo>

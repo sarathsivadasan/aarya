@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Default Expense Categories -->
+        <record id="category_stationery" model="petty.cash.expense.category">
+            <field name="name">Stationery</field>
+            <field name="code">STAT</field>
+        </record>
+
+        <record id="category_transport" model="petty.cash.expense.category">
+            <field name="name">Transport</field>
+            <field name="code">TRANS</field>
+        </record>
+
+        <record id="category_refreshment" model="petty.cash.expense.category">
+            <field name="name">Refreshment</field>
+            <field name="code">REF</field>
+        </record>
+
+        <record id="category_printing" model="petty.cash.expense.category">
+            <field name="name">Printing</field>
+            <field name="code">PRINT</field>
+        </record>
+
+        <record id="category_bank_charges" model="petty.cash.expense.category">
+            <field name="name">Bank Charges</field>
+            <field name="code">BANK</field>
+        </record>
+
+        <record id="category_general" model="petty.cash.expense.category">
+            <field name="name">General Expenses</field>
+            <field name="code">GEN</field>
+        </record>
+
+        <record id="category_miscellaneous" model="petty.cash.expense.category">
+            <field name="name">Miscellaneous</field>
+            <field name="code">MISC</field>
+        </record>
+
+        <record id="category_telephone" model="petty.cash.expense.category">
+            <field name="name">Telephone</field>
+            <field name="code">TEL</field>
+        </record>
+
+        <record id="category_postage" model="petty.cash.expense.category">
+            <field name="name">Postage &amp; Courier</field>
+            <field name="code">POST</field>
+        </record>
+
+        <record id="category_repairs" model="petty.cash.expense.category">
+            <field name="name">Repairs &amp; Maintenance</field>
+            <field name="code">REPR</field>
+        </record>
+    </data>
+</odoo>

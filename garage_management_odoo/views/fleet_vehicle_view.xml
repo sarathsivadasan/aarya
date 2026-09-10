@@ -1,0 +1,174 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+
+    <!--    Search View Extend-->
+    <record id="cc_extend_vehicle_search" model="ir.ui.view">
+        <field name="name">Vehicle Search Extend</field>
+        <field name="model">fleet.vehicle</field>
+        <field name="inherit_id" ref="fleet.fleet_vehicle_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="partner_id" string="Customer"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="cc_extend_vehicle_form" model="ir.ui.view">
+        <field name="name">Vehicle Form Extend</field>
+        <field name="model">fleet.vehicle</field>
+        <field name="inherit_id" ref="fleet.fleet_vehicle_view_form"/>
+        <field name="arch" type="xml">
+            <field name="tag_ids" position="replace"/>
+            <field name="model_year" position="replace"/>
+            <!-- <field name="color" position="replace"/> -->
+            <xpath expr="//form/sheet/notebook/page[@name='note']" position="replace"/>
+            <field name="license_plate" position="before">
+                <field name="fleet_emirate_id" nolabel="1" placeholder="Select Emirates"/>
+                <field name="fleet_code_id" nolabel="1" placeholder="Select Code"/>
+            </field>
+            <xpath expr="//form/sheet/notebook/page[@name='page_tax_info']" position="before">
+                <page string="Note" name="note">
+                    <field name="description" nolabel="1" placeholder="Write here any other information related to this vehicle"/>
+                </page>
+            </xpath>
+            <xpath expr="//form/sheet/group" position="replace">
+                <group col="2">
+                    <group string="VEHICLE">
+                        <field name="active" invisible="1"/>
+                        <field name="vehicle_make_id"/>
+                        <field name="vin_sn"/>
+                        <field name="engin_no"/>
+                        <field name="color_id"/>
+                        <field name="model_year"/>
+                        <field name="cylinder_count"/>
+                        <field name="fuel_type"/>
+                    </group>
+                    <group string="CUSTOMER">
+                        <field name="partner_id"/>
+                        <field name="partner_phone"/>
+                        <field name="partner_mobile"/>
+                        <field name="partner_email"/>
+                        <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color', 'no_create_edit': True}"/>
+                    </group>
+                </group>
+            </xpath>
+
+            <xpath expr="//page[@name='page_model']/group" position="replace">
+                <group>
+                    <group string="Model" name="group_model">
+                        <field name="transmission"/>
+                        <field name="seats"/>
+                        <field name="doors"/>
+                        <field name="trailer_hook"/>
+                    </group>
+                    <group string="Engine">
+                        <field name="power_unit"/>
+                        <label for="power" invisible="power_unit != 'power'"/>
+                        <div class="o_row" invisible="power_unit != 'power'">
+                            <field name="power"/><span>kW</span>
+                        </div>
+                        <field name="horsepower" invisible="power_unit != 'horsepower'"/>
+                        <label for="vehicle_range"/>
+                        <div class="o_row">
+                            <field name="vehicle_range"/><span>km</span>
+                        </div>
+                        <field name="fuel_type"/>
+                        <label for="co2"/>
+                        <div class="o_row" name="co2">
+                            <field name="co2"/><span>g/km</span>
+                        </div>
+                        <field name="co2_standard"/>
+                    </group>
+                </group>
+            </xpath> 
+        </field>
+    </record>
+
+    <record id="cc_extend_vehicle_tree" model="ir.ui.view">
+        <field name="name">fleet.vehicle.list</field>
+        <field name="model">fleet.vehicle</field>
+        <field name="inherit_id" ref="fleet.fleet_vehicle_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='tag_ids']" position="attributes">
+                <attribute name="optional">hide</attribute>
+            </xpath>
+            <xpath expr="//field[@name='category_id']" position="attributes">
+                <attribute name="optional">hide</attribute>
+            </xpath>
+            <xpath expr="//field[@name='acquisition_date']" position="attributes">
+                <attribute name="optional">hide</attribute>
+            </xpath>
+            <xpath expr="//field[@name='contract_renewal_due_soon']" position="attributes">
+                <attribute name="optional">hide</attribute>
+            </xpath>
+            <xpath expr="//field[@name='contract_renewal_overdue']" position="attributes">
+                <attribute name="optional">hide</attribute>
+            </xpath>
+            <xpath expr="//field[@name='driver_id']" position="attributes">
+                <attribute name="optional">hide</attribute>
+            </xpath>
+            <xpath expr="//field[@name='future_driver_id']" position="attributes">
+                <attribute name="optional">hide</attribute>
+            </xpath>
+            <field name="vin_sn" position="replace"/>
+            <xpath expr="//field[@name='model_id']" position="after">
+                <field name="vin_sn" readonly="1" optional="show"/>
+                <field name="partner_id"/>
+                <field name="partner_phone"/>
+                <field name="partner_email"/>
+            </xpath>
+        </field>
+    </record>
+
+<!--Override fleet vehicle action-->
+    <record id='fleet.fleet_vehicle_action' model='ir.actions.act_window'>
+        <field name="name">Vehicles</field>
+        <field name="path">fleet</field>
+        <field name="res_model">fleet.vehicle</field>
+        <field name="view_mode">list,kanban,form,pivot,activity</field>
+        <field name="help" type="html">
+          <p class="o_view_nocontent_smiling_face">
+            Ready to manage your fleet more efficiently?
+          </p><p>
+            Let's create your first vehicle.
+          </p>
+        </field>
+    </record>
+
+    <record model="ir.ui.menu" id="fleet.menu_root">
+        <field name="sequence">8</field>
+    </record>
+
+
+    <!-- <record id="fleet_vehicle_view_form_inherit" model="ir.ui.view">
+        <field name="name">fleet.vehicle.form.inherit</field>
+        <field name="model">fleet.vehicle</field>
+        <field name="inherit_id" ref="fleet.fleet_vehicle_view_form"/>
+        <field name="arch" type="xml">
+           <field name="cc_partner_email" position="after">
+               <field name="insurance_expiry_date"/>
+               <field name="insurance_company_id"/>
+           </field>
+           <xpath expr="//field[@name='odometer']" position="after">
+                <field name="km_in"/>
+                <field name="km_out"/>
+                <field name="fuel_in"/>
+                <field name="fuel_out"/>
+            </xpath>
+        </field>
+    </record>
+ -->
+    <!-- <record id="fleet_vehicle_tree_extend" model="ir.ui.view">
+        <field name="name">Fleet Vehicle Tree Extend</field>
+        <field name="model">fleet.vehicle</field>
+        <field name="inherit_id" ref="fleet.fleet_vehicle_view_tree"/>
+        <field name="arch" type="xml">
+            <field name="cc_partner_email" position="after">
+               <field name="insurance_expiry_date"/>
+               <field name="insurance_company_id"/>
+           </field>
+        </field>
+    </record> -->
+
+
+</odoo>

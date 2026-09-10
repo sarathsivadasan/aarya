@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="odex_garage_technician_portal.VehiclePhotosTab">
+        <div class="o_tp_photos_tab">
+            <input type="file" accept="image/*" class="d-none" t-ref="fileInput" t-on-change="onFileSelected"/>
+            <div class="o_tp_photo_slot_grid">
+                <div t-foreach="state.slots" t-as="slot" t-key="slot.slot" class="o_tp_photo_slot">
+                    <div class="o_tp_photo_slot_label" t-esc="slot.label"/>
+                    <div class="o_tp_photo_slot_image" t-on-click="() => this.triggerUpload(slot.slot)">
+                        <img t-if="slot.has_image" t-att-src="slot.url"/>
+                        <div t-else="" class="o_tp_photo_slot_placeholder">
+                            <i class="fa fa-camera"/>
+                            <span t-if="state.uploading === slot.slot">Uploading...</span>
+                            <span t-else="">Tap to add photo</span>
+                        </div>
+                    </div>
+                    <input type="text" class="form-control form-control-sm" placeholder="Description"
+                           t-att-value="slot.desc" t-on-blur="(ev) => this.onDescBlur(slot, ev)"/>
+                    <div class="o_tp_photo_slot_actions">
+                        <button class="btn btn-link btn-sm" t-on-click="() => this.triggerUpload(slot.slot)">
+                            <i class="fa fa-upload"/> Replace</button>
+                        <button t-if="slot.has_image" class="btn btn-link btn-sm text-danger"
+                                t-on-click="() => this.deletePhoto(slot.slot)">
+                            <i class="fa fa-trash"/> Remove</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

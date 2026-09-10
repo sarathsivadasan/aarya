@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ═══════════════════════════════════════════════
+         PDF REPORT ACTION
+    ═══════════════════════════════════════════════ -->
+    <record id="action_report_customer_coupon" model="ir.actions.report">
+        <field name="name">Customer Coupon</field>
+        <field name="model">customer.coupon</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">odex_coupon_management.report_customer_coupon_doc</field>
+        <field name="report_file">odex_coupon_management.report_customer_coupon_doc</field>
+        <field name="binding_model_id" ref="model_customer_coupon"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- ═══════════════════════════════════════════════
+         QWEB REPORT TEMPLATE
+    ═══════════════════════════════════════════════ -->
+    <template id="report_customer_coupon_doc">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+
+                        <!-- Header -->
+                        <div style="text-align:center;margin-bottom:24px;">
+                            <h2 style="color:#7c3aed;font-weight:700;letter-spacing:1px;margin:0;">
+                                CUSTOMER COUPON
+                            </h2>
+                            <div style="font-size:13px;color:#6c757d;margin-top:4px;">
+                                <t t-esc="doc.name"/>
+                            </div>
+                        </div>
+
+                        <!-- Status Badge -->
+                        <div style="text-align:right;margin-bottom:16px;">
+                            <span t-attf-style="
+                                background:#7c3aed;color:white;
+                                padding:4px 14px;border-radius:4px;
+                                font-size:12px;font-weight:600;
+                                text-transform:uppercase;letter-spacing:1px;">
+                                <t t-esc="dict(doc._fields['state'].selection).get(doc.state, doc.state)"/>
+                            </span>
+                        </div>
+
+                        <!-- Customer + Vehicle -->
+                        <div style="display:flex;gap:24px;margin-bottom:24px;">
+                            <!-- Customer -->
+                            <div style="flex:1;border:1px solid #dee2e6;border-radius:8px;overflow:hidden;">
+                                <div style="background:#f8f9fa;padding:8px 14px;border-bottom:1px solid #dee2e6;">
+                                    <span style="font-size:11px;font-weight:700;text-transform:uppercase;color:#7c3aed;letter-spacing:0.5px;">
+                                        Customer Details
+                                    </span>
+                                </div>
+                                <table style="width:100%;padding:12px 14px;font-size:12px;" cellpadding="4">
+                                    <tr>
+                                        <td style="color:#6c757d;width:40%;">Customer Name</td>
+                                        <td style="font-weight:600;">
+                                            <t t-esc="doc.customer_id.name"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="color:#6c757d;">Contact Number</td>
+                                        <td><t t-esc="doc.mobile or '-'"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="color:#6c757d;">Alternate Number</td>
+                                        <td><t t-esc="doc.alternate_mobile or '-'"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <!-- Vehicle -->
+                            <div style="flex:1;border:1px solid #dee2e6;border-radius:8px;overflow:hidden;">
+                                <div style="background:#f8f9fa;padding:8px 14px;border-bottom:1px solid #dee2e6;">
+                                    <span style="font-size:11px;font-weight:700;text-transform:uppercase;color:#7c3aed;letter-spacing:0.5px;">
+                                        Vehicle Details
+                                    </span>
+                                </div>
+                                <table style="width:100%;padding:12px 14px;font-size:12px;" cellpadding="4">
+                                    <tr>
+                                        <td style="color:#6c757d;width:40%;">License Plate</td>
+                                        <td style="font-weight:600;">
+                                            <t t-esc="doc.plate_number or '-'"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="color:#6c757d;">Vehicle Make</td>
+                                        <td><t t-esc="doc.vehicle_make_id.name if doc.vehicle_make_id else '-'"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="color:#6c757d;">Model</td>
+                                        <td><t t-esc="doc.vehicle_model_id.name if doc.vehicle_model_id else '-'"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="color:#6c757d;">Year</td>
+                                        <td><t t-esc="doc.year or '-'"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="color:#6c757d;">Chassis No.</td>
+                                        <td><t t-esc="doc.chassis_no or '-'"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Coupon Details -->
+                        <div style="border:1px solid #dee2e6;border-radius:8px;overflow:hidden;margin-bottom:24px;">
+                            <div style="background:#f8f9fa;padding:8px 14px;border-bottom:1px solid #dee2e6;">
+                                <span style="font-size:11px;font-weight:700;text-transform:uppercase;color:#7c3aed;letter-spacing:0.5px;">
+                                    Coupon / Package Details
+                                </span>
+                            </div>
+                            <div style="padding:14px;">
+                                <table style="width:100%;font-size:12px;" cellpadding="5">
+                                    <tr>
+                                        <td style="color:#6c757d;width:20%;">Coupon Master</td>
+                                        <td style="width:30%;">
+                                            <t t-esc="doc.coupon_master_id.name if doc.coupon_master_id else '-'"/>
+                                        </td>
+                                        <td style="color:#6c757d;width:20%;">Coupon Type</td>
+                                        <td>
+                                            <t t-esc="dict(doc._fields['coupon_type'].selection).get(doc.coupon_type, '-')"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="color:#6c757d;">Start Date</td>
+                                        <td><t t-esc="doc.start_date"/></td>
+                                        <td style="color:#6c757d;">Expiry Date</td>
+                                        <td><t t-esc="doc.expiry_date or '-'"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="color:#6c757d;">Validity (Days)</td>
+                                        <td><t t-esc="doc.validity_days"/> Days</td>
+                                        <td style="color:#6c757d;">Description</td>
+                                        <td><t t-esc="doc.description or '-'"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Financial Summary -->
+                        <div style="border:1px solid #dee2e6;border-radius:8px;overflow:hidden;margin-bottom:24px;">
+                            <div style="background:#f8f9fa;padding:8px 14px;border-bottom:1px solid #dee2e6;">
+                                <span style="font-size:11px;font-weight:700;text-transform:uppercase;color:#7c3aed;letter-spacing:0.5px;">
+                                    Financial Summary
+                                </span>
+                            </div>
+                            <table style="width:100%;font-size:13px;" cellpadding="8">
+                                <tr style="border-bottom:1px solid #f1f3f5;">
+                                    <td style="color:#6c757d;padding-left:14px;">Coupon Amount</td>
+                                    <td style="text-align:right;font-weight:600;padding-right:14px;">
+                                        <t t-esc="'%.2f %s' % (doc.coupon_amount, doc.currency_id.name)"/>
+                                    </td>
+                                </tr>
+                                <tr style="border-bottom:1px solid #f1f3f5;">
+                                    <td style="color:#6c757d;padding-left:14px;">Total Paid Amount</td>
+                                    <td style="text-align:right;font-weight:600;color:#198754;padding-right:14px;">
+                                        <t t-esc="'%.2f %s' % (doc.total_paid_amount, doc.currency_id.name)"/>
+                                    </td>
+                                </tr>
+                                <tr style="border-bottom:1px solid #f1f3f5;">
+                                    <td style="color:#6c757d;padding-left:14px;">Utilized Amount</td>
+                                    <td style="text-align:right;font-weight:600;padding-right:14px;">
+                                        <t t-esc="'%.2f %s' % (doc.utilized_amount, doc.currency_id.name)"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight:700;padding-left:14px;">Remaining Amount</td>
+                                    <td t-attf-style="text-align:right;font-weight:700;padding-right:14px;color:{{ '#dc3545' if doc.remaining_amount > 0 else '#198754' }};">
+                                        <t t-esc="'%.2f %s' % (doc.remaining_amount, doc.currency_id.name)"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <!-- Payment History -->
+                        <t t-if="doc.payment_ids or doc.pdc_payment_ids">
+                            <div style="border:1px solid #dee2e6;border-radius:8px;overflow:hidden;margin-bottom:24px;">
+                                <div style="background:#f8f9fa;padding:8px 14px;border-bottom:1px solid #dee2e6;">
+                                    <span style="font-size:11px;font-weight:700;text-transform:uppercase;color:#7c3aed;letter-spacing:0.5px;">
+                                        Payment History
+                                    </span>
+                                </div>
+                                <table style="width:100%;font-size:11px;" cellpadding="6">
+                                    <thead style="background:#f8f9fa;">
+                                        <tr>
+                                            <th style="padding:8px 12px;text-align:left;color:#6c757d;">Date</th>
+                                            <th style="padding:8px 12px;text-align:left;color:#6c757d;">Method</th>
+                                            <th style="padding:8px 12px;text-align:left;color:#6c757d;">Journal</th>
+                                            <th style="padding:8px 12px;text-align:left;color:#6c757d;">Reference</th>
+                                            <th style="padding:8px 12px;text-align:right;color:#6c757d;">Amount</th>
+                                            <th style="padding:8px 12px;text-align:center;color:#6c757d;">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="doc.payment_ids + doc.pdc_payment_ids" t-as="pay">
+                                            <tr style="border-bottom:1px solid #f1f3f5;">
+                                                <td style="padding:6px 12px;"><t t-esc="pay.payment_date"/></td>
+                                                <td style="padding:6px 12px;"><t t-esc="dict(pay._fields['payment_method'].selection).get(pay.payment_method,'')"/></td>
+                                                <td style="padding:6px 12px;"><t t-esc="pay.journal_id.name"/></td>
+                                                <td style="padding:6px 12px;"><t t-esc="pay.reference or '-'"/></td>
+                                                <td style="padding:6px 12px;text-align:right;font-weight:600;">
+                                                    <t t-esc="'%.2f' % pay.amount"/>
+                                                </td>
+                                                <td style="padding:6px 12px;text-align:center;">
+                                                    <t t-esc="dict(pay._fields['state'].selection).get(pay.state,'')"/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </t>
+
+                        <!-- Allowed Services -->
+                        <t t-if="doc.allowed_service_ids">
+                            <div style="border:1px solid #dee2e6;border-radius:8px;overflow:hidden;">
+                                <div style="background:#f8f9fa;padding:8px 14px;border-bottom:1px solid #dee2e6;">
+                                    <span style="font-size:11px;font-weight:700;text-transform:uppercase;color:#7c3aed;letter-spacing:0.5px;">
+                                        Allowed Services
+                                    </span>
+                                </div>
+                                <table style="width:100%;font-size:11px;" cellpadding="6">
+                                    <thead style="background:#f8f9fa;">
+                                        <tr>
+                                            <th style="padding:8px 12px;text-align:left;color:#6c757d;">#</th>
+                                            <th style="padding:8px 12px;text-align:left;color:#6c757d;">Service</th>
+                                            <th style="padding:8px 12px;text-align:left;color:#6c757d;">Type</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="doc.allowed_service_ids" t-as="svc">
+                                            <tr style="border-bottom:1px solid #f1f3f5;">
+                                                <td style="padding:6px 12px;"><t t-esc="svc_index + 1"/></td>
+                                                <td style="padding:6px 12px;font-weight:600;"><t t-esc="svc.name"/></td>
+                                                <td style="padding:6px 12px;"><t t-esc="svc.type"/></td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </t>
+
+                        <!-- Footer Note -->
+                        <div style="margin-top:32px;padding-top:12px;border-top:1px solid #dee2e6;text-align:center;font-size:10px;color:#adb5bd;">
+                            This is a computer generated coupon. Valid until
+                            <t t-esc="doc.expiry_date or 'N/A'"/>.
+                        </div>
+
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

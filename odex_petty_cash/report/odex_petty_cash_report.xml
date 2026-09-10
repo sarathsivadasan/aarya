@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_odex_petty_cash" model="ir.actions.report">
+        <field name="name">ODEX Petty Cash Statement</field>
+        <field name="model">odex.petty.cash.statement</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">odex_petty_cash.report_odex_pc_template</field>
+        <field name="report_file">odex_petty_cash.report_odex_pc_template</field>
+        <field name="print_report_name">'Petty Cash Statement - %s' % (object.petty_cash_account_id.employee_id.name)</field>
+        <field name="paperformat_id" ref="base.paperformat_euro"/>
+    </record>
+</odoo>

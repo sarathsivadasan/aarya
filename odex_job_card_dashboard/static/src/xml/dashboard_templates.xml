@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<!-- ================================================================= -->
+<!-- Status card                                                       -->
+<!-- ================================================================= -->
+<t t-name="odex_job_card_dashboard.StatusCard">
+    <div class="o_jcd_card" t-att-style="tint" t-on-click="onCardClick"
+         t-att-title="'Open all ' + props.status.name + ' job cards'">
+        <div class="o_jcd_card_head">
+            <div class="o_jcd_card_icon">
+                <i class="fa" t-att-class="props.status.icon" t-att-style="iconStyle"/>
+            </div>
+            <div class="o_jcd_card_body">
+                <div class="o_jcd_card_title" t-out="props.status.name"/>
+                <div class="o_jcd_card_metrics">
+                    <span class="o_jcd_card_count" t-out="props.status.count"/>
+                    <span class="o_jcd_card_share"><t t-out="props.status.percentage"/>%</span>
+                    <span class="o_jcd_card_trend" t-att-class="trendClass">
+                        <i class="fa" t-att-class="trendIcon"/>
+                        <t t-out="Math.abs(props.status.trend)"/>%
+                    </span>
+                </div>
+            </div>
+            <button class="o_jcd_card_toggle btn btn-link p-0">
+                   <!-- t-on-click="onToggleClick"
+                    t-att-aria-expanded="props.expanded ? 'true' : 'false'"
+                    aria-label="Show recent job cards"> -->
+                <i class="fa" t-att-class="props.expanded ? 'fa-chevron-up' : 'fa-chevron-down'"/>
+            </button>
+        </div>
+
+        <div t-if="props.expanded" class="o_jcd_drill">
+            <div t-if="props.loadingDetails" class="o_jcd_skeleton_line"/>
+            <t t-else="">
+                <div t-if="props.details and props.details.inspection.length"
+                     class="o_jcd_drill_chips">
+                    <span class="o_jcd_chip_label">Vehicle inspection</span>
+                    <button t-foreach="props.details.inspection" t-as="item" t-key="item.label"
+                            class="o_jcd_chip"
+                            t-on-click="() => props.onOpenInspection(item)">
+                        <t t-out="item.label"/>
+                        <span class="o_jcd_chip_count" t-out="item.count"/>
+                    </button>
+                </div>
+                <table class="o_jcd_drill_table">
+                    <tbody>
+                        <tr t-foreach="props.details ? props.details.rows : []" t-as="row"
+                            t-key="row.id" t-on-click="() => props.onOpenJob(row.id)">
+                            <td class="o_jcd_link" t-out="row.number"/>
+                            <td t-out="row.vehicle"/>
+                            <td t-out="row.customer"/>
+                            <td class="d-none d-xl-table-cell" t-out="row.advisor"/>
+                            <td class="d-none d-xl-table-cell" t-out="row.technician"/>
+                            <td t-out="row.promise_date"/>
+                        </tr>
+                        <tr t-if="props.details and !props.details.rows.length">
+                            <td colspan="6" class="text-muted">No job cards in this status.</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button class="o_jcd_drill_all btn btn-sm"
+                        t-on-click="() => props.onOpen(props.status)">
+                    View all <i class="fa fa-arrow-right"/>
+                </button>
+            </t>
+        </div>
+    </div>
+</t>
+
+<!-- ================================================================= -->
+<!-- Job table                                                         -->
+<!-- ================================================================= -->
+<t t-name="odex_job_card_dashboard.JobTable">
+    <section class="o_jcd_panel">
+        <header class="o_jcd_panel_head">
+            <h3 t-out="props.title"/>
+            <button t-if="props.onViewAll" class="o_jcd_viewall" t-on-click="props.onViewAll">
+                View All <i class="fa fa-arrow-right"/>
+            </button>
+        </header>
+        <div t-if="props.banner" class="o_jcd_banner">
+            <i class="fa fa-exclamation-triangle"/>
+            <span class="o_jcd_banner_count" t-out="props.banner.count"/>
+            <span class="o_jcd_banner_text">
+                <strong t-out="props.banner.title"/>
+                <small t-out="props.banner.subtitle"/>
+            </span>
+        </div>
+        <div class="o_jcd_table_wrap">
+            <table class="o_jcd_table">
+                <thead>
+                    <tr>
+                        <th t-foreach="props.columns" t-as="column" t-key="column.key"
+                            t-out="column.label"/>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr t-foreach="props.rows" t-as="row" t-key="row.id"
+                        t-att-class="lineClass(row)"
+                        t-on-click="() => props.onRowClick(row)">
+                        <td t-foreach="props.columns" t-as="column" t-key="column.key">
+                            <span t-if="column.type === 'badge'" class="o_jcd_badge"
+                                  t-att-style="badgeStyle(row)"
+                                  t-out="cellValue(row, column)"/>
+                            <span t-elif="column.type === 'days'" t-att-class="daysClass(row)"
+                                  t-out="cellValue(row, column)"/>
+                            <span t-elif="column.type === 'link'" class="o_jcd_link"
+                                  t-out="cellValue(row, column)"/>
+                            <span t-elif="column.type === 'state'"
+                                  t-att-class="'o_jcd_state o_jcd_state_' + (row.severity || 'none')"
+                                  t-out="cellValue(row, column)"/>
+                            <span t-else="" t-out="cellValue(row, column)"/>
+                        </td>
+                    </tr>
+                    <tr t-if="!props.rows.length">
+                        <td t-att-colspan="props.columns.length" class="o_jcd_empty"
+                            t-out="props.emptyText"/>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</t>
+
+<!-- ================================================================= -->
+<!-- Bay occupancy                                                     -->
+<!-- ================================================================= -->
+<t t-name="odex_job_card_dashboard.BayGrid">
+    <section class="o_jcd_panel">
+        <header class="o_jcd_panel_head">
+            <h3>Bay Occupancy</h3>
+            <button t-if="props.onViewAll" class="o_jcd_viewall" t-on-click="props.onViewAll">
+                View All <i class="fa fa-arrow-right"/>
+            </button>
+        </header>
+        <div class="o_jcd_bays">
+            <button t-foreach="props.bays" t-as="bay" t-key="bay.id"
+                    t-att-class="stateClass(bay)" t-on-click="() => this.onBayClick(bay)">
+                <span class="o_jcd_bay_name" t-out="bay.name"/>
+                <i class="fa o_jcd_bay_icon" t-att-class="icon(bay)"/>
+                <span class="o_jcd_bay_state" t-out="bay.label"/>
+                <span t-if="bay.occupant" class="o_jcd_bay_kind" t-out="bay.occupant"/>
+                <span t-if="bay.number" class="o_jcd_bay_job" t-out="bay.number"/>
+            </button>
+            <div t-if="!props.bays.length" class="o_jcd_empty">
+                No workshop bays configured yet.
+            </div>
+        </div>
+    </section>
+</t>
+
+<!-- ================================================================= -->
+<!-- Quick actions                                                     -->
+<!-- ================================================================= -->
+<t t-name="odex_job_card_dashboard.QuickActions">
+    <section class="o_jcd_panel">
+        <header class="o_jcd_panel_head">
+            <h3>Quick Actions</h3>
+        </header>
+        <div class="o_jcd_quick">
+            <button t-foreach="props.actions" t-as="action" t-key="action.key"
+                    class="o_jcd_quick_tile" t-att-style="tileStyle(action)"
+                    t-on-click="() => props.onSelect(action)">
+                <i class="fa" t-att-class="action.icon"/>
+                <span t-out="action.label"/>
+            </button>
+        </div>
+    </section>
+</t>
+
+<!-- ================================================================= -->
+<!-- Filter bar                                                        -->
+<!-- ================================================================= -->
+<t t-name="odex_job_card_dashboard.FilterBar">
+    <div class="o_jcd_filters">
+        <div class="o_jcd_chips">
+            <button t-foreach="periods" t-as="period" t-key="period.key"
+                    class="o_jcd_chip_btn"
+                    t-att-class="{ 'o_jcd_chip_active': isActive(period.key) }"
+                    t-on-click="() => this.setPeriod(period.key)"
+                    t-out="period.label"/>
+            <button class="o_jcd_chip_btn"
+                    t-att-class="{ 'o_jcd_chip_active': isActive('custom') }"
+                    t-on-click="toggleCustom">
+                <i class="fa fa-calendar"/> Custom Date
+            </button>
+        </div>
+
+        <div t-if="state.showCustom" class="o_jcd_dates">
+            <input type="date" class="o_jcd_input" t-att-value="props.filters.date_from or ''"
+                   t-on-change="(ev) => this.onDate('date_from', ev)" aria-label="From"/>
+            <span>to</span>
+            <input type="date" class="o_jcd_input" t-att-value="props.filters.date_to or ''"
+                   t-on-change="(ev) => this.onDate('date_to', ev)" aria-label="To"/>
+        </div>
+
+    </div>
+</t>
+
+<!-- ================================================================= -->
+<!-- Dashboard                                                         -->
+<!-- ================================================================= -->
+<t t-name="odex_job_card_dashboard.Dashboard">
+    <div class="o_jcd">
+
+        <FilterBar filters="state.filters" onChange.bind="onFilterChange"/>
+
+        <div t-if="state.error" class="o_jcd_alert o_jcd_alert_error">
+            <i class="fa fa-exclamation-circle"/>
+            <span>The dashboard could not load: <t t-out="state.error"/></span>
+        </div>
+        <div t-if="state.data.warnings and state.data.warnings.length"
+             class="o_jcd_alert o_jcd_alert_warn">
+            <i class="fa fa-exclamation-triangle"/>
+            <span>
+                Some widgets were skipped:
+                <t t-foreach="state.data.warnings" t-as="warning" t-key="warning_index">
+                    <t t-out="warning"/><t t-if="!warning_last">; </t>
+                </t>
+            </span>
+        </div>
+
+        <!-- Loading skeleton -->
+        <div t-if="state.loading" class="o_jcd_skeletons">
+            <div t-foreach="[1,2,3,4,5,6,7,8,9,10,11,12]" t-as="n" t-key="n"
+                 class="o_jcd_skeleton_card"/>
+        </div>
+
+        <t t-else="">
+            <!-- Status cards -->
+            <div t-if="widgets.status_cards !== false" class="o_jcd_status_grid">
+                <StatusCard t-foreach="statuses" t-as="status" t-key="status.id"
+                            status="status"
+                            expanded="state.expanded === status.id"
+                            details="state.details[status.id] or null"
+                            loadingDetails="state.detailsLoading and state.expanded === status.id"
+                            onOpen.bind="openStatus"
+                            onToggle.bind="toggleStatus"
+                            onOpenJob.bind="openJob"
+                            onOpenInspection.bind="openInspection"/>
+                <div t-if="!statuses.length" class="o_jcd_empty">
+                    No job card statuses are enabled. Configure them in
+                    Workshop Dashboard / Configuration / Status Cards.
+                </div>
+            </div>
+
+            <!-- Bay occupancy comes first: what is physically in the workshop -->
+            <div t-if="widgets.bays" class="o_jcd_row_block o_jcd_full">
+                <BayGrid bays="state.data.bays or []" onOpenJob.bind="openJob"
+                         onViewAll.bind="openAllJobs"/>
+            </div>
+
+            <div class="row g-3 o_jcd_row_block">
+                <div t-if="widgets.today_jobs" class="col-12 col-xxl-8">
+                    <JobTable title="&quot;Today's Job Cards&quot;" columns="todayColumns"
+                              rows="state.data.today_jobs or []"
+                              onRowClick="(row) => this.openJob(row.id)"
+                              onViewAll.bind="openAllJobs"
+                              emptyText="'No job cards for this filter.'"/>
+                </div>
+                <div t-if="widgets.quick_actions" class="col-12 col-xxl-4">
+                    <QuickActions actions="quickActions" onSelect.bind="openQuickAction"/>
+                </div>
+            </div>
+
+            <div class="row g-3 o_jcd_row_block">
+                <div t-if="widgets.overdue" class="col-12 col-xl-6">
+                    <JobTable title="'Overdue Jobs - Promise Date'" columns="overdueColumns"
+                              rows="state.data.overdue ? state.data.overdue.rows : []"
+                              banner="overdueBanner"
+                              rowClass.bind="overdueRowClass"
+                              onRowClick="(row) => this.openJob(row.id)"
+                              onViewAll.bind="openOverdue"
+                              emptyText="'Nothing is past its promise date.'"/>
+                </div>
+                <div t-if="widgets.waiting" class="col-12 col-xl-6">
+                    <JobTable title="'Customer Waiting'" columns="waitingColumns"
+                              rows="state.data.waiting or []"
+                              onRowClick="(row) => this.openJob(row.id)"
+                              onViewAll.bind="openAllJobs"
+                              emptyText="'No customers are waiting right now.'"/>
+                </div>
+            </div>
+
+            <!-- Priority alerts -->
+            <div t-if="widgets.alerts and state.data.alerts and state.data.alerts.length"
+                 class="o_jcd_alerts">
+                <button t-foreach="state.data.alerts" t-as="alert" t-key="alert.key"
+                        class="o_jcd_alert_tile"
+                        t-att-style="'border-left:4px solid ' + alert.color"
+                        t-on-click="() => this.openAlert(alert)">
+                    <i class="fa" t-att-class="alert.icon" t-att-style="'color:' + alert.color"/>
+                    <span class="o_jcd_alert_count" t-out="alert.count"/>
+                    <span class="o_jcd_alert_label" t-out="alert.label"/>
+                </button>
+            </div>
+        </t>
+
+        <footer class="o_jcd_footer">
+            Job Card Dashboard build <t t-out="build"/>
+            <span t-if="state.data.config and state.data.config.auto_refresh">
+                - refreshing every <t t-out="state.data.config.refresh_interval"/>s
+            </span>
+        </footer>
+    </div>
+</t>
+
+</templates>

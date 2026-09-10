@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="odex_mulkiya_scan.MulkiyaConfidenceField">
+        <span class="o_mulkiya_confidence badge" t-att-class="badgeClass" t-att-title="title">
+            <i class="fa fa-exclamation-triangle me-1" t-if="isLow"/>
+            <t t-if="value"><t t-esc="value"/>%</t>
+            <t t-else="">--</t>
+        </span>
+    </t>
+
+</templates>

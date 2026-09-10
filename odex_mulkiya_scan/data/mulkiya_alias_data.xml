@@ -1,0 +1,706 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Normalization table: Arabic spellings, abbreviations and
+             common OCR variants mapped onto canonical values. Fully
+             editable, a new variant never requires a code change. -->
+
+        <record id="alias_registration_emirate_ar830" model="odex.mulkiya.alias">
+            <field name="field_key">registration_emirate</field>
+            <field name="source_value">أبوظبي</field>
+            <field name="target_value">Abu Dhabi</field>
+        </record>
+        <record id="alias_registration_emirate_ar90325" model="odex.mulkiya.alias">
+            <field name="field_key">registration_emirate</field>
+            <field name="source_value">أبو ظبي</field>
+            <field name="target_value">Abu Dhabi</field>
+        </record>
+        <record id="alias_registration_emirate_abudhabi" model="odex.mulkiya.alias">
+            <field name="field_key">registration_emirate</field>
+            <field name="source_value">ABUDHABI</field>
+            <field name="target_value">Abu Dhabi</field>
+        </record>
+        <record id="alias_registration_emirate_abu_dhabi" model="odex.mulkiya.alias">
+            <field name="field_key">registration_emirate</field>
+            <field name="source_value">ABU-DHABI</field>
+            <field name="target_value">Abu Dhabi</field>
+        </record>
+        <record id="alias_registration_emirate_auh" model="odex.mulkiya.alias">
+            <field name="field_key">registration_emirate</field>
+            <field name="source_value">AUH</field>
+            <field name="target_value">Abu Dhabi</field>
+        </record>
+        <record id="alias_registration_emirate_abu_dabi" model="odex.mulkiya.alias">
+            <field name="field_key">registration_emirate</field>
+            <field name="source_value">ABU DABI</field>
+            <field name="target_value">Abu Dhabi</field>
+        </record>
+        <record id="alias_registration_emirate_abudabi" model="odex.mulkiya.alias">
+            <field name="field_key">registration_emirate</field>
+            <field name="source_value">ABUDABI</field>
+            <field name="target_value">Abu Dhabi</field>
+        </record>
+        <record id="alias_registration_emirate_ar3240" model="odex.mulkiya.alias">
+            <field name="field_key">registration_emirate</field>
+            <field name="source_value">دبي</field>
+            <field name="target_value">Dubai</field>
+        </record>
+        <record id="alias_registration_emirate_dxb" model="odex.mulkiya.alias">
+            <field name="field_key">registration_emirate</field>
+            <field name="source_value">DXB</field>
+            <field name="target_value">Dubai</field>
+        </record>
+        <record id="alias_registration_emirate_dubai" model="odex.mulkiya.alias">
+            <field name="field_key">registration_emirate</field>
+            <field name="source_value">DUBAI</field>
+            <field name="target_value">Dubai</field>
+        </record>
+        <record id="alias_registration_emirate_dubay" model="odex.mulkiya.alias">
+            <field name="field_key">registration_emirate</field>
+            <field name="source_value">DUBAY</field>
+            <field name="target_value">Dubai</field>
+        </record>
+        <record id="alias_registration_emirate_ar1017" model="odex.mulkiya.alias">
+            <field name="field_key">registration_emirate</field>
+            <field name="source_value">الشارقة</field>
+            <field name="target_value">Sharjah</field>
+        </record>
+        <record id="alias_registration_emirate_ar12781" model="odex.mulkiya.alias">
+            <field name="field_key">registration_emirate</field>
+            <field name="source_value">شارقة</field>
+            <field name="target_value">Sharjah</field>
+        </record>
+        <record id="alias_registration_emirate_shj" model="odex.mulkiya.alias">
+            <field name="field_key">registration_emirate</field>
+            <field name="source_value">SHJ</field>
+            <field name="target_value">Sharjah</field>
+        </record>
+        <record id="alias_registration_emirate_al_sharjah" model="odex.mulkiya.alias">
+            <field name="field_key">registration_emirate</field>
+            <field name="source_value">AL SHARJAH</field>
+            <field name="target_value">Sharjah</field>
+        </record>
+        <record id="alias_registration_emirate_ar75815" model="odex.mulkiya.alias">
+            <field name="field_key">registration_emirate</field>
+            <field name="source_value">عجمان</field>
+            <field name="target_value">Ajman</field>
+        </record>
+        <record id="alias_registration_emirate_ajm" model="odex.mulkiya.alias">
+            <field name="field_key">registration_emirate</field>
+            <field name="source_value">AJM</field>
+            <field name="target_value">Ajman</field>
+        </record>
+        <record id="alias_registration_emirate_ar95340" model="odex.mulkiya.alias">
+            <field name="field_key">registration_emirate</field>
+            <field name="source_value">أم القيوين</field>
+            <field name="target_value">Umm Al Quwain</field>
+        </record>
+        <record id="alias_registration_emirate_umm_al_qaiwain" model="odex.mulkiya.alias">
+            <field name="field_key">registration_emirate</field>
+            <field name="source_value">UMM AL QAIWAIN</field>
+            <field name="target_value">Umm Al Quwain</field>
+        </record>
+        <record id="alias_registration_emirate_umm_al_quwain" model="odex.mulkiya.alias">
+            <field name="field_key">registration_emirate</field>
+            <field name="source_value">UMM AL QUWAIN</field>
+            <field name="target_value">Umm Al Quwain</field>
+        </record>
+        <record id="alias_registration_emirate_uaq" model="odex.mulkiya.alias">
+            <field name="field_key">registration_emirate</field>
+            <field name="source_value">UAQ</field>
+            <field name="target_value">Umm Al Quwain</field>
+        </record>
+        <record id="alias_registration_emirate_ummalquwain" model="odex.mulkiya.alias">
+            <field name="field_key">registration_emirate</field>
+            <field name="source_value">UMMALQUWAIN</field>
+            <field name="target_value">Umm Al Quwain</field>
+        </record>
+        <record id="alias_registration_emirate_ar14546" model="odex.mulkiya.alias">
+            <field name="field_key">registration_emirate</field>
+            <field name="source_value">رأس الخيمة</field>
+            <field name="target_value">Ras Al Khaimah</field>
+        </record>
+        <record id="alias_registration_emirate_ras_al_khaima" model="odex.mulkiya.alias">
+            <field name="field_key">registration_emirate</field>
+            <field name="source_value">RAS AL KHAIMA</field>
+            <field name="target_value">Ras Al Khaimah</field>
+        </record>
+        <record id="alias_registration_emirate_rak" model="odex.mulkiya.alias">
+            <field name="field_key">registration_emirate</field>
+            <field name="source_value">RAK</field>
+            <field name="target_value">Ras Al Khaimah</field>
+        </record>
+        <record id="alias_registration_emirate_rasalkhaimah" model="odex.mulkiya.alias">
+            <field name="field_key">registration_emirate</field>
+            <field name="source_value">RASALKHAIMAH</field>
+            <field name="target_value">Ras Al Khaimah</field>
+        </record>
+        <record id="alias_registration_emirate_ar65167" model="odex.mulkiya.alias">
+            <field name="field_key">registration_emirate</field>
+            <field name="source_value">الفجيرة</field>
+            <field name="target_value">Fujairah</field>
+        </record>
+        <record id="alias_registration_emirate_ar17941" model="odex.mulkiya.alias">
+            <field name="field_key">registration_emirate</field>
+            <field name="source_value">فجيرة</field>
+            <field name="target_value">Fujairah</field>
+        </record>
+        <record id="alias_registration_emirate_fuj" model="odex.mulkiya.alias">
+            <field name="field_key">registration_emirate</field>
+            <field name="source_value">FUJ</field>
+            <field name="target_value">Fujairah</field>
+        </record>
+        <record id="alias_registration_emirate_al_fujairah" model="odex.mulkiya.alias">
+            <field name="field_key">registration_emirate</field>
+            <field name="source_value">AL FUJAIRAH</field>
+            <field name="target_value">Fujairah</field>
+        </record>
+        <record id="alias_registration_emirate_fujeirah" model="odex.mulkiya.alias">
+            <field name="field_key">registration_emirate</field>
+            <field name="source_value">FUJEIRAH</field>
+            <field name="target_value">Fujairah</field>
+        </record>
+        <record id="alias_fuel_type_ar53212" model="odex.mulkiya.alias">
+            <field name="field_key">fuel_type</field>
+            <field name="source_value">بنزين</field>
+            <field name="target_value">Petrol</field>
+        </record>
+        <record id="alias_fuel_type_gasoline" model="odex.mulkiya.alias">
+            <field name="field_key">fuel_type</field>
+            <field name="source_value">GASOLINE</field>
+            <field name="target_value">Petrol</field>
+        </record>
+        <record id="alias_fuel_type_gas" model="odex.mulkiya.alias">
+            <field name="field_key">fuel_type</field>
+            <field name="source_value">GAS</field>
+            <field name="target_value">Petrol</field>
+        </record>
+        <record id="alias_fuel_type_benzine" model="odex.mulkiya.alias">
+            <field name="field_key">fuel_type</field>
+            <field name="source_value">BENZINE</field>
+            <field name="target_value">Petrol</field>
+        </record>
+        <record id="alias_fuel_type_petrol" model="odex.mulkiya.alias">
+            <field name="field_key">fuel_type</field>
+            <field name="source_value">PETROL</field>
+            <field name="target_value">Petrol</field>
+        </record>
+        <record id="alias_fuel_type_ar89700" model="odex.mulkiya.alias">
+            <field name="field_key">fuel_type</field>
+            <field name="source_value">ديزل</field>
+            <field name="target_value">Diesel</field>
+        </record>
+        <record id="alias_fuel_type_diesel" model="odex.mulkiya.alias">
+            <field name="field_key">fuel_type</field>
+            <field name="source_value">DIESEL</field>
+            <field name="target_value">Diesel</field>
+        </record>
+        <record id="alias_fuel_type_deisel" model="odex.mulkiya.alias">
+            <field name="field_key">fuel_type</field>
+            <field name="source_value">DEISEL</field>
+            <field name="target_value">Diesel</field>
+        </record>
+        <record id="alias_fuel_type_ar62928" model="odex.mulkiya.alias">
+            <field name="field_key">fuel_type</field>
+            <field name="source_value">كهربائي</field>
+            <field name="target_value">Electric</field>
+        </record>
+        <record id="alias_fuel_type_electric" model="odex.mulkiya.alias">
+            <field name="field_key">fuel_type</field>
+            <field name="source_value">ELECTRIC</field>
+            <field name="target_value">Electric</field>
+        </record>
+        <record id="alias_fuel_type_ev" model="odex.mulkiya.alias">
+            <field name="field_key">fuel_type</field>
+            <field name="source_value">EV</field>
+            <field name="target_value">Electric</field>
+        </record>
+        <record id="alias_fuel_type_ar97521" model="odex.mulkiya.alias">
+            <field name="field_key">fuel_type</field>
+            <field name="source_value">هجين</field>
+            <field name="target_value">Hybrid</field>
+        </record>
+        <record id="alias_fuel_type_hybrid" model="odex.mulkiya.alias">
+            <field name="field_key">fuel_type</field>
+            <field name="source_value">HYBRID</field>
+            <field name="target_value">Hybrid</field>
+        </record>
+        <record id="alias_fuel_type_ar82504" model="odex.mulkiya.alias">
+            <field name="field_key">fuel_type</field>
+            <field name="source_value">غاز</field>
+            <field name="target_value">LPG</field>
+        </record>
+        <record id="alias_fuel_type_lpg" model="odex.mulkiya.alias">
+            <field name="field_key">fuel_type</field>
+            <field name="source_value">LPG</field>
+            <field name="target_value">LPG</field>
+        </record>
+        <record id="alias_color_ar11676" model="odex.mulkiya.alias">
+            <field name="field_key">color</field>
+            <field name="source_value">أبيض</field>
+            <field name="target_value">White</field>
+        </record>
+        <record id="alias_color_white" model="odex.mulkiya.alias">
+            <field name="field_key">color</field>
+            <field name="source_value">WHITE</field>
+            <field name="target_value">White</field>
+        </record>
+        <record id="alias_color_wht" model="odex.mulkiya.alias">
+            <field name="field_key">color</field>
+            <field name="source_value">WHT</field>
+            <field name="target_value">White</field>
+        </record>
+        <record id="alias_color_ar61214" model="odex.mulkiya.alias">
+            <field name="field_key">color</field>
+            <field name="source_value">أسود</field>
+            <field name="target_value">Black</field>
+        </record>
+        <record id="alias_color_black" model="odex.mulkiya.alias">
+            <field name="field_key">color</field>
+            <field name="source_value">BLACK</field>
+            <field name="target_value">Black</field>
+        </record>
+        <record id="alias_color_blk" model="odex.mulkiya.alias">
+            <field name="field_key">color</field>
+            <field name="source_value">BLK</field>
+            <field name="target_value">Black</field>
+        </record>
+        <record id="alias_color_ar67402" model="odex.mulkiya.alias">
+            <field name="field_key">color</field>
+            <field name="source_value">فضي</field>
+            <field name="target_value">Silver</field>
+        </record>
+        <record id="alias_color_silver" model="odex.mulkiya.alias">
+            <field name="field_key">color</field>
+            <field name="source_value">SILVER</field>
+            <field name="target_value">Silver</field>
+        </record>
+        <record id="alias_color_silvery" model="odex.mulkiya.alias">
+            <field name="field_key">color</field>
+            <field name="source_value">SILVERY</field>
+            <field name="target_value">Silver</field>
+        </record>
+        <record id="alias_color_ar55698" model="odex.mulkiya.alias">
+            <field name="field_key">color</field>
+            <field name="source_value">رمادي</field>
+            <field name="target_value">Grey</field>
+        </record>
+        <record id="alias_color_gray" model="odex.mulkiya.alias">
+            <field name="field_key">color</field>
+            <field name="source_value">GRAY</field>
+            <field name="target_value">Grey</field>
+        </record>
+        <record id="alias_color_grey" model="odex.mulkiya.alias">
+            <field name="field_key">color</field>
+            <field name="source_value">GREY</field>
+            <field name="target_value">Grey</field>
+        </record>
+        <record id="alias_color_ar89443" model="odex.mulkiya.alias">
+            <field name="field_key">color</field>
+            <field name="source_value">أزرق</field>
+            <field name="target_value">Blue</field>
+        </record>
+        <record id="alias_color_blue" model="odex.mulkiya.alias">
+            <field name="field_key">color</field>
+            <field name="source_value">BLUE</field>
+            <field name="target_value">Blue</field>
+        </record>
+        <record id="alias_color_ar33866" model="odex.mulkiya.alias">
+            <field name="field_key">color</field>
+            <field name="source_value">أحمر</field>
+            <field name="target_value">Red</field>
+        </record>
+        <record id="alias_color_red" model="odex.mulkiya.alias">
+            <field name="field_key">color</field>
+            <field name="source_value">RED</field>
+            <field name="target_value">Red</field>
+        </record>
+        <record id="alias_color_ar56004" model="odex.mulkiya.alias">
+            <field name="field_key">color</field>
+            <field name="source_value">أخضر</field>
+            <field name="target_value">Green</field>
+        </record>
+        <record id="alias_color_green" model="odex.mulkiya.alias">
+            <field name="field_key">color</field>
+            <field name="source_value">GREEN</field>
+            <field name="target_value">Green</field>
+        </record>
+        <record id="alias_color_ar75005" model="odex.mulkiya.alias">
+            <field name="field_key">color</field>
+            <field name="source_value">بني</field>
+            <field name="target_value">Brown</field>
+        </record>
+        <record id="alias_color_brown" model="odex.mulkiya.alias">
+            <field name="field_key">color</field>
+            <field name="source_value">BROWN</field>
+            <field name="target_value">Brown</field>
+        </record>
+        <record id="alias_color_ar8522" model="odex.mulkiya.alias">
+            <field name="field_key">color</field>
+            <field name="source_value">ذهبي</field>
+            <field name="target_value">Gold</field>
+        </record>
+        <record id="alias_color_gold" model="odex.mulkiya.alias">
+            <field name="field_key">color</field>
+            <field name="source_value">GOLD</field>
+            <field name="target_value">Gold</field>
+        </record>
+        <record id="alias_color_golden" model="odex.mulkiya.alias">
+            <field name="field_key">color</field>
+            <field name="source_value">GOLDEN</field>
+            <field name="target_value">Gold</field>
+        </record>
+        <record id="alias_color_ar39180" model="odex.mulkiya.alias">
+            <field name="field_key">color</field>
+            <field name="source_value">بيج</field>
+            <field name="target_value">Beige</field>
+        </record>
+        <record id="alias_color_beige" model="odex.mulkiya.alias">
+            <field name="field_key">color</field>
+            <field name="source_value">BEIGE</field>
+            <field name="target_value">Beige</field>
+        </record>
+        <record id="alias_color_ar60050" model="odex.mulkiya.alias">
+            <field name="field_key">color</field>
+            <field name="source_value">أصفر</field>
+            <field name="target_value">Yellow</field>
+        </record>
+        <record id="alias_color_yellow" model="odex.mulkiya.alias">
+            <field name="field_key">color</field>
+            <field name="source_value">YELLOW</field>
+            <field name="target_value">Yellow</field>
+        </record>
+        <record id="alias_color_ar74355" model="odex.mulkiya.alias">
+            <field name="field_key">color</field>
+            <field name="source_value">برتقالي</field>
+            <field name="target_value">Orange</field>
+        </record>
+        <record id="alias_color_orange" model="odex.mulkiya.alias">
+            <field name="field_key">color</field>
+            <field name="source_value">ORANGE</field>
+            <field name="target_value">Orange</field>
+        </record>
+        <record id="alias_color_ar99881" model="odex.mulkiya.alias">
+            <field name="field_key">color</field>
+            <field name="source_value">عنابي</field>
+            <field name="target_value">Maroon</field>
+        </record>
+        <record id="alias_color_maroon" model="odex.mulkiya.alias">
+            <field name="field_key">color</field>
+            <field name="source_value">MAROON</field>
+            <field name="target_value">Maroon</field>
+        </record>
+        <record id="alias_make_ar2167" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">نيسان</field>
+            <field name="target_value">Nissan</field>
+        </record>
+        <record id="alias_make_nissan" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">NISSAN</field>
+            <field name="target_value">Nissan</field>
+        </record>
+        <record id="alias_make_nisan" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">NISAN</field>
+            <field name="target_value">Nissan</field>
+        </record>
+        <record id="alias_make_ar21290" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">تويوتا</field>
+            <field name="target_value">Toyota</field>
+        </record>
+        <record id="alias_make_toyota" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">TOYOTA</field>
+            <field name="target_value">Toyota</field>
+        </record>
+        <record id="alias_make_toyata" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">TOYATA</field>
+            <field name="target_value">Toyota</field>
+        </record>
+        <record id="alias_make_ar51499" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">متسوبيشي</field>
+            <field name="target_value">Mitsubishi</field>
+        </record>
+        <record id="alias_make_mitsubishi" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">MITSUBISHI</field>
+            <field name="target_value">Mitsubishi</field>
+        </record>
+        <record id="alias_make_ar88999" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">هوندا</field>
+            <field name="target_value">Honda</field>
+        </record>
+        <record id="alias_make_honda" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">HONDA</field>
+            <field name="target_value">Honda</field>
+        </record>
+        <record id="alias_make_ar23649" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">هيونداي</field>
+            <field name="target_value">Hyundai</field>
+        </record>
+        <record id="alias_make_hyundai" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">HYUNDAI</field>
+            <field name="target_value">Hyundai</field>
+        </record>
+        <record id="alias_make_hyundai_motor" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">HYUNDAI MOTOR</field>
+            <field name="target_value">Hyundai</field>
+        </record>
+        <record id="alias_make_ar69454" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">كيا</field>
+            <field name="target_value">Kia</field>
+        </record>
+        <record id="alias_make_kia" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">KIA</field>
+            <field name="target_value">Kia</field>
+        </record>
+        <record id="alias_make_ar41403" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">مرسيدس</field>
+            <field name="target_value">Mercedes-Benz</field>
+        </record>
+        <record id="alias_make_mercedes" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">MERCEDES</field>
+            <field name="target_value">Mercedes-Benz</field>
+        </record>
+        <record id="alias_make_mercedes_benz" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">MERCEDES BENZ</field>
+            <field name="target_value">Mercedes-Benz</field>
+        </record>
+        <record id="alias_make_mercedesbenz" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">MERCEDESBENZ</field>
+            <field name="target_value">Mercedes-Benz</field>
+        </record>
+        <record id="alias_make_benz" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">BENZ</field>
+            <field name="target_value">Mercedes-Benz</field>
+        </record>
+        <record id="alias_make_ar98475" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">بي إم دبليو</field>
+            <field name="target_value">BMW</field>
+        </record>
+        <record id="alias_make_bmw" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">BMW</field>
+            <field name="target_value">BMW</field>
+        </record>
+        <record id="alias_make_b_m_w" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">B M W</field>
+            <field name="target_value">BMW</field>
+        </record>
+        <record id="alias_make_ar72699" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">أودي</field>
+            <field name="target_value">Audi</field>
+        </record>
+        <record id="alias_make_audi" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">AUDI</field>
+            <field name="target_value">Audi</field>
+        </record>
+        <record id="alias_make_ar47002" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">لكزس</field>
+            <field name="target_value">Lexus</field>
+        </record>
+        <record id="alias_make_lexus" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">LEXUS</field>
+            <field name="target_value">Lexus</field>
+        </record>
+        <record id="alias_make_ar60550" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">فورد</field>
+            <field name="target_value">Ford</field>
+        </record>
+        <record id="alias_make_ford" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">FORD</field>
+            <field name="target_value">Ford</field>
+        </record>
+        <record id="alias_make_ar98050" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">شيفروليه</field>
+            <field name="target_value">Chevrolet</field>
+        </record>
+        <record id="alias_make_chevrolet" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">CHEVROLET</field>
+            <field name="target_value">Chevrolet</field>
+        </record>
+        <record id="alias_make_chevy" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">CHEVY</field>
+            <field name="target_value">Chevrolet</field>
+        </record>
+        <record id="alias_make_ar33296" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">جي إم سي</field>
+            <field name="target_value">GMC</field>
+        </record>
+        <record id="alias_make_gmc" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">GMC</field>
+            <field name="target_value">GMC</field>
+        </record>
+        <record id="alias_make_ar98373" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">لاند روفر</field>
+            <field name="target_value">Land Rover</field>
+        </record>
+        <record id="alias_make_land_rover" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">LAND ROVER</field>
+            <field name="target_value">Land Rover</field>
+        </record>
+        <record id="alias_make_landrover" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">LANDROVER</field>
+            <field name="target_value">Land Rover</field>
+        </record>
+        <record id="alias_make_range_rover" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">RANGE ROVER</field>
+            <field name="target_value">Land Rover</field>
+        </record>
+        <record id="alias_make_ar19461" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">فولكس فاجن</field>
+            <field name="target_value">Volkswagen</field>
+        </record>
+        <record id="alias_make_volkswagen" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">VOLKSWAGEN</field>
+            <field name="target_value">Volkswagen</field>
+        </record>
+        <record id="alias_make_vw" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">VW</field>
+            <field name="target_value">Volkswagen</field>
+        </record>
+        <record id="alias_make_ar87690" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">سوزوكي</field>
+            <field name="target_value">Suzuki</field>
+        </record>
+        <record id="alias_make_suzuki" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">SUZUKI</field>
+            <field name="target_value">Suzuki</field>
+        </record>
+        <record id="alias_make_ar9042" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">ايسوزو</field>
+            <field name="target_value">Isuzu</field>
+        </record>
+        <record id="alias_make_isuzu" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">ISUZU</field>
+            <field name="target_value">Isuzu</field>
+        </record>
+        <record id="alias_make_ar30606" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">مازدا</field>
+            <field name="target_value">Mazda</field>
+        </record>
+        <record id="alias_make_mazda" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">MAZDA</field>
+            <field name="target_value">Mazda</field>
+        </record>
+        <record id="alias_make_ar46673" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">رينو</field>
+            <field name="target_value">Renault</field>
+        </record>
+        <record id="alias_make_renault" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">RENAULT</field>
+            <field name="target_value">Renault</field>
+        </record>
+        <record id="alias_make_ar97459" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">بژو</field>
+            <field name="target_value">Peugeot</field>
+        </record>
+        <record id="alias_make_peugeot" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">PEUGEOT</field>
+            <field name="target_value">Peugeot</field>
+        </record>
+        <record id="alias_make_ar2494" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">جيب</field>
+            <field name="target_value">Jeep</field>
+        </record>
+        <record id="alias_make_jeep" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">JEEP</field>
+            <field name="target_value">Jeep</field>
+        </record>
+        <record id="alias_make_ar36398" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">انفينيتي</field>
+            <field name="target_value">Infiniti</field>
+        </record>
+        <record id="alias_make_infiniti" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">INFINITI</field>
+            <field name="target_value">Infiniti</field>
+        </record>
+        <record id="alias_make_infinity" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">INFINITY</field>
+            <field name="target_value">Infiniti</field>
+        </record>
+        <record id="alias_make_ar99557" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">بورشه</field>
+            <field name="target_value">Porsche</field>
+        </record>
+        <record id="alias_make_porsche" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">PORSCHE</field>
+            <field name="target_value">Porsche</field>
+        </record>
+        <record id="alias_make_mg" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">MG</field>
+            <field name="target_value">MG</field>
+        </record>
+        <record id="alias_make_m_g" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">M G</field>
+            <field name="target_value">MG</field>
+        </record>
+        <record id="alias_make_ar43024" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">شانغان</field>
+            <field name="target_value">Changan</field>
+        </record>
+        <record id="alias_make_changan" model="odex.mulkiya.alias">
+            <field name="field_key">make</field>
+            <field name="source_value">CHANGAN</field>
+            <field name="target_value">Changan</field>
+        </record>
+
+    </data>
+</odoo>

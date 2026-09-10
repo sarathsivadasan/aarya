@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_coupon_payment_wizard_form" model="ir.ui.view">
+        <field name="name">coupon.payment.wizard.form</field>
+        <field name="model">coupon.payment.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Register Payment">
+                <sheet>
+                    <!-- Summary Banner -->
+                    <div class="alert alert-info" role="status">
+                        <div class="row">
+                            <div class="col-4 text-center">
+                                <div class="text-muted" style="font-size:11px;text-transform:uppercase;">Coupon Amount</div>
+                                <div style="font-size:18px;font-weight:700;">
+                                    <field name="coupon_amount" readonly="1" nolabel="1"/>
+                                </div>
+                            </div>
+                            <div class="col-4 text-center">
+                                <div class="text-muted" style="font-size:11px;text-transform:uppercase;">Already Paid</div>
+                                <div style="font-size:18px;font-weight:700;color:#198754;">
+                                    <field name="total_paid" readonly="1" nolabel="1"/>
+                                </div>
+                            </div>
+                            <div class="col-4 text-center">
+                                <div class="text-muted" style="font-size:11px;text-transform:uppercase;">Balance Due</div>
+                                <div style="font-size:18px;font-weight:700;color:#dc3545;">
+                                    <field name="balance_amount" readonly="1" nolabel="1"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <group>
+                        <group string="Payment Details">
+                            <field name="coupon_id" readonly="1"/>
+                            <field name="customer_id" readonly="1"/>
+                            <field name="payment_date" required="1"/>
+                            <field name="payment_method" required="1" widget="radio"
+                                   options="{'horizontal': true}"/>
+                            <field name="payment_type" invisible="1"/>
+                            <field name="journal_id" required="1"/>
+                            <field name="amount" required="1"/>
+                            <field name="reference" placeholder="Cheque/Transfer reference..."/>
+                        </group>
+                        <group string="PDC Details"
+                               invisible="payment_method != 'pdc'">
+                            <field name="cheque_number"/>
+                            <field name="cheque_date"/>
+                            <field name="bank_name"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="notes" placeholder="Internal notes..." colspan="2"/>
+                    </group>
+                    <field name="currency_id" invisible="1"/>
+                </sheet>
+                <footer>
+                    <button name="action_register_payment"
+                            string="Register Payment"
+                            type="object"
+                            class="btn-primary"/>
+                    <button string="Discard" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

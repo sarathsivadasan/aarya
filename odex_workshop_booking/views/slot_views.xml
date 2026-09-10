@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_booking_slot_list" model="ir.ui.view">
+        <field name="name">odex.booking.slot.list</field>
+        <field name="model">odex.booking.slot</field>
+        <field name="arch" type="xml">
+            <list decoration-danger="state == 'full'"
+                  decoration-warning="state == 'limited'"
+                  decoration-muted="state == 'blocked'"
+                  multi_edit="1" sample="1">
+                <field name="date"/>
+                <field name="hour_from" widget="float_time" string="From"/>
+                <field name="hour_to" widget="float_time" string="To"/>
+                <field name="company_id"/>
+                <field name="capacity"/>
+                <field name="booked_count"/>
+                <field name="remaining"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'available'"
+                       decoration-warning="state == 'limited'"
+                       decoration-danger="state == 'full'"/>
+                <button name="action_block" string="Block" type="object" icon="fa-ban"
+                        invisible="is_blocked"/>
+                <button name="action_unblock" string="Unblock" type="object" icon="fa-check"
+                        invisible="not is_blocked"/>
+                <field name="is_blocked" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_booking_slot_form" model="ir.ui.view">
+        <field name="name">odex.booking.slot.form</field>
+        <field name="model">odex.booking.slot</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_block" string="Block Slot" type="object"
+                            invisible="is_blocked"/>
+                    <button name="action_unblock" string="Unblock" type="object"
+                            class="btn-primary" invisible="not is_blocked"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_bookings" type="object"
+                                class="oe_stat_button" icon="fa-calendar-check-o">
+                            <field name="booked_count" widget="statinfo" string="Bookings"/>
+                        </button>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="company_id" options="{'no_create': True}"/>
+                            <field name="date"/>
+                            <field name="hour_from" widget="float_time"/>
+                            <field name="hour_to" widget="float_time"/>
+                        </group>
+                        <group>
+                            <field name="capacity"/>
+                            <field name="remaining"/>
+                            <field name="is_blocked"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                    </group>
+                    <field name="booking_ids" readonly="1">
+                        <list>
+                            <field name="name"/>
+                            <field name="partner_id"/>
+                            <field name="vehicle_id"/>
+                            <field name="service_type_id"/>
+                            <field name="state" widget="badge"/>
+                        </list>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_booking_slot_calendar" model="ir.ui.view">
+        <field name="name">odex.booking.slot.calendar</field>
+        <field name="model">odex.booking.slot</field>
+        <field name="arch" type="xml">
+            <calendar date_start="start_datetime" date_stop="stop_datetime"
+                      color="company_id" mode="week" quick_create="0">
+                <field name="company_id" filters="1"/>
+                <field name="booked_count"/>
+                <field name="capacity"/>
+                <field name="state"/>
+            </calendar>
+        </field>
+    </record>
+
+    <record id="view_booking_slot_search" model="ir.ui.view">
+        <field name="name">odex.booking.slot.search</field>
+        <field name="model">odex.booking.slot</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="company_id"/>
+                <field name="date"/>
+                <filter string="Today" name="today" domain="[('date', '=', context_today())]"/>
+                <filter string="Upcoming" name="upcoming" domain="[('date', '&gt;=', context_today())]"/>
+                <separator/>
+                <filter string="Available" name="available" domain="[('state', '=', 'available')]"/>
+                <filter string="Limited" name="limited" domain="[('state', '=', 'limited')]"/>
+                <filter string="Fully Booked" name="full" domain="[('state', '=', 'full')]"/>
+                <filter string="Blocked" name="blocked" domain="[('state', '=', 'blocked')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Date" name="group_date" context="{'group_by': 'date'}"/>
+                    <filter string="Company" name="group_company" context="{'group_by': 'company_id'}"/>
+                    <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_booking_slot" model="ir.actions.act_window">
+        <field name="name">Slot Management</field>
+        <field name="res_model">odex.booking.slot</field>
+        <field name="view_mode">list,calendar,form</field>
+        <field name="context">{'search_default_upcoming': 1, 'search_default_group_date': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No slots yet</p>
+            <p>Open <b>Slot Management</b> and click Generate Slots on the working schedule.</p>
+        </field>
+    </record>
+
+    <record id="action_booking_slot_calendar" model="ir.actions.act_window">
+        <field name="name">Slot Calendar</field>
+        <field name="res_model">odex.booking.slot</field>
+        <field name="view_mode">calendar,list,form</field>
+        <field name="view_id" ref="view_booking_slot_calendar"/>
+    </record>
+</odoo>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Top-level menu under Accounting -->
+    <menuitem
+        id="menu_bank_reconciliation_pro_root"
+        name="Bank Reconciliation Pro"
+        parent="account.menu_finance"
+        sequence="15"
+        groups="bank_reconciliation_pro.group_bank_reco_user"
+    />
+
+    <!-- Main screen (OWL) -->
+    <menuitem
+        id="menu_bank_reconciliation_pro_main"
+        name="Reconcile"
+        parent="menu_bank_reconciliation_pro_root"
+        action="action_bank_reconciliation_pro"
+        sequence="10"
+        groups="bank_reconciliation_pro.group_bank_reco_user"
+    />
+
+    <!-- Admin lines list -->
+    <menuitem
+        id="menu_bank_reco_lines"
+        name="All Lines"
+        parent="menu_bank_reconciliation_pro_root"
+        action="action_bank_reco_line_list"
+        sequence="20"
+        groups="bank_reconciliation_pro.group_bank_reco_manager"
+    />
+</odoo>

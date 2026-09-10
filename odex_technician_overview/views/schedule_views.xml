@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_overview_schedule_list" model="ir.ui.view">
+        <field name="name">odex.overview.report.schedule.list</field>
+        <field name="model">odex.overview.report.schedule</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="report_type"/>
+                <field name="interval"/>
+                <field name="period"/>
+                <field name="export_format"/>
+                <field name="last_run"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_overview_schedule_form" model="ir.ui.view">
+        <field name="name">odex.overview.report.schedule.form</field>
+        <field name="model">odex.overview.report.schedule</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="report_type"/>
+                            <field name="export_format"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="interval"/>
+                            <field name="period"/>
+                            <field name="last_run"/>
+                        </group>
+                    </group>
+                    <group string="Recipients">
+                        <field name="recipient_ids" nolabel="1"
+                               widget="many2many_tags"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+</odoo>

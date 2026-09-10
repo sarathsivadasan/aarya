@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_odex_pc_settings_config" model="ir.ui.view">
+        <field name="name">odex.pc.settings.config.form</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority">100</field>
+        <field name="arch" type="xml">
+            <form string="ODEX Petty Cash Settings" class="oe_form">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>ODEX Petty Cash — Settings</h1>
+                        <p style="color:#888;font-size:13px;">
+                            Set all default GL accounts here once. Transactions inherit these automatically.
+                            Override per-employee in <b>Configuration → Petty Cash Accounts</b>.
+                            Assign petty cash managers in <b>HR → Employees → Petty Cash tab</b>.
+                        </p>
+                    </div>
+
+                    <group string="📒 Default Journal">
+                        <group><field name="petty_cash_journal_id" options="{'no_create': True}"/></group>
+                        <group><div class="alert alert-info" style="margin:0;font-size:12px;">
+                            Create a dedicated "Petty Cash" Cash-type journal in Accounting → Configuration → Journals.
+                        </div></group>
+                    </group>
+
+                    <group string="🏦 Petty Cash GL Account (Asset)">
+                        <group><field name="petty_cash_gl_account_id" options="{'no_create': True}"/></group>
+                        <group><div style="font-size:12px;color:#555;line-height:1.8;">
+                            e.g. <code>130002 Petty Cash</code><br/>
+                            <b style="color:#17a75a;">DR</b> on allocation | <b style="color:#e0403e;">CR</b> on expense &amp; return
+                        </div></group>
+                    </group>
+
+                    <group string="💵 Cash Allocation — Credit Side">
+                        <group><field name="cash_receipt_account_id" options="{'no_create': True}" string="Cash Receipt Credit Account"/></group>
+                        <group><div style="font-size:12px;color:#555;line-height:1.8;">
+                            <b>DR</b> Petty Cash GL → <b>CR</b> this account when cash is issued to user.<br/>
+                            <span style="color:#e65100;">⚠ Must be set — prevents wrong clearing accounts.</span>
+                        </div></group>
+                    </group>
+
+                    <group string="💸 Expense Default Account">
+                        <group><field name="cash_expense_account_id" options="{'no_create': True}" string="Default Cash Expense Account"/></group>
+                        <group><div style="font-size:12px;color:#555;line-height:1.8;">
+                            Fallback when expense category has no GL mapped.<br/>
+                            Best practice: map each category in <b>Configuration → Expense Categories</b>.
+                        </div></group>
+                    </group>
+
+                    <group string="🔄 Cash Return Account">
+                        <group><field name="cash_return_account_id" options="{'no_create': True}" string="Cash Return Debit Account"/></group>
+                        <group><div style="font-size:12px;color:#555;line-height:1.8;">
+                            <b>DR</b> this (Cash/Bank) → <b>CR</b> Petty Cash GL when user returns unused cash.
+                        </div></group>
+                    </group>
+
+                    <group string="⚙ Workflow">
+                        <group>
+                            <field name="petty_cash_require_approval" string="Require Manager Approval"/>
+                            <field name="petty_cash_auto_post" string="Auto-Post After Approval"/>
+                            <field name="petty_cash_warn_over_balance" string="Warn Manager on Over-Balance Approval"/>
+                        </group>
+                        <group>
+                            <field name="petty_cash_default_opening" string="Default Opening Balance"/>
+                            <field name="petty_cash_default_max" string="Default Maximum Limit"/>
+                        </group>
+                    </group>
+
+                    <!-- Summary table -->
+                    <group string="📊 Journal Entry Summary">
+                        <div colspan="2" style="overflow-x:auto;">
+                            <table style="width:100%;border-collapse:collapse;font-size:12px;">
+                                <thead><tr style="background:#3b3480;color:#fff;">
+                                    <th style="padding:8px 12px;">Transaction</th>
+                                    <th style="padding:8px 12px;">Debit Account</th>
+                                    <th style="padding:8px 12px;">Credit Account</th>
+                                </tr></thead>
+                                <tbody>
+                                    <tr style="background:#f0faf5;">
+                                        <td style="padding:8px 12px;font-weight:600;color:#17a75a;">💵 Cash Allocation (Finance → User)</td>
+                                        <td style="padding:8px 12px;"><field name="petty_cash_gl_account_id" readonly="1" nolabel="1"/> <span style="color:#aaa;font-size:10px;">(Employee Petty Cash)</span></td>
+                                        <td style="padding:8px 12px;"><field name="cash_receipt_account_id" readonly="1" nolabel="1"/> <span style="color:#aaa;font-size:10px;">(Cash/Bank)</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding:8px 12px;font-weight:600;color:#e0403e;">💸 Expense (with category GL)</td>
+                                        <td style="padding:8px 12px;color:#666;">Category GL Account</td>
+                                        <td style="padding:8px 12px;"><field name="petty_cash_gl_account_id" readonly="1" nolabel="1"/></td>
+                                    </tr>
+                                    <tr style="background:#fff8e1;">
+                                        <td style="padding:8px 12px;font-weight:600;color:#e65100;">💸 Expense (fallback)</td>
+                                        <td style="padding:8px 12px;"><field name="cash_expense_account_id" readonly="1" nolabel="1"/></td>
+                                        <td style="padding:8px 12px;"><field name="petty_cash_gl_account_id" readonly="1" nolabel="1"/></td>
+                                    </tr>
+                                    <tr style="background:#e8f4fd;">
+                                        <td style="padding:8px 12px;font-weight:600;color:#1a6fa0;">🔄 Cash Return (User → Company)</td>
+                                        <td style="padding:8px 12px;"><field name="cash_return_account_id" readonly="1" nolabel="1"/> <span style="color:#aaa;font-size:10px;">(Cash/Bank)</span></td>
+                                        <td style="padding:8px 12px;"><field name="petty_cash_gl_account_id" readonly="1" nolabel="1"/></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_odex_pc_settings" model="ir.actions.act_window">
+        <field name="name">ODEX Petty Cash Settings</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_odex_pc_settings_config"/>
+        <field name="target">inline</field>
+    </record>
+</odoo>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_gate_pass_root" name="Gate Pass"
+              web_icon="odex_vehicle_gate_pass,static/description/icon.png"
+              sequence="2"/>
+
+    <menuitem id="menu_gate_pass_operations" name="Operations"
+              parent="menu_gate_pass_root" sequence="10"/>
+
+    <menuitem id="menu_gate_pass_all" name="Gate Passes"
+              parent="menu_gate_pass_operations" action="action_gate_pass" sequence="10"/>
+
+    <menuitem id="menu_gate_pass_config" name="Configuration"
+              parent="menu_gate_pass_root" sequence="90"
+              groups="group_gate_pass_manager"/>
+
+    <menuitem id="menu_gate_pass_settings" name="Settings"
+              parent="menu_gate_pass_config" action="action_gate_pass_settings" sequence="10"/>
+</odoo>

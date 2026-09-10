@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ==================== PETTY CASH BOOK REPORT ==================== -->
+
+    <!-- Report Action -->
+    <record id="action_petty_cash_book_report" model="ir.actions.report">
+        <field name="name">Petty Cash Book</field>
+        <field name="model">petty.cash.report.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">petty_cash_book.report_petty_cash_book</field>
+        <field name="report_file">petty_cash_book.report_petty_cash_book</field>
+        <field name="binding_model_id" ref="model_petty_cash_report_wizard"/>
+        <field name="binding_type">report</field>
+        <!-- <field name="paperformat_id" ref="base.paperformat_a4"/> -->
+    </record>
+
+    <!-- Report Template -->
+    <template id="report_petty_cash_book">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="wizard">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <!-- Report Header -->
+                        <div class="pcb_report_header" style="text-align:center; margin-bottom:20px; border-bottom:2px solid #3f51b5; padding-bottom:12px;">
+                            <h2 style="color:#3f51b5; font-size:1.4rem; font-weight:700; margin:0 0 4px 0;">PETTY CASH BOOK</h2>
+                            <p style="color:#546e7a; font-size:0.85rem; margin:0;">
+                                Period: <strong><t t-esc="wizard.date_from"/></strong> to <strong><t t-esc="wizard.date_to"/></strong>
+                            </p>
+                            <t t-if="wizard.account_id">
+                                <p style="color:#546e7a; font-size:0.8rem; margin:2px 0 0 0;">
+                                    Account: <t t-esc="wizard.account_id.code"/> - <t t-esc="wizard.account_id.name"/>
+                                </p>
+                            </t>
+                        </div>
+
+                        <!-- Summary Cards -->
+                        <table style="width:100%; border-collapse:collapse; margin-bottom:20px; font-size:0.85rem;">
+                            <tr>
+                                <td style="padding:10px; border:1px solid #e0e0e0; background:#f3f4ff; width:25%;">
+                                    <div style="color:#7986cb; font-size:0.75rem; font-weight:600; text-transform:uppercase; margin-bottom:4px;">Opening Balance</div>
+                                    <div style="font-size:1.1rem; font-weight:700; color:#37474f;">
+                                        <t t-esc="wizard.currency_id.symbol"/>
+                                        <t t-esc="'{:,.2f}'.format(wizard.opening_balance)"/>
+                                    </div>
+                                </td>
+                                <td style="padding:10px; border:1px solid #e0e0e0; background:#e8f5e9; width:25%;">
+                                    <div style="color:#388e3c; font-size:0.75rem; font-weight:600; text-transform:uppercase; margin-bottom:4px;">(+) Cash Received</div>
+                                    <div style="font-size:1.1rem; font-weight:700; color:#2e7d32;">
+                                        <t t-esc="wizard.currency_id.symbol"/>
+                                        <t t-esc="'{:,.2f}'.format(wizard.total_received)"/>
+                                    </div>
+                                </td>
+                                <td style="padding:10px; border:1px solid #e0e0e0; background:#ffebee; width:25%;">
+                                    <div style="color:#c62828; font-size:0.75rem; font-weight:600; text-transform:uppercase; margin-bottom:4px;">(-) Expenses</div>
+                                    <div style="font-size:1.1rem; font-weight:700; color:#c62828;">
+                                        <t t-esc="wizard.currency_id.symbol"/>
+                                        <t t-esc="'{:,.2f}'.format(wizard.total_expenses)"/>
+                                    </div>
+                                </td>
+                                <td style="padding:10px; border:1px solid #e0e0e0; background:#e8f5e9; width:25%;">
+                                    <div style="color:#1565c0; font-size:0.75rem; font-weight:600; text-transform:uppercase; margin-bottom:4px;">Cash in Hand</div>
+                                    <div style="font-size:1.1rem; font-weight:700; color:#1565c0;">
+                                        <t t-esc="wizard.currency_id.symbol"/>
+                                        <t t-esc="'{:,.2f}'.format(wizard.closing_balance)"/>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- Cash Received Section -->
+                        <h4 style="color:#2e7d32; font-size:0.95rem; font-weight:700; border-bottom:2px solid #a5d6a7; padding-bottom:6px; margin-bottom:10px;">
+                            Cash Received (Income)
+                        </h4>
+                        <table style="width:100%; border-collapse:collapse; font-size:0.8rem; margin-bottom:20px;">
+                            <thead>
+                                <tr style="background:#f5f5f5;">
+                                    <th style="padding:7px 10px; border:1px solid #e0e0e0; text-align:left; font-weight:600; color:#455a64;">Date</th>
+                                    <th style="padding:7px 10px; border:1px solid #e0e0e0; text-align:left; font-weight:600; color:#455a64;">Reference</th>
+                                    <th style="padding:7px 10px; border:1px solid #e0e0e0; text-align:left; font-weight:600; color:#455a64;">From (Partner)</th>
+                                    <th style="padding:7px 10px; border:1px solid #e0e0e0; text-align:left; font-weight:600; color:#455a64;">Description</th>
+                                    <th style="padding:7px 10px; border:1px solid #e0e0e0; text-align:left; font-weight:600; color:#455a64;">Received By</th>
+                                    <th style="padding:7px 10px; border:1px solid #e0e0e0; text-align:right; font-weight:600; color:#455a64;">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="wizard.received_line_ids" t-as="line">
+                                    <tr style="border-bottom:1px solid #f0f0f0;">
+                                        <td style="padding:6px 10px; border:1px solid #e0e0e0;"><t t-esc="line.date"/></td>
+                                        <td style="padding:6px 10px; border:1px solid #e0e0e0;"><t t-esc="line.reference"/></td>
+                                        <td style="padding:6px 10px; border:1px solid #e0e0e0;"><t t-esc="line.partner_id.name or ''"/></td>
+                                        <td style="padding:6px 10px; border:1px solid #e0e0e0;"><t t-esc="line.description"/></td>
+                                        <td style="padding:6px 10px; border:1px solid #e0e0e0;"><t t-esc="line.received_by.name or ''"/></td>
+                                        <td style="padding:6px 10px; border:1px solid #e0e0e0; text-align:right; font-weight:600; color:#2e7d32;">
+                                            <t t-esc="wizard.currency_id.symbol"/>
+                                            <t t-esc="'{:,.2f}'.format(line.amount)"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                                <tr style="background:#e8f5e9; font-weight:700;">
+                                    <td colspan="5" style="padding:7px 10px; border:1px solid #e0e0e0; text-align:right; color:#2e7d32;">Total Received:</td>
+                                    <td style="padding:7px 10px; border:1px solid #e0e0e0; text-align:right; color:#2e7d32;">
+                                        <t t-esc="wizard.currency_id.symbol"/>
+                                        <t t-esc="'{:,.2f}'.format(wizard.total_received)"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- Expenses Section -->
+                        <h4 style="color:#c62828; font-size:0.95rem; font-weight:700; border-bottom:2px solid #ffcdd2; padding-bottom:6px; margin-bottom:10px;">
+                            Expenses (Spending)
+                        </h4>
+                        <table style="width:100%; border-collapse:collapse; font-size:0.8rem; margin-bottom:20px;">
+                            <thead>
+                                <tr style="background:#f5f5f5;">
+                                    <th style="padding:7px 10px; border:1px solid #e0e0e0; text-align:left; font-weight:600; color:#455a64;">Date</th>
+                                    <th style="padding:7px 10px; border:1px solid #e0e0e0; text-align:left; font-weight:600; color:#455a64;">Reference</th>
+                                    <th style="padding:7px 10px; border:1px solid #e0e0e0; text-align:left; font-weight:600; color:#455a64;">To (Partner)</th>
+                                    <th style="padding:7px 10px; border:1px solid #e0e0e0; text-align:left; font-weight:600; color:#455a64;">Category</th>
+                                    <th style="padding:7px 10px; border:1px solid #e0e0e0; text-align:left; font-weight:600; color:#455a64;">Description</th>
+                                    <th style="padding:7px 10px; border:1px solid #e0e0e0; text-align:right; font-weight:600; color:#455a64;">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="wizard.expense_line_ids" t-as="line">
+                                    <tr style="border-bottom:1px solid #f0f0f0;">
+                                        <td style="padding:6px 10px; border:1px solid #e0e0e0;"><t t-esc="line.date"/></td>
+                                        <td style="padding:6px 10px; border:1px solid #e0e0e0;"><t t-esc="line.reference"/></td>
+                                        <td style="padding:6px 10px; border:1px solid #e0e0e0;"><t t-esc="line.partner_id.name or ''"/></td>
+                                        <td style="padding:6px 10px; border:1px solid #e0e0e0;"><t t-esc="line.category_id.name or ''"/></td>
+                                        <td style="padding:6px 10px; border:1px solid #e0e0e0;"><t t-esc="line.description"/></td>
+                                        <td style="padding:6px 10px; border:1px solid #e0e0e0; text-align:right; font-weight:600; color:#c62828;">
+                                            <t t-esc="wizard.currency_id.symbol"/>
+                                            <t t-esc="'{:,.2f}'.format(line.amount)"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                                <tr style="background:#ffebee; font-weight:700;">
+                                    <td colspan="5" style="padding:7px 10px; border:1px solid #e0e0e0; text-align:right; color:#c62828;">Total Expenses:</td>
+                                    <td style="padding:7px 10px; border:1px solid #e0e0e0; text-align:right; color:#c62828;">
+                                        <t t-esc="wizard.currency_id.symbol"/>
+                                        <t t-esc="'{:,.2f}'.format(wizard.total_expenses)"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- Closing Summary -->
+                        <table style="width:100%; border-collapse:collapse; font-size:0.85rem; margin-bottom:30px;">
+                            <tr>
+                                <td style="width:60%;"></td>
+                                <td style="padding:8px 12px; border:2px solid #3f51b5; background:#f3f4ff; font-weight:700; color:#3f51b5; width:20%; text-align:right;">Closing Balance:</td>
+                                <td style="padding:8px 12px; border:2px solid #3f51b5; background:#f3f4ff; font-weight:700; color:#3f51b5; width:20%; text-align:right;">
+                                    <t t-esc="wizard.currency_id.symbol"/>
+                                    <t t-esc="'{:,.2f}'.format(wizard.closing_balance)"/>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- Signature Section -->
+                        <table style="width:100%; margin-top:40px; font-size:0.8rem; color:#546e7a;">
+                            <tr>
+                                <td style="width:33%; text-align:center; padding:10px;">
+                                    <div style="border-top:1px solid #90a4ae; padding-top:6px; margin-top:40px;">Prepared By</div>
+                                </td>
+                                <td style="width:33%; text-align:center; padding:10px;">
+                                    <div style="border-top:1px solid #90a4ae; padding-top:6px; margin-top:40px;">Checked By</div>
+                                </td>
+                                <td style="width:33%; text-align:center; padding:10px;">
+                                    <div style="border-top:1px solid #90a4ae; padding-top:6px; margin-top:40px;">Approved By</div>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- Footer Note -->
+                        <div style="text-align:center; margin-top:20px; font-size:0.7rem; color:#9e9e9e; border-top:1px solid #f0f0f0; padding-top:8px;">
+                            Tally Style Petty Cash Book | Generated on <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y %H:%M')"/>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- v2.0.0: fixed against the real schema - o.timer_status/technician_id/
+         estimated_hours/actual_hours/allocated_date and qc.result/signature
+         never existed for real; replaced with technician_job_status,
+         job_card_daily_report_ids (multi-technician), allocated_hours,
+         total_working_hours, time_in, and check_mark.
+
+         v4.0.0: this template previously printed o.my_timer_status,
+         which was named in the v2 comment but never actually declared -
+         printing the report raised. It now uses the real rollup field
+         declared in models/project_task.py. -->
+    <template id="report_vehicle_inspection">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <div class="row mb-4">
+                            <div class="col-6">
+                                <h2>Vehicle Inspection Report</h2>
+                                <div>Number: <strong t-esc="o.number or o.name"/></div>
+                                <div>Status: <strong t-field="o.technician_job_status"/></div>
+                            </div>
+                            <div class="col-6 text-end">
+                                <img t-att-src="'/report/barcode/?type=QR&amp;value=%s&amp;width=120&amp;height=120' % (o.number or o.name or '')"
+                                     alt="QR Code"/>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <h4>Vehicle</h4>
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td>Vehicle</td>
+                                        <td><span t-field="o.vehicle_id"/></td>
+                                    </tr>
+                                    <tr t-if="'partner_id' in o">
+                                        <td>Customer</td>
+                                        <td><span t-field="o.partner_id"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-6">
+                                <h4>Job Details</h4>
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td>Allocated Hours</td>
+                                        <td><span t-field="o.allocated_hours"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Total Working Hours</td>
+                                        <td><span t-field="o.total_working_hours"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Time In</td>
+                                        <td><span t-field="o.time_in"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Time Out</td>
+                                        <td><span t-field="o.time_out"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <h4>Technicians</h4>
+                        <table class="table table-sm table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Technician</th>
+                                    <th>Start</th>
+                                    <th>End</th>
+                                    <th>Paused (h)</th>
+                                    <th>Total Hours</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="o.job_card_daily_report_ids" t-as="line">
+                                    <td><span t-field="line.employees_id"/></td>
+                                    <td><span t-field="line.start_datetime"/></td>
+                                    <td><span t-field="line.end_datetime"/></td>
+                                    <td><span t-field="line.total_pause_time"/></td>
+                                    <td><span t-field="line.total_hours"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h4>QC Checklist</h4>
+                        <table class="table table-sm table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Pass</th>
+                                    <th>Remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="o.quality_checklist_ids.filtered(lambda q: not q.display_type)" t-as="qc">
+                                    <td><span t-field="qc.checklist_name_id"/></td>
+                                    <td><span t-esc="'Yes' if qc.check_mark else 'No'"/></td>
+                                    <td><span t-field="qc.description"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h4>Vehicle Photos</h4>
+                        <div class="row">
+                            <t t-foreach="o.get_photo_slots()" t-as="slot">
+                                <div t-if="slot['has_image']" class="col-3 mb-2">
+                                    <img t-att-src="image_data_uri(o['image%d' % slot['slot']])" style="width:100%;"/>
+                                    <div class="text-muted small" t-esc="slot['label']"/>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

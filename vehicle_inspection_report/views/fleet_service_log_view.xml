@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+	<record id="fleet_vehicle_log_services_sheet_view_form" model="ir.ui.view">
+        <field name="name">fleet.vehicle.log.services.form.sheet</field>
+        <field name="model">fleet.vehicle.log.services</field>
+        <field name="inherit_id" ref="fleet.fleet_vehicle_log_services_view_form"/>
+        <field name="arch" type="xml">
+        	<xpath expr="//form/sheet" position="inside">
+                <notebook>
+        		    <page name="fleet_service_sheet" string="Fleet Service Sheet">
+                        <field name="fleet_service_sheet_ids" mode="tree">
+                            <form string="Service Sheet">
+                                <group>
+                                    <group>
+                                        <field name="cost_type"/>
+                                        <field name="product_id" options="{'no_create': True, 'no_edit': True}"/>
+                                        <field name="account_id"/>
+                                        <!-- <field name="account_analytic_id"/> -->
+                                        <field name="quantity"/>
+                                        <field name="name"/>
+                                    </group>
+                                    <group>
+                                        <field name="uom_id"/>
+                                        <field name="price_unit"/>
+                                        <field name="discount"/>
+                                        <field name="invoice_line_tax_ids" widget="many2many_tags"/>
+                                    </group>
+                                </group>
+                            </form>
+                            <tree string="Cost Sheet" editable="bottom">
+                                <field name="cost_type"/>
+                                <field name="barcode_custom"/>
+                                <field name="product_id" options="{'no_create': True, 'no_edit': True}"/>
+                                <field name="name"/>
+                                <field name="quantity"/>
+                                <field name="uom_id"/>
+                                <field name="price_custom"/>
+                                <field name="price_factor" options="{'no_quick_create': True}"/>
+                                <field name="price_unit" readonly="1" force_save="True"/>
+                                <field name="discount"/>
+                                <field name="invoice_line_tax_ids" widget="many2many_tags"/>
+                                <field name="price_subtotal"/>
+                                <field name="tax_amount" invisible="1"/>
+                                <field name="account_id"/>
+                                <!-- <field name="account_analytic_id"/> -->
+                            </tree>
+                        </field>
+                    </page>
+                </notebook>
+        	</xpath>
+        </field>
+    </record>
+
+</odoo>

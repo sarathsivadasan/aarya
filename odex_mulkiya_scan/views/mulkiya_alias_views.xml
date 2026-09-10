@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_mulkiya_alias_list" model="ir.ui.view">
+        <field name="name">odex.mulkiya.alias.list</field>
+        <field name="model">odex.mulkiya.alias</field>
+        <field name="arch" type="xml">
+            <list string="Value Aliases" editable="bottom" multi_edit="1">
+                <field name="field_key"/>
+                <field name="source_value"/>
+                <field name="target_value"/>
+                <field name="note" optional="hide"/>
+                <field name="active" widget="boolean_toggle" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_mulkiya_alias_search" model="ir.ui.view">
+        <field name="name">odex.mulkiya.alias.search</field>
+        <field name="model">odex.mulkiya.alias</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="source_value"/>
+                <field name="target_value"/>
+                <field name="field_key"/>
+                <filter name="filter_archived" string="Archived" domain="[('active', '=', False)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_field" string="Field" context="{'group_by': 'field_key'}"/>
+                    <filter name="group_target" string="Normalized Value" context="{'group_by': 'target_value'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_mulkiya_alias" model="ir.actions.act_window">
+        <field name="name">Value Aliases</field>
+        <field name="res_model">odex.mulkiya.alias</field>
+        <field name="view_mode">list</field>
+        <field name="context">{'search_default_group_field': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Teach the engine a new spelling</p>
+            <p>Arabic spellings, abbreviations and recurring OCR mistakes are mapped
+               here onto the canonical value used for matching.</p>
+        </field>
+    </record>
+
+</odoo>

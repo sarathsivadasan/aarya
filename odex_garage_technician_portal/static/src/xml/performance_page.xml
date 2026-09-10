@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="odex_garage_technician_portal.PerformancePage">
+        <div class="o_tp_performance" t-if="state.data">
+            <div class="o_tp_cards_row">
+                <div class="o_tp_card">
+                    <div class="o_tp_card_label">Completed Today</div>
+                    <div class="o_tp_card_value" t-esc="state.data.completed_today"/>
+                </div>
+                <div class="o_tp_card">
+                    <div class="o_tp_card_label">Completed This Week</div>
+                    <div class="o_tp_card_value" t-esc="state.data.completed_week"/>
+                </div>
+                <div class="o_tp_card">
+                    <div class="o_tp_card_label">Completed This Month</div>
+                    <div class="o_tp_card_value" t-esc="state.data.completed_month"/>
+                </div>
+                <div class="o_tp_card">
+                    <div class="o_tp_card_label">Average Time</div>
+                    <div class="o_tp_card_value"><t t-esc="state.data.average_time"/>h</div>
+                </div>
+                <div class="o_tp_card">
+                    <div class="o_tp_card_label">Efficiency</div>
+                    <div class="o_tp_card_value"><t t-esc="state.data.efficiency"/>%</div>
+                </div>
+            </div>
+            <div class="o_tp_cards_row">
+                <div class="o_tp_card">
+                    <div class="o_tp_card_label">Pending</div>
+                    <div class="o_tp_card_value" t-esc="state.data.pending"/>
+                </div>
+                <div class="o_tp_card">
+                    <div class="o_tp_card_label">Paused</div>
+                    <div class="o_tp_card_value" t-esc="state.data.paused"/>
+                </div>
+                <div class="o_tp_card">
+                    <div class="o_tp_card_label">Late Jobs</div>
+                    <div class="o_tp_card_value text-danger" t-esc="state.data.late_jobs"/>
+                </div>
+            </div>
+
+            <div class="o_tp_chart_block">
+                <h3>Hours Worked (Last 7 Days)</h3>
+                <div class="o_tp_bar_chart">
+                    <div t-foreach="state.data.chart" t-as="day" t-key="day_index" class="o_tp_bar_col">
+                        <div class="o_tp_bar" t-attf-style="height: #{this.barHeight(day.hours)}"
+                             t-att-title="day.hours"/>
+                        <div class="o_tp_bar_label" t-esc="day.date"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

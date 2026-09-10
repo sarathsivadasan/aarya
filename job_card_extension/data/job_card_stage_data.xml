@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding='UTF-8'?>
+<odoo>
+	<data noupdate="0">
+
+		<record id="job_card_stage_in" model="job.card.stage">
+	        <field name="name">Vehicle In</field>
+	        <field name="value">in</field>
+	        <field name="color">PURPLE</field>
+	    </record>
+
+	    <record id="job_card_stage_urgent" model="job.card.stage">
+	        <field name="name">Urgent</field>
+	        <field name="value">urg</field>
+	        <field name="color">PURPLE</field>
+	    </record>
+
+	    <record id="job_card_stage_awaiting_approval" model="job.card.stage">
+	        <field name="name">AWaiting Approval</field>
+	        <field name="value">awaiting_approval</field>
+	        <field name="color">purple</field>
+	    </record>
+
+	    <record id="job_card_stage_wip" model="job.card.stage">
+	        <field name="name">Work in Progress</field>
+	        <field name="value">wip</field>
+	        <field name="color">blue</field>
+	    </record>
+
+	    <record id="job_card_stage_awaiting_parts" model="job.card.stage">
+	        <field name="name">Waiting For Parts</field>
+	        <field name="value">awaiting_parts</field>
+	        <field name="color">orange</field>
+	    </record>
+
+	    <record id="job_card_stage_ready" model="job.card.stage">
+	        <field name="name">Ready For Delivery</field>
+	        <field name="value">ready</field>
+	        <field name="color">green</field>
+	    </record>
+
+	    <record id="job_card_stage_no_action" model="job.card.stage">
+	        <field name="name">No Action</field>
+	        <field name="value">no_action</field>
+	        <field name="color">green</field>
+	    </record>
+
+	    <record id="job_card_stage_out" model="job.card.stage">
+	        <field name="name">Vehicle Out</field>
+	        <field name="value">out</field>
+	        <field name="color">GREEN</field>
+	    </record>
+
+	    <record id="job_card_stage_road_testing" model="job.card.stage">
+	        <field name="name">Road Testing</field>
+	        <field name="value">road_testing</field>
+	        <field name="color">pink</field>
+	    </record>
+
+	    <record id="job_card_stage_washing" model="job.card.stage">
+	        <field name="name">Washing</field>
+	        <field name="value">washing</field>
+	        <field name="color">grey</field>
+	    </record>
+
+	    <record id="job_card_stage_closed" model="job.card.stage">
+	        <field name="name">Closed</field>
+	        <field name="value">closed</field>
+	        <field name="color">black</field>
+	    </record>
+
+	    <record id="job_card_stage_awaiting_payment" model="job.card.stage">
+	        <field name="name">Awaiting Payments</field>
+	        <field name="value">awaiting_payment</field>
+	        <field name="color">gray</field>
+	    </record>
+
+	    <!-- <record id="job_card_stage_hold" model="job.card.stage">
+	        <field name="name">Hold</field>
+	        <field name="value">hold</field>
+	        <field name="color">brown</field>
+	    </record> -->    
+
+	    <!-- <record id="job_card_stage_delivered_not_invoiced" model="job.card.stage">
+	        <field name="name">Delivered Awaiting LPO</field>
+	        <field name="value">delivered_not_invoiced</field>
+	        <field name="color">red</field>
+	    </record> -->
+
+	    <!-- <record id="job_card_stage_insurance" model="job.card.stage">
+	        <field name="name">Total Loss</field>
+	        <field name="value">insurance</field>
+	        <field name="color">blue</field>
+	    </record>
+
+	    <record id="job_card_stage_total" model="job.card.stage">
+	        <field name="name">Total</field>
+	        <field name="value">insurance</field>
+	        <field name="color">grey</field>
+	    </record> -->
+	   	
+
+	</data>
+</odoo>

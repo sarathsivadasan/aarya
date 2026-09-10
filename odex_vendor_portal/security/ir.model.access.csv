@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_purchase_order_vendor_portal,purchase.order.vendor.portal,purchase.model_purchase_order,group_vendor_portal,1,0,0,0
+access_purchase_order_line_vendor_portal,purchase.order.line.vendor.portal,purchase.model_purchase_order_line,group_vendor_portal,1,0,0,0
+access_account_move_vendor_portal,account.move.vendor.portal,account.model_account_move,group_vendor_portal,1,0,0,0
+access_account_move_line_vendor_portal,account.move.line.vendor.portal,account.model_account_move_line,group_vendor_portal,1,0,0,0
+access_uom_uom_vendor_portal,uom.uom.vendor.portal,uom.model_uom_uom,group_vendor_portal,1,0,0,0
+access_account_tax_vendor_portal,account.tax.vendor.portal,account.model_account_tax,group_vendor_portal,1,0,0,0

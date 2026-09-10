@@ -1,0 +1,372 @@
+<odoo>
+
+    <record id="job_card_dashboard_kanban_view" model="ir.ui.view">
+        <field name="name">job.card.dashboard.kanban</field>
+        <field name="model">job.card.stage</field>
+        <field name="arch" type="xml">
+<!--            <kanban class="oe_background_grey o_kanban_dashboard o_emphasize_colors o_stock_kanban" create="0" group_create="false">-->
+            <kanban class="oe_background_grey o_kanban_dashboard o_emphasize_colors o_stock_kanban"
+                    t-attf-style="width: fit-content; display: flex;"
+                    create="0" group_create="false">
+                    <field name="name"/>
+                    <field name="value"/>
+                    <field name="color"/>
+                    <templates>
+                        <t t-name="kanban-box">
+<!--                            <div t-attf-style="background-color:{{ record.color.raw_value }}; flex: 1; border-radius: 5px; min-width: 155px;" name="job_card">-->
+                            <div t-attf-style="background-color:{{ record.color.raw_value }}; border-radius: 5px; flex: 1; flex-basis: 150px; flex-grow: 0; flex-shrink: 0;" name="job_card">
+                                <div>
+                                    <div t-attf-class="o_kanban_card_header row" t-attf-style="height: 70px;">
+                                        <div class="o_kanban_card_header_title col-8">
+                                            <div class="o_primary" t-if="!selection_mode">
+                                                <a type="object" name="get_action_job_card_ready" t-attf-style="color:#FFFFFF;">
+                                                    <field name="name"/>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="text-left col-4">
+                                            <span t-if="record.value.raw_value == 'in'"><i class="fa fa-car" style="color: white; font-size: 25px;"></i></span>
+                                            <span t-if="record.value.raw_value == 'wip'"><i class="fa fa-gear" style="color: white; font-size: 25px;"></i></span>
+                                            <span t-if="record.value.raw_value == 'hold'"><i class="fa fa-pause" style="color: white; font-size: 25px;"></i></span>
+                                            <span t-if="record.value.raw_value == 'no_action'"><i class="fa fa-thumbs-o-down" style="color: white; font-size: 25px;"></i></span>
+                                            <span t-if="record.value.raw_value == 'awaiting_parts'"><i class="fa fa-spinner" style="color: white; font-size: 25px;"></i></span>
+                                            <span t-if="record.value.raw_value == 'awaiting_approval'"><i class="fa fa-clock-o" style="color: white; font-size: 25px;"></i></span>
+                                            <span t-if="record.value.raw_value == 'ready'"><i class="fa fa-truck" style="color: white; font-size: 25px;"></i></span>
+                                            <span t-if="record.value.raw_value == 'delivered_not_invoiced'"><i class="fa fa-file-text-o" style="color: white; font-size: 25px;"></i></span>
+                                            <span t-if="record.value.raw_value == 'out'"><i class="fa fa-arrow-right" style="color: white; font-size: 25px;"></i></span>
+                                            <span t-if="record.value.raw_value == 'road_testing'"><i class="fa fa-road" style="color: white; font-size: 25px;"></i></span>
+                                            <span t-if="record.value.raw_value == 'washing'"><i class="fa fa-water" style="color: white; font-size: 25px;"></i></span>
+                                            <span t-if="record.value.raw_value == 'insurance'"><i class="fa fa-note" style="color: white; font-size: 25px;"></i></span>
+                                            <span t-if="record.value.raw_value == 'closed'"><i class="fa fa-money" style="color: white; font-size: 25px;"></i></span>
+                                            <span t-if="record.value.raw_value == 'total'"><i class="fa fa-usd" style="color: white; font-size: 25px;"></i></span>
+                                        </div>
+                                    </div>
+                                    <div class="container o_kanban_card_content" t-attf-style="min-height:30px;">
+                                        <div class="row" t-attf-style="border-top: 1px solid #FFFFFF;">
+                                            <div class="col-3 o_kanban_primary_left" t-attf-style="margin-top: 7px;">
+                                                <span t-if="record.value.raw_value == 'in'" t-attf-style="color:#FFFFFF;"><field name="count_vehicle_in"/></span>
+                                                <span t-if="record.value.raw_value == 'wip'" t-attf-style="color:#FFFFFF;"><field name="count_work_in_progress"/></span>
+                                                <span t-if="record.value.raw_value == 'hold'" t-attf-style="color:#FFFFFF;"><field name="count_hold"/></span>
+                                                <span t-if="record.value.raw_value == 'no_action'" t-attf-style="color:#FFFFFF;"><field name="count_no_action"/></span>
+                                                <span t-if="record.value.raw_value == 'awaiting_parts'" t-attf-style="color:#FFFFFF;"><field name="count_awaiting_parts"/></span>
+                                                <span t-if="record.value.raw_value == 'awaiting_approval'" t-attf-style="color:#FFFFFF;"><field name="count_awaiting_approval"/></span>
+                                                <span t-if="record.value.raw_value == 'ready'" t-attf-style="color:#FFFFFF;"><field name="count_ready"/></span>
+                                                <span t-if="record.value.raw_value == 'delivered_not_invoiced'" t-attf-style="color:#FFFFFF;"><field name="count_delivered_not_invoiced"/></span>
+                                                <span t-if="record.value.raw_value == 'out'" t-attf-style="color:#FFFFFF;"><field name="count_out"/></span>
+                                                <span t-if="record.value.raw_value == 'road_testing'" t-attf-style="color:#FFFFFF;"><field name="count_road_testing"/></span>
+                                                <span t-if="record.value.raw_value == 'washing'" t-attf-style="color:#FFFFFF;"><field name="count_washing"/></span>
+                                                <span t-if="record.value.raw_value == 'insurance'" t-attf-style="color:#FFFFFF;"><field name="count_insurance"/></span>
+                                                <span t-if="record.value.raw_value == 'closed'" t-attf-style="color:#FFFFFF;"><field name="count_closed"/></span>
+                                                <span t-if="record.value.raw_value == 'total'" t-attf-style="color:#FFFFFF;"><field name="count_total"/></span>
+                                            </div>
+                                            <div class="col-9 o_kanban_primary_right text-right" t-attf-style="margin-top: 7px;">
+                                                <button class="btn" name="get_action_job_card_ready" type="object" t-attf-style="background-color:#FFFFFF;">
+                                                    <span t-attf-style="color:{{ record.color.raw_value }};">View</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+
+                    </templates>
+                </kanban>
+        </field>
+    </record>
+
+    <record id="open_job_card_dashboard_kanban" model="ir.actions.act_window">
+        <field name="name">Dashboard</field>
+        <field name="res_model">job.card.stage</field>
+        <field name="view_mode">kanban</field>
+        <field name="view_id" ref="job_card_dashboard_kanban_view"/>
+        <field name="usage">menu</field>
+        <field name="context">{'search_default_dashboard':1}</field>
+        <field name="domain">[]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_neutral_face">
+                This is the Job Card dashboard
+            </p>
+        </field>
+    </record>
+
+    <record id="job_card_view_graph" model="ir.ui.view">
+        <field name="name">job.card.graph</field>
+        <field name="model">project.task</field>
+        <field name="type">graph</field>
+        <field name="arch" type="xml">
+            <graph string="Stage Graph" type="pie" sample="1">
+                <field name="cc_stage_id"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="action_job_card_graph" model="ir.actions.act_window">
+        <field name="name">Job Card Graph</field>
+        <field name="res_model">project.task</field>
+        <field name="view_mode">graph</field>
+        <field name="view_id" ref="job_card_view_graph"/>
+    </record>
+
+    <!-- Bar Graph -->
+    <record id="job_card_view_bar_graph" model="ir.ui.view">
+        <field name="name">job.card.bar.graph</field>
+        <field name="model">project.task</field>
+        <field name="type">graph</field>
+        <field name="arch" type="xml">
+            <graph string="Stage Bar Graph" type="bar" sample="1">
+                <field name="cc_stage_id"/>
+            </graph>
+        </field>
+    </record>
+
+        <record id="action_job_card_bar_graph" model="ir.actions.act_window">
+        <field name="name">Job Card Bar Graph</field>
+        <field name="res_model">project.task</field>
+        <field name="view_mode">graph</field>
+        <field name="view_id" ref="job_card_view_bar_graph"/>
+    </record>
+    <!---->
+
+    <record id="job_card_form_view" model="ir.ui.view">
+        <field name="name">Job Card Dashboard</field>
+        <field name="model">board.board</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Job Card Dashboard">
+                <board style="1">
+                    <column>
+                        <action string="Job card Status" name="%(open_job_card_dashboard_kanban)d"/>
+                    </column>
+                </board>
+                <board style="1-1-1">
+                    <column>
+                        <action string="Pie Graph" name="%(action_job_card_graph)d"/>
+                    </column>
+                    <column>
+                        <action string="Bar Graph" name="%(action_job_card_bar_graph)d"/>
+                    </column>
+                </board>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_dashboard" model="ir.actions.act_window">
+        <field name="name">Job Card Dashboard</field>
+        <field name="res_model">board.board</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="job_card_form_view"/>
+        <field name="usage">menu</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_neutral_face">
+                This is the Job Card dashboard
+            </p>
+        </field>
+    </record>
+
+<!--    <menuitem id="dashbaord_menu" name="Job Dashboard" parent="job_card.menu_job_card" sequence="1" action="action_dashboard"/>-->
+    <menuitem id="dashbaord2_menu" name="Dashboard" sequence="1" action="action_dashboard"/>
+
+
+<!--    <menuitem id="dashbaord_menu" name="Dashboard" parent="job_card.menu_job_card" sequence="1" action="open_job_card_dashboard_kanban"/>-->
+
+
+    <!-- Job Card Filters action -->
+
+    <!-- Vehicle In -->
+    <record id="open_vehicle_in_job_card" model="ir.actions.act_window">
+        <field name="name">Job Cards</field>
+        <field name="res_model">project.task</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('is_jobcard', '=', True), ('cc_stage_value', '=', 'in')]</field>
+        <field name="context">{'default_is_jobcard': True, 'search_default_cc_stage_value': 'in'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_neutral_face">
+                This is the Job Card dashboard
+            </p>
+        </field>
+    </record>
+
+    <!-- Work In Progress -->
+    <record id="open_work_in_progress_job_card" model="ir.actions.act_window">
+        <field name="name">Job Cards</field>
+        <field name="res_model">project.task</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('is_jobcard', '=', True), ('cc_stage_value', '=', 'wip')]</field>
+        <field name="context">{'default_is_jobcard': True, 'search_default_cc_stage_value': 'wip'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_neutral_face">
+                This is the Job Card dashboard
+            </p>
+        </field>
+    </record>
+
+    <!-- Hold -->
+    <record id="open_hold_job_card" model="ir.actions.act_window">
+        <field name="name">Job Cards</field>
+        <field name="res_model">project.task</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('is_jobcard', '=', True), ('cc_stage_value', '=', 'hold')]</field>
+        <field name="context">{'default_is_jobcard': True, 'search_default_cc_stage_id': 'hold'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_neutral_face">
+                This is the Job Card dashboard
+            </p>
+        </field>
+    </record>
+
+    <!-- No Action -->
+    <record id="open_no_action_job_card" model="ir.actions.act_window">
+        <field name="name">Job Cards</field>
+        <field name="res_model">project.task</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('is_jobcard', '=', True), ('cc_stage_value', '=', 'no_action')]</field>
+        <field name="context">{'default_is_jobcard': True, 'search_default_cc_stage_value': 'no_action'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_neutral_face">
+                This is the Job Card dashboard
+            </p>
+        </field>
+    </record>
+
+    <!-- Waiting For Parts -->
+    <record id="open_awaiting_parts_job_card" model="ir.actions.act_window">
+        <field name="name">Job Cards</field>
+        <field name="res_model">project.task</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('is_jobcard', '=', True), ('cc_stage_value', '=', 'awaiting_parts')]</field>
+        <field name="context">{'default_is_jobcard': True, 'search_default_cc_stage_value': 'awaiting_parts'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_neutral_face">
+                This is the Job Card dashboard
+            </p>
+        </field>
+    </record>
+
+    <!-- Waiting For Approval -->
+    <record id="open_awaiting_approval_job_card" model="ir.actions.act_window">
+        <field name="name">Job Cards</field>
+        <field name="res_model">project.task</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('is_jobcard', '=', True), ('cc_stage_value', '=', 'awaiting_approval')]</field>
+        <field name="context">{'default_is_jobcard': True, 'search_default_cc_stage_value': 'awaiting_approval'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_neutral_face">
+                This is the Job Card dashboard
+            </p>
+        </field>
+    </record>
+
+    <!-- Ready For Delivery -->
+    <record id="open_ready_job_card" model="ir.actions.act_window">
+        <field name="name">Job Cards</field>
+        <field name="res_model">project.task</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('is_jobcard', '=', True), ('cc_stage_value', '=', 'ready')]</field>
+        <field name="context">{'default_is_jobcard': True, 'search_default_cc_stage_value': 'ready'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_neutral_face">
+                This is the Job Card dashboard
+            </p>
+        </field>
+    </record>
+
+    <!-- Delivered Not Invoiced -->
+    <record id="open_delivered_not_invoiced_job_card" model="ir.actions.act_window">
+        <field name="name">Job Cards</field>
+        <field name="res_model">project.task</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('is_jobcard', '=', True), ('cc_stage_value', '=', 'delivered_not_invoiced')]</field>
+        <field name="context">{'default_is_jobcard': True, 'search_default_cc_stage_value': 'delivered_not_invoiced'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_neutral_face">
+                This is the Job Card dashboard
+            </p>
+        </field>
+    </record>
+
+    <!-- Vehicle Out -->
+    <record id="open_out_job_card" model="ir.actions.act_window">
+        <field name="name">Job Cards</field>
+        <field name="res_model">project.task</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('is_jobcard', '=', True), ('cc_stage_value', '=', 'out')]</field>
+        <field name="context">{'default_is_jobcard': True, 'search_default_cc_stage_value': 'out'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_neutral_face">
+                This is the Job Card dashboard
+            </p>
+        </field>
+    </record>
+
+        <!-- Road Testing -->
+    <record id="open_road_testing_job_card" model="ir.actions.act_window">
+        <field name="name">Job Cards</field>
+        <field name="res_model">project.task</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('is_jobcard', '=', True), ('cc_stage_value', '=', 'road_testing')]</field>
+        <field name="context">{'default_is_jobcard': True, 'search_default_cc_stage_value': 'road_testing'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_neutral_face">
+                This is the Job Card dashboard
+            </p>
+        </field>
+    </record>
+
+        <!-- Washing -->
+    <record id="open_washing_job_card" model="ir.actions.act_window">
+        <field name="name">Job Cards</field>
+        <field name="res_model">project.task</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('is_jobcard', '=', True), ('cc_stage_value', '=', 'washing')]</field>
+        <field name="context">{'default_is_jobcard': True, 'search_default_cc_stage_value': 'washing'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_neutral_face">
+                This is the Job Card dashboard
+            </p>
+        </field>
+    </record>
+
+    <!-- Total -->
+    <record id="open_total_job_card" model="ir.actions.act_window">
+        <field name="name">Job Cards</field>
+        <field name="res_model">project.task</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('is_jobcard', '=', True)]</field>
+        <field name="context">{'default_is_jobcard': True}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_neutral_face">
+                This is the Job Card dashboard
+            </p>
+        </field>
+    </record>
+
+    <!-- Delivered Not Invoiced -->
+    <record id="open_insurance_job_card" model="ir.actions.act_window">
+        <field name="name">Insurance Job Cards</field>
+        <field name="res_model">project.task</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('is_jobcard', '=', True), ('cc_stage_value', '=', 'insurance')]</field>
+        <field name="context">{'default_is_jobcard': True, 'search_default_cc_stage_value': 'insurance'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_neutral_face">
+                This is the Job Card dashboard
+            </p>
+        </field>
+    </record>
+
+            <!-- Closed -->
+    <record id="open_closed_job_card" model="ir.actions.act_window">
+        <field name="name">Job Cards</field>
+        <field name="res_model">project.task</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('is_jobcard', '=', True), ('cc_stage_value', '=', 'closed')]</field>
+        <field name="context">{'default_is_jobcard': True, 'search_default_cc_stage_value': 'closed'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_neutral_face">
+                This is the Job Card dashboard
+            </p>
+        </field>
+    </record>
+
+</odoo>

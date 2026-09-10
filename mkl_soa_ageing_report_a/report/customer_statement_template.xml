@@ -1,0 +1,177 @@
+<odoo>
+   
+
+    <template id="customer_statement_ageing_report">
+        <t t-call="web.external_layout">
+            <t t-set="data" t-value="env.context.get('data')"/>
+            <main>
+                <t t-foreach="docs" t-as="doc">
+                    <div class="page">
+
+                        <div style="width: 100%; text-align: right;">
+                            <h3>Customer Statement of Account</h3>
+                        </div>
+
+                        <div style="width: 100%; text-align: right;">
+                            <div style="display: inline-block; text-align: left;">
+                                <!-- Date Range with Lines Above and Below -->
+                                <hr/>
+                                <p style="text-align: right;">
+                                    As of :
+                                    <span t-esc="data.get('form', {}).get('as_of', '')"/>
+                                </p>
+                                <hr/>
+                            </div>
+                        </div>
+
+                        <div style="display: table; width: 100%;">
+                            <div style="float: left; width: 50%; padding: 10px;">
+                                <strong>Customer:</strong>
+                                <p>
+                                    <span t-esc="doc.partner_id.name"/>  <!-- Customer Name -->
+                                </p>
+                                <strong>Address:</strong>
+                                <p>
+                                    <span t-esc="', '.join(filter(None, [doc.partner_id.street, doc.partner_id.street2, doc.partner_id.city, doc.partner_id.state_id.name, doc.partner_id.zip, doc.partner_id.country_id.name]))"/> 
+                                </p>
+                            </div>
+                            <div style="float: left; width: 50%;">
+                                <table class="table table-condensed">
+                                    <thead>
+                                        <tr>
+                                            <th style="text-align: left; width: 200px;">Account Summary</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td style="text-align: left; width: 200px;">Invoiced Amount Due:</td>
+                                            <td style="text-align: right;">
+                                                <t t-if="env.company.currency_id.position == 'before'">
+                                                    <span t-esc="env.company.currency_id.symbol"/>
+                                                    <span t-esc="data.get('form', {}).get('amount_due', 0.0)" 
+                                                          t-options='{"widget": "float", "precision": 2}'/>
+                                                </t>
+                                                <t t-else="">
+                                                    <span t-esc="data.get('form', {}).get('amount_due', 0.0)" 
+                                                          t-options='{"widget": "float", "precision": 2}'/>
+                                                    <span t-esc="env.company.currency_id.symbol"/>
+                                                </t>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr style="font-weight: bold;">
+                                            <td style="text-align: left; width: 200px;">Total Amount Due:</td>
+                                            <td style="text-align: right;">
+                                                <t t-if="env.company.currency_id.position == 'before'">
+                                                    <span t-esc="env.company.currency_id.symbol"/>
+                                                    <span t-esc="data.get('form', {}).get('total_amount_due', 0.0)" 
+                                                          t-options='{"widget": "float", "precision": 2}'/>
+                                                </t>
+                                                <t t-else="">
+                                                    <span t-esc="data.get('form', {}).get('total_amount_due', 0.0)" 
+                                                          t-options='{"widget": "float", "precision": 2}'/>
+                                                    <span t-esc="env.company.currency_id.symbol"/>
+                                                </t>
+                                            </td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+
+                            </div>
+                        </div>
+
+                        <h3>Transaction Summary</h3>
+                        <table class="table table-condensed" style="font-size: 0.85em;">
+                            <thead>
+                                <tr>
+                                    <th>Invoice Date</th>
+                                    <th>Transaction</th>
+                                    <th>Payment Term</th>
+                                    <th>Due Date</th>
+                                    <th>Amount</th>
+                                    <th>Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="data.get('form', {}).get('transactions', [])" t-as="transaction">
+                                    <td t-esc="transaction.get('invoice_date')"/>
+                                    <td t-esc="transaction.get('name')"/>
+                                    <td t-esc="transaction.get('payment_term')"/>
+                                    <td t-esc="transaction.get('due_date')"/>
+                                    <td style="text-align: right;" t-esc="transaction.get('amount')" t-options='{"widget": "float", "precision": 2}'/>
+                                    <td style="text-align: right;" t-esc="transaction.get('running_balance')" t-options='{"widget": "float", "precision": 2}'/>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr style="font-weight: bold;">
+                                </tr>
+                            </tfoot>
+                        </table>
+
+                        <table class="table table-condensed" style="font-size: 0.85em;">
+                            <thead>
+                                <tr>
+                                    <th>CURRENT</th>
+                                    <th>1-30 DAYS PAST DUE</th>
+                                    <th>31-60 DAYS PAST DUE</th>
+                                    <th>61-90 DAYS PAST DUE</th>
+                                    <th>OVER 90 DAYS PAST DUE</th>
+                                    <th>AMOUNT DUE</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="text-align: right;">
+                                        <t>
+                                            <span t-esc="data.get('form', {}).get('due_current_amt', 0.0)" t-options='{"widget": "float", "precision": 2}'/>
+                                        </t>
+                                    </td>
+                                    <td style="text-align: right;">
+                                        <t>
+                                            <span t-esc="data.get('form', {}).get('due_0130_amt', 0.0)" t-options='{"widget": "float", "precision": 2}'/>
+                                        </t>
+                                    </td>
+                                    <td style="text-align: right;">
+                                        <t>
+                                            <span t-esc="data.get('form', {}).get('due_3160_amt', 0.0)" t-options='{"widget": "float", "precision": 2}'/>
+                                        </t>
+                                    </td>
+                                    <td style="text-align: right;">
+                                        <t>
+                                            <span t-esc="data.get('form', {}).get('due_6190_amt', 0.0)" t-options='{"widget": "float", "precision": 2}'/>
+                                        </t>
+                                    </td>
+
+                                    <td style="text-align: right;">
+                                        <t>
+                                            <span t-esc="data.get('form', {}).get('due_past90_amt', 0.0)" t-options='{"widget": "float", "precision": 2}'/>
+                                        </t>
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold;">
+                                        <t t-if="env.company.currency_id.position == 'before'">
+                                            <span t-esc="env.company.currency_id.symbol"/>
+                                            <span t-esc="data.get('form', {}).get('total_amount_due', 0.0)" t-options='{"widget": "float", "precision": 2}'/>
+                                        </t>
+                                        <t t-else="">
+                                            <span t-esc="data.get('form', {}).get('total_amount_due', 0.0)" t-options='{"widget": "float", "precision": 2}'/>
+                                            <span t-esc="env.company.currency_id.symbol"/>
+                                        </t>
+                                    </td>
+
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                </t>
+            </main>
+        </t>
+    </template>
+
+
+
+
+
+</odoo>
