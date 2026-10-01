@@ -391,12 +391,12 @@ class Task(models.Model):
                     })
             if rec.bay_id:
                 if rec.bay_id.is_occupied:
-                    raise ValidationError(_("Bay '%s' is already occupied!") % record.bay_id.name)
+                    raise ValidationError(_("Bay '%s' is already occupied!") % rec.bay_id.name)
                 # Mark bay occupied & log entry
                 rec.bay_id.is_occupied = True
                 self.env['job.card.bay.log'].create({
-                    'task_id': record.id,
-                    'bay_id': record.bay_id.id,
+                    'task_id': rec.id,
+                    'bay_id': rec.bay_id.id,
                     'bay_in': fields.Datetime.now(),
                 })
         return result 

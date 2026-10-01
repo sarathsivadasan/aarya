@@ -7,5 +7,5 @@ job_card_extension.access_jobcard_advance_payment_wizard,access_jobcard_advance_
 job_card_extension.access_job_card_bay,access_job_card_bay,job_card_extension.model_job_card_bay,base.group_user,1,1,1,1
 job_card_extension.access_job_card_bay_log,access_job_card_bay_log,job_card_extension.model_job_card_bay_log,base.group_user,1,1,1,1
 job_card_extension.access_vehicle_inspection_part,access_vehicle_inspection_part,job_card_extension.model_vehicle_inspection_part,base.group_user,1,1,1,1
-
-
+access_job_card_vehicle_photo,job.card.vehicle.photo.user,model_job_card_vehicle_photo,base.group_user,1,1,1,1
+access_job_card_damage,job.card.damage.user,model_job_card_damage,base.group_user,1,1,1,1

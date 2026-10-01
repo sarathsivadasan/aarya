@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- Header summary card -->
+    <t t-name="job_card_extension.JcHeroCard">
+        <div class="o_jc_hero">
+            <div class="o_jc_hero_plate">
+                <span class="o_jc_hero_plate_label">PLATE</span>
+                <span class="o_jc_hero_plate_no" t-esc="plate"/>
+            </div>
+            <div class="o_jc_hero_main">
+                <div class="o_jc_hero_title">
+                    <span t-esc="d.name or 'New Job Card'"/>
+                    <span t-if="stage" class="o_jc_chip o_jc_chip_stage" t-esc="stage"/>
+                    <span t-if="d.customer_waiting" class="o_jc_chip o_jc_chip_warn"><i class="fa fa-clock-o me-1"/>Customer Waiting</span>
+                    <span t-if="overdue" class="o_jc_chip o_jc_chip_danger"><i class="fa fa-exclamation-circle me-1"/>Overdue</span>
+                    <span t-if="d.is_close" class="o_jc_chip o_jc_chip_done"><i class="fa fa-check me-1"/>Closed</span>
+                </div>
+                <div class="o_jc_hero_sub" t-if="vehicleLine" t-esc="vehicleLine"/>
+                <div class="o_jc_hero_meta">
+                    <span t-if="customer"><i class="fa fa-user"/><t t-esc="customer"/></span>
+                    <span t-if="d.cc_partner_phone"><i class="fa fa-phone"/><t t-esc="d.cc_partner_phone"/></span>
+                    <span t-if="bay"><i class="fa fa-wrench"/>Bay <t t-esc="bay"/></span>
+                    <span t-if="promise"><i class="fa fa-calendar"/>Promise <t t-esc="promise"/></span>
+                    <span t-if="d.odometer"><i class="fa fa-tachometer"/><t t-esc="d.odometer"/> km</span>
+                    <span t-if="fuel"><i class="fa fa-tint"/>Fuel <t t-esc="fuel"/></span>
+                </div>
+            </div>
+            <div class="o_jc_hero_stats">
+                <div class="o_jc_stat">
+                    <span class="o_jc_stat_val" t-esc="d.vehicle_photo_count or 0"/>
+                    <span class="o_jc_stat_lbl">Photos</span>
+                </div>
+                <div class="o_jc_stat">
+                    <span class="o_jc_stat_val" t-esc="d.damage_count or 0"/>
+                    <span class="o_jc_stat_lbl">Damages</span>
+                </div>
+                <div t-att-class="'o_jc_stat' + (d.major_damage_count ? ' o_jc_stat_danger' : '')">
+                    <span class="o_jc_stat_val" t-esc="d.major_damage_count or 0"/>
+                    <span class="o_jc_stat_lbl">Major</span>
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <!-- Vehicle Photos -->
+    <t t-name="job_card_extension.JcPhotoSheet">
+        <div class="o_jc_photos">
+            <div class="o_jc_section_head">
+                <div>
+                    <div class="o_jc_section_title"><i class="fa fa-camera me-2"/>Vehicle Photos</div>
+                    <div class="o_jc_section_hint">Tap a slot to open the camera. One photo per angle; damage and additional slots accept several.</div>
+                </div>
+                <div class="o_jc_progress">
+                    <span><t t-esc="takenCount"/> / <t t-esc="slots.length"/> angles</span>
+                    <div class="o_jc_progress_bar"><div t-att-style="'width:' + progress + '%'"/></div>
+                </div>
+            </div>
+
+            <input type="file" accept="image/*" class="d-none" t-ref="file" multiple="multiple"
+                   t-on-change="onFileChange"/>
+
+            <div class="o_jc_photo_grid">
+                <t t-foreach="slots" t-as="slot" t-key="slot.key">
+                    <t t-set="items" t-value="photosOf(slot.key)"/>
+                    <div t-att-class="'o_jc_slot' + (items.length ? ' o_jc_slot_done' : '') + (slot.multi ? ' o_jc_slot_multi' : '')">
+                        <div class="o_jc_slot_head">
+                            <span class="o_jc_slot_no" t-esc="slot_index + 1"/>
+                            <span class="o_jc_slot_label" t-esc="slot.label"/>
+                            <i t-if="items.length" class="fa fa-check-circle o_jc_slot_ok"/>
+                        </div>
+
+                        <t t-if="!items.length">
+                            <button type="button" class="o_jc_slot_empty" t-att-disabled="readonly"
+                                    t-on-click="() => this.capture(slot)">
+                                <t t-if="state.busySlot === slot.key">
+                                    <i class="fa fa-spinner fa-spin fa-2x"/>
+                                </t>
+                                <t t-else="">
+                                    <i t-att-class="'fa fa-2x ' + slot.icon"/>
+                                    <span><t t-if="readonly">No photo</t><t t-else="">Tap to add photo</t></span>
+                                </t>
+                            </button>
+                            <button t-if="!readonly" type="button" class="btn btn-link btn-sm o_jc_slot_upload"
+                                    t-on-click="() => this.upload(slot)">
+                                <i class="fa fa-upload me-1"/>Upload
+                            </button>
+                        </t>
+
+                        <t t-foreach="items" t-as="p" t-key="p.id">
+                            <div class="o_jc_slot_photo">
+                                <img t-att-src="thumb(p)" alt="photo" t-on-click="() => this.openPreview(p)"/>
+                                <div class="o_jc_slot_actions" t-if="!readonly">
+                                    <button type="button" class="btn btn-sm btn-light" title="Retake"
+                                            t-on-click="() => this.capture(slot, p.id)"><i class="fa fa-camera"/></button>
+                                    <button type="button" class="btn btn-sm btn-light" title="Replace from file"
+                                            t-on-click="() => this.upload(slot, p.id)"><i class="fa fa-refresh"/></button>
+                                    <button type="button" class="btn btn-sm btn-light text-danger" title="Delete"
+                                            t-on-click="() => this.remove(p)"><i class="fa fa-trash"/></button>
+                                </div>
+                            </div>
+                            <input type="text" class="o_input o_jc_slot_caption" placeholder="Description"
+                                   t-att-value="p.caption or ''" t-att-readonly="readonly"
+                                   t-on-change="(ev) => this.saveCaption(p, ev)"/>
+                        </t>
+
+                        <button t-if="items.length and slot.multi and !readonly" type="button"
+                                class="btn btn-sm btn-outline-primary o_jc_slot_more"
+                                t-on-click="() => this.capture(slot)">
+                            <i class="fa fa-plus me-1"/>Add another
+                        </button>
+                    </div>
+                </t>
+            </div>
+
+            <!-- Camera -->
+            <div t-if="state.camera.open" class="o_jc_modal" t-on-click.self="closeCamera">
+                <div class="o_jc_camera">
+                    <div class="o_jc_camera_head">
+                        <span><i class="fa fa-camera me-2"/>Capture photo</span>
+                        <button type="button" class="btn btn-sm btn-link text-white" t-on-click="closeCamera"><i class="fa fa-times fa-lg"/></button>
+                    </div>
+                    <video t-ref="video" autoplay="autoplay" playsinline="playsinline" muted="muted"/>
+                    <div t-if="state.camera.error" class="o_jc_camera_err" t-esc="state.camera.error"/>
+                    <div class="o_jc_camera_foot">
+                        <button type="button" class="btn btn-light" t-on-click="cameraFallback"><i class="fa fa-upload me-1"/>Upload</button>
+                        <button type="button" class="o_jc_shutter" t-on-click="snap" title="Capture"/>
+                        <button type="button" class="btn btn-light" t-on-click="closeCamera">Cancel</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preview -->
+            <div t-if="state.preview" class="o_jc_modal" t-on-click="closePreview">
+                <img class="o_jc_preview" t-att-src="state.preview" alt="preview"/>
+            </div>
+        </div>
+    </t>
+
+    <!-- Damage Mark -->
+    <t t-name="job_card_extension.JcDamageMap">
+        <div class="o_jc_damage">
+            <div class="o_jc_section_head">
+                <div>
+                    <div class="o_jc_section_title"><i class="fa fa-crosshairs me-2"/>Damage Mark</div>
+                    <div class="o_jc_section_hint">Pick a damage type, then click on the vehicle. Drag a marker to move it.</div>
+                </div>
+                <div class="o_jc_damage_totals">
+                    <span class="o_jc_chip"><t t-esc="state.marks.length"/> marked</span>
+                    <span t-if="majorCount" class="o_jc_chip o_jc_chip_danger"><t t-esc="majorCount"/> major</span>
+                    <button t-if="!readonly and state.marks.length" type="button" class="btn btn-sm btn-outline-danger" t-on-click="clearAll">
+                        <i class="fa fa-eraser me-1"/>Clear all
+                    </button>
+                </div>
+            </div>
+
+            <div class="o_jc_legend">
+                <t t-foreach="types" t-as="t" t-key="t.key">
+                    <button type="button" t-att-disabled="readonly"
+                            t-att-class="'o_jc_legend_chip' + (state.active === t.key ? ' active' : '')"
+                            t-on-click="() => this.selectType(t.key)">
+                        <span class="o_jc_code" t-att-style="'background:' + t.color" t-esc="t.code"/>
+                        <t t-esc="t.label"/>
+                    </button>
+                </t>
+                <div class="o_jc_sev_switch" t-if="!readonly">
+                    <button type="button" t-att-class="state.severity === 'minor' ? 'active' : ''" t-on-click="() => this.setSeverity('minor')">Minor</button>
+                    <button type="button" t-att-class="state.severity === 'major' ? 'active major' : ''" t-on-click="() => this.setSeverity('major')">Major</button>
+                </div>
+            </div>
+
+            <div class="o_jc_damage_body">
+                <div class="o_jc_map_wrap">
+                    <div t-ref="map" t-att-class="'o_jc_map' + (readonly ? ' o_jc_map_ro' : '')" t-on-click="onMapClick">
+                        <img t-att-src="state.src" alt="vehicle" draggable="false" t-on-error="onImgError"/>
+                        <t t-foreach="state.marks" t-as="m" t-key="m.id">
+                            <div t-att-class="'o_jc_marker' + (m.severity === 'major' ? ' major' : '') + (state.selected === m.id ? ' selected' : '')"
+                                 t-att-style="markerStyle(m)"
+                                 t-att-title="info(m).label + ' (' + m.severity + ')'"
+                                 t-on-pointerdown="(ev) => this.onMarkerDown(ev, m)"
+                                 t-on-click.stop="noop">
+                                <t t-esc="info(m).code"/>
+                                <sup t-esc="m_index + 1"/>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+
+                <div class="o_jc_damage_list">
+                    <div class="o_jc_damage_summary" t-if="summary.length">
+                        <t t-foreach="summary" t-as="s" t-key="s.key">
+                            <span class="o_jc_summary_item"><span class="o_jc_code" t-att-style="'background:' + s.color" t-esc="s.code"/><t t-esc="s.count"/></span>
+                        </t>
+                    </div>
+                    <div t-if="!state.marks.length" class="o_jc_empty">
+                        <i class="fa fa-car fa-3x"/>
+                        <div>No damage marked</div>
+                    </div>
+                    <t t-foreach="state.marks" t-as="m" t-key="m.id">
+                        <div t-att-class="'o_jc_damage_row' + (state.selected === m.id ? ' selected' : '')"
+                             t-on-click="() => this.select(m)">
+                            <span class="o_jc_code" t-att-style="'background:' + info(m).color" t-esc="info(m).code"/>
+                            <div class="o_jc_damage_row_main">
+                                <div class="o_jc_damage_row_title">
+                                    <span class="o_jc_damage_no">#<t t-esc="m_index + 1"/></span>
+                                    <select class="o_input o_jc_type_select" t-att-disabled="readonly"
+                                            t-on-click.stop="noop" t-on-change="(ev) => this.changeType(m, ev)">
+                                        <t t-foreach="types" t-as="t" t-key="t.key">
+                                            <option t-att-value="t.key" t-att-selected="t.key === m.damage_type" t-esc="t.label"/>
+                                        </t>
+                                    </select>
+                                    <button type="button" t-att-disabled="readonly"
+                                            t-att-class="'o_jc_sev ' + m.severity"
+                                            t-on-click.stop="() => this.toggleSeverity(m)" t-esc="m.severity === 'major' ? 'Major' : 'Minor'"/>
+                                </div>
+                                <input type="text" class="o_input" placeholder="Note (location, size...)"
+                                       t-att-value="m.note or ''" t-att-readonly="readonly"
+                                       t-on-click.stop="noop"
+                                       t-on-change="(ev) => this.saveNote(m, ev)"/>
+                            </div>
+                            <button t-if="!readonly" type="button" class="btn btn-sm btn-link text-danger"
+                                    t-on-click.stop="() => this.remove(m)"><i class="fa fa-trash"/></button>
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

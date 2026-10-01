@@ -3,7 +3,7 @@
 {
     'name': 'Job Card Extension',
     'category': 'Services/Project',
-    'version': '18.0.1.0.1',
+    'version': '18.0.1.1.0',
     'author': 'Sarasoft',
     'company': '',
     'maintainer': 'Sarasoft',
@@ -48,9 +48,11 @@
         'reports/account_invoice_report_tmpl.xml',
     ],
     'assets': {
-        # 'web.assets_backend': [
-        #     'job_card_extension/static/js/**/*.js',
-        # ],
+        'web.assets_backend': [
+            'job_card_extension/static/src/vehicle_condition/vehicle_condition.scss',
+            'job_card_extension/static/src/vehicle_condition/vehicle_condition.js',
+            'job_card_extension/static/src/vehicle_condition/vehicle_condition.xml',
+        ],
         'web.assets_qweb': [
             'job_card_extension/static/xml/**/*.xml',
         ],

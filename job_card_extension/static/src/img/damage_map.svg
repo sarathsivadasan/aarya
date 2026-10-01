@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 900" width="1400" height="900">
+<rect width="1400" height="900" fill="#ffffff"/>
+<g transform="translate(60,30)">
+<path fill="#f4f6f9" stroke="#37474f" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" d="M20,200 L15,162 Q18,140 42,134 L198,116 L268,62 Q300,54 420,57 L500,110 L572,120 Q592,124 592,150 L590,200 L520,200 A50,50 0 0 0 420,200 L180,200 A50,50 0 0 0 80,200 Z"/>
+<path fill="#d6e4f2" stroke="#37474f" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" d="M214,116 L272,69 L338,66 L338,116 Z"/>
+<path fill="#d6e4f2" stroke="#37474f" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" d="M350,66 L414,64 L482,112 L350,116 Z"/>
+<path fill="none" stroke="#78909c" stroke-width="2" d="M212,120 L212,196 M344,118 L344,196 M470,114 L476,150 M40,152 L585,140"/>
+<rect x="250" y="128" width="26" height="6" rx="3" fill="#90a4ae"/>
+<rect x="380" y="128" width="26" height="6" rx="3" fill="#90a4ae"/>
+<path fill="#90a4ae" stroke="#37474f" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" d="M222,112 l-14,-12 l-12,4 l4,12 z"/>
+<path fill="#ffe082" stroke="#37474f" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" d="M18,150 L48,142 L50,156 L20,162 Z"/>
+<path fill="#ef9a9a" stroke="#37474f" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" d="M574,124 L590,128 L590,146 L570,142 Z"/>
+<circle cx="130" cy="203" r="40" fill="#455a64" stroke="#37474f" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="130" cy="203" r="20" fill="#cfd8dc"/>
+<circle cx="470" cy="203" r="40" fill="#455a64" stroke="#37474f" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="470" cy="203" r="20" fill="#cfd8dc"/></g><text x="360" y="300" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="bold" fill="#607d8b" letter-spacing="2">LEFT SIDE</text>
+<g transform="translate(1340,30) scale(-1,1)">
+<path fill="#f4f6f9" stroke="#37474f" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" d="M20,200 L15,162 Q18,140 42,134 L198,116 L268,62 Q300,54 420,57 L500,110 L572,120 Q592,124 592,150 L590,200 L520,200 A50,50 0 0 0 420,200 L180,200 A50,50 0 0 0 80,200 Z"/>
+<path fill="#d6e4f2" stroke="#37474f" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" d="M214,116 L272,69 L338,66 L338,116 Z"/>
+<path fill="#d6e4f2" stroke="#37474f" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" d="M350,66 L414,64 L482,112 L350,116 Z"/>
+<path fill="none" stroke="#78909c" stroke-width="2" d="M212,120 L212,196 M344,118 L344,196 M470,114 L476,150 M40,152 L585,140"/>
+<rect x="250" y="128" width="26" height="6" rx="3" fill="#90a4ae"/>
+<rect x="380" y="128" width="26" height="6" rx="3" fill="#90a4ae"/>
+<path fill="#90a4ae" stroke="#37474f" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" d="M222,112 l-14,-12 l-12,4 l4,12 z"/>
+<path fill="#ffe082" stroke="#37474f" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" d="M18,150 L48,142 L50,156 L20,162 Z"/>
+<path fill="#ef9a9a" stroke="#37474f" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" d="M574,124 L590,128 L590,146 L570,142 Z"/>
+<circle cx="130" cy="203" r="40" fill="#455a64" stroke="#37474f" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="130" cy="203" r="20" fill="#cfd8dc"/>
+<circle cx="470" cy="203" r="40" fill="#455a64" stroke="#37474f" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="470" cy="203" r="20" fill="#cfd8dc"/></g><text x="1040" y="300" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="bold" fill="#607d8b" letter-spacing="2">RIGHT SIDE</text>
+<line x1="40" y1="330" x2="1360" y2="330" stroke="#eceff1" stroke-width="2"/>
+<g transform="translate(70,400) scale(1.05)">
+<rect x="34" y="282" width="50" height="40" rx="8" fill="#455a64"/><rect x="216" y="282" width="50" height="40" rx="8" fill="#455a64"/>
+<path fill="#f4f6f9" stroke="#37474f" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" d="M88,44 Q150,32 212,44 L246,140 L268,172 L272,290 L28,290 L32,172 L54,140 Z"/>
+<path fill="#d6e4f2" stroke="#37474f" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" d="M94,54 Q150,44 206,54 L234,136 L66,136 Z"/>
+<path fill="none" stroke="#78909c" stroke-width="2" d="M40,172 L260,172 M34,262 L266,262"/>
+<path fill="#90a4ae" stroke="#37474f" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" d="M54,140 L30,128 L28,146 L48,150 Z M246,140 L270,128 L272,146 L252,150 Z"/>
+<rect x="44" y="180" width="54" height="26" rx="10" fill="#ffe082" stroke="#37474f" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><rect x="202" y="180" width="54" height="26" rx="10" fill="#ffe082" stroke="#37474f" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="108" y="190" width="84" height="46" rx="10" fill="#b0bec5" stroke="#37474f" stroke-width="3"/><path fill="none" stroke="#78909c" stroke-width="2" d="M114,203 L186,203 M114,216 L186,216 M114,229 L186,229"/>
+<rect x="118" y="246" width="64" height="24" rx="3" fill="#ffffff" stroke="#37474f" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/></g><text x="227" y="800" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="bold" fill="#607d8b" letter-spacing="2">FRONT</text>
+<g transform="translate(420,440)">
+<rect x="92" y="6" width="66" height="18" rx="6" fill="#455a64"/><rect x="402" y="6" width="66" height="18" rx="6" fill="#455a64"/>
+<rect x="92" y="216" width="66" height="18" rx="6" fill="#455a64"/><rect x="402" y="216" width="66" height="18" rx="6" fill="#455a64"/>
+<rect x="10" y="18" width="540" height="204" rx="64" fill="#f4f6f9" stroke="#37474f" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+<path fill="#d6e4f2" stroke="#37474f" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" d="M172,36 L236,52 L236,188 L172,204 Q160,120 172,36 Z"/>
+<rect x="236" y="52" width="164" height="136" rx="10" fill="#e8edf3" stroke="#37474f" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+<path fill="#d6e4f2" stroke="#37474f" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" d="M400,52 L452,40 Q464,120 452,200 L400,188 Z"/>
+<path fill="none" stroke="#78909c" stroke-width="2" d="M30,120 L160,120 M60,60 Q100,50 160,46 M60,180 Q100,190 160,194 M470,120 L535,120"/>
+<ellipse cx="190" cy="14" rx="14" ry="8" fill="#90a4ae" stroke="#37474f" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><ellipse cx="190" cy="226" rx="14" ry="8" fill="#90a4ae" stroke="#37474f" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+<path fill="#ffe082" stroke="#37474f" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" d="M18,62 Q24,40 44,34 L40,62 Z M18,178 Q24,200 44,206 L40,178 Z"/>
+<path fill="#ef9a9a" stroke="#37474f" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" d="M542,62 Q536,40 516,34 L520,62 Z M542,178 Q536,200 516,206 L520,178 Z"/></g><text x="700" y="720" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="bold" fill="#607d8b" letter-spacing="2">TOP VIEW</text>
+<g transform="translate(1015,400) scale(1.05)">
+<rect x="34" y="282" width="50" height="40" rx="8" fill="#455a64"/><rect x="216" y="282" width="50" height="40" rx="8" fill="#455a64"/>
+<path fill="#f4f6f9" stroke="#37474f" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" d="M88,44 Q150,32 212,44 L246,140 L268,172 L272,290 L28,290 L32,172 L54,140 Z"/>
+<path fill="#d6e4f2" stroke="#37474f" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" d="M94,54 Q150,44 206,54 L234,136 L66,136 Z"/>
+<path fill="none" stroke="#78909c" stroke-width="2" d="M40,172 L260,172 M34,262 L266,262"/>
+<path fill="#90a4ae" stroke="#37474f" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" d="M54,140 L30,128 L28,146 L48,150 Z M246,140 L270,128 L272,146 L252,150 Z"/>
+<rect x="44" y="180" width="54" height="26" rx="10" fill="#ef9a9a" stroke="#37474f" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><rect x="202" y="180" width="54" height="26" rx="10" fill="#ef9a9a" stroke="#37474f" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="104" y="190" width="92" height="22" rx="6" fill="#cfd8dc" stroke="#37474f" stroke-width="3"/>
+<rect x="118" y="246" width="64" height="24" rx="3" fill="#ffffff" stroke="#37474f" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/></g><text x="1172" y="800" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="bold" fill="#607d8b" letter-spacing="2">REAR</text>
+</svg>
