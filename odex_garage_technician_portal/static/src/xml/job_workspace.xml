@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates xml:space="preserve">
-    <t t-name="odex_garage_technician_portal.InspectionWorkspace">
+    <t t-name="odex_garage_technician_portal.JobWorkspace">
         <div class="o_tp_workspace" t-att-class="isSmall ? 'o_tp_workspace_mobile' : ''">
             <!-- LEFT: my work records (account.analytic.line) -->
             <div class="o_tp_list_pane" t-if="!isSmall or !state.mobileShowDetail">
@@ -10,9 +10,9 @@
                 </div>
                 <input type="text" class="o_tp_search" placeholder="Search..."
                        t-on-input="onSearchInput"/>
-                <div class="o_tp_inspection_list">
+                <div class="o_tp_job_list">
                     <div t-foreach="state.list" t-as="item" t-key="item.id"
-                         t-attf-class="o_tp_inspection_row #{state.detail and state.detail.id === item.id ? 'active' : ''}"
+                         t-attf-class="o_tp_job_row #{state.detail and state.detail.id === item.id ? 'active' : ''}"
                          t-on-click="() => this.selectLine(item.id)">
                         <div class="o_tp_row_left">
                             <span class="o_tp_row_code" t-esc="item.task_name"/>
@@ -36,8 +36,7 @@
                     <div class="o_tp_detail_title">
                         <i t-if="isSmall" class="fa fa-arrow-left o_tp_back_btn" t-on-click="backToList"/>
                         <strong t-esc="state.detail.task_name"/>
-                        <span class="badge o_tp_record_type"
-                              t-esc="state.detail.is_jobcard ? 'Job Card' : (state.detail.is_vc ? 'Vehicle Inspection' : '')"/>
+                        <span class="badge o_tp_record_type" t-if="state.detail.is_jobcard">Job Card</span>
                         <span t-attf-class="badge o_tp_status_#{state.detail.status}"
                               t-esc="state.detail.status"/>
                     </div>
@@ -72,8 +71,7 @@
                         </div>
                         <div class="o_tp_job_facts">
                             <div><label>Service</label><span t-esc="state.detail.service || '-'"/></div>
-                            <div t-if="state.detail.is_vc"><label>Inspection State</label><span t-esc="state.detail.inspection_state || '-'"/></div>
-                            <div t-if="state.detail.is_jobcard"><label>Job Type</label><span t-esc="state.detail.job_type || '-'"/></div>
+                            <div><label>Job Type</label><span t-esc="state.detail.job_type || '-'"/></div>
                             <div><label>Stage</label><span t-esc="state.detail.cc_stage || '-'"/></div>
                             <div><label>Promise Date</label><span t-esc="state.detail.promise_date || '-'"/></div>
                             <div><label>Priority</label><span t-esc="state.detail.priority_label || '-'"/></div>
@@ -205,7 +203,7 @@
                         <ComplaintsTab t-if="state.activeTab === 'complaints'" taskId="state.detail.task_id"/>
                         <VehiclePhotosTab t-if="state.activeTab === 'photos'" taskId="state.detail.task_id"/>
                         <QcTab t-if="state.activeTab === 'qc'" taskId="state.detail.task_id"/>
-                        <PartsTab t-if="state.activeTab === 'parts'" taskId="state.detail.task_id" isVc="state.detail.is_vc"/>
+                        <PartsTab t-if="state.activeTab === 'parts'" taskId="state.detail.task_id"/>
                         <PartsPhotosTab t-if="state.activeTab === 'parts_photos'" taskId="state.detail.task_id"/>
                         <LogTab t-if="state.activeTab === 'log'" taskId="state.detail.task_id"/>
                         <NotesTab t-if="state.activeTab === 'notes'" taskId="state.detail.task_id"/>

@@ -9,7 +9,7 @@
         <field name="name">Garage Technician</field>
         <field name="category_id" ref="module_category_garage_technician"/>
         <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
-        <field name="comment">Technicians can only access their own inspections,
+        <field name="comment">Technicians can only access their own job cards,
             job cards, parts requests, QC checklists, logs and profile through
             the Technician Portal.</field>
     </record>

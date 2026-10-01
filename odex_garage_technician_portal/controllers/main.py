@@ -70,19 +70,18 @@ class TechnicianPortalController(http.Controller):
     # ------------------------------------------------------------------
     # WORK RECORD LIST + DETAIL
     # The portal's primary query: MY account.analytic.line rows
-    # (employees_id = me). task_id then tells us whether each one is a
-    # Job Card (is_jobcard) or a Vehicle Inspection (is_vc), and all
-    # related data is fetched through it.
+    # (employees_id = me) on Job Cards (task_id.is_jobcard). All related
+    # data is fetched through task_id.
     # ------------------------------------------------------------------
-    @http.route('/technician_portal/inspection_list', type='json', auth='user')
-    def inspection_list(self, search='', task_type='is_vc', status=None):
-        """task_type: 'is_vc' | 'is_jobcard' | None (both).
-        status: optional technician_status filter (not_started/running/
+    @http.route('/technician_portal/job_list', type='json', auth='user')
+    def job_list(self, search='', status=None, **kwargs):
+        """status: optional technician_status filter (not_started/running/
         paused/completed) - applied in Python since it's a non-stored
-        compute on the line."""
+        compute on the line. Extra kwargs (e.g. a legacy task_type) are
+        ignored."""
         self._check_access()
         AAL = request.env['account.analytic.line']
-        domain = AAL._my_lines_domain(task_type)
+        domain = AAL._my_lines_domain()
         if search:
             domain += ['|', '|',
                        ('task_id.name', 'ilike', search),
@@ -93,8 +92,8 @@ class TechnicianPortalController(http.Controller):
             lines = lines.filtered(lambda l: l.technician_status == status)
         return [l.to_portal_list_item() for l in lines]
 
-    @http.route('/technician_portal/inspection_detail', type='json', auth='user')
-    def inspection_detail(self, line_id):
+    @http.route('/technician_portal/job_detail', type='json', auth='user')
+    def job_detail(self, line_id):
         self._check_access()
         return self._line(line_id).to_portal_detail()
 
@@ -103,7 +102,7 @@ class TechnicianPortalController(http.Controller):
     # Assignment goes through a normal ORM write on project.task.bay_id,
     # so the existing create()/write() occupancy validation and
     # job.card.bay.log Bay In/Out tracking run exactly as they do from
-    # the Job Card / Vehicle Inspection form. Release calls the existing
+    # the Job Card form. Release calls the existing
     # action_release_bay(). No logging, validation, or state handling is
     # reimplemented here.
     # ------------------------------------------------------------------
@@ -162,11 +161,10 @@ class TechnicianPortalController(http.Controller):
 
     # ------------------------------------------------------------------
     # complaints - job.requested.service (requested_services_ids), the
-    # SAME One2many already used on Vehicle Inspection / Job Card.
+    # SAME One2many already used on the Job Card.
     #
     # Read-only in the portal by design: Service, Instruction and Assign
-    # Hours are all set upstream (on the Job Card / Vehicle Inspection
-    # form). Assign Hours + the assignee list are sourced from the linked
+    # Hours are all set upstream (on the Job Card form). Assign Hours + the assignee list are sourced from the linked
     # timesheet lines (job_card_daily_report_ids), matched by product_id -
     # that link is created by add_service_to_timesheet_ext() in
     # job_card_extension, which stamps product_id onto the analytic line.
@@ -249,109 +247,54 @@ class TechnicianPortalController(http.Controller):
             return self._error(str(e))
 
     # ------------------------------------------------------------------
-    # parts - TWO different real models depending on task type:
-    #   - Vehicle Inspection (is_vc): vehicle.inspection.part
-    #     (inspection_part_ids on project.task, vehicle_inspection_report
-    #     module). Fields confirmed: part_no (related, readonly),
-    #     product_id, quantity. No status/remarks/type field exists on
-    #     this model in the version reviewed.
-    #   - Job Card (is_jobcard): jobcard.part.requisition (parts_request
-    #     module). state is draft/approve/reject; creating a line already
-    #     puts it in 'draft' = awaiting approval, no separate submit step.
-    #     Has a real 'cost_type' selection (spare_parts/material/
-    #     consumables/paint_material/sublet) - NOT the "Original"/etc
-    #     values seen in a screenshot, which don't match either model as
-    #     reviewed; flagging that mismatch rather than guessing at it.
+    # parts - jobcard.part.requisition (parts_request module), the same
+    # One2many shown on the Job Card. state is draft/approve/reject;
+    # creating a line already puts it in 'draft' = awaiting approval, no
+    # separate submit step. Has a real 'cost_type' selection (spare_parts/
+    # material/consumables/paint_material/sublet).
+    #
+    # v5.0.0: the vehicle.inspection.part branch (vehicle_inspection_report)
+    # and the Job Card <-> Vehicle Inspection part sync were removed.
     # ------------------------------------------------------------------
+    PART_MODEL = 'jobcard.part.requisition'
+
+    def _part_row(self, line):
+        return {
+            'id': line.id, 'model': self.PART_MODEL,
+            'part_no': line.name,
+            'part': line.part or '',
+            'part_editable': True,
+            'product': line.product_id.display_name,
+            'qty': line.qty, 'qty_available': line.qty_available,
+            'state': line.state, 'remarks': line.remarks or '',
+            'cost_type': dict(line._fields['cost_type'].selection or {}).get(line.cost_type, ''),
+        }
+
     @http.route('/technician_portal/parts/list', type='json', auth='user')
     def parts_list(self, task_id):
-        """Part lines for this job.
-
-        The `part` column carries the Char field you added to
-        vehicle.inspection.part. Where a line has no value of its own but
-        the linked Job Card / Vehicle Inspection does, that value is shown
-        instead (part_source says where it came from) - so existing part
-        data is visible from either side without being copied twice.
-        """
+        """Parts requisition lines for this Job Card."""
         self._check_access()
         task = self._task(task_id)
-        if task.is_vc or task.is_jobcard:
-            lines = request.env['vehicle.inspection.part'].search(
-                [('inspection_id', '=', task.id)])
-            rows = [l.to_portal_dict() for l in lines]
-            rows += self._related_part_rows(task, lines)
-            return rows
-        lines = request.env['jobcard.part.requisition'].search([('job_id', '=', task.id)])
-        return [{
-            'id': l.id, 'model': 'jobcard.part.requisition',
-            'part_no': l.name,
-            'part': l.part or '',
-            'part_source': 'own',
-            'part_editable': True,
-            'product': l.product_id.display_name,
-            'qty': l.qty, 'qty_available': l.qty_available,
-            'state': l.state, 'remarks': l.remarks or '',
-            'cost_type': dict(l._fields['cost_type'].selection or {}).get(l.cost_type, ''),
-        } for l in lines]
-
-    def _related_part_rows(self, task, own_lines):
-        """Read-only rows for part data that exists on the linked Job Card
-        / Vehicle Inspection but has no counterpart line on this task.
-
-        These are shown so the technician sees everything that is already
-        recorded for the vehicle, and are flagged is_related=True so the
-        UI renders them without an edit box - editing them here would
-        create a duplicate, which the brief explicitly forbids.
-        """
-        others = task._linked_part_tasks()
-        if not others:
-            return []
-        related = request.env['vehicle.inspection.part'].sudo().search(
-            [('inspection_id', 'in', others.ids)])
-        own_products = own_lines.mapped('product_id').ids
-        rows = []
-        for line in related:
-            if line.product_id and line.product_id.id in own_products:
-                continue  # already represented by one of our own rows
-            data = line.to_portal_dict()
-            other_task = line.inspection_id
-            data.update({
-                'is_related': True,
-                'part_editable': False,
-                'origin': _('Job Card') if other_task.is_jobcard else _('Vehicle Inspection'),
-                'origin_ref': (other_task.number if other_task.is_jobcard and other_task.number
-                               else other_task.name) or '',
-            })
-            rows.append(data)
-        return rows
+        lines = request.env[self.PART_MODEL].search([('job_id', '=', task.id)])
+        return [self._part_row(l) for l in lines]
 
     @http.route('/technician_portal/parts/update_line', type='json', auth='user')
-    def parts_update_line(self, line_id, model='vehicle.inspection.part',
-                          part=None, qty=None, remarks=None):
-        """Save the technician's edits from the Parts tab.
-
-        Writing `part` on a vehicle.inspection.part line propagates the
-        value to the matching line on the linked Job Card / Vehicle
-        Inspection (see models/vehicle_inspection_part.py). The
-        propagation UPDATES the existing counterpart line; it never
-        creates one, so nothing is duplicated.
-        """
+    def parts_update_line(self, line_id, part=None, qty=None, remarks=None, **kwargs):
+        """Save the technician's edits from the Parts tab. A legacy
+        `model` kwarg is accepted and ignored."""
         self._check_access()
-        if model not in ('vehicle.inspection.part', 'jobcard.part.requisition'):
-            return self._error(_('Unknown part line type.'))
-        line = request.env[model].browse(int(line_id))
+        line = request.env[self.PART_MODEL].browse(int(line_id))
         if not line.exists():
             return self._error(_('Part line not found.'))
         vals = {}
-        if part is not None and 'part' in line._fields:
+        if part is not None:
             vals['part'] = part
         if qty is not None:
-            qty_field = 'quantity' if model == 'vehicle.inspection.part' else 'qty'
             try:
-                vals[qty_field] = float(qty)
+                vals['qty'] = float(qty)
             except (TypeError, ValueError):
                 return self._error(_('Quantity must be a number.'))
-        if remarks is not None and 'remarks' in line._fields:
+        if remarks is not None:
             vals['remarks'] = remarks
         if not vals:
             return {'status': 'ok', 'changed': False}
@@ -360,10 +303,7 @@ class TechnicianPortalController(http.Controller):
         except (UserError, ValidationError, AccessError) as e:
             return self._error(str(e))
         if 'part' in vals:
-            if model == 'vehicle.inspection.part':
-                line._log_part_change(vals['part'])
-            else:
-                self._log_requisition_part(line, vals['part'])
+            self._log_requisition_part(line, vals['part'])
         return {'status': 'ok', 'changed': True}
 
     def _log_requisition_part(self, line, value):
@@ -389,26 +329,19 @@ class TechnicianPortalController(http.Controller):
         if task.is_fully_completed():
             return self._error(_('This job is already completed - parts can no longer be requested against it.'))
         product = request.env['product.product'].browse(int(product_id))
-        if task.is_vc or task.is_jobcard:
-            vals = {
-                'inspection_id': task.id, 'product_id': product.id, 'quantity': qty,
-            }
-            Part = request.env['vehicle.inspection.part']
-            if part and 'part' in Part._fields:
-                vals['part'] = part
-            line = Part.create(vals)
-        else:
-            vals = {
-                'job_id': task.id, 'product_id': product.id,
-                'description': product.display_name, 'qty': qty,
-                'uom_id': product.uom_id.id, 'remarks': remarks,
-                'register_no': task.vehicle_id.name if task.vehicle_id else '',
-                'cc_vehicle_model': task.model_id.id if task.model_id else False,
-            }
-            Requisition = request.env['jobcard.part.requisition']
-            if part and 'part' in Requisition._fields:
-                vals['part'] = part
-            line = Requisition.create(vals)
+        vals = {
+            'job_id': task.id, 'product_id': product.id,
+            'description': product.display_name, 'qty': qty,
+            'uom_id': product.uom_id.id, 'remarks': remarks,
+            'register_no': task.vehicle_id.name if task.vehicle_id else '',
+            'cc_vehicle_model': task.model_id.id if task.model_id else False,
+        }
+        if part:
+            vals['part'] = part
+        try:
+            line = request.env[self.PART_MODEL].create(vals)
+        except (UserError, ValidationError, AccessError) as e:
+            return self._error(str(e))
         try:
             qty_val = float(qty or 0.0)
         except (ValueError, TypeError):
@@ -420,12 +353,11 @@ class TechnicianPortalController(http.Controller):
         return {'status': 'ok', 'id': line.id}
 
     @http.route('/technician_portal/parts/delete_line', type='json', auth='user')
-    def parts_delete_line(self, line_id, model='jobcard.part.requisition'):
+    def parts_delete_line(self, line_id, **kwargs):
         self._check_access()
-        if model == 'vehicle.inspection.part':
-            request.env['vehicle.inspection.part'].browse(int(line_id)).unlink()
-            return {'status': 'ok'}
-        line = request.env['jobcard.part.requisition'].browse(int(line_id))
+        line = request.env[self.PART_MODEL].browse(int(line_id))
+        if not line.exists():
+            return self._error(_('Part line not found.'))
         if line.state not in ('draft', 'reject'):
             return self._error(_('Only draft or rejected lines can be removed.'))
         line.unlink()
@@ -465,9 +397,9 @@ class TechnicianPortalController(http.Controller):
     # ------------------------------------------------------------------
     # photos - reads/writes the real image1..image12 fields directly on
     # project.task (garage_management_odoo). No separate photo model or
-    # storage: this IS the same record shown on Vehicle Inspection / Job
-    # Card, so a technician's upload/edit here is immediately visible
-    # there and vice versa.
+    # storage: this IS the same record shown on the Job Card, so a
+    # technician's upload/edit here is immediately visible there and vice
+    # versa.
     # ------------------------------------------------------------------
     @http.route('/technician_portal/photo/list', type='json', auth='user')
     def photo_list(self, task_id):
@@ -501,9 +433,9 @@ class TechnicianPortalController(http.Controller):
         return {'status': 'ok'}
 
     # ------------------------------------------------------------------
-    # parts photos - a genuinely new feature (neither vehicle.inspection.
-    # part nor jobcard.part.requisition has a photo field), so this is a
-    # small dedicated model rather than a reuse of existing data.
+    # parts photos - a genuinely new feature (jobcard.part.requisition has
+    # no photo field), so this is a small dedicated model rather than a
+    # reuse of existing data.
     # ------------------------------------------------------------------
     @http.route('/technician_portal/parts_photo/list', type='json', auth='user')
     def parts_photo_list(self, task_id):
@@ -562,7 +494,7 @@ class TechnicianPortalController(http.Controller):
     # ------------------------------------------------------------------
     # performance - aggregated directly from account.analytic.line
     # (job_card_daily_report_ids) for the current employee, across every
-    # job card / inspection, not from per-task fields.
+    # job card, not from per-task fields.
     # ------------------------------------------------------------------
     @http.route('/technician_portal/performance', type='json', auth='user')
     def performance(self):
@@ -650,9 +582,7 @@ class TechnicianPortalController(http.Controller):
     # ADMINISTRATOR - ALL ASSIGNED JOBS (requirement 3)
     # ==================================================================
     # The query starts from account.analytic.line, which is where a
-    # technician assignment actually lives, so a job shows up here
-    # whether it originated as a Job Card or as a Vehicle Inspection -
-    # no second code path, no union of two lists.
+    # technician assignment actually lives.
     #
     # Pause / Resume / Stop call the SAME _do_*() internals the
     # technician's own buttons call (see models/account_analytic_line.py),
@@ -678,16 +608,15 @@ class TechnicianPortalController(http.Controller):
                 for e in employees.sorted(lambda e: e.display_name or '')]
 
     @http.route('/technician_portal/admin/jobs', type='json', auth='user')
-    def admin_jobs(self, search='', task_type=None, status=None, technician_id=None):
-        """Every assigned job in the workshop.
+    def admin_jobs(self, search='', status=None, technician_id=None, **kwargs):
+        """Every assigned Job Card line in the workshop.
 
-        task_type: 'is_vc' | 'is_jobcard' | None (both)
         status:    not_started | running | paused | completed | None
         technician_id: restrict to one technician
         """
         self._check_admin()
         AAL = request.env['account.analytic.line'].sudo()
-        domain = AAL._all_lines_domain(task_type)
+        domain = AAL._all_lines_domain()
         if technician_id:
             domain.append(('employees_id', '=', int(technician_id)))
         if search:

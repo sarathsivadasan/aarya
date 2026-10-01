@@ -5,22 +5,23 @@
         now means: I'm in the task's Assignees (user_ids, core project.task)
         OR I have at least one of my own timesheet lines
         (job_card_daily_report_ids.employees_id) on it - reflecting that a
-        job card / inspection can have multiple technicians.
+        job card can have multiple technicians.
         is_technician_task never existed for real; replaced with the
-        genuine is_jobcard / is_vc booleans.
+        genuine is_jobcard boolean.
+
+        v5.0.0: Vehicle Inspection (is_vc, vehicle_inspection_report)
+        removed - the rule now scopes Job Cards only.
     -->
 
-    <!-- ================= project.task (Job Cards / Inspections) ================= -->
+    <!-- ================= project.task (Job Cards) ================= -->
     <record id="rule_task_technician_own" model="ir.rule">
-        <field name="name">Technician: only own job cards / inspections</field>
+        <field name="name">Technician: only own job cards</field>
         <field name="model_id" ref="project.model_project_task"/>
         <field name="domain_force">
             ['|',
-                '&amp;', ('is_jobcard', '=', False), ('is_vc', '=', False),
-                '&amp;',
-                    '|', ('is_jobcard', '=', True), ('is_vc', '=', True),
-                    '|', ('user_ids', 'in', [user.id]),
-                         ('job_card_daily_report_ids.employees_id.user_id', '=', user.id)]
+                ('is_jobcard', '=', False),
+                '|', ('user_ids', 'in', [user.id]),
+                     ('job_card_daily_report_ids.employees_id.user_id', '=', user.id)]
         </field>
         <field name="groups" eval="[(4, ref('group_garage_technician'))]"/>
         <field name="perm_read">1</field>
@@ -30,7 +31,7 @@
     </record>
 
     <record id="rule_task_supervisor_all_technician_tasks" model="ir.rule">
-        <field name="name">Supervisor: all job cards / inspections</field>
+        <field name="name">Supervisor: all job cards</field>
         <field name="model_id" ref="project.model_project_task"/>
         <field name="domain_force">[(1, '=', 1)]</field>
         <field name="groups" eval="[(4, ref('group_garage_technician_supervisor'))]"/>
@@ -77,7 +78,7 @@
     </record>
 
     <!-- Same reasoning for QC lines: a supervisor reviewing another
-         technician's inspection must be able to read its checklist. -->
+         technician's job card must be able to read its checklist. -->
     <record id="rule_qc_supervisor_all" model="ir.rule">
         <field name="name">Supervisor: all QC lines</field>
         <field name="model_id" search="[('model','=','quality.checklist')]"/>
@@ -87,7 +88,7 @@
 
     <!-- ================= technician.log ================= -->
     <record id="rule_log_technician_own" model="ir.rule">
-        <field name="name">Technician: only logs for my job cards / inspections</field>
+        <field name="name">Technician: only logs for my job cards</field>
         <field name="model_id" ref="model_technician_log"/>
         <field name="domain_force">
             ['|', ('task_id.user_ids', 'in', [user.id]),
@@ -109,7 +110,7 @@
 
     <!-- ================= technician.note ================= -->
     <record id="rule_note_technician_own" model="ir.rule">
-        <field name="name">Technician: only notes for my job cards / inspections</field>
+        <field name="name">Technician: only notes for my job cards</field>
         <field name="model_id" ref="model_technician_note"/>
         <field name="domain_force">
             ['|', ('task_id.user_ids', 'in', [user.id]),
@@ -131,7 +132,7 @@
 
     <!-- ================= technician.part.photo ================= -->
     <record id="rule_part_photo_technician_own" model="ir.rule">
-        <field name="name">Technician: only part photos for my job cards / inspections</field>
+        <field name="name">Technician: only part photos for my job cards</field>
         <field name="model_id" ref="model_technician_part_photo"/>
         <field name="domain_force">
             ['|', ('task_id.user_ids', 'in', [user.id]),
@@ -153,7 +154,7 @@
 
     <!-- ================= quality.checklist ================= -->
     <record id="rule_qc_technician_own" model="ir.rule">
-        <field name="name">Technician: only QC lines for my job cards / inspections</field>
+        <field name="name">Technician: only QC lines for my job cards</field>
         <field name="model_id" search="[('model','=','quality.checklist')]"/>
         <field name="domain_force">
             ['|', ('job_card_id.user_ids', 'in', [user.id]),
@@ -168,7 +169,7 @@
 
     <!-- ================= jobcard.part.requisition ================= -->
     <record id="rule_parts_technician_own" model="ir.rule">
-        <field name="name">Technician: only parts requests for my job cards / inspections</field>
+        <field name="name">Technician: only parts requests for my job cards</field>
         <field name="model_id" search="[('model','=','jobcard.part.requisition')]"/>
         <field name="domain_force">
             ['|', ('job_id.user_ids', 'in', [user.id]),

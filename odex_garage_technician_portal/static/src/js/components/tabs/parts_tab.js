@@ -5,25 +5,19 @@ import { Component, useState, onWillStart } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
 
 /**
- * Parts tab - reads/writes real records directly:
- *   - Vehicle Inspection (isVc=true): vehicle.inspection.part
- *   - Job Card (isVc=false): jobcard.part.requisition
- * Both are the SAME One2many relationships already shown on Vehicle
- * Inspection / Job Card - no separate storage here.
+ * Parts tab - reads/writes jobcard.part.requisition (parts_request)
+ * directly: the SAME One2many already shown on the Job Card, no separate
+ * storage here.
  *
- * v4.0.0 - PART COLUMN
- * The `part` Char field already on vehicle.inspection.part is shown as an
- * editable box. Saving writes the real record, and the server propagates
- * the value to the matching line on the linked Job Card / Vehicle
- * Inspection (updating it, never creating a second line).
+ * The `part` Char column is an editable box that saves as you type.
  *
- * Rows that come from the linked record and have no counterpart here are
- * listed read-only with an origin badge, so existing part data is visible
- * from both sides without being duplicated into either.
+ * v5.0.0: the Vehicle Inspection branch (vehicle.inspection.part) and the
+ * read-only "linked record" rows were removed with Vehicle Inspection
+ * support.
  */
 export class PartsTab extends Component {
     static template = "odex_garage_technician_portal.PartsTab";
-    static props = { taskId: Number, isVc: { type: Boolean, optional: true } };
+    static props = { taskId: Number };
 
     setup() {
         this.notification = useService("notification");
@@ -40,32 +34,15 @@ export class PartsTab extends Component {
         });
     }
 
-    get modelName() {
-        return this.props.isVc ? "vehicle.inspection.part" : "jobcard.part.requisition";
-    }
-
     async loadLines() {
         this.state.lines = await rpc("/technician_portal/parts/list", { task_id: this.props.taskId });
     }
 
-    get editableLines() {
-        return this.state.lines.filter((l) => !l.is_related);
-    }
+    get totalItems() { return this.state.lines.length; }
+    get totalQty() { return this.state.lines.reduce((s, l) => s + (l.qty || 0), 0); }
 
-    get relatedLines() {
-        return this.state.lines.filter((l) => l.is_related);
-    }
-
-    get totalItems() { return this.editableLines.length; }
-    get totalQty() { return this.editableLines.reduce((s, l) => s + (l.qty || 0), 0); }
-
-    /** Label under the input when the value shown came from the linked
-     *  record rather than from this line. */
-    partSourceLabel(line) {
-        if (line.part_source === "job_card") { return "from the linked Job Card"; }
-        if (line.part_source === "inspection") { return "from the linked Vehicle Inspection"; }
-        if (line.part_source === "related") { return "from the linked record"; }
-        return "";
+    canDelete(line) {
+        return line.state === "draft" || line.state === "reject";
     }
 
     // ---------------- part field ----------------
@@ -74,7 +51,6 @@ export class PartsTab extends Component {
     onPartInput(line, ev) {
         const value = ev.target.value;
         line.part = value;
-        line.part_source = "own";
         clearTimeout(this._partTimers[line.id]);
         this._partTimers[line.id] = setTimeout(() => this.savePart(line, value), 700);
     }
@@ -98,7 +74,6 @@ export class PartsTab extends Component {
         this.state.saving[line.id] = true;
         const res = await rpc("/technician_portal/parts/update_line", {
             line_id: line.id,
-            model: line.model,
             part: value,
         });
         this.state.saving[line.id] = false;
@@ -130,17 +105,12 @@ export class PartsTab extends Component {
             return;
         }
         this.state.newLine = { product_id: null, qty: 1, remarks: "", part: "" };
-        this.notification.add(
-            this.props.isVc ? "Part added." : "Parts request sent for approval.",
-            { type: "success" }
-        );
+        this.notification.add("Parts request sent for approval.", { type: "success" });
         await this.loadLines();
     }
 
     async deleteLine(line) {
-        const res = await rpc("/technician_portal/parts/delete_line", {
-            line_id: line.id, model: line.model,
-        });
+        const res = await rpc("/technician_portal/parts/delete_line", { line_id: line.id });
         if (res.status === "error") {
             this.notification.add(res.message, { type: "danger" });
             return;

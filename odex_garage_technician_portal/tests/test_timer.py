@@ -20,13 +20,13 @@ class TestTechnicianTimer(TransactionCase):
         })
         self.project = self.env['project.project'].create({'name': 'Workshop'})
         self.task = self.env['project.task'].create({
-            'name': 'VC-TEST-0001', 'is_vc': True, 'project_id': self.project.id,
+            'name': 'JC-TEST-0001', 'is_jobcard': True, 'project_id': self.project.id,
         })
         self.line = self.env['account.analytic.line'].create({
             'task_id': self.task.id,
             'project_id': self.project.id,
             'employees_id': self.employee.id,
-            'name': 'VC-TEST-0001',
+            'name': 'JC-TEST-0001',
         }).with_user(self.user)
 
     def _pass_qc(self):
@@ -73,10 +73,12 @@ class TestTechnicianTimer(TransactionCase):
         second = self.line._elapsed_seconds()
         self.assertEqual(first, second, 'elapsed must not tick while paused')
 
-    def test_end_blocked_until_qc_passes_on_inspection(self):
+    def test_end_not_gated_by_qc_on_job_card(self):
+        # the QC gate only ever applied to Vehicle Inspections, which the
+        # portal no longer handles - a Job Card ends without it
         self.line.action_technician_start()
-        with self.assertRaises(UserError):
-            self.line.action_technician_end()
+        self.line.action_technician_end()
+        self.assertEqual(self.line.technician_status, 'completed')
 
     def test_end_allowed_after_qc(self):
         self._pass_qc()
@@ -87,11 +89,11 @@ class TestTechnicianTimer(TransactionCase):
 
     def test_only_one_running_line_at_a_time(self):
         other_task = self.env['project.task'].create({
-            'name': 'VC-TEST-0002', 'is_vc': True, 'project_id': self.project.id,
+            'name': 'JC-TEST-0002', 'is_jobcard': True, 'project_id': self.project.id,
         })
         other = self.env['account.analytic.line'].create({
             'task_id': other_task.id, 'project_id': self.project.id,
-            'employees_id': self.employee.id, 'name': 'VC-TEST-0002',
+            'employees_id': self.employee.id, 'name': 'JC-TEST-0002',
         }).with_user(self.user)
 
         self.line.action_technician_start()
@@ -100,11 +102,11 @@ class TestTechnicianTimer(TransactionCase):
 
     def test_paused_line_elsewhere_does_not_block_starting_another(self):
         other_task = self.env['project.task'].create({
-            'name': 'VC-TEST-0003', 'is_vc': True, 'project_id': self.project.id,
+            'name': 'JC-TEST-0003', 'is_jobcard': True, 'project_id': self.project.id,
         })
         other = self.env['account.analytic.line'].create({
             'task_id': other_task.id, 'project_id': self.project.id,
-            'employees_id': self.employee.id, 'name': 'VC-TEST-0003',
+            'employees_id': self.employee.id, 'name': 'JC-TEST-0003',
         }).with_user(self.user)
 
         self.line.action_technician_start()

@@ -14,10 +14,6 @@ class ResConfigSettings(models.TransientModel):
         related='company_id.technician_late_job_threshold',
         readonly=False, string='Late Job Threshold (Hours)')
 
-    technician_part_link_field = fields.Char(
-        related='company_id.technician_part_link_field',
-        readonly=False, string='Job Card / Inspection Link Field')
-
 
 class ResCompany(models.Model):
     _inherit = 'res.company'
@@ -28,15 +24,6 @@ class ResCompany(models.Model):
              'flagged "Late" on the Performance page. 0 = flag as soon as '
              "today's date passes the promise date.")
 
-    # v4.0.0: the Parts tab keeps the `part` value in step between a
-    # Vehicle Inspection and the Job Card it became. Those are two
-    # project.task rows joined by a many2one that lives in job_card /
-    # vehicle_inspection_report, and the field name differs by install.
-    # Leave this blank and the module probes for any project.task ->
-    # project.task many2one at runtime; set it to pin the exact field and
-    # skip the probe entirely.
-    technician_part_link_field = fields.Char(
-        string='Job Card / Inspection Link Field',
-        help='Name of the many2one on project.task that links a Job Card '
-             'to the Vehicle Inspection it came from (or vice versa), e.g. '
-             '"inspection_id". Leave empty to detect it automatically.')
+    # v5.0.0: technician_part_link_field (Job Card <-> Vehicle Inspection
+    # link for the Parts tab) removed together with Vehicle Inspection
+    # support.

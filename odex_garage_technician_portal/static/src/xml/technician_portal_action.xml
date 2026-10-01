@@ -10,10 +10,6 @@
                         t-on-click="() => this.setPage('dashboard')">
                         <i class="fa fa-th-large"/> Dashboard
                     </li>
-                    <li t-att-class="state.page === 'inspection' ? 'active' : ''"
-                        t-on-click="() => this.setPage('inspection')">
-                        <i class="fa fa-search"/> Vehicle Inspection
-                    </li>
                     <li t-att-class="state.page === 'job_card' ? 'active' : ''"
                         t-on-click="() => this.setPage('job_card')">
                         <i class="fa fa-id-card"/> Job Card
@@ -30,8 +26,8 @@
                         t-on-click="() => this.setPage('profile')">
                         <i class="fa fa-user"/> Profile
                     </li>
-                    <!-- administrators only: every assigned job in the
-                         workshop, whatever its origin -->
+                    <!-- administrators only: every assigned job card in
+                         the workshop -->
                     <li t-if="state.isAdmin"
                         t-att-class="state.page === 'admin_jobs' ? 'active' : ''"
                         t-on-click="() => this.setPage('admin_jobs')">
@@ -53,20 +49,14 @@
 
                 <main class="o_tp_content">
                     <DashboardPage t-if="state.page === 'dashboard'"
-                                   openInspection.bind="openInspection"
+                                   openJob.bind="openJob"
                                    viewAll.bind="viewAll"/>
-                    <InspectionWorkspace t-if="state.page === 'inspection'"
-                                         taskType="'is_vc'"
-                                         selectedLineId="state.selectedLineId"
-                                         statusFilter="state.statusFilter"/>
-                    <InspectionWorkspace t-if="state.page === 'job_card'"
-                                         taskType="'is_jobcard'"
-                                         selectedLineId="state.selectedLineId"
-                                         statusFilter="state.statusFilter"/>
-                    <InspectionWorkspace t-if="state.page === 'parts'"
-                                         taskType="'is_jobcard'"
-                                         selectedLineId="state.selectedLineId"
-                                         focusTab="'parts'"/>
+                    <JobWorkspace t-if="state.page === 'job_card'"
+                                  selectedLineId="state.selectedLineId"
+                                  statusFilter="state.statusFilter"/>
+                    <JobWorkspace t-if="state.page === 'parts'"
+                                  selectedLineId="state.selectedLineId"
+                                  focusTab="'parts'"/>
                     <AdminJobsPage t-if="state.page === 'admin_jobs' and state.isAdmin"/>
                     <PerformancePage t-if="state.page === 'performance'"/>
                     <ProfilePage t-if="state.page === 'profile'"/>

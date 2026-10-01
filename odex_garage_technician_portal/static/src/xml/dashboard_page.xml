@@ -55,9 +55,9 @@
                     <h3>My Work</h3>
                     <a href="#" t-on-click.prevent="() => this.viewAll(null)">View All</a>
                 </div>
-                <div class="o_tp_inspection_list">
+                <div class="o_tp_job_list">
                     <div t-foreach="state.recent" t-as="item" t-key="item.id"
-                         class="o_tp_inspection_row" t-on-click="() => this.openTask(item.id, item.record_type)">
+                         class="o_tp_job_row" t-on-click="() => this.openTask(item.id)">
                         <div class="o_tp_row_left">
                             <a href="#" class="o_tp_row_code" t-esc="item.task_name"/>
                             <span t-attf-class="badge o_tp_priority_#{item.priority_label}"

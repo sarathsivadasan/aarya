@@ -24,7 +24,7 @@ class TechnicianLog(models.Model):
     _order = 'log_date desc, id desc'
     _rec_name = 'action'
 
-    task_id = fields.Many2one('project.task', string='Job / Inspection',
+    task_id = fields.Many2one('project.task', string='Job Card',
                               required=True, ondelete='cascade', index=True)
     analytic_line_id = fields.Many2one(
         'account.analytic.line', string='Work Record', ondelete='cascade',
@@ -38,15 +38,18 @@ class TechnicianLog(models.Model):
              'the administrator who performed it.')
     job_reference = fields.Char(
         string='Job Reference',
-        help='Job Card number or Inspection name captured at the time of '
-             'the action.')
+        help='Job Card number captured at the time of the action.')
+    # v5.0.0: Vehicle Inspection support was removed and nothing writes
+    # 'inspection' any more. The value is kept ONLY so log rows written
+    # before the removal keep their origin instead of being blanked by
+    # the upgrade (Odoo nulls removed selection values).
     record_type = fields.Selection([
         ('job_card', 'Job Card'),
-        ('inspection', 'Vehicle Inspection'),
+        ('inspection', 'Vehicle Inspection (legacy)'),
         ('other', 'Other'),
     ], string='Origin', default='other')
     action = fields.Selection([
-        ('started', 'Started Inspection'),
+        ('started', 'Started'),
         ('paused', 'Paused'),
         ('resumed', 'Resumed'),
         ('completed', 'Completed'),
@@ -95,9 +98,7 @@ class TechnicianLog(models.Model):
                     vals['job_reference'] = (
                         task.number if task.is_jobcard and task.number else task.name) or ''
                     vals.setdefault(
-                        'record_type',
-                        'job_card' if task.is_jobcard else (
-                            'inspection' if task.is_vc else 'other'))
+                        'record_type', 'job_card' if task.is_jobcard else 'other')
         return super().create(vals_list)
 
     def to_portal_dict(self):

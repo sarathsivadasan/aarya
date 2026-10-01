@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <!--
-        Inspection / Job Card numbering (project.task.name) is assumed to
+        Job Card numbering (project.task.name) is assumed to
         already be handled by your existing garage-management sequence.
         This file is a placeholder kept for structural completeness and for
         any future Odex-specific numbered document (e.g. a QC certificate

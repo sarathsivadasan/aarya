@@ -7,8 +7,8 @@ import { useService } from "@web/core/utils/hooks";
 /**
  * Vehicle Photos tab - reads/writes the real image1..image12 /
  * image{N}_name / image{N}_desc fields directly on project.task
- * (garage_management_odoo). These are the SAME fields shown on Vehicle
- * Inspection / Job Card - no separate photo storage.
+ * (garage_management_odoo). These are the SAME fields shown on the
+ * Job Card - no separate photo storage.
  */
 export class VehiclePhotosTab extends Component {
     static template = "odex_garage_technician_portal.VehiclePhotosTab";

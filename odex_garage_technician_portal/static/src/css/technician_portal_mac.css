@@ -118,7 +118,7 @@
     flex: 1 1 0%;
     -webkit-overflow-scrolling: touch;
 }
-.o_tp_mac .o_tp_inspection_list {
+.o_tp_mac .o_tp_job_list {
     min-height: 0;
 }
 .o_tp_mac .o_tp_sidebar {
@@ -163,7 +163,7 @@
    behaviour.
    -------------------------------------------------------------------------- */
 .o_tp_mac .o_tp_content,
-.o_tp_mac .o_tp_inspection_list,
+.o_tp_mac .o_tp_job_list,
 .o_tp_mac .o_tp_tab_content,
 .o_tp_mac .o_tp_tabs,
 .o_tp_mac .o_tp_admin_table_wrap {
@@ -171,7 +171,7 @@
     scrollbar-color: #c4c4d4 transparent;
 }
 .o_tp_mac .o_tp_content::-webkit-scrollbar,
-.o_tp_mac .o_tp_inspection_list::-webkit-scrollbar,
+.o_tp_mac .o_tp_job_list::-webkit-scrollbar,
 .o_tp_mac .o_tp_tab_content::-webkit-scrollbar,
 .o_tp_mac .o_tp_tabs::-webkit-scrollbar,
 .o_tp_mac .o_tp_admin_table_wrap::-webkit-scrollbar {
@@ -180,7 +180,7 @@
     -webkit-appearance: none;
 }
 .o_tp_mac .o_tp_content::-webkit-scrollbar-thumb,
-.o_tp_mac .o_tp_inspection_list::-webkit-scrollbar-thumb,
+.o_tp_mac .o_tp_job_list::-webkit-scrollbar-thumb,
 .o_tp_mac .o_tp_tab_content::-webkit-scrollbar-thumb,
 .o_tp_mac .o_tp_tabs::-webkit-scrollbar-thumb,
 .o_tp_mac .o_tp_admin_table_wrap::-webkit-scrollbar-thumb {
@@ -190,7 +190,7 @@
     background-clip: content-box;
 }
 .o_tp_mac .o_tp_content::-webkit-scrollbar-track,
-.o_tp_mac .o_tp_inspection_list::-webkit-scrollbar-track,
+.o_tp_mac .o_tp_job_list::-webkit-scrollbar-track,
 .o_tp_mac .o_tp_tab_content::-webkit-scrollbar-track,
 .o_tp_mac .o_tp_tabs::-webkit-scrollbar-track,
 .o_tp_mac .o_tp_admin_table_wrap::-webkit-scrollbar-track {

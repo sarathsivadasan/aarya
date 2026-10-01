@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <!-- v2.0.0: object.technician_id and object.exceeded_hours never
-         existed for real; a job card / inspection can have several
+         existed for real; a job card can have several
          technicians (job_card_daily_report_ids), so this now lists all
          of them instead of assuming one. -->
     <record id="mail_template_technician_time_exceeded" model="mail.template">

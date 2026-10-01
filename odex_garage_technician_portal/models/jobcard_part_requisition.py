@@ -23,11 +23,10 @@ class JobcardPartRequisition(models.Model):
 
     remarks = fields.Char(string='Remarks')
 
-    # v4.0.0: the Parts tab shows one "Part" column whatever the
-    # underlying model is. vehicle.inspection.part already has `part`
-    # (you added it); requisition lines get the equivalent here so the
-    # column behaves identically on the branch that renders them. Purely
-    # additive - no existing field of this name in parts_request.
+    # Free-text "Part" column shown and edited in the portal Parts tab.
+    # Purely additive - no existing field of this name in parts_request.
+    # v5.0.0: this is now the ONLY model behind the Parts tab (the
+    # vehicle.inspection.part branch was removed with Vehicle Inspection).
     part = fields.Char(
         string='Part',
         help='Free-text part information entered by the technician from '

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Odex Garage Technician Portal',
-    'version': '18.0.4.0.0',
+    'version': '18.0.5.0.0',
     'category': 'Services/Field Service',
-    'summary': 'Dedicated workspace for garage technicians: inspections, job cards, '
+    'summary': 'Dedicated workspace for garage technicians: job cards, '
                'parts requests, QC, timers and performance tracking.',
     'description': """
 Odex Garage Technician Portal
@@ -16,20 +16,19 @@ Features
 --------
 * Technician-only dashboard with live counters (Assigned / In Progress /
   Paused / Completed Today / Hours Today)
-* Vehicle Inspection workspace (list + detail) with Complaints, Vehicle
-  Photos, QC, Parts, Log and Notes tabs
+* Job Card workspace (list + detail) with Complaints, Vehicle Photos,
+  QC, Parts, Parts Photos, Log and Notes tabs
 * Server-side timer (Start / Pause / Resume / Complete) immune to browser
   refresh, logout or crash
 * Parts Requisition submission straight from the Parts tab
 * Technician performance dashboard (today / week / month, efficiency,
   late jobs)
 * Technician profile page
-* QWeb PDF inspection report with QR code
+* QWeb PDF job card work report with QR code
 * Strict record rules: a technician only ever sees their own records
-* Administrator view of every assigned job (Job Card or Vehicle
-  Inspection) with Pause / Resume / Stop control and a full audit log
-* Editable Part information on inspection part lines, kept in step
-  between the Vehicle Inspection and the linked Job Card
+* Administrator view of every assigned Job Card with Pause / Resume /
+  Stop control and a full audit log
+* Editable Part information on parts requisition lines
 * macOS / Safari layout corrections, scoped so no other platform is
   affected
     """,
@@ -48,7 +47,6 @@ Features
         'job_card',
         'job_card_extension',
         'garage_management_odoo',
-        'vehicle_inspection_report',
         'parts_request',
     ],
     'data': [
@@ -68,8 +66,8 @@ Features
         'views/res_config_settings_views.xml',
         'views/hr_employee_kanban_views.xml',
         # report
-        'report/inspection_report.xml',
-        'report/inspection_report_templates.xml',
+        'report/job_report.xml',
+        'report/job_report_templates.xml',
     ],
     'assets': {
         'web.assets_backend': [

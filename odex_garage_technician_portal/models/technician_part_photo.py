@@ -7,7 +7,7 @@ class TechnicianPartPhoto(models.Model):
     _description = 'Technician Part Photo'
     _order = 'create_date desc'
 
-    task_id = fields.Many2one('project.task', string='Job / Inspection',
+    task_id = fields.Many2one('project.task', string='Job Card',
                                required=True, ondelete='cascade', index=True)
     part_reference = fields.Char(
         string='Part / Product',

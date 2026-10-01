@@ -5,8 +5,8 @@ from odoo.tests.common import TransactionCase, tagged
 
 @tagged('post_install', '-at_install')
 class TestAdministratorControl(TransactionCase):
-    """Requirement 3 + 4: an administrator sees every assigned job whatever
-    its origin, can pause/resume/stop it, and every action is logged with
+    """Requirement 3 + 4: an administrator sees every assigned job card,
+    can pause/resume/stop it, and every action is logged with
     the job reference, technician, action, timestamp and acting user."""
 
     def setUp(self):
@@ -30,16 +30,16 @@ class TestAdministratorControl(TransactionCase):
         self.jobcard = self.env['project.task'].create({
             'name': 'JC-ADM-0001', 'is_jobcard': True, 'project_id': self.project.id,
         })
-        self.inspection = self.env['project.task'].create({
-            'name': 'VC-ADM-0001', 'is_vc': True, 'project_id': self.project.id,
-        })
         self.jc_line = self.env['account.analytic.line'].create({
             'task_id': self.jobcard.id, 'project_id': self.project.id,
             'employees_id': self.tech.id, 'name': 'JC-ADM-0001',
         })
-        self.vc_line = self.env['account.analytic.line'].create({
-            'task_id': self.inspection.id, 'project_id': self.project.id,
-            'employees_id': self.tech.id, 'name': 'VC-ADM-0001',
+        self.plain_task = self.env['project.task'].create({
+            'name': 'PLAIN-ADM-0001', 'project_id': self.project.id,
+        })
+        self.plain_line = self.env['account.analytic.line'].create({
+            'task_id': self.plain_task.id, 'project_id': self.project.id,
+            'employees_id': self.tech.id, 'name': 'PLAIN-ADM-0001',
         })
 
     def _logs(self, line):
@@ -49,11 +49,12 @@ class TestAdministratorControl(TransactionCase):
     # ------------------------------------------------------------------
     # visibility
     # ------------------------------------------------------------------
-    def test_admin_query_covers_both_origins(self):
+    def test_admin_query_lists_job_cards_only(self):
         AAL = self.env['account.analytic.line']
         lines = AAL.search(AAL._all_lines_domain())
         self.assertIn(self.jc_line, lines, 'Job Card work must be listed')
-        self.assertIn(self.vc_line, lines, 'Inspection work must be listed')
+        self.assertNotIn(self.plain_line, lines,
+                         'work on non-job-card tasks must not be listed')
 
     def test_admin_list_item_names_technician_and_status(self):
         self.jc_line.action_admin_start()
@@ -86,14 +87,6 @@ class TestAdministratorControl(TransactionCase):
         line.action_admin_end()
         self.assertEqual(line.technician_status, 'completed')
         self.assertTrue(line.end_datetime)
-
-    def test_admin_stop_bypasses_qc_gate_but_technician_stop_does_not(self):
-        line = self.vc_line  # inspection with no QC lines -> qc_passed False
-        line.action_technician_start()
-        with self.assertRaises(UserError):
-            line.with_user(self.tech_user).action_technician_end()
-        line.action_admin_end()
-        self.assertEqual(line.technician_status, 'completed')
 
     def test_non_admin_cannot_drive_another_technicians_timer(self):
         other_user = self.env['res.users'].create({
@@ -206,37 +199,7 @@ class TestJobStatusRollup(TransactionCase):
     def test_report_renders_without_raising(self):
         self.line_a.action_admin_start()
         report = self.env.ref(
-            'odex_garage_technician_portal.action_report_vehicle_inspection')
+            'odex_garage_technician_portal.action_report_technician_job')
         html = report._render_qweb_html(report.report_name, self.task.ids)[0]
-        self.assertIn(b'Vehicle Inspection Report', html)
+        self.assertIn(b'Job Card Work Report', html)
 
-
-@tagged('post_install', '-at_install')
-class TestPartLinkFieldSetting(TransactionCase):
-    """The Job Card <-> Inspection link field can be pinned in Settings
-    instead of probed."""
-
-    def test_blank_setting_falls_back_to_probing(self):
-        self.env.company.technician_part_link_field = False
-        task = self.env['project.task'].new({'name': 'probe'})
-        names = task._part_link_field_names()
-        self.assertIsInstance(names, list)
-        for name in names:
-            field = task._fields[name]
-            self.assertEqual(field.comodel_name, 'project.task')
-
-    def test_invalid_setting_is_ignored_not_fatal(self):
-        self.env.company.technician_part_link_field = 'no_such_field_xyz'
-        task = self.env['project.task'].new({'name': 'probe'})
-        names = task._part_link_field_names()  # must not raise
-        self.assertNotIn('no_such_field_xyz', names)
-
-    def test_valid_setting_pins_the_field_and_skips_probing(self):
-        task = self.env['project.task'].new({'name': 'probe'})
-        candidates = [n for n, f in task._fields.items()
-                      if f.type == 'many2one' and f.comodel_name == 'project.task'
-                      and n not in task._PART_LINK_EXCLUDED_FIELDS]
-        if not candidates:
-            self.skipTest('no project.task -> project.task many2one on this instance')
-        self.env.company.technician_part_link_field = candidates[0]
-        self.assertEqual(task._part_link_field_names(), [candidates[0]])

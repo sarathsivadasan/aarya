@@ -5,10 +5,13 @@
 # =====================================================================
 # The portal starts here, not from project.task. A technician's work is
 # a set of account.analytic.line rows (task.job_card_daily_report_ids).
-# Each row is one unit of work; task_id then tells us whether it belongs
-# to a Job Card (task_id.is_jobcard) or a Vehicle Inspection
-# (task_id.is_vc), and all related data (complaints, photos, parts, QC)
-# is fetched through task_id from there.
+# Each row is one unit of work on a Job Card (task_id.is_jobcard), and
+# all related data (complaints, photos, parts, QC) is fetched through
+# task_id from there.
+#
+# v5.0.0: Vehicle Inspection support removed - only Job Card lines are
+# listed, and the inspection_state / inspection QC-gate side effects
+# that used to run on Start / End are gone.
 #
 # ---------------------------------------------------------------------
 # TWO PRE-EXISTING BUGS IN job_card_extension THAT WE WORK AROUND HERE
@@ -308,12 +311,9 @@ class AccountAnalyticLine(models.Model):
         vals = self._time_vals('start', now)
         vals['is_start_time'] = True
         self.sudo().write(vals)
-        self._log('Started Inspection',
+        self._log('Started',
                   _('%(who)s started work.') % {'who': self._actor_label(actor)},
                   is_admin=(actor == 'admin'))
-        task = self.task_id
-        if task.is_vc and 'inspection_state' in task._fields:
-            task.sudo().inspection_state = 'inspection_started'
         return True
 
     def _do_pause(self, actor='technician'):
@@ -351,16 +351,12 @@ class AccountAnalyticLine(models.Model):
                   is_admin=(actor == 'admin'))
         return True
 
-    def _do_end(self, actor='technician', force=False):
+    def _do_end(self, actor='technician'):
         self.ensure_one()
         if not self.is_start_time:
             raise UserError(_('This work record has not been started.'))
         if self.is_end_time:
             raise UserError(_('This work record is already completed.'))
-        task = self.task_id
-        if not force and task.is_vc and not task.qc_passed:
-            raise UserError(_('QC checklist must be completed and passed '
-                              'before you can complete this inspection.'))
         now = self._source_now()
         vals = self._time_vals('end', now)
         vals['is_end_time'] = True
@@ -378,9 +374,6 @@ class AccountAnalyticLine(models.Model):
                       'net': self.technician_net_hours,
                       'paused': self.total_pause_time or 0.0},
                   is_admin=(actor == 'admin'))
-        if task.is_vc and 'inspection_state' in task._fields:
-            if all(l.is_end_time for l in task.job_card_daily_report_ids):
-                task.sudo().inspection_state = 'inspection_finished'
         return True
 
     def _sync_total_hours(self):
@@ -429,9 +422,7 @@ class AccountAnalyticLine(models.Model):
     # =====================================================================
     # TIMER - ADMINISTRATOR ENTRY POINTS
     # Same time tracking, different permission check and log wording.
-    # Stop is allowed to bypass the QC gate (force=True): the whole point
-    # of an admin stop is to close out a job the technician cannot or did
-    # not close. The log records that it was an administrator action.
+    # The log records that it was an administrator action.
     # =====================================================================
     def action_admin_start(self):
         self.ensure_one()
@@ -451,7 +442,7 @@ class AccountAnalyticLine(models.Model):
     def action_admin_end(self):
         self.ensure_one()
         self._check_admin()
-        return self._do_end(actor='admin', force=True)
+        return self._do_end(actor='admin')
 
     def action_request_more_time(self, extra_hours=0.5, reason=''):
         self.ensure_one()
@@ -476,18 +467,15 @@ class AccountAnalyticLine(models.Model):
 
     @api.model
     def _task_type_domain(self, task_type=None):
-        if task_type == 'is_jobcard':
-            return [('task_id.is_jobcard', '=', True)]
-        if task_type == 'is_vc':
-            return [('task_id.is_vc', '=', True)]
-        return ['|', ('task_id.is_jobcard', '=', True),
-                ('task_id.is_vc', '=', True)]
+        """The portal serves Job Cards only. task_type is still accepted
+        so older callers keep working, but it no longer changes the
+        result."""
+        return [('task_id.is_jobcard', '=', True)]
 
     @api.model
     def _all_lines_domain(self, task_type=None):
-        """Every assigned job in the workshop, whatever its origin (Job
-        Card or Vehicle Inspection) and whoever it belongs to. Used by the
-        administrator view only."""
+        """Every assigned Job Card line in the workshop, whoever it
+        belongs to. Used by the administrator view only."""
         return [('employees_id', '!=', False)] + self._task_type_domain(task_type)
 
     @api.model
@@ -562,23 +550,19 @@ class AccountAnalyticLine(models.Model):
             'customer': task.partner_id.display_name if task.partner_id else '',
             'priority_label': dict(task._fields['priority'].selection or {}).get(
                 task.priority, task.priority),
-            'record_type': 'job_card' if task.is_jobcard else ('inspection' if task.is_vc else 'other'),
+            'record_type': 'job_card' if task.is_jobcard else 'other',
             'status': self.technician_status,
         }
 
     def to_admin_list_item(self):
-        """One row of the administrator's "all assigned jobs" table.
-        Covers both origins (Job Card and Vehicle Inspection) because the
-        query starts from the analytic line, not from either form."""
+        """One row of the administrator's "all assigned jobs" table."""
         self.ensure_one()
         task = self.task_id
         return {
             'id': self.id,
             'task_id': task.id,
             'task_name': self._task_label(),
-            'record_type': 'job_card' if task.is_jobcard else ('inspection' if task.is_vc else 'other'),
-            'record_type_label': _('Job Card') if task.is_jobcard else (
-                _('Vehicle Inspection') if task.is_vc else _('Other')),
+            'record_type': 'job_card' if task.is_jobcard else 'other',
             'technician': self.employees_id.display_name or '',
             'technician_id': self.employees_id.id,
             'service': self.product_id.display_name if self.product_id else (self.name or ''),
@@ -622,15 +606,13 @@ class AccountAnalyticLine(models.Model):
             'id': self.id,
             'task_id': task.id,
             'task_name': self._task_label(),
-            'record_type': 'job_card' if task.is_jobcard else ('inspection' if task.is_vc else 'other'),
+            'record_type': 'job_card' if task.is_jobcard else 'other',
             'is_jobcard': task.is_jobcard,
-            'is_vc': task.is_vc,
             'service': self.product_id.display_name if self.product_id else (self.name or ''),
             'status': self.technician_status,
             'vehicle': vehicle_data,
             'customer': task.partner_id.display_name if task.partner_id else '',
             'job_type': task.job_type if 'job_type' in task._fields else False,
-            'inspection_state': task.inspection_state if task.is_vc and 'inspection_state' in task._fields else False,
             'cc_stage': task.cc_stage_id.name if 'cc_stage_id' in task._fields and task.cc_stage_id else '',
             'priority_label': dict(task._fields['priority'].selection or {}).get(
                 task.priority, task.priority),
@@ -678,18 +660,17 @@ class AccountAnalyticLine(models.Model):
             task, employee = line.task_id, line.employees_id
             if not task or not employee or not employee.user_id:
                 continue
-            if not (task.is_jobcard or task.is_vc):
+            if not task.is_jobcard:
                 continue
             if employee.user_id.id == self.env.uid:
                 continue  # don't notify someone about their own action
-            label = _('Job Card') if task.is_jobcard else _('Vehicle Inspection')
-            display_name = task.number if task.is_jobcard and task.number else task.name
+            display_name = task.number if task.number else task.name
             task.message_notify(
                 partner_ids=employee.user_id.partner_id.ids,
-                body=_('You have been assigned to %(type)s %(name)s.') % {
-                    'type': label, 'name': display_name,
+                body=_('You have been assigned to Job Card %(name)s.') % {
+                    'name': display_name,
                 },
-                subject=_('New %s assigned') % label,
+                subject=_('New Job Card assigned'),
                 record_name=display_name,
             )
 

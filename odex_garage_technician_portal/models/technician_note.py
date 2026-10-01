@@ -7,7 +7,7 @@ class TechnicianNote(models.Model):
     _description = 'Technician Timestamped Note'
     _order = 'create_date desc'
 
-    task_id = fields.Many2one('project.task', string='Job / Inspection',
+    task_id = fields.Many2one('project.task', string='Job Card',
                                required=True, ondelete='cascade', index=True)
     content = fields.Html(string='Note', required=True, sanitize=True)
     user_id = fields.Many2one('res.users', string='User',

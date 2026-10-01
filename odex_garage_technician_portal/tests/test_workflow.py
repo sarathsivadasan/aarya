@@ -16,7 +16,7 @@ class TestTechnicianWorkflow(TransactionCase):
             'workshop_position_type': 'worker',
         })
         self.task = self.env['project.task'].create({
-            'name': 'VC-WF-0001', 'is_vc': True, 'user_ids': [(4, self.user.id)],
+            'name': 'JC-WF-0001', 'is_jobcard': True, 'user_ids': [(4, self.user.id)],
         })
 
     def test_start_creates_log_entry(self):
@@ -42,7 +42,7 @@ class TestTechnicianWorkflow(TransactionCase):
         self.assertEqual(self.task.image1_desc, 'Front bumper')
 
     def test_photo_slots_reflect_immediately_on_the_same_task_record(self):
-        # this IS the Vehicle Inspection / Job Card record - no separate
+        # this IS the Job Card record - no separate
         # storage, so the write is visible via a fresh browse immediately
         self.task.set_photo_slot(2, image='iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=')
         same_task = self.env['project.task'].browse(self.task.id)
@@ -92,8 +92,8 @@ class TestTechnicianWorkflow(TransactionCase):
         self.assertIn('hours_today', counters)
 
     def test_complaint_line_created_elsewhere_is_visible_via_requested_services_ids(self):
-        # simulates a complaint added directly on the Vehicle Inspection
-        # form (or Job Card) - the portal must see the exact same record
+        # simulates a complaint added directly on the Job Card form -
+        # the portal must see the exact same record
         # via requested_services_ids, with no separate storage of its own
         service = self.env['job.requested.service'].create({
             'task_id': self.task.id, 'remark': 'Check AC cooling',

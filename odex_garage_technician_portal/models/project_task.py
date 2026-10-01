@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 #
+# v5.0.0 - Vehicle Inspection support removed. The portal now serves Job
+# Cards only (is_jobcard); nothing here reads is_vc / inspection_state
+# and the module no longer depends on vehicle_inspection_report.
+#
 # v2.0.0 - rebuilt against your actual installed schema after reviewing
-# job_card, job_card_extension, garage_management_odoo, vehicle_inspection_report
-# and parts_request. Every field below is either genuinely new (no name
+# job_card, job_card_extension, garage_management_odoo and parts_request. Every field below is either genuinely new (no name
 # collision anywhere in those five modules) or a deliberate read of a
 # real, pre-existing field. Nothing here is guessed.
 #
@@ -11,7 +14,6 @@
 #   vehicle_id, model_id, cylinder_count, odometer   -> garage_management_odoo
 #   cc_stage_id, promise_date, job_type,
 #   requested_services_ids, analytic_account_id      -> job_card_extension / job_card
-#   is_vc, inspection_state                          -> vehicle_inspection_report
 #   allocated_hours, remaining_hours (via hr_timesheet on project.task)
 #   user_ids (core project.task "Assignees")
 #   job_card_daily_report_ids -> account.analytic.line, inverse of task_id (job_card)
@@ -93,7 +95,7 @@ class ProjectTask(models.Model):
              'section/note display rows) has check_mark = True.')
 
     # ---- job-level rollup of the per-technician timers ----
-    # v4.0.0: report/inspection_report_templates.xml printed
+    # v4.0.0: report/job_report_templates.xml printed
     # `o.my_timer_status`, a field that was planned in v2 but never
     # actually declared anywhere - so the Print button in the technician
     # workspace raised as soon as it reached that line. This is the real
@@ -179,76 +181,6 @@ class ProjectTask(models.Model):
                        _('Requested +%.2f hour(s). Reason: %s') % (extra_hours, reason or '-'))
         return True
 
-    # =====================================================================
-    # JOB CARD <-> VEHICLE INSPECTION LINK (used by the Parts tab)
-    # =====================================================================
-    # A Job Card and the Vehicle Inspection it came from are two separate
-    # project.task rows joined by a many2one that lives in job_card /
-    # vehicle_inspection_report, not here. The exact field name differs
-    # between installs, so instead of hardcoding one we probe for any
-    # many2one on project.task that points back at project.task and treat
-    # it as the link - in BOTH directions (this task points at the other,
-    # or the other points at this one).
-    #
-    # Deliberately excluded: parent_id / child_ids and the project's own
-    # structural links, which are ordinary sub-task relationships and are
-    # not the inspection<->job-card pairing.
-    _PART_LINK_EXCLUDED_FIELDS = (
-        'parent_id', 'child_ids', 'displayed_image_id', 'recurring_task_id',
-    )
-
-    def _part_link_field_names(self):
-        """Names of the many2one fields on project.task that point at
-        another project.task and can carry the inspection <-> job card
-        link.
-
-        If an administrator has pinned the field in Settings
-        (technician_part_link_field), that name is used verbatim and no
-        probing happens - which is what you want in production once the
-        real field name is known.
-        """
-        configured = (self.env.company.technician_part_link_field or '').strip()
-        if configured:
-            field = self._fields.get(configured)
-            if field and field.type == 'many2one' \
-                    and field.comodel_name == 'project.task':
-                return [configured]
-            _logger.warning(
-                'technician_part_link_field is set to %r, which is not a '
-                'many2one to project.task on this instance - falling back '
-                'to automatic detection.', configured)
-        return [
-            name for name, field in self._fields.items()
-            if field.type == 'many2one'
-            and field.comodel_name == 'project.task'
-            and name not in self._PART_LINK_EXCLUDED_FIELDS
-        ]
-
-    def _linked_part_tasks(self):
-        """Other project.task records that share this job's part data.
-
-        Returns an empty recordset when nothing links - in which case the
-        Parts tab simply operates on this task alone, which is already
-        correct behaviour.
-        """
-        self.ensure_one()
-        linked = self.browse()
-        names = self._part_link_field_names()
-        # forward: this task points at another one
-        for name in names:
-            other = self[name]
-            if other and other.id != self.id:
-                linked |= other
-        # reverse: another task points at this one
-        if names:
-            domain = []
-            for i, name in enumerate(names):
-                if i:
-                    domain.insert(0, '|')
-                domain.append((name, '=', self.id))
-            linked |= self.sudo().search(domain) - self
-        return linked.filtered(lambda t: t.is_jobcard or t.is_vc)
-
     def is_fully_completed(self):
         """True once every technician who has a timesheet line on this job
         has stopped it. False (not blocked) if nobody has started yet -
@@ -292,8 +224,7 @@ class ProjectTask(models.Model):
             'technician_id': technician.id if technician else False,
             'job_reference': (self.number if self.is_jobcard and self.number
                               else self.name) or '',
-            'record_type': ('job_card' if self.is_jobcard
-                            else ('inspection' if self.is_vc else 'other')),
+            'record_type': 'job_card' if self.is_jobcard else 'other',
             'action': action,
             'description': description,
             'is_admin_action': bool(is_admin),
@@ -311,18 +242,18 @@ class ProjectTask(models.Model):
     def create(self, vals_list):
         tasks = super().create(vals_list)
         for task in tasks:
-            if (task.is_jobcard or task.is_vc) and task.user_ids:
+            if task.is_jobcard and task.user_ids:
                 task._notify_assignees(task.user_ids)
         return tasks
 
     def write(self, vals):
         old_assignees = {}
         if 'user_ids' in vals:
-            for task in self.filtered(lambda t: t.is_jobcard or t.is_vc):
+            for task in self.filtered(lambda t: t.is_jobcard):
                 old_assignees[task.id] = task.user_ids
         res = super().write(vals)
         if 'user_ids' in vals:
-            for task in self.filtered(lambda t: t.is_jobcard or t.is_vc):
+            for task in self.filtered(lambda t: t.is_jobcard):
                 newly_added = task.user_ids - old_assignees.get(task.id, self.env['res.users'])
                 if newly_added:
                     task._notify_assignees(newly_added)
@@ -333,11 +264,10 @@ class ProjectTask(models.Model):
         partners = users.mapped('partner_id')
         if not partners:
             return
-        label = _('Job Card') if self.is_jobcard else _('Vehicle Inspection')
-        display_name = self.number if self.is_jobcard and self.number else self.name
+        display_name = self.number if self.number else self.name
         self.message_post(
-            body=_('You have been assigned to %(type)s %(name)s.') % {
-                'type': label, 'name': display_name,
+            body=_('You have been assigned to Job Card %(name)s.') % {
+                'name': display_name,
             },
             partner_ids=partners.ids,
             subtype_xmlid='mail.mt_comment',
@@ -346,9 +276,8 @@ class ProjectTask(models.Model):
     # =====================================================================
     # VEHICLE PHOTOS - reads/writes the real image{N}/image{N}_name/
     # image{N}_desc fields (garage_management_odoo) directly. No separate
-    # photo model or storage - this task record IS the record shown in
-    # Vehicle Inspection / Job Card, so writes here are immediately the
-    # same data there.
+    # photo model or storage - this task record IS the record shown on the
+    # Job Card, so writes here are immediately the same data there.
     # =====================================================================
     def get_photo_slots(self):
         self.ensure_one()
@@ -403,7 +332,7 @@ class ProjectTask(models.Model):
         Runs every 15 minutes (see data/ir_cron_data.xml)."""
         today = fields.Date.context_today(self)
         overdue = self.search([
-            '|', ('is_jobcard', '=', True), ('is_vc', '=', True),
+            ('is_jobcard', '=', True),
             ('promise_date', '!=', False),
             ('promise_date', '<', today),
         ])

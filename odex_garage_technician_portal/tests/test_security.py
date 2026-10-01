@@ -27,15 +27,15 @@ class TestTechnicianSecurity(TransactionCase):
         })
         # task_a: A is an assignee (user_ids)
         self.task_a = self.env['project.task'].create({
-            'name': 'VC-SEC-A', 'is_vc': True, 'user_ids': [(4, self.user_a.id)],
+            'name': 'JC-SEC-A', 'is_jobcard': True, 'user_ids': [(4, self.user_a.id)],
         })
         # task_b: B is an assignee
         self.task_b = self.env['project.task'].create({
-            'name': 'VC-SEC-B', 'is_vc': True, 'user_ids': [(4, self.user_b.id)],
+            'name': 'JC-SEC-B', 'is_jobcard': True, 'user_ids': [(4, self.user_b.id)],
         })
 
     def test_technician_sees_only_own_task(self):
-        tasks = self.env['project.task'].with_user(self.user_a).search([('is_vc', '=', True)])
+        tasks = self.env['project.task'].with_user(self.user_a).search([('is_jobcard', '=', True)])
         self.assertIn(self.task_a.id, tasks.ids)
         self.assertNotIn(self.task_b.id, tasks.ids)
 
@@ -51,16 +51,16 @@ class TestTechnicianSecurity(TransactionCase):
 
     def test_technician_with_own_timesheet_line_can_see_task_without_being_assignee(self):
         # task_c has neither A nor B as an assignee, but A has logged time on it
-        task_c = self.env['project.task'].create({'name': 'VC-SEC-C', 'is_vc': True})
+        task_c = self.env['project.task'].create({'name': 'JC-SEC-C', 'is_jobcard': True})
         self.env['account.analytic.line'].create({
             'task_id': task_c.id, 'employees_id': self.employee_a.id,
             'name': '/', 'date': fields.Date.today(),
         })
-        tasks = self.env['project.task'].with_user(self.user_a).search([('is_vc', '=', True)])
+        tasks = self.env['project.task'].with_user(self.user_a).search([('is_jobcard', '=', True)])
         self.assertIn(task_c.id, tasks.ids)
 
     def test_non_portal_tasks_unaffected(self):
-        # a plain project task (neither job card nor inspection) must not
+        # a plain project task (not a job card) must not
         # be filtered by the technician record rule at all
         plain_task = self.env['project.task'].create({'name': 'Plain Task'})
         tasks = self.env['project.task'].with_user(self.user_a).search([('id', '=', plain_task.id)])

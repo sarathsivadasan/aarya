@@ -9,7 +9,7 @@ import { useNarrowScreen } from "./narrow_screen";
 import { platformClasses } from "./platform";
 
 import { DashboardPage } from "./components/dashboard_page";
-import { InspectionWorkspace } from "./components/inspection_workspace";
+import { JobWorkspace } from "./components/job_workspace";
 import { PerformancePage } from "./components/performance_page";
 import { ProfilePage } from "./components/profile_page";
 import { AdminJobsPage } from "./components/admin_jobs_page";
@@ -17,7 +17,7 @@ import { AdminJobsPage } from "./components/admin_jobs_page";
 /**
  * Odex Garage Technician Portal - root client action.
  *
- * Reproduces the reference layout: left sidebar with the six menu
+ * Reproduces the reference layout: left sidebar with the menu
  * entries, a top bar, and a routed main content area. State (current
  * page, selected task) lives here and is passed down as props so every
  * sub-page/tab talks to the same source of truth.
@@ -28,7 +28,7 @@ import { AdminJobsPage } from "./components/admin_jobs_page";
  */
 export class TechnicianPortalAction extends Component {
     static template = "odex_garage_technician_portal.TechnicianPortalAction";
-    static components = { DashboardPage, InspectionWorkspace, PerformancePage, ProfilePage, AdminJobsPage };
+    static components = { DashboardPage, JobWorkspace, PerformancePage, ProfilePage, AdminJobsPage };
     static props = ["*"];
 
     setup() {
@@ -36,8 +36,8 @@ export class TechnicianPortalAction extends Component {
         // reactive; covers tablet portrait, which ui.isSmall misses
         this.narrow = useNarrowScreen();
         this.state = useState({
-            // dashboard | inspection | job_card | parts | performance |
-            // profile | admin_jobs
+            // dashboard | job_card | parts | performance | profile |
+            // admin_jobs
             page: "dashboard",
             selectedLineId: null,
             statusFilter: null,
@@ -80,17 +80,15 @@ export class TechnicianPortalAction extends Component {
         this.state.sidebarOpen = false; // auto-close the drawer after navigating on mobile
     }
 
-    /** lineId is an account.analytic.line id. recordType tells us whether
-     *  it belongs to a Job Card or a Vehicle Inspection (task_id.is_jobcard
-     *  / task_id.is_vc), so we land on the right page. */
-    openInspection(lineId, recordType) {
-        this.state.page = recordType === "job_card" ? "job_card" : "inspection";
+    /** lineId is an account.analytic.line id on a Job Card. */
+    openJob(lineId) {
+        this.state.page = "job_card";
         this.state.selectedLineId = lineId;
     }
 
     /** Called from the Dashboard's "View All" links. status may be null
      *  (show everything); page lets "View Timesheet" jump to Performance. */
-    viewAll(status, page = "inspection") {
+    viewAll(status, page = "job_card") {
         this.state.page = page;
         this.state.statusFilter = status;
         this.state.selectedLineId = null;

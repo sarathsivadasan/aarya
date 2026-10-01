@@ -5,18 +5,18 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <th>Request No / Part No</th>
+                        <th>Request No</th>
                         <th>Part</th>
                         <th>Product</th><th>Quantity</th>
                         <th>Available Qty</th>
-                        <th t-if="!props.isVc">Type</th>
-                        <th t-if="!props.isVc">Status</th>
-                        <th t-if="!props.isVc">Remarks</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>Remarks</th>
                         <th/>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr t-foreach="editableLines" t-as="line" t-key="line.id">
+                    <tr t-foreach="state.lines" t-as="line" t-key="line.id">
                         <td t-esc="line.part_no"/>
                         <td class="o_tp_part_cell">
                             <input type="text" class="o_tp_part_input"
@@ -27,43 +27,20 @@
                                    t-on-input="(ev) => this.onPartInput(line, ev)"
                                    t-on-blur="(ev) => this.onPartBlur(line, ev)"
                                    t-on-keydown="(ev) => this.onPartKeydown(line, ev)"/>
-                            <span class="o_tp_part_source" t-if="partSourceLabel(line)"
-                                  t-esc="partSourceLabel(line)"/>
                         </td>
                         <td t-esc="line.product"/>
                         <td t-esc="line.qty.toFixed(2)"/>
                         <td t-esc="line.qty_available.toFixed(2)"/>
-                        <td t-if="!props.isVc" t-esc="line.cost_type"/>
-                        <td t-if="!props.isVc"><span t-attf-class="badge o_tp_status_#{line.state}" t-esc="line.state"/></td>
-                        <td t-if="!props.isVc" t-esc="line.remarks"/>
+                        <td t-esc="line.cost_type"/>
+                        <td><span t-attf-class="badge o_tp_status_#{line.state}" t-esc="line.state"/></td>
+                        <td t-esc="line.remarks"/>
                         <td>
-                            <i t-if="props.isVc or line.state === 'draft' or line.state === 'reject'"
+                            <i t-if="canDelete(line)"
                                class="fa fa-trash" t-on-click="() => this.deleteLine(line)"/>
                         </td>
                     </tr>
-
-                    <!-- Part data that lives on the linked Job Card /
-                         Vehicle Inspection and has no counterpart line
-                         here. Read-only on purpose: editing it from this
-                         side would create a second line for the same
-                         part. -->
-                    <tr t-foreach="relatedLines" t-as="line" t-key="'rel_' + line.id"
-                        class="o_tp_related_row">
-                        <td>
-                            <t t-esc="line.part_no"/>
-                            <span class="badge o_tp_related_badge" t-esc="line.origin"/>
-                        </td>
-                        <td class="o_tp_part_cell">
-                            <t t-esc="line.part || '-'"/>
-                            <span class="o_tp_part_source" t-esc="'on ' + line.origin_ref"/>
-                        </td>
-                        <td t-esc="line.product"/>
-                        <td t-esc="line.qty.toFixed(2)"/>
-                        <td t-esc="line.qty_available.toFixed(2)"/>
-                        <td t-if="!props.isVc" t-esc="line.cost_type"/>
-                        <td t-if="!props.isVc"/>
-                        <td t-if="!props.isVc"/>
-                        <td/>
+                    <tr t-if="!state.lines.length">
+                        <td colspan="9" class="text-muted">No parts requested on this job card yet.</td>
                     </tr>
                 </tbody>
             </table>
@@ -76,9 +53,9 @@
                 </select>
                 <input type="text" placeholder="Part" t-model="state.newLine.part"/>
                 <input type="number" min="0.01" step="0.01" t-model="state.newLine.qty"/>
-                <input t-if="!props.isVc" type="text" placeholder="Remarks" t-model="state.newLine.remarks"/>
+                <input type="text" placeholder="Remarks" t-model="state.newLine.remarks"/>
                 <button class="btn btn-primary" t-on-click="addLine">
-                    <i class="fa fa-shopping-cart"/> <t t-esc="props.isVc ? 'Add Part' : 'Request Part'"/></button>
+                    <i class="fa fa-shopping-cart"/> Request Part</button>
             </div>
 
             <div class="o_tp_parts_footer">
@@ -87,14 +64,9 @@
             </div>
             <div class="o_tp_info_note">
                 <i class="fa fa-info-circle"/>
-                Part information saves as you type and is written back to the
-                Vehicle Inspection and the linked Job Card, so both stay in
-                step without a second line being created.
-            </div>
-            <div class="o_tp_info_note" t-if="!props.isVc">
-                <i class="fa fa-info-circle"/>
                 Requesting a part sends it straight to your supervisor for approval -
-                no separate submit step. Track status right here or from the
+                no separate submit step. Part information saves as you type.
+                Track status right here or from the
                 <strong>Parts Requested</strong> menu.
             </div>
         </div>

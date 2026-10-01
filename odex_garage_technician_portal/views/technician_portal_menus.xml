@@ -56,9 +56,7 @@
                     <!-- Administrator controls. Same time tracking as the
                          technician buttons above (both call the shared
                          _do_*() internals); the difference is the
-                         permission check and the audit entry. Admin Stop
-                         also bypasses the QC gate so a stuck job can
-                         always be closed out. -->
+                         permission check and the audit entry. -->
                     <button name="action_admin_pause" type="object"
                             string="Admin: Pause" class="btn-warning"
                             groups="odex_garage_technician_portal.group_garage_technician_supervisor"
@@ -112,18 +110,6 @@
     </record>
 
     <!-- Actions -->
-    <record id="action_technician_my_inspections" model="ir.actions.act_window">
-        <field name="name">Vehicle Inspection Work Records</field>
-        <field name="res_model">account.analytic.line</field>
-        <field name="view_mode">list,form</field>
-        <field name="domain">[('task_id.is_vc', '=', True)]</field>
-        <field name="view_ids" eval="[
-            (5, 0, 0),
-            (0, 0, {'view_mode': 'list', 'view_id': ref('view_analytic_line_technician_list')}),
-            (0, 0, {'view_mode': 'form', 'view_id': ref('view_analytic_line_technician_form')}),
-        ]"/>
-    </record>
-
     <record id="action_technician_job_cards" model="ir.actions.act_window">
         <field name="name">Job Card Work Records</field>
         <field name="res_model">account.analytic.line</field>
@@ -140,9 +126,8 @@
         <field name="name">All Assigned Jobs</field>
         <field name="res_model">account.analytic.line</field>
         <field name="view_mode">list,form</field>
-        <field name="domain">['&amp;', ('employees_id', '!=', False),
-                              '|', ('task_id.is_jobcard', '=', True),
-                                   ('task_id.is_vc', '=', True)]</field>
+        <field name="domain">[('employees_id', '!=', False),
+                              ('task_id.is_jobcard', '=', True)]</field>
         <field name="context">{'search_default_group_technician': 1}</field>
         <field name="view_ids" eval="[
             (5, 0, 0),
@@ -173,9 +158,6 @@
     <menuitem id="menu_technician_dashboard" name="Dashboard"
               parent="menu_technician_portal_root"
               action="action_technician_portal_client" sequence="10"/>
-    <menuitem id="menu_technician_inspection" name="Vehicle Inspection"
-              parent="menu_technician_portal_root"
-              action="action_technician_portal_client" sequence="20"/>
     <menuitem id="menu_technician_job_card" name="Job Card"
               parent="menu_technician_portal_root"
               action="action_technician_portal_client" sequence="30"/>
@@ -192,9 +174,6 @@
     <menuitem id="menu_technician_native_fallback" name="Backend Views (Admin)"
               parent="menu_technician_portal_root" sequence="90"
               groups="group_garage_technician_supervisor"/>
-    <menuitem id="menu_technician_native_inspections" name="Inspections (List/Form)"
-              parent="menu_technician_native_fallback"
-              action="action_technician_my_inspections" sequence="10"/>
     <menuitem id="menu_technician_native_job_cards" name="Job Cards (List/Form)"
               parent="menu_technician_native_fallback"
               action="action_technician_job_cards" sequence="20"/>

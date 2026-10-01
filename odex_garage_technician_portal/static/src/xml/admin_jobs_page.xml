@@ -46,11 +46,6 @@
             <div class="o_tp_admin_filters">
                 <input type="text" class="o_tp_admin_search" placeholder="Search job, vehicle, service or technician..."
                        t-att-value="state.filters.search" t-on-input="onSearchInput"/>
-                <select t-model="state.filters.task_type" t-on-change="onFilterChange">
-                    <option value="">All origins</option>
-                    <option value="is_jobcard">Job Card</option>
-                    <option value="is_vc">Vehicle Inspection</option>
-                </select>
                 <select t-model="state.filters.status" t-on-change="onFilterChange">
                     <option value="">All statuses</option>
                     <option value="not_started">Not Started</option>
@@ -73,7 +68,6 @@
                     <thead>
                         <tr>
                             <th>Job Reference</th>
-                            <th>Origin</th>
                             <th>Technician</th>
                             <th>Vehicle</th>
                             <th>Service</th>
@@ -89,7 +83,6 @@
                             t-att-class="state.selectedJobId === job.id ? 'o_tp_my_line' : ''"
                             t-on-click="() => this.selectJob(job)">
                             <td><strong t-esc="job.task_name"/></td>
-                            <td t-esc="job.record_type_label"/>
                             <td t-esc="job.technician"/>
                             <td t-esc="job.vehicle || '-'"/>
                             <td t-esc="job.service || '-'"/>

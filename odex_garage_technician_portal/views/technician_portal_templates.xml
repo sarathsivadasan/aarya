@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <!-- Phase 2: the pixel-perfect OWL Technician Portal, registered as a
-         single client action. All six sections (Dashboard, Vehicle
-         Inspection, Job Card, Parts Requested, My Performance, Profile)
+         single client action. All sections (Dashboard, Job Card, Parts
+         Requested, My Performance, Profile, All Assigned Jobs)
          live inside it and are switched client-side (see
          technician_portal_action.js) so navigation between them is instant. -->
     <record id="action_technician_portal_client" model="ir.actions.client">

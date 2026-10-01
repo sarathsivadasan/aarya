@@ -101,7 +101,7 @@
 .o_tp_card_value { font-size: 22px; font-weight: 700; color: #222; }
 .o_tp_card_link { font-size: 12px; color: var(--tp-primary); }
 
-/* ---------- Inspection list rows (shared: dashboard recent + workspace list) ---------- */
+/* ---------- Job list rows (shared: dashboard recent + workspace list) ---------- */
 .o_tp_recent, .o_tp_list_pane {
     background: var(--tp-card-bg);
     border: 1px solid var(--tp-border);
@@ -116,13 +116,13 @@
     width: 100%; margin-bottom: 10px; padding: 6px 10px;
     border: 1px solid var(--tp-border); border-radius: 6px;
 }
-.o_tp_inspection_list { overflow-y: auto; max-height: 70vh; }
-.o_tp_inspection_row {
+.o_tp_job_list { overflow-y: auto; max-height: 70vh; }
+.o_tp_job_row {
     padding: 10px; border-radius: 8px; cursor: pointer; margin-bottom: 4px;
     border-left: 3px solid transparent;
 }
-.o_tp_inspection_row:hover { background: #f7f6fd; }
-.o_tp_inspection_row.active { background: #f0edfc; border-left-color: var(--tp-primary); }
+.o_tp_job_row:hover { background: #f7f6fd; }
+.o_tp_job_row.active { background: #f0edfc; border-left-color: var(--tp-primary); }
 .o_tp_row_left { display: flex; justify-content: space-between; align-items: center; }
 .o_tp_row_code { color: var(--tp-primary); font-weight: 600; }
 .o_tp_row_vehicle { font-weight: 600; margin: 2px 0; }
@@ -446,7 +446,7 @@
 
     /* bigger tap targets throughout */
     .o_tp_menu li { padding: 14px 20px; }
-    .o_tp_inspection_row { padding: 14px 10px; }
+    .o_tp_job_row { padding: 14px 10px; }
 }
 
 @media (max-width: 420px) {

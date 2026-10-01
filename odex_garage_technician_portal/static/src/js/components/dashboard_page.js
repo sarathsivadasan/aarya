@@ -6,7 +6,7 @@ import { Component, useState, onWillStart, onWillDestroy } from "@odoo/owl";
 export class DashboardPage extends Component {
     static template = "odex_garage_technician_portal.DashboardPage";
     static props = {
-        openInspection: { type: Function, optional: true },
+        openJob: { type: Function, optional: true },
         viewAll: { type: Function, optional: true },
     };
 
@@ -18,7 +18,7 @@ export class DashboardPage extends Component {
 
         onWillStart(async () => {
             await this.loadCounters();
-            this.state.recent = await rpc("/technician_portal/inspection_list", {});
+            this.state.recent = await rpc("/technician_portal/job_list", {});
         });
 
         // live refresh every 30s, same pattern the reference "Realtime counters" spec asks for
@@ -31,15 +31,15 @@ export class DashboardPage extends Component {
     }
 
     /** id is an account.analytic.line id - the portal's primary record. */
-    openTask(id, recordType) {
-        if (this.props.openInspection) {
-            this.props.openInspection(id, recordType);
+    openTask(id) {
+        if (this.props.openJob) {
+            this.props.openJob(id);
         }
     }
 
     /** status: not_started | running | paused | completed | null (all)
-     *  page: 'inspection' | 'performance' */
-    viewAll(status, page = "inspection") {
+     *  page: 'job_card' | 'performance' */
+    viewAll(status, page = "job_card") {
         if (this.props.viewAll) {
             this.props.viewAll(status, page);
         }

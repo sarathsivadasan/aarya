@@ -6,8 +6,7 @@
 # removed. The real 'description' field (job_card base) is used for the
 # QC tab's text column - an earlier version of this module added a
 # redundant 'remarks' field here, which has been removed in favour of
-# 'description' to match what Vehicle Inspection / Job Card actually
-# show. image/checked_by/checked_date below are genuinely new additions
+# 'description' to match what the Job Card actually shows. image/checked_by/checked_date below are genuinely new additions
 # (no collision, purely additive).
 
 from odoo import api, fields, models, _

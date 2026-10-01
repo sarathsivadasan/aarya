@@ -16,13 +16,6 @@
                             <field name="technician_late_job_threshold"/>
                         </setting>
                     </block>
-                    <block title="Parts" name="technician_parts">
-                        <setting string="Job Card / Inspection Link Field"
-                                 help="Technical name of the many2one on project.task that links a Job Card to the Vehicle Inspection it came from, e.g. 'inspection_id'. Part information entered in the Parts tab is kept in step across that link. Leave empty to detect it automatically.">
-                            <field name="technician_part_link_field"
-                                   placeholder="auto-detect"/>
-                        </setting>
-                    </block>
                 </app>
             </xpath>
         </field>

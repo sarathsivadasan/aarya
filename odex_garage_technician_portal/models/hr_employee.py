@@ -36,7 +36,7 @@ class HrEmployee(models.Model):
         your instance it isn't set on every technician - which is why the
         status label rendered for nobody. So we also accept: the linked
         user is in the Garage Technician group, OR the employee already
-        has timesheet lines on a job card / vehicle inspection.
+        has timesheet lines on a job card.
         """
         self.ensure_one()
         if self.workshop_position_type:
@@ -46,7 +46,7 @@ class HrEmployee(models.Model):
             return True
         return bool(self.env['account.analytic.line'].search_count([
             ('employees_id', '=', self.id),
-            '|', ('task_id.is_jobcard', '=', True), ('task_id.is_vc', '=', True),
+            ('task_id.is_jobcard', '=', True),
         ]))
 
     def _compute_technician_work_status(self):

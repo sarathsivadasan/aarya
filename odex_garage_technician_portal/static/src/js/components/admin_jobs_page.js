@@ -7,10 +7,8 @@ import { useService } from "@web/core/utils/hooks";
 /**
  * Administrator view - every assigned job in the workshop (requirement 3).
  *
- * The list is built from account.analytic.line, which is where a
- * technician assignment actually lives, so a job appears here whether it
- * originated as a Job Card or as a Vehicle Inspection - there is no
- * second query and no union of two lists to keep in step.
+ * The list is built from account.analytic.line on Job Cards, which is
+ * where a technician assignment actually lives.
  *
  * Pause / Resume / Stop hit the admin routes, which call the same
  * _do_pause() / _do_resume() / _do_end() internals the technician's own
@@ -29,7 +27,7 @@ export class AdminJobsPage extends Component {
             jobs: [],
             technicians: [],
             logs: [],
-            filters: { search: "", task_type: "", status: "", technician_id: "" },
+            filters: { search: "", status: "", technician_id: "" },
             selectedJobId: null,
             busy: {},
             loading: true,
@@ -61,7 +59,6 @@ export class AdminJobsPage extends Component {
         const f = this.state.filters;
         this.state.jobs = await rpc("/technician_portal/admin/jobs", {
             search: f.search || "",
-            task_type: f.task_type || null,
             status: f.status || null,
             technician_id: f.technician_id ? parseInt(f.technician_id, 10) : null,
         });
@@ -85,7 +82,7 @@ export class AdminJobsPage extends Component {
     }
 
     async clearFilters() {
-        this.state.filters = { search: "", task_type: "", status: "", technician_id: "" };
+        this.state.filters = { search: "", status: "", technician_id: "" };
         await this.loadJobs();
     }
 

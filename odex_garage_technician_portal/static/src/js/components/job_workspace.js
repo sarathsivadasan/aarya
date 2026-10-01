@@ -13,11 +13,15 @@ import { PartsPhotosTab } from "./tabs/parts_photos_tab";
 import { LogTab } from "./tabs/log_tab";
 import { NotesTab } from "./tabs/notes_tab";
 
-export class InspectionWorkspace extends Component {
-    static template = "odex_garage_technician_portal.InspectionWorkspace";
+/**
+ * Job Card workspace - list of MY work records (account.analytic.line on
+ * Job Cards) plus the detail pane with timer and tabs.
+ * v5.0.0: was InspectionWorkspace; Vehicle Inspection support removed.
+ */
+export class JobWorkspace extends Component {
+    static template = "odex_garage_technician_portal.JobWorkspace";
     static components = { ComplaintsTab, VehiclePhotosTab, QcTab, PartsTab, PartsPhotosTab, LogTab, NotesTab };
     static props = {
-        taskType: { type: String, optional: true },
         selectedLineId: { type: [Number, { value: null }], optional: true },
         focusTab: { type: String, optional: true },
         statusFilter: { type: [String, { value: null }], optional: true },
@@ -77,9 +81,8 @@ export class InspectionWorkspace extends Component {
     }
 
     async loadList() {
-        this.state.list = await rpc("/technician_portal/inspection_list", {
+        this.state.list = await rpc("/technician_portal/job_list", {
             search: this.state.search,
-            task_type: this.props.taskType || "is_vc",
             status: this.state.statusFilter || null,
         });
     }
@@ -98,7 +101,7 @@ export class InspectionWorkspace extends Component {
     }
 
     async selectLine(id) {
-        this.state.detail = await rpc("/technician_portal/inspection_detail", { line_id: id });
+        this.state.detail = await rpc("/technician_portal/job_detail", { line_id: id });
         // elapsed is computed server-side (against the same timezone
         // convention the data is stored in); we only tick forward locally
         // from the moment we received it.
@@ -237,6 +240,6 @@ export class InspectionWorkspace extends Component {
     }
 
     print() {
-        window.open(`/report/pdf/odex_garage_technician_portal.report_vehicle_inspection/${this.state.detail.task_id}`, "_blank");
+        window.open(`/report/pdf/odex_garage_technician_portal.report_technician_job/${this.state.detail.task_id}`, "_blank");
     }
 }
