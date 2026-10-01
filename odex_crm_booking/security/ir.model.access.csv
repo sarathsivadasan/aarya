@@ -1,0 +1,12 @@
+id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
+access_odex_crm_business_user,odex.crm.business.user,model_odex_crm_business,sales_team.group_sale_salesman,1,0,0,0
+access_odex_crm_business_manager,odex.crm.business.manager,model_odex_crm_business,sales_team.group_sale_manager,1,1,1,1
+access_odex_crm_customer_type_user,odex.crm.customer.type.user,model_odex_crm_customer_type,sales_team.group_sale_salesman,1,0,0,0
+access_odex_crm_customer_type_manager,odex.crm.customer.type.manager,model_odex_crm_customer_type,sales_team.group_sale_manager,1,1,1,1
+access_fleet_vehicle_crm_salesman,fleet.vehicle.crm.salesman,fleet.model_fleet_vehicle,sales_team.group_sale_salesman,1,1,1,0
+access_fleet_vehicle_model_crm_salesman,fleet.vehicle.model.crm.salesman,fleet.model_fleet_vehicle_model,sales_team.group_sale_salesman,1,0,0,0
+access_fleet_vehicle_brand_crm_salesman,fleet.vehicle.brand.crm.salesman,fleet.model_fleet_vehicle_model_brand,sales_team.group_sale_salesman,1,0,0,0
+access_fleet_vehicle_category_crm_salesman,fleet.vehicle.category.crm.salesman,fleet.model_fleet_vehicle_model_category,sales_team.group_sale_salesman,1,0,0,0
+access_fleet_vehicle_tag_crm_salesman,fleet.vehicle.tag.crm.salesman,fleet.model_fleet_vehicle_tag,sales_team.group_sale_salesman,1,0,0,0
+access_fleet_vehicle_state_crm_salesman,fleet.vehicle.state.crm.salesman,fleet.model_fleet_vehicle_state,sales_team.group_sale_salesman,1,0,0,0
+access_fleet_vehicle_odometer_crm_salesman,fleet.vehicle.odometer.crm.salesman,fleet.model_fleet_vehicle_odometer,sales_team.group_sale_salesman,1,0,0,0

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="crm_lead_view_form_odex_vehicle_service" model="ir.ui.view">
+        <field name="name">crm.lead.form.odex.vehicle.service</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="priority">90</field>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="attributes">
+                <attribute name="class" add="o_odex_crm_service_form" separator=" "/>
+            </xpath>
+
+            <!-- Header: Create Booking first -->
+            <xpath expr="//header/button[@name='action_set_won_rainbowman']" position="before">
+                <button name="action_create_booking" type="object" string="Create Booking"
+                        icon="fa-calendar-plus-o" class="btn-secondary o_odex_create_booking"
+                        invisible="not active" data-hotkey="b"/>
+            </xpath>
+
+            <!-- Smart buttons: Bookings first, Activities last (chatter is removed) -->
+            <xpath expr="//div[@name='button_box']/button[1]" position="before">
+                <button name="action_view_bookings" type="object" class="oe_stat_button"
+                        icon="fa-calendar" invisible="not id">
+                    <field name="booking_count" widget="statinfo" string="Bookings"/>
+                </button>
+            </xpath>
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_odex_activities" type="object" class="oe_stat_button"
+                        icon="fa-clock-o" invisible="not id">
+                    <field name="odex_activity_count" widget="statinfo" string="Activities"/>
+                </button>
+            </xpath>
+
+            <!-- The two service sections replace the standard partner/info groups -->
+            <xpath expr="//sheet/div[hasclass('oe_title')]" position="after">
+                <field name="odex_vehicle_partner_id" invisible="1"/>
+                <field name="odex_allowed_vehicle_ids" invisible="1"/>
+                <field name="odex_vehicle_ro" invisible="1"/>
+                <field name="odex_vehicle_last_odometer" invisible="1"/>
+
+                <div class="o_odex_section" name="odex_customer_details">
+                    <div class="o_odex_section_head">
+                        <i class="fa fa-user" role="img" aria-label="Customer" title="Customer"/>
+                        <span>Customer Details</span>
+                    </div>
+                    <group class="o_odex_section_body">
+                        <group name="odex_customer_left">
+                            <field name="partner_id" string="Customer Name" required="1"
+                                   options="{'no_quick_create': True}"
+                                   context="{'default_name': contact_name or partner_name,
+                                             'default_phone': phone,
+                                             'default_mobile': alternate_phone,
+                                             'default_email': email_from,
+                                             'default_user_id': user_id,
+                                             'default_team_id': team_id}"/>
+                            <field name="phone" string="Contact Number" widget="phone" required="1"/>
+                            <field name="alternate_phone" widget="phone"/>
+                            <field name="tag_ids" widget="many2many_tags"
+                                   options="{'color_field': 'color', 'no_create_edit': True}"/>
+                        </group>
+                        <group name="odex_customer_right">
+                            <field name="customer_waiting" widget="boolean_toggle"/>
+                            <field name="extra_info" placeholder="Preferences, call instructions, anything the workshop should know..."/>
+                            <field name="odex_business_id" options="{'no_quick_create': True}"/>
+                            <field name="odex_customer_type_id" string="Type" options="{'no_quick_create': True}"/>
+                        </group>
+                    </group>
+                </div>
+
+                <div class="o_odex_section" name="odex_vehicle_details">
+                    <div class="o_odex_section_head">
+                        <i class="fa fa-car" role="img" aria-label="Vehicle" title="Vehicle"/>
+                        <span>Vehicle Details</span>
+                    </div>
+                    <group class="o_odex_section_body">
+                        <group name="odex_vehicle_left">
+                            <field name="vehicle_id"
+                                   domain="odex_vehicle_partner_id and [('id', 'in', odex_allowed_vehicle_ids)] or []"
+                                   options="{'no_quick_create': True}"
+                                   placeholder="Search by plate, chassis or model..."
+                                   context="{'odex_crm_partner_id': odex_vehicle_partner_id,
+                                             'default_driver_id': odex_vehicle_partner_id,
+                                             'form_view_ref': 'odex_crm_booking.fleet_vehicle_view_form_crm_quick'}"/>
+                            <field name="odex_license_plate"
+                                   readonly="not vehicle_id or ',plate,' in odex_vehicle_ro"/>
+                            <field name="odex_vehicle_make"
+                                   readonly="not vehicle_id or ',make,' in odex_vehicle_ro"/>
+                            <field name="odex_vehicle_model"
+                                   readonly="not vehicle_id or ',model,' in odex_vehicle_ro"/>
+                            <field name="odex_chassis_no"
+                                   readonly="not vehicle_id or ',chassis,' in odex_vehicle_ro"/>
+                        </group>
+                        <group name="odex_vehicle_right">
+                            <field name="odex_cylinder_count"
+                                   readonly="not vehicle_id or ',cylinder,' in odex_vehicle_ro"/>
+                            <field name="odex_vehicle_colour"
+                                   readonly="not vehicle_id or ',colour,' in odex_vehicle_ro"/>
+                            <field name="odex_engine_no"
+                                   readonly="not vehicle_id or ',engine,' in odex_vehicle_ro"/>
+                            <field name="odex_vehicle_year"
+                                   readonly="not vehicle_id or ',year,' in odex_vehicle_ro"/>
+                            <field name="odometer_reading" required="1"
+                                   placeholder="Current reading in KM"/>
+                        </group>
+                    </group>
+                </div>
+            </xpath>
+
+            <!-- Standard partner/info groups stay in the DOM (onchanges, phone/email
+                 sync flags) but are not shown; sales fields move to a notebook page. -->
+            <xpath expr="//sheet/group[1]" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Sales" name="odex_sales_info">
+                    <group>
+                        <group>
+                            <field name="email_from" widget="email"/>
+                            <field name="user_id" widget="many2one_avatar_user"/>
+                            <field name="team_id" options="{'no_open': True, 'no_create': True}"/>
+                        </group>
+                        <group>
+                            <field name="date_deadline"/>
+                            <field name="priority" widget="priority"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+
+            <!-- Full-width form: no chatter on the right -->
+            <xpath expr="//chatter" position="replace"/>
+        </field>
+    </record>
+</odoo>

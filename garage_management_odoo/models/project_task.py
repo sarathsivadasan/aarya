@@ -2,19 +2,19 @@
 
 from odoo import fields, models, api
 
-# FLEET_IMAGES_NAME = [
-#     ('front_view', 'Front view'),
-#     ('rear_view', 'Rear view'),
-#     ('left_side_view', 'Left side view'),
-#     ('right_side_view', 'Right side view'),
-#     ('top_view', 'Top view'),
-#     ('front_left_corner', 'Front-left corner'),
-#     ('front_right_corner', 'Front-right corner'),
-#     ('rear_left_corner', 'Rear-left corner'),
-#     ('rear_right_corner', 'Rear-right corner'),
-#     ('dent_scratch', 'Any visible dent, scratch, or damage'),
-#     ('odometer', 'Odometer reading'),
-# ]
+FLEET_IMAGES_NAME = [
+    ('front_view', 'Front view'),
+    ('rear_view', 'Rear view'),
+    ('left_side_view', 'Left side view'),
+    ('right_side_view', 'Right side view'),
+    ('top_view', 'Top view'),
+    ('front_left_corner', 'Front-left corner'),
+    ('front_right_corner', 'Front-right corner'),
+    ('rear_left_corner', 'Rear-left corner'),
+    ('rear_right_corner', 'Rear-right corner'),
+    ('dent_scratch', 'Any visible dent, scratch, or damage'),
+    ('odometer', 'Odometer reading'),
+]
 
 
 class Task(models.Model):
