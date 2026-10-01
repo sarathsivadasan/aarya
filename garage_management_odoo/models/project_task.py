@@ -2,19 +2,19 @@
 
 from odoo import fields, models, api
 
-FLEET_IMAGES_NAME = [
-    ('front_view', 'Front view'),
-    ('rear_view', 'Rear view'),
-    ('left_side_view', 'Left side view'),
-    ('right_side_view', 'Right side view'),
-    ('top_view', 'Top view'),
-    ('front_left_corner', 'Front-left corner'),
-    ('front_right_corner', 'Front-right corner'),
-    ('rear_left_corner', 'Rear-left corner'),
-    ('rear_right_corner', 'Rear-right corner'),
-    ('dent_scratch', 'Any visible dent, scratch, or damage'),
-    ('odometer', 'Odometer reading'),
-]
+# FLEET_IMAGES_NAME = [
+#     ('front_view', 'Front view'),
+#     ('rear_view', 'Rear view'),
+#     ('left_side_view', 'Left side view'),
+#     ('right_side_view', 'Right side view'),
+#     ('top_view', 'Top view'),
+#     ('front_left_corner', 'Front-left corner'),
+#     ('front_right_corner', 'Front-right corner'),
+#     ('rear_left_corner', 'Rear-left corner'),
+#     ('rear_right_corner', 'Rear-right corner'),
+#     ('dent_scratch', 'Any visible dent, scratch, or damage'),
+#     ('odometer', 'Odometer reading'),
+# ]
 
 
 class Task(models.Model):
@@ -86,58 +86,58 @@ class Task(models.Model):
     insurance_company = fields.Char(
         string="Insurance Company"
     )
-    image1_name = fields.Selection(FLEET_IMAGES_NAME, default="front_view")
-    image2_name = fields.Selection(FLEET_IMAGES_NAME, default="rear_view")
-    image3_name = fields.Selection(FLEET_IMAGES_NAME, default="left_side_view")
-    image4_name = fields.Selection(FLEET_IMAGES_NAME, default="right_side_view")
-    image5_name = fields.Selection(FLEET_IMAGES_NAME, default="top_view")
-    image6_name = fields.Selection(FLEET_IMAGES_NAME, default="front_left_corner")
-    image7_name = fields.Selection(FLEET_IMAGES_NAME, default="front_right_corner")
-    image8_name = fields.Selection(FLEET_IMAGES_NAME, default="rear_left_corner")
-    image9_name = fields.Selection(FLEET_IMAGES_NAME, default="rear_right_corner")
-    image10_name = fields.Selection(FLEET_IMAGES_NAME, default="dent_scratch")
-    image11_name = fields.Selection(FLEET_IMAGES_NAME, default="odometer")
-    image12_name = fields.Selection(FLEET_IMAGES_NAME)
-    image1 = fields.Binary(string="")
-    image2 = fields.Binary(string="")
-    image3 = fields.Binary(string="")
-    image4 = fields.Binary(string="")
-    image5 = fields.Binary(string="")
-    image6 = fields.Binary(string="")
-    image7 = fields.Binary(string="")
-    image8 = fields.Binary(string="")
-    image9 = fields.Binary(string="")
-    image10 = fields.Binary(string="")
-    image11 = fields.Binary(string="")
-    image12 = fields.Binary(string="")
-    image1_desc = fields.Text()
-    image2_desc = fields.Text()
-    image3_desc = fields.Text()
-    image4_desc = fields.Text()
-    image5_desc = fields.Text()
-    image6_desc = fields.Text()
-    image7_desc = fields.Text()
-    image8_desc = fields.Text()
-    image9_desc = fields.Text()
-    image10_desc = fields.Text()
-    image11_desc = fields.Text()
-    image12_desc = fields.Text()
+    # image1_name = fields.Selection(FLEET_IMAGES_NAME, default="front_view")
+    # image2_name = fields.Selection(FLEET_IMAGES_NAME, default="rear_view")
+    # image3_name = fields.Selection(FLEET_IMAGES_NAME, default="left_side_view")
+    # image4_name = fields.Selection(FLEET_IMAGES_NAME, default="right_side_view")
+    # image5_name = fields.Selection(FLEET_IMAGES_NAME, default="top_view")
+    # image6_name = fields.Selection(FLEET_IMAGES_NAME, default="front_left_corner")
+    # image7_name = fields.Selection(FLEET_IMAGES_NAME, default="front_right_corner")
+    # image8_name = fields.Selection(FLEET_IMAGES_NAME, default="rear_left_corner")
+    # image9_name = fields.Selection(FLEET_IMAGES_NAME, default="rear_right_corner")
+    # image10_name = fields.Selection(FLEET_IMAGES_NAME, default="dent_scratch")
+    # image11_name = fields.Selection(FLEET_IMAGES_NAME, default="odometer")
+    # image12_name = fields.Selection(FLEET_IMAGES_NAME)
+    # image1 = fields.Binary(string="")
+    # image2 = fields.Binary(string="")
+    # image3 = fields.Binary(string="")
+    # image4 = fields.Binary(string="")
+    # image5 = fields.Binary(string="")
+    # image6 = fields.Binary(string="")
+    # image7 = fields.Binary(string="")
+    # image8 = fields.Binary(string="")
+    # image9 = fields.Binary(string="")
+    # image10 = fields.Binary(string="")
+    # image11 = fields.Binary(string="")
+    # image12 = fields.Binary(string="")
+    # image1_desc = fields.Text()
+    # image2_desc = fields.Text()
+    # image3_desc = fields.Text()
+    # image4_desc = fields.Text()
+    # image5_desc = fields.Text()
+    # image6_desc = fields.Text()
+    # image7_desc = fields.Text()
+    # image8_desc = fields.Text()
+    # image9_desc = fields.Text()
+    # image10_desc = fields.Text()
+    # image11_desc = fields.Text()
+    # image12_desc = fields.Text()
 
     quality_check_name_ids = fields.One2many(
         'checklist.name.line', 'task_id',
         string="Checklist Names"
     )
 
-    video_file = fields.Binary(
-        string="Service Video",
-        attachment=True
-    )
-    video_filename = fields.Char(
-        string="Video Filename"
-    )
-    video_description = fields.Text(
-        string="Video Description"
-    )
+    # video_file = fields.Binary(
+    #     string="Service Video",
+    #     attachment=True
+    # )
+    # video_filename = fields.Char(
+    #     string="Video Filename"
+    # )
+    # video_description = fields.Text(
+    #     string="Video Description"
+    # )
     cylinder_count = fields.Integer(string="Cylinder Count", related="vehicle_id.cylinder_count")
 
     @api.onchange('quality_checklist_id')
