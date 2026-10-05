@@ -41,11 +41,6 @@ const DAMAGE_BY_KEY = Object.fromEntries(DAMAGE_TYPES.map((d) => [d.key, d]));
 const GATEPASS_MAP = "/odex_vehicle_gate_pass/static/src/img/vehicle/damage_map.jpg";
 const OWN_MAP = "/job_card_extension/static/src/img/damage_map.svg";
 
-function m2oName(v) {
-    if (!v) return "";
-    if (Array.isArray(v)) return v[1] || "";
-    return v.display_name || "";
-}
 function uniq(d) {
     return (d || "").replace(/\D/g, "");
 }
@@ -448,54 +443,6 @@ export class JcDamageMap extends Component {
     }
 }
 
-/* ------------------------------------------------------------------ */
-/* Header summary card                                                 */
-/* ------------------------------------------------------------------ */
-export class JcHeroCard extends Component {
-    static template = "job_card_extension.JcHeroCard";
-
-    get d() {
-        return this.props.record.data;
-    }
-    get plate() {
-        return m2oName(this.d.vehicle_id) || _t("No vehicle");
-    }
-    get vehicleLine() {
-        return [m2oName(this.d.brand), m2oName(this.d.model_id), this.d.year].filter(Boolean).join(" · ");
-    }
-    get customer() {
-        return m2oName(this.d.partner_id);
-    }
-    get stage() {
-        return m2oName(this.d.cc_stage_id);
-    }
-    get bay() {
-        return m2oName(this.d.bay_id);
-    }
-    get promise() {
-        const p = this.d.promise_date;
-        return p && p.toFormat ? p.toFormat("dd MMM yyyy") : "";
-    }
-    get overdue() {
-        const p = this.d.promise_date;
-        if (!p || !p.toJSDate || this.d.is_close) return false;
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        return p.toJSDate() < today;
-    }
-    get fuel() {
-        const v = this.d.fuel_level;
-        if (v === undefined || v === false || v === null || v === "") return "";
-        const sel = this.props.record.fields.fuel_level?.selection;
-        if (sel) {
-            const hit = sel.find((s) => s[0] === v);
-            return hit ? hit[1] : String(v);
-        }
-        return String(v);
-    }
-}
-
 const viewWidgets = registry.category("view_widgets");
 viewWidgets.add("jc_photo_sheet", { component: JcPhotoSheet });
 viewWidgets.add("jc_damage_map", { component: JcDamageMap });
-viewWidgets.add("jc_hero_card", { component: JcHeroCard });

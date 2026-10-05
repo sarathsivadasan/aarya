@@ -1,48 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates xml:space="preserve">
 
-    <!-- Header summary card -->
-    <t t-name="job_card_extension.JcHeroCard">
-        <div class="o_jc_hero">
-            <div class="o_jc_hero_plate">
-                <span class="o_jc_hero_plate_label">PLATE</span>
-                <span class="o_jc_hero_plate_no" t-esc="plate"/>
-            </div>
-            <div class="o_jc_hero_main">
-                <div class="o_jc_hero_title">
-                    <span t-esc="d.name or 'New Job Card'"/>
-                    <span t-if="stage" class="o_jc_chip o_jc_chip_stage" t-esc="stage"/>
-                    <span t-if="d.customer_waiting" class="o_jc_chip o_jc_chip_warn"><i class="fa fa-clock-o me-1"/>Customer Waiting</span>
-                    <span t-if="overdue" class="o_jc_chip o_jc_chip_danger"><i class="fa fa-exclamation-circle me-1"/>Overdue</span>
-                    <span t-if="d.is_close" class="o_jc_chip o_jc_chip_done"><i class="fa fa-check me-1"/>Closed</span>
-                </div>
-                <div class="o_jc_hero_sub" t-if="vehicleLine" t-esc="vehicleLine"/>
-                <div class="o_jc_hero_meta">
-                    <span t-if="customer"><i class="fa fa-user"/><t t-esc="customer"/></span>
-                    <span t-if="d.cc_partner_phone"><i class="fa fa-phone"/><t t-esc="d.cc_partner_phone"/></span>
-                    <span t-if="bay"><i class="fa fa-wrench"/>Bay <t t-esc="bay"/></span>
-                    <span t-if="promise"><i class="fa fa-calendar"/>Promise <t t-esc="promise"/></span>
-                    <span t-if="d.odometer"><i class="fa fa-tachometer"/><t t-esc="d.odometer"/> km</span>
-                    <span t-if="fuel"><i class="fa fa-tint"/>Fuel <t t-esc="fuel"/></span>
-                </div>
-            </div>
-            <div class="o_jc_hero_stats">
-                <div class="o_jc_stat">
-                    <span class="o_jc_stat_val" t-esc="d.vehicle_photo_count or 0"/>
-                    <span class="o_jc_stat_lbl">Photos</span>
-                </div>
-                <div class="o_jc_stat">
-                    <span class="o_jc_stat_val" t-esc="d.damage_count or 0"/>
-                    <span class="o_jc_stat_lbl">Damages</span>
-                </div>
-                <div t-att-class="'o_jc_stat' + (d.major_damage_count ? ' o_jc_stat_danger' : '')">
-                    <span class="o_jc_stat_val" t-esc="d.major_damage_count or 0"/>
-                    <span class="o_jc_stat_lbl">Major</span>
-                </div>
-            </div>
-        </div>
-    </t>
-
     <!-- Vehicle Photos -->
     <t t-name="job_card_extension.JcPhotoSheet">
         <div class="o_jc_photos">

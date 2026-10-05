@@ -1,55 +1,9 @@
-// Job Card form + Vehicle Photos + Damage Mark
+// Job Card - Vehicle Photos + Damage Mark tabs
 $jc-primary: #14149c;
 $jc-radius: 12px;
 $jc-border: rgba(20, 20, 60, 0.10);
 $jc-shadow: 0 1px 3px rgba(16, 24, 40, 0.06), 0 1px 2px rgba(16, 24, 40, 0.04);
 $jc-muted: #667085;
-
-// ---------------------------------------------------------------- form
-.o_form_view .o_jc_form {
-    .o_jc_cards {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 16px;
-        margin: 0 0 16px 0;
-
-        > .o_inner_group,
-        > div > .o_inner_group {
-            flex: 1 1 380px;
-            max-width: none;
-            width: auto;
-            margin: 0;
-        }
-    }
-
-    .o_jc_card {
-        background: var(--o-view-background-color, var(--bs-body-bg, #fff));
-        border: 1px solid $jc-border;
-        border-radius: $jc-radius;
-        box-shadow: $jc-shadow;
-        padding: 12px 18px 10px 18px;
-
-        .o_horizontal_separator {
-            color: $jc-primary;
-            font-size: 0.78rem;
-            font-weight: 700;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            border-bottom: 1px solid $jc-border;
-            padding-bottom: 8px;
-            margin: 2px 0 10px 0;
-        }
-        .o_cell.o_wrap_label label,
-        .o_form_label {
-            color: $jc-muted;
-            font-weight: 500;
-        }
-    }
-
-    .o_notebook .nav-tabs .nav-link {
-        font-weight: 600;
-    }
-}
 
 // ---------------------------------------------------------------- shared
 .o_jc_chip {
@@ -110,92 +64,6 @@ $jc-muted: #667085;
     justify-content: center;
     padding: 16px;
 }
-
-// ---------------------------------------------------------------- hero
-.o_jc_hero {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 18px;
-    padding: 16px 20px;
-    margin-bottom: 16px;
-    border-radius: $jc-radius;
-    color: #fff;
-    background: linear-gradient(120deg, #14149c 0%, #2f3bd1 60%, #4e5cf0 100%);
-    box-shadow: 0 6px 18px rgba(20, 20, 156, 0.22);
-
-    .o_jc_chip { background: rgba(255, 255, 255, 0.16); color: #fff; }
-    .o_jc_chip_stage { background: #fff; color: $jc-primary; }
-    .o_jc_chip_warn { background: #ffb020; color: #3d2600; }
-    .o_jc_chip_danger { background: #ff5a5f; color: #fff; }
-    .o_jc_chip_done { background: #2ecc71; color: #fff; }
-}
-.o_jc_hero_plate {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-width: 130px;
-    padding: 6px 14px;
-    background: #fff;
-    color: #111;
-    border: 3px solid #111;
-    border-radius: 8px;
-    line-height: 1.1;
-}
-.o_jc_hero_plate_label {
-    font-size: 0.6rem;
-    font-weight: 700;
-    letter-spacing: 0.2em;
-    color: #c62828;
-}
-.o_jc_hero_plate_no {
-    font-size: 1.35rem;
-    font-weight: 800;
-    letter-spacing: 0.06em;
-    white-space: nowrap;
-}
-.o_jc_hero_main {
-    flex: 1 1 320px;
-    min-width: 0;
-}
-.o_jc_hero_title {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 8px;
-    font-size: 1.3rem;
-    font-weight: 700;
-}
-.o_jc_hero_sub {
-    opacity: 0.85;
-    margin-top: 2px;
-}
-.o_jc_hero_meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px 18px;
-    margin-top: 8px;
-    font-size: 0.85rem;
-    opacity: 0.95;
-
-    .fa { margin-right: 6px; opacity: 0.8; }
-}
-.o_jc_hero_stats {
-    display: flex;
-    gap: 10px;
-}
-.o_jc_stat {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-width: 72px;
-    padding: 8px 10px;
-    border-radius: 10px;
-    background: rgba(255, 255, 255, 0.14);
-}
-.o_jc_stat_val { font-size: 1.4rem; font-weight: 800; line-height: 1; }
-.o_jc_stat_lbl { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.85; margin-top: 4px; }
-.o_jc_stat_danger { background: #ff5a5f; }
 
 // ---------------------------------------------------------------- photos
 .o_jc_photos {
@@ -531,6 +399,5 @@ $jc-muted: #667085;
 }
 
 @media (max-width: 767px) {
-    .o_jc_hero_stats { width: 100%; justify-content: space-between; }
     .o_jc_photo_grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
