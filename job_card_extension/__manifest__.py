@@ -21,6 +21,7 @@
         'wizard/jobcard_advance_payment.xml',
         # 'security/security.xml',
         # 'views/customer_declaration.xml',
+        'views/ins_checklist_name_view.xml',
         'views/product_template_view.xml',
         'views/project_view.xml',
         'views/job_card_stage_view.xml',

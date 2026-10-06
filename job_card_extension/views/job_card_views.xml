@@ -245,7 +245,7 @@
                 <page name="damage_mark" string="Damage Mark" invisible="not is_jobcard">
                     <widget name="jc_damage_map"/>
                 </page>
-                <page name="quality_checklist" string="QC"
+                <page name="quality_checklist" string="50 Points"
                       invisible="not is_jobcard">
                     <field name="is_close" invisible="1"/>
                     <field name="quality_checklist_ids" widget="section_and_note_one2many" mode="list">
@@ -259,13 +259,36 @@
                             </control>
 
                             <field name="serial_no" column_invisible="1"/>
-                            <field name="name" widget="section_and_note_text" optional="show" string="Checklist"
+                            <field name="name" widget="section_and_note_text" optional="show" string="Inspection Items"
                                    readonly="1" force_save="1"/>
                             <field name="display_type" column_invisible="1"/>
                             <field name="checklist_name_ids" column_invisible="1"/>
                             <field name="description"/>
-                            <field name="check_mark"
+                            <field name="check_mark" widget="boolean_toggle"
                                    options='{"bg_color": "red: check_mark == False; green: check_mark == True", "fg_color": "red: check_mark == False"}'/>
+                        </list>
+                    </field>
+                </page>
+                <page name="ins_quality_checklist" string="Inspection"
+                      invisible="not is_jobcard">
+                    <field name="is_close" invisible="1"/>
+                    <field name="ins_quality_checklist_ids" mode="list">
+                        <list editable="bottom" default_order="serial_no" limit="100">
+                            <control>
+                                <create name="add_product_control" string="Add a product"/>
+<!--                                 <create name="add_section_control" string="Add a section"
+                                        context="{'default_display_type': 'line_section'}"/>
+                                <create name="add_note_control" string="Add a note"
+                                        context="{'default_display_type': 'line_note'}"/> -->
+                            </control>
+
+                            <field name="serial_no" column_invisible="1"/>
+                            <field name="name" optional="show" string="Inspection Items" readonly="1" force_save="1"/>
+<!--                             <field name="display_type" column_invisible="1"/>
+                            <field name="checklist_name_ids" column_invisible="1"/> -->
+                            <field name="check_mark" widget="boolean_toggle"
+                                   options='{"bg_color": "red: check_mark == False; green: check_mark == True", "fg_color": "red: check_mark == False"}'/>
+                            <field name="description"/>
                         </list>
                     </field>
                 </page>

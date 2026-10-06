@@ -43,6 +43,8 @@ class Task(models.Model):
     company_id = fields.Many2one('res.company', string='Company', compute='_compute_company_id', store=True, readonly=False, recursive=True, copy=True, default=_default_company_id)
     quality_checklist_ids = fields.One2many('quality.checklist', 'job_card_id',
                                             string="Quality Checklist", default=lambda x: x.get_quality_checklist())
+    ins_quality_checklist_ids = fields.One2many('ins.qc.checklist', 'job_card_id',
+                                            string="Inspection Quality Checklist", default=lambda x: x.get_ins_quality_checklist())
     advance_payment_count = fields.Integer(string="Advance Payment Count", compute="count_advance_payment")
     last_update_status = fields.Selection(related="project_id.last_update_status")
     last_update_color = fields.Integer(related="project_id.last_update_color")
@@ -268,15 +270,38 @@ class Task(models.Model):
             if rec.cc_stage_value == 'closed':
                 rec.customer_waiting = False
 
+    def get_ins_quality_checklist(self):
+        print("true,,,,,,,,,,")
+        ins_quality_lines = []
+        ins_checklist_with_serial = [
+            (1, 'Registration card validity'),
+            (2, 'Wheel caps'),
+            (3, 'Spare tyre'),
+            (4, 'Jack / tools'),
+            (5, 'Wipers'),
+            (6, 'Lights'),
+            (7, 'Radio antena / function'),
+            (8, 'Wind screen / glass'),
+            (9, 'A/C Operation / cooling'),
+            (10, 'Body scratches / dents'),
+            (11, 'Police repair permit (acc. Veh)'),
+        ]
+        for line in ins_checklist_with_serial:
+            vals = {
+                'name': line[1],
+                'serial_no': line[0],
+            }
+            ins_quality_lines.append((0, 0, vals))
+        print("ins_quality_lines,,,,,,", ins_quality_lines)
+        return ins_quality_lines
+
     def get_quality_checklist(self):
         quality_lines = []
         category_checklist = [
-            'SERVICE CHECKLIST',
-            'UNDER BODY',
-            'WHEELS AND BRAKES',
-            'EXTERIOR',
-            'ENGINE COMPARTMENT',
-            'INTERIOR & FUNCTIONS',
+            'Under the Hood',
+            'Under the Vehicle',
+            'Exterior & Interior',
+            'Miscellenous Inspection',
         ]
         quality_checklist_name_obj = self.env['quality.checklist.name']
         for cat in category_checklist:
@@ -285,71 +310,56 @@ class Task(models.Model):
                 quality_checklist_name_obj.create({'name': cat})
 
         checklist_with_serial = [
-            (1, 'Engine Oil Level', category_checklist[0]),
-            (2, 'Power Steering Fluid Level And Reservoir Cap', category_checklist[0]),
-            (3, 'Brake Fluid Level, Reservoir And Cap Check', category_checklist[0]),
-            (4, 'Differential Oil Front Condition', category_checklist[0]),
-            (5, 'Transmission Oil Condition', category_checklist[0]),
-            (6, 'Transfer Case Oil Condition', category_checklist[0]),
-            (7, 'Wind Shield Washer Fluid', category_checklist[0]),
-            (8, 'Coolant', category_checklist[0]),
-            (9, 'Signs Of Engine Oil Leaks', category_checklist[1]),
-            (10, 'Signs Of Coolant Leaks', category_checklist[1]),
-            (11, 'Engine Mount Condition Crack/Damage', category_checklist[1]),
-            (12, 'Transmission Mount Condition Crack/Damage', category_checklist[1]),
-            (13, 'Front Suspension:LHS Crack/Damage', category_checklist[1]),
-            (14, 'Front Suspension:RHS Crack/Damage', category_checklist[1]),
-            (15, 'Rear Suspension:LHS Crack/Damage', category_checklist[1]),
-            (16, 'Rear Suspension:RHS Crack/Damage', category_checklist[1]),
-            (17, 'Drive Shaft & Boots', category_checklist[1]),
-            (18, 'Steering Arms, Rack and Boots Condition', category_checklist[1]),
-            (19, 'Chassis Frame Condition', category_checklist[1]),
-            (20, 'Fuel Tank And Fuel Lines Connections', category_checklist[1]),
-            (21, 'Exhaust System Condition', category_checklist[1]),
-            (22, 'Spare Tyre Condition', category_checklist[2]),
-            (23, 'Tyre Front:LHS', category_checklist[2]),
-            (24, 'Tyre Front:RHS', category_checklist[2]),
-            (25, 'Tyre Rear:LHS', category_checklist[2]),
-            (26, 'Tyre Rear:RHS', category_checklist[2]),
-            (27, 'All Rim Condition', category_checklist[2]),
-            (28, 'Wheel Bearing Condition (Play/Noise)', category_checklist[2]),
-            (29, 'Front Brake Pad Condition', category_checklist[2]),
-            (30, 'Rear Brake Pad Condition', category_checklist[2]),
-            (31, 'Front Brake Disc Condition', category_checklist[2]),
-            (32, 'Rear Brake Disc Condition', category_checklist[2]),
-            (33, 'Parking Brake', category_checklist[2]),
-            (34, 'Brake Hoses & Lines', category_checklist[2]),
-            (35, 'All Lights Condition', category_checklist[3]),
-            (36, 'All Lights Function', category_checklist[3]),
-            (37, 'Windscreen Glass', category_checklist[3]),
-            (38, 'All Side Mirror Housing And Glass', category_checklist[3]),
-            (39, 'Fuel Lid Correctly Locking And Unlocking', category_checklist[2]),
-            (40, 'Sunroof Glass And Seals', category_checklist[3]),
-            (41, 'Convertible Soft Top Condition', category_checklist[3]),
-            (42, 'Door Hinges & Latches', category_checklist[3]),
-            (43, 'Body Scratches & Damages', category_checklist[3]),
-            (44, 'Check Bonnet Lock & Cable', category_checklist[4]),
-            (45, 'Check Power Steering Pump / Hoses For Leakages', category_checklist[2]),
-            (46, 'Air Filter', category_checklist[4]),
-            (47, 'AC Filter', category_checklist[4]),
-            (48, 'A/C Hoses (Cracks / Damages Leaks)', category_checklist[4]),
-            (49, 'Drive Belts (Condition Tension)', category_checklist[4]),
-            (50, 'Check Coolant Level and Condition', category_checklist[4]),
-            (51, 'Radiator Hoses', category_checklist[4]),
-            (52, 'Timing Belt', category_checklist[4]),
-            (53, 'Battery & Terminals', category_checklist[4]),
-            (54, 'Spark Plugs', category_checklist[4]),
-            (55, 'Engine Starting Condition', category_checklist[5]),
-            (56, 'Parking Brake Function', category_checklist[5]),
-            (57, 'Foot Brake Function', category_checklist[5]),
-            (58, 'A/C Operations', category_checklist[5]),
-            (59, 'Light Functions', category_checklist[5]),
-            (60, 'Wiper Functions', category_checklist[5]),
-            (61, 'Electctric Switches & Gauges', category_checklist[5]),
-            (62, 'Warning Lights ON (ASC, ESC, Airbag, MIL)', category_checklist[5]),
-            (63, 'Stored Messages / DTC', category_checklist[5]),
-            (64, 'Horn Functionality', category_checklist[5]),
-            (65, 'Seat Belt Functions', category_checklist[5]),
+            (1, 'Engine Oil', category_checklist[0]),
+            (2, 'Transmission Fluid', category_checklist[0]),
+            (3, 'Powersteering Fluid', category_checklist[0]),
+            (4, 'Engine Coolant', category_checklist[0]),
+            (5, 'Hoses & Water Pump', category_checklist[0]),
+            (6, 'Drive Belts', category_checklist[0]),
+            (7, 'Tensioner & Idler Bearings', category_checklist[0]),
+            (8, 'Battery / Water Level / Condition', category_checklist[0]),
+            (9, 'A/C System', category_checklist[0]),
+            (10, 'Brake Fluid', category_checklist[0]),
+            (11, 'Brake Master Cylinder', category_checklist[0]),
+            (12, 'Brake Booster', category_checklist[0]),
+            (13, 'Clutch Fluid', category_checklist[0]),
+            (14, 'Clutch Cables & Linkings', category_checklist[0]),
+            (15, 'Engine Oil Leaks', category_checklist[1]),
+            (16, 'Transmission Oil Leaks', category_checklist[1]),
+            (17, 'Transmission Cooler Pipes & Linkages', category_checklist[1]),
+            (18, 'Transfercase Fluid', category_checklist[1]),
+            (19, 'Differential Fluid', category_checklist[1]),
+            (20, 'Gear Box Oil', category_checklist[1]),
+            (21, 'Engine Mounts', category_checklist[1]),
+            (22, 'Transmission Mounts', category_checklist[1]),
+            (23, 'Exhaust System', category_checklist[1]),
+            (24, 'Drive Shafts', category_checklist[1]),
+            (25, 'Universal Joints', category_checklist[1]),
+            (26, 'C.V. Joints', category_checklist[1]),
+            (27, 'Front Shock Absorbers', category_checklist[1]),
+            (28, 'Rear Shock Absorbers', category_checklist[1]),
+            (29, 'Springs & Mounts', category_checklist[1]),
+            (30, 'Upper Arms', category_checklist[1]),
+            (31, 'Lower Arms', category_checklist[1]),
+            (32, 'Stabilizer Links & Bushes', category_checklist[1]),
+            (33, 'Tie Rods', category_checklist[1]),
+            (34, 'Steering Rack / Box', category_checklist[1]),
+            (35, 'Wheel & Tires (Incl Spare)', category_checklist[1]),
+            (36, 'Tyre Pressure (Fill If Less)', category_checklist[1]),
+            (37, 'Front Brakes', category_checklist[1]),
+            (38, 'Rear Brakes', category_checklist[1]),
+            (39, 'Hand Brake', category_checklist[1]),
+            (40, 'Panel, Paintwork & Body Fittings', category_checklist[2]),
+            (41, 'Windscreen & Other Glass', category_checklist[2]),
+            (42, 'Washes & Wipers', category_checklist[2]),
+            (43, 'All Lightings', category_checklist[2]),
+            (44, 'Horn Tone', category_checklist[2]),
+            (45, 'All Instruments & Accessories', category_checklist[2]),
+            (46, 'Checked Engine Oil Cap Tighten', category_checklist[3]),
+            (47, 'Checked Radiator Cap Tighten', category_checklist[3]),
+            (48, 'Checked Brake Fluid Cap Tighten', category_checklist[3]),
+            (49, 'Checked for Tools not left in the Vehicle', category_checklist[3]),
+            (50, 'Checked for Abnormal Sounds', category_checklist[3]),
         ]
         category_used = []
         for line in checklist_with_serial:
