@@ -15,7 +15,7 @@ class GatePassFormApi(models.Model):
             'vehicle_status'].selection,
         string="Manual Stage Override", copy=False)
 
-    @api.depends('state', 'out_reason', 'inspection_status', 'estimate_status',
+    @api.depends('state', 'out_reason', 'estimate_status',
                  'job_card_status', 'invoice_status', 'payment_status',
                  'vehicle_status_override')
     def _compute_vehicle_status(self):
@@ -38,10 +38,10 @@ class GatePassFormApi(models.Model):
         'manufacturing_year', 'fuel_type', 'transmission', 'engine_capacity',
         'plate_source', 'odometer', 'customer_complaint', 'condition_remarks',
         'note', 'customer_note', 'booking_ref', 'advisor_id', 'vehicle_status',
-        'inspection_status', 'estimate_status', 'job_card_status',
+        'estimate_status', 'job_card_status',
         'invoice_status', 'payment_status', 'send_whatsapp_notification',
         'send_sms_notification', 'booking_res_id',
-        'inspection_count', 'job_card_count',
+        'job_card_count',
         'estimate_count', 'invoice_count', 'history_count',
     ]
 
@@ -72,7 +72,6 @@ class GatePassFormApi(models.Model):
             'transmission': sel('fleet.gate.pass', 'transmission'),
             'out_reason': sel('fleet.gate.pass', 'out_reason'),
             'payment_status': sel('fleet.gate.pass', 'payment_status'),
-            'inspection_status': sel('fleet.gate.pass', 'inspection_status'),
             'estimate_status': sel('fleet.gate.pass', 'estimate_status'),
             'job_card_status': sel('fleet.gate.pass', 'job_card_status'),
             'invoice_status': sel('fleet.gate.pass', 'invoice_status'),

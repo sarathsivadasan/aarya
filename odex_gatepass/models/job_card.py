@@ -15,8 +15,6 @@ class Task(models.Model):
         for task in tasks.filtered('gate_pass_id'):
             if task.is_jobcard:
                 task.gate_pass_id._log_timeline('job_card')
-            elif task.is_vc:
-                task.gate_pass_id._log_timeline('inspection')
         return tasks
 
     def write(self, vals):

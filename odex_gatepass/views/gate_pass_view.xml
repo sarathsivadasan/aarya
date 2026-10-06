@@ -14,20 +14,11 @@
                                 class="btn-primary"/>
                         <button name="vehicle_revisit" type="object" string="Revisit"
                                 invisible="state != 'in'" class="btn-primary"/>
-                        <button name="action_create_vehicle_inspection" type="object"
-                                string="Create Vehicle Inspection"
-                                class="btn-secondary"
-                                invisible="inspection_count >= 1 or state == 'out'"/>
                         <field name="state" widget="statusbar" string="Status"
                                statusbar_visible="in,revisit,out"/>
                     </header>
                     <sheet>
                         <div class="oe_button_box" name="button_box">
-                            <button name="action_view_vehicle_inspection" type="object"
-                                    class="oe_stat_button" icon="fa-car"
-                                    invisible="inspection_count == 0">
-                                <field name="inspection_count" widget="statinfo" string="Vehicle Inspection"/>
-                            </button>
                             <button name="action_view_estimates" type="object"
                                     class="oe_stat_button" icon="fa-file-o"
                                     invisible="estimate_count == 0">
@@ -58,7 +49,7 @@
                             <group string="Status">
                                 <field name="vehicle_status" widget="badge"
                                        decoration-success="vehicle_status in ('in_workshop','ready_for_delivery')"
-                                       decoration-warning="vehicle_status in ('under_inspection','waiting_approval')"
+                                       decoration-warning="vehicle_status == 'waiting_approval'"
                                        decoration-info="vehicle_status in ('repair_in_progress','invoice_ready')"
                                        decoration-danger="vehicle_status == 'revisit'"/>
                                 <field name="payment_status" widget="badge"
@@ -181,14 +172,10 @@
                     <field name="vehicle_color_id" optional="hide"/>
                     <field name="vehicle_status" widget="badge"
                            decoration-success="vehicle_status in ('in_workshop','ready_for_delivery')"
-                           decoration-warning="vehicle_status in ('under_inspection','waiting_approval')"
+                           decoration-warning="vehicle_status == 'waiting_approval'"
                            decoration-info="vehicle_status in ('repair_in_progress','invoice_ready')"
                            decoration-danger="vehicle_status == 'revisit'"
                            decoration-muted="vehicle_status == 'delivered'"/>
-                    <field name="inspection_status" widget="badge" optional="show"
-                           decoration-warning="inspection_status == 'pending'"
-                           decoration-info="inspection_status == 'in_progress'"
-                           decoration-success="inspection_status == 'completed'"/>
                     <field name="estimate_status" widget="badge" optional="show"
                            decoration-warning="estimate_status == 'pending'"
                            decoration-success="estimate_status == 'approved'"
@@ -278,10 +265,8 @@
                     <filter name="filter_revisit" string="Revisit / Rework"
                             domain="[('vehicle_status','=','revisit')]"/>
                     <separator/>
-                    <filter name="filter_inspection_pending" string="Inspection Pending"
-                            domain="[('inspection_status','=','pending'),('state','!=','out')]"/>
                     <filter name="filter_estimation_pending" string="Estimation Pending"
-                            domain="[('inspection_status','=','completed'),('estimate_status','in',('none','pending')),('state','!=','out')]"/>
+                            domain="[('estimate_status','in',('none','pending')),('state','!=','out')]"/>
                     <filter name="filter_job_card_open" string="Job Card Open"
                             domain="[('job_card_status','in',('open','in_progress'))]"/>
                     <filter name="filter_invoice_generated" string="Invoice Generated"

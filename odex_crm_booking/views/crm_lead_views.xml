@@ -33,12 +33,41 @@
 
             <!-- The two service sections replace the standard partner/info groups -->
             <xpath expr="//sheet/div[hasclass('oe_title')]" position="after">
-                <field name="odex_vehicle_partner_id" invisible="1"/>
+                <group>
+                    <group name="customer_info" string="Customer Details">
+                        <field name="partner_id" string="Customer Name" required="1"
+                                   options="{'no_quick_create': True}"
+                                   context="{'default_name': contact_name or partner_name,
+                                             'default_phone': phone,
+                                             'default_mobile': alternate_phone,
+                                             'default_email': email_from,
+                                             'default_user_id': user_id,
+                                             'default_team_id': team_id}"/>
+                        <field name="phone" string="Contact Number" widget="phone" required="1"/>
+                        <field name="alternate_phone" widget="phone"/>
+                        <field name="tag_ids" widget="many2many_tags"
+                               options="{'color_field': 'color', 'no_create_edit': True}"/>
+                        <field name="customer_waiting" widget="boolean_toggle"/>
+                        <field name="extra_info" placeholder="Preferences, call instructions, anything the workshop should know..."/>
+                        <field name="odex_business_id" options="{'no_quick_create': True}"/>
+                        <field name="odex_customer_type_id" string="Type" options="{'no_quick_create': True}"/>
+                    </group>
+                    <group name="vehicle_info" string="Vehicle Details">
+                        <field name="vehicle_id"/>
+                        <field name="vehicle_make_id"/>
+                        <field name="vehicle_model_id"/>
+                        <field name="vehicle_color_id"/>
+                        <field name="vin"/>
+                        <field name="engine_no"/>
+                        <field name="year"/>
+                    </group>
+                </group>
+                <!-- <field name="odex_vehicle_partner_id" invisible="1"/>
                 <field name="odex_allowed_vehicle_ids" invisible="1"/>
                 <field name="odex_vehicle_ro" invisible="1"/>
-                <field name="odex_vehicle_last_odometer" invisible="1"/>
+                <field name="odex_vehicle_last_odometer" invisible="1"/> -->
 
-                <div class="o_odex_section" name="odex_customer_details">
+<!--                 <div class="o_odex_section" name="odex_customer_details">
                     <div class="o_odex_section_head">
                         <i class="fa fa-user" role="img" aria-label="Customer" title="Customer"/>
                         <span>Customer Details</span>
@@ -65,7 +94,7 @@
                             <field name="odex_customer_type_id" string="Type" options="{'no_quick_create': True}"/>
                         </group>
                     </group>
-                </div>
+                </div> -->
 
                 <div class="o_odex_section" name="odex_vehicle_details">
                     <div class="o_odex_section_head">

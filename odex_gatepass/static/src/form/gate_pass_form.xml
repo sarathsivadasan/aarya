@@ -22,10 +22,6 @@
             <i class="fa fa-file-text-o"/>
             <span>Job Cards<br/><b t-esc="state.rec.job_card_count"/></span>
           </button>
-          <button class="ogp_smart" t-on-click="() => this.smart('action_view_vehicle_inspection')">
-            <i class="fa fa-car"/>
-            <span>Vehicle Inspection<br/><b t-esc="state.rec.inspection_count"/></span>
-          </button>
           <button class="ogp_smart" t-on-click="() => this.smart('action_view_invoices')">
             <i class="fa fa-file-o"/>
             <span>Invoices<br/><b t-esc="state.rec.invoice_count"/></span>

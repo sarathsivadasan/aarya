@@ -1,0 +1,69 @@
+// Job Card - Inspection tab: G / W / B segmented control
+$gwb-track: #f2f4f7;
+$gwb-border: #e4e7ec;
+$gwb-idle: #98a2b3;
+$gwb-good: #16a34a;
+$gwb-warn: #f59e0b;
+$gwb-bad: #dc2626;
+
+.o_gwb_toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 2px;
+    background: $gwb-track;
+    border: 1px solid $gwb-border;
+    border-radius: 8px;
+    vertical-align: middle;
+
+    .o_gwb_btn {
+        min-width: 32px;
+        height: 24px;
+        padding: 0 8px;
+        border: 0;
+        border-radius: 6px;
+        background: transparent;
+        color: $gwb-idle;
+        font-size: 0.78rem;
+        font-weight: 700;
+        line-height: 24px;
+        letter-spacing: 0.02em;
+        cursor: pointer;
+        transition: background-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+
+        &:hover:not(.o_gwb_active):not(:disabled) {
+            background: $gwb-border;
+            color: #475467;
+        }
+        &:focus-visible {
+            outline: 2px solid rgba(20, 20, 156, 0.35);
+            outline-offset: 1px;
+        }
+        &.o_gwb_active {
+            color: #fff;
+            box-shadow: 0 1px 2px rgba(16, 24, 40, 0.18);
+        }
+        &.o_gwb_g.o_gwb_active { background: $gwb-good; }
+        &.o_gwb_w.o_gwb_active { background: $gwb-warn; }
+        &.o_gwb_b.o_gwb_active { background: $gwb-bad; }
+        &:disabled { cursor: default; }
+        &:disabled:not(.o_gwb_active) { opacity: 0.7; }
+    }
+}
+
+// Touch screens (tablets / phones): finger-sized segments
+@media (pointer: coarse) {
+    .o_gwb_toggle {
+        gap: 4px;
+        padding: 3px;
+        border-radius: 10px;
+
+        .o_gwb_btn {
+            min-width: 44px;
+            height: 36px;
+            line-height: 36px;
+            font-size: 0.9rem;
+            border-radius: 8px;
+        }
+    }
+}

@@ -37,7 +37,6 @@ class GatePass(models.Model):
         ('general_service', 'General Service'),
         ('repair', 'Repair'),
         ('maintenance', 'Maintenance'),
-        ('inspection', 'Inspection'),
         ('body_paint', 'Body & Paint'),
         ('electrical', 'Electrical'),
         ('other', 'Other')],
@@ -170,19 +169,10 @@ class GatePass(models.Model):
         'fleet.gate.pass.log', 'gate_pass_id', string="Entry / Exit Logs")
     timeline_ids = fields.One2many(
         'fleet.gate.pass.timeline', 'gate_pass_id', string="Timeline")
-    inspection_id = fields.Many2one(
-        'project.task', string="Vehicle Inspection", readonly=True, copy=False)
 
     # ------------------------------------------------------------------
     # Synced statuses (stored computes -> dashboard/list are index-fast)
     # ------------------------------------------------------------------
-    inspection_status = fields.Selection([
-        ('none', '-'),
-        ('pending', 'Pending'),
-        ('in_progress', 'In Progress'),
-        ('completed', 'Completed')],
-        string="Inspection", compute="_compute_doc_statuses",
-        store=True, index=True)
     estimate_status = fields.Selection([
         ('none', '-'),
         ('pending', 'Pending'),
@@ -205,7 +195,6 @@ class GatePass(models.Model):
         store=True, index=True)
     vehicle_status = fields.Selection([
         ('in_workshop', 'In Workshop'),
-        ('under_inspection', 'Under Inspection'),
         ('waiting_approval', 'Waiting Approval'),
         ('repair_in_progress', 'Repair in Progress'),
         ('invoice_ready', 'Invoice Ready'),
@@ -226,7 +215,6 @@ class GatePass(models.Model):
 
     # Smart-button counters
     job_card_count = fields.Integer(compute="_compute_counts", string="Job Cards")
-    inspection_count = fields.Integer(compute="_compute_counts", string="Vehicle Inspection")
     estimate_count = fields.Integer(compute="_compute_counts", string="Quotations")
     invoice_count = fields.Integer(compute="_compute_counts", string="Invoices")
     history_count = fields.Integer(compute="_compute_counts", string="Vehicle History")
@@ -246,26 +234,16 @@ class GatePass(models.Model):
                 filter(None, [p.street, p.street2, p.city, p.country_id.name])
             ) if p else False
 
-    @api.depends('task_ids', 'task_ids.state', 'task_ids.is_vc',
-                 'task_ids.is_jobcard',
+    @api.depends('task_ids', 'task_ids.state', 'task_ids.is_jobcard',
                  'sale_order_ids', 'sale_order_ids.state',
                  'invoice_ids', 'invoice_ids.state',
                  'invoice_ids.payment_state')
     def _compute_doc_statuses(self):
         for rec in self:
-            inspections = rec.task_ids.filtered('is_vc')
             job_cards = rec.task_ids.filtered('is_jobcard')
             estimates = rec.sale_order_ids
             invoices = rec.invoice_ids.filtered(
                 lambda m: m.state != 'cancel')
-
-            # Inspection
-            if not inspections:
-                rec.inspection_status = 'pending' if rec.state != 'out' else 'none'
-            elif all(t.state in ('1_done', '1_canceled') for t in inspections):
-                rec.inspection_status = 'completed'
-            else:
-                rec.inspection_status = 'in_progress'
 
             # Estimation
             if not estimates:
@@ -303,7 +281,7 @@ class GatePass(models.Model):
                 rec.invoice_status = 'generated'
                 rec.payment_status = 'not_paid'
 
-    @api.depends('state', 'out_reason', 'inspection_status', 'estimate_status',
+    @api.depends('state', 'out_reason', 'estimate_status',
                  'job_card_status', 'invoice_status', 'payment_status')
     def _compute_vehicle_status(self):
         for rec in self:
@@ -321,8 +299,6 @@ class GatePass(models.Model):
                 rec.vehicle_status = 'invoice_ready'
             elif rec.estimate_status == 'pending':
                 rec.vehicle_status = 'waiting_approval'
-            elif rec.inspection_status == 'in_progress':
-                rec.vehicle_status = 'under_inspection'
             else:
                 rec.vehicle_status = 'in_workshop'
 
@@ -343,7 +319,6 @@ class GatePass(models.Model):
 
     def _compute_counts(self):
         for rec in self:
-            rec.inspection_count = len(rec.task_ids.filtered('is_vc'))
             rec.job_card_count = len(rec.task_ids.filtered('is_jobcard'))
             rec.estimate_count = len(rec.sale_order_ids)
             rec.invoice_count = len(rec.invoice_ids)
@@ -459,43 +434,6 @@ class GatePass(models.Model):
             'domain': domain,
             'context': context or {},
         }
-
-    def action_create_vehicle_inspection(self):
-        self.ensure_one()
-        if self.inspection_id:
-            inspection = self.inspection_id
-        else:
-            inspection = self.env['project.task'].with_context(
-                default_is_vc=True
-            ).create({
-                'is_vc': True,
-                'name': _("Inspection - %s") % (self.name or ''),
-                'partner_id': self.partner_id.id,
-                'vehicle_id': self.vehicle_id.id,
-                'gate_pass_id': self.id,
-            })
-            self.inspection_id = inspection.id
-            self._log_timeline('inspection')
-        action = self.env["ir.actions.actions"]._for_xml_id(
-            "vehicle_inspection_report.action_vehicle_inspection")
-        action.update({
-            "res_id": inspection.id,
-            "view_mode": "form",
-            "views": [(self.env.ref(
-                "vehicle_inspection_report.view_form_v_job_card_extension"
-            ).id, "form")],
-        })
-        return action
-
-    def action_view_vehicle_inspection(self):
-        self.ensure_one()
-        inspections = self.task_ids.filtered('is_vc')
-        action = self.env["ir.actions.actions"]._for_xml_id(
-            "vehicle_inspection_report.action_vehicle_inspection")
-        action['domain'] = [('id', 'in', inspections.ids)]
-        if len(inspections) == 1:
-            action.update({'view_mode': 'form', 'res_id': inspections.id})
-        return action
 
     def action_view_job_card(self):
         self.ensure_one()

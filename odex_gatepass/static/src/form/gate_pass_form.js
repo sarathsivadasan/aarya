@@ -7,8 +7,7 @@ import { _t } from "@web/core/l10n/translation";
 
 const MODEL = "fleet.gate.pass";
 const TIMELINE_FLOW = [
-    ["gate_pass_in", "Gate Pass IN"], ["inspection", "Inspection"],
-    ["estimate", "Estimation"], ["job_card", "Job Card"],
+    ["gate_pass_in", "Gate Pass IN"], ["estimate", "Estimation"], ["job_card", "Job Card"],
     ["invoice", "Sales Invoice"], ["gate_pass_out", "Gate Pass OUT"],
 ];
 
@@ -69,7 +68,7 @@ export class GatePassForm extends Component {
             date_in: luxon.DateTime.now().toFormat("yyyy-MM-dd HH:mm:ss"),
             customer_type: "walkin", job_type: "general_service",
             send_whatsapp_notification: true, send_sms_notification: true,
-            inspection_count: 0, job_card_count: 0, estimate_count: 0,
+            job_card_count: 0, estimate_count: 0,
             invoice_count: 0, history_count: 0,
             payment_status: "not_paid", vehicle_status: "in_workshop",
         };

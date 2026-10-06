@@ -3,7 +3,7 @@
 {
     'name': 'Job Card Extension',
     'category': 'Services/Project',
-    'version': '18.0.1.1.0',
+    'version': '18.0.1.3.0',
     'author': 'Sarasoft',
     'company': '',
     'maintainer': 'Sarasoft',
@@ -53,6 +53,10 @@
             'job_card_extension/static/src/vehicle_condition/vehicle_condition.scss',
             'job_card_extension/static/src/vehicle_condition/vehicle_condition.js',
             'job_card_extension/static/src/vehicle_condition/vehicle_condition.xml',
+            'job_card_extension/static/src/gwb_toggle/gwb_toggle.scss',
+            'job_card_extension/static/src/gwb_toggle/gwb_toggle.js',
+            'job_card_extension/static/src/gwb_toggle/gwb_toggle.xml',
+            'job_card_extension/static/src/mobile/job_card_mobile.scss',
         ],
         'web.assets_qweb': [
             'job_card_extension/static/xml/**/*.xml',

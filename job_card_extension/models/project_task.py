@@ -44,7 +44,7 @@ class Task(models.Model):
     quality_checklist_ids = fields.One2many('quality.checklist', 'job_card_id',
                                             string="Quality Checklist", default=lambda x: x.get_quality_checklist())
     ins_quality_checklist_ids = fields.One2many('ins.qc.checklist', 'job_card_id',
-                                            string="Inspection Quality Checklist", default=lambda x: x.get_ins_quality_checklist())
+                                            string="Inspection Quality Checklist")
     advance_payment_count = fields.Integer(string="Advance Payment Count", compute="count_advance_payment")
     last_update_status = fields.Selection(related="project_id.last_update_status")
     last_update_color = fields.Integer(related="project_id.last_update_color")

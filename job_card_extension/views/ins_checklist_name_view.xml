@@ -40,10 +40,5 @@
                 </p>
             </field>
         </record>
-         <menuitem
-            action="job_card_extension.action_view_ins_quality_checklist"
-            id="menu_action_view_ins_quality_checklist" 
-            parent="job_card.menu_job_card_setting"
-            groups="project.group_project_manager" 
-            sequence="4" />
+        <!-- Menu removed: the Inspection tab on the Job Card form is the only entry point. -->
 </odoo>

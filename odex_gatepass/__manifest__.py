@@ -2,7 +2,7 @@
 {
     'name': 'ODEX Gate Pass',
     'category': 'Material/Project',
-    'version': '18.0.2.1.0',
+    'version': '18.0.2.2.0',
     'author': 'Sarasoft',
     'company': 'ODEX',
     'maintainer': 'Sarasoft',
