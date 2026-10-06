@@ -1,21 +1,23 @@
 /** @odoo-module **/
 import { registry } from "@web/core/registry";
 import { Component } from "@odoo/owl";
+import { CheckBox } from "@web/core/checkbox/checkbox";
 import { standardFieldProps } from "@web/views/fields/standard_field_props";
 
 const OPTIONS = [
-    { key: "g", label: "G", title: "Good" },
-    { key: "w", label: "W", title: "Warning" },
-    { key: "b", label: "B", title: "Bad" },
+    { key: "g", label: "G", aria: "Good" },
+    { key: "w", label: "W", aria: "Warning" },
+    { key: "b", label: "B", aria: "Bad" },
 ];
 
 /**
  * 50 Points result cell.
- *  - Normal items: G / W / B segmented control on `condition` (grey until picked).
- *  - Miscellaneous items (is_yes_no): plain on/off switch on `check_mark`.
+ *  - Normal items: G / W / B buttons on `condition` (grey until picked).
+ *  - Miscellaneous items (is_yes_no): Odoo's standard green toggle on `check_mark`.
  */
 export class GwbToggleField extends Component {
     static template = "job_card_extension.GwbToggleField";
+    static components = { CheckBox };
     static props = { ...standardFieldProps };
 
     get options() {
@@ -38,16 +40,16 @@ export class GwbToggleField extends Component {
         if (this.props.readonly) {
             return;
         }
-        // Tapping the active option again clears it back to grey.
+        // Clicking the active option again clears it back to grey.
         const next = this.value === key ? false : key;
         await this.props.record.update({ [this.props.name]: next });
     }
 
-    async onToggle() {
+    async onToggle(value) {
         if (this.props.readonly) {
             return;
         }
-        await this.props.record.update({ check_mark: !this.checked });
+        await this.props.record.update({ check_mark: !!value });
     }
 }
 

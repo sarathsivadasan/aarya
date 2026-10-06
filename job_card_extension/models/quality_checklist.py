@@ -23,10 +23,16 @@ class QualityChecklist(models.Model):
         string="Yes / No Item", compute="_compute_is_yes_no", store=True,
         help="Miscellaneous items are answered Yes / No instead of G / W / B.")
 
-    @api.depends('checklist_name_id.name')
+    @api.depends('checklist_name_id.name', 'name', 'display_type')
     def _compute_is_yes_no(self):
         for rec in self:
-            rec.is_yes_no = (rec.checklist_name_id.name or '').strip().lower().startswith('miscel')
+            if rec.display_type:
+                rec.is_yes_no = False
+                continue
+            category = (rec.checklist_name_id.name or '').strip().lower()
+            item = (rec.name or '').strip().lower()
+            # Miscellaneous section items ("Checked ...") are answered with a simple toggle.
+            rec.is_yes_no = category.startswith('miscel') or item.startswith('checked')
 
 
 class InsQCChecklist(models.Model):

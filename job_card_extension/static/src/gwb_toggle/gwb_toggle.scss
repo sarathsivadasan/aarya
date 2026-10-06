@@ -53,44 +53,15 @@ $gwb-bad: #dc2626;
     }
 }
 
-// ------------------------------------------------------------ Yes / No switch
+// ------------------------------------------------------------ Yes / No toggle
+// Markup is Odoo's own boolean_toggle (CheckBox .o_boolean_toggle.form-switch),
+// so colours come from the core stylesheet; only alignment / size here.
 .o_gwb_switch_wrap {
     display: inline-flex;
     align-items: center;
     min-height: 38px;
-}
-.o_gwb_switch {
-    position: relative;
-    width: 46px;
-    height: 26px;
-    padding: 0;
-    border: 0;
-    border-radius: 999px;
-    background: #d0d5dd;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-    transition: background-color 0.15s ease;
 
-    .o_gwb_knob {
-        position: absolute;
-        top: 3px;
-        left: 3px;
-        width: 20px;
-        height: 20px;
-        border-radius: 50%;
-        background: #fff;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
-        transition: transform 0.15s ease;
-    }
-    &.o_gwb_on {
-        background: $gwb-good;
-        .o_gwb_knob { transform: translateX(20px); }
-    }
-    &:focus-visible {
-        outline: 2px solid rgba(20, 20, 156, 0.4);
-        outline-offset: 2px;
-    }
-    &:disabled { cursor: default; opacity: 0.6; }
+    .o-checkbox { margin: 0; }
 }
 
 // ------------------------------------------------------------ touch screens
@@ -104,16 +75,37 @@ $gwb-bad: #dc2626;
             border-radius: 10px;
         }
     }
-    .o_gwb_switch_wrap { min-height: 46px; }
-    .o_gwb_switch {
-        width: 54px;
-        height: 30px;
-        .o_gwb_knob { width: 24px; height: 24px; }
-        &.o_gwb_on .o_gwb_knob { transform: translateX(24px); }
+    .o_gwb_switch_wrap {
+        min-height: 46px;
+        .form-check-input { width: 2.6em; height: 1.4em; }
     }
 }
 
 // phones: buttons share the card width
 @media (max-width: 767.98px) {
     .o_jc_insp_kanban .o_gwb_toggle .o_gwb_btn { min-width: 52px; }
+}
+
+// ------------------------------------------------------------ 50 Points list rows
+// No hover / focus / striped / edited-row shading: the row stays still under the cursor
+// so the buttons are easy to hit.
+.o_jc_inspection_list .o_list_renderer .o_data_row {
+    > td {
+        box-shadow: none !important;
+        --bs-table-accent-bg: transparent;
+        --bs-table-bg-state: transparent;
+        --bs-table-bg-type: transparent;
+        --bs-table-striped-bg: transparent;
+        --bs-table-hover-bg: transparent;
+    }
+    &:hover > td,
+    &:focus-within > td,
+    &.o_selected_row > td {
+        background-color: transparent !important;
+        box-shadow: none !important;
+    }
+    // section headers keep their own look
+    &.o_is_line_section > td {
+        background-color: var(--bs-gray-100, #f8f9fa) !important;
+    }
 }
