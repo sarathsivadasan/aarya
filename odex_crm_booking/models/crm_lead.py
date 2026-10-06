@@ -36,34 +36,34 @@ class CrmLead(models.Model):
     engin_no = fields.Char(string="Engin No.", related="vehicle_id.engin_no")
     year = fields.Selection(string="Year", related="vehicle_id.model_year")
 
-    # # ---- vehicle ---------------------------------------------------------
-    # vehicle_id = fields.Many2one("fleet.vehicle", "Vehicle", tracking=True, index=True)
-    # odometer_reading '= fields.Float("Odometer Reading (KM)", digits=(16, 0), tracking=True)
-    # odex_vehicle_partner_id = fields.Many2one(
-    #     "res.partner", compute="_compute_odex_vehicle_partner")
-    # odex_allowed_vehicle_ids = fields.Many2many(
-    #     "fleet.vehicle", compute="_compute_odex_allowed_vehicles")
-    # odex_vehicle_ro = fields.Char(compute="_compute_odex_vehicle_meta")
-    # odex_vehicle_last_odometer = fields.Float(
-    #     "Last Recorded Odometer", digits=(16, 0), compute="_compute_odex_vehicle_meta")
+    # ---- vehicle ---------------------------------------------------------
+    vehicle_id = fields.Many2one("fleet.vehicle", "Vehicle", tracking=True, index=True)
+    odometer_reading '= fields.Float("Odometer Reading (KM)", digits=(16, 0), tracking=True)
+    odex_vehicle_partner_id = fields.Many2one(
+        "res.partner", compute="_compute_odex_vehicle_partner")
+    odex_allowed_vehicle_ids = fields.Many2many(
+        "fleet.vehicle", compute="_compute_odex_allowed_vehicles")
+    odex_vehicle_ro = fields.Char(compute="_compute_odex_vehicle_meta")
+    odex_vehicle_last_odometer = fields.Float(
+        "Last Recorded Odometer", digits=(16, 0), compute="_compute_odex_vehicle_meta")
 
-    # displayed from fleet.vehicle - nothing is stored on the lead
-    # odex_license_plate = fields.Char("License Plate", compute="_compute_vehicle_info",
-    #                                  inverse="_inverse_vehicle_info")
-    # odex_vehicle_make = fields.Char("Vehicle Make", compute="_compute_vehicle_info",
-    #                                 inverse="_inverse_vehicle_info")
-    # odex_vehicle_model = fields.Char("Model", compute="_compute_vehicle_info",
-    #                                  inverse="_inverse_vehicle_info")
-    # odex_chassis_no = fields.Char("Chassis No.", compute="_compute_vehicle_info",
-    #                               inverse="_inverse_vehicle_info")
-    # odex_cylinder_count = fields.Char("Cylinder Count", compute="_compute_vehicle_info",
-    #                                   inverse="_inverse_vehicle_info")
-    # odex_vehicle_colour = fields.Char("Colour", compute="_compute_vehicle_info",
-    #                                   inverse="_inverse_vehicle_info")
-    # odex_engine_no = fields.Char("Engine No.", compute="_compute_vehicle_info",
-    #                              inverse="_inverse_vehicle_info")
-    # odex_vehicle_year = fields.Char("Year", compute="_compute_vehicle_info",
-    #                                 inverse="_inverse_vehicle_info")
+    displayed from fleet.vehicle - nothing is stored on the lead
+    odex_license_plate = fields.Char("License Plate", compute="_compute_vehicle_info",
+                                     inverse="_inverse_vehicle_info")
+    odex_vehicle_make = fields.Char("Vehicle Make", compute="_compute_vehicle_info",
+                                    inverse="_inverse_vehicle_info")
+    odex_vehicle_model = fields.Char("Model", compute="_compute_vehicle_info",
+                                     inverse="_inverse_vehicle_info")
+    odex_chassis_no = fields.Char("Chassis No.", compute="_compute_vehicle_info",
+                                  inverse="_inverse_vehicle_info")
+    odex_cylinder_count = fields.Char("Cylinder Count", compute="_compute_vehicle_info",
+                                      inverse="_inverse_vehicle_info")
+    odex_vehicle_colour = fields.Char("Colour", compute="_compute_vehicle_info",
+                                      inverse="_inverse_vehicle_info")
+    odex_engine_no = fields.Char("Engine No.", compute="_compute_vehicle_info",
+                                 inverse="_inverse_vehicle_info")
+    odex_vehicle_year = fields.Char("Year", compute="_compute_vehicle_info",
+                                    inverse="_inverse_vehicle_info")
 
     # ---- smart buttons ---------------------------------------------------
     booking_count = fields.Integer("Bookings", compute="_compute_booking_count")
