@@ -1,69 +1,119 @@
-// Job Card - Inspection tab: G / W / B segmented control
-$gwb-track: #f2f4f7;
-$gwb-border: #e4e7ec;
-$gwb-idle: #98a2b3;
+// Job Card - 50 Points: G / W / B buttons + Yes/No switch
+$gwb-border: #d0d5dd;
+$gwb-idle-bg: #f2f4f7;
+$gwb-idle-fg: #667085;
 $gwb-good: #16a34a;
 $gwb-warn: #f59e0b;
 $gwb-bad: #dc2626;
 
+// ------------------------------------------------------------ G / W / B
 .o_gwb_toggle {
     display: inline-flex;
-    align-items: center;
-    gap: 2px;
-    padding: 2px;
-    background: $gwb-track;
-    border: 1px solid $gwb-border;
-    border-radius: 8px;
+    align-items: stretch;
+    gap: 6px;
     vertical-align: middle;
 
     .o_gwb_btn {
-        min-width: 32px;
-        height: 24px;
-        padding: 0 8px;
-        border: 0;
-        border-radius: 6px;
-        background: transparent;
-        color: $gwb-idle;
-        font-size: 0.78rem;
+        min-width: 56px;
+        height: 38px;
+        padding: 0 12px;
+        border: 1px solid $gwb-border;
+        border-radius: 8px;
+        background: $gwb-idle-bg;
+        color: $gwb-idle-fg;
+        font-size: 0.95rem;
         font-weight: 700;
-        line-height: 24px;
-        letter-spacing: 0.02em;
+        line-height: 1;
         cursor: pointer;
-        transition: background-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+        transition: background-color 0.12s ease, color 0.12s ease, border-color 0.12s ease,
+            transform 0.06s ease;
 
-        &:hover:not(.o_gwb_active):not(:disabled) {
-            background: $gwb-border;
-            color: #475467;
-        }
+        &:active:not(:disabled) { transform: scale(0.95); }
         &:focus-visible {
-            outline: 2px solid rgba(20, 20, 156, 0.35);
-            outline-offset: 1px;
+            outline: 2px solid rgba(20, 20, 156, 0.4);
+            outline-offset: 2px;
         }
+        // hover previews the colour the button will take
+        &.o_gwb_g:hover:not(.o_gwb_active):not(:disabled) { border-color: $gwb-good; color: $gwb-good; background: #fff; }
+        &.o_gwb_w:hover:not(.o_gwb_active):not(:disabled) { border-color: $gwb-warn; color: #b45309; background: #fff; }
+        &.o_gwb_b:hover:not(.o_gwb_active):not(:disabled) { border-color: $gwb-bad; color: $gwb-bad; background: #fff; }
+
         &.o_gwb_active {
             color: #fff;
-            box-shadow: 0 1px 2px rgba(16, 24, 40, 0.18);
+            box-shadow: 0 1px 3px rgba(16, 24, 40, 0.2);
         }
-        &.o_gwb_g.o_gwb_active { background: $gwb-good; }
-        &.o_gwb_w.o_gwb_active { background: $gwb-warn; }
-        &.o_gwb_b.o_gwb_active { background: $gwb-bad; }
+        &.o_gwb_g.o_gwb_active { background: $gwb-good; border-color: $gwb-good; }
+        &.o_gwb_w.o_gwb_active { background: $gwb-warn; border-color: $gwb-warn; }
+        &.o_gwb_b.o_gwb_active { background: $gwb-bad; border-color: $gwb-bad; }
+
         &:disabled { cursor: default; }
-        &:disabled:not(.o_gwb_active) { opacity: 0.7; }
+        &:disabled:not(.o_gwb_active) { opacity: 0.6; }
     }
 }
 
-// Touch screens (tablets / phones): finger-sized segments
+// ------------------------------------------------------------ Yes / No switch
+.o_gwb_switch_wrap {
+    display: inline-flex;
+    align-items: center;
+    min-height: 38px;
+}
+.o_gwb_switch {
+    position: relative;
+    width: 46px;
+    height: 26px;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: #d0d5dd;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color 0.15s ease;
+
+    .o_gwb_knob {
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+        transition: transform 0.15s ease;
+    }
+    &.o_gwb_on {
+        background: $gwb-good;
+        .o_gwb_knob { transform: translateX(20px); }
+    }
+    &:focus-visible {
+        outline: 2px solid rgba(20, 20, 156, 0.4);
+        outline-offset: 2px;
+    }
+    &:disabled { cursor: default; opacity: 0.6; }
+}
+
+// ------------------------------------------------------------ touch screens
 @media (pointer: coarse) {
     .o_gwb_toggle {
-        gap: 4px;
-        padding: 3px;
-        border-radius: 10px;
-
+        gap: 8px;
         .o_gwb_btn {
-            min-width: 44px;
-            height: 36px;
-            line-height: 36px;
-            font-size: 0.9rem;
-            border-radius: 8px;
+            min-width: 60px;
+            height: 46px;
+            font-size: 1.05rem;
+            border-radius: 10px;
         }
     }
+    .o_gwb_switch_wrap { min-height: 46px; }
+    .o_gwb_switch {
+        width: 54px;
+        height: 30px;
+        .o_gwb_knob { width: 24px; height: 24px; }
+        &.o_gwb_on .o_gwb_knob { transform: translateX(24px); }
+    }
+}
+
+// phones: buttons share the card width
+@media (max-width: 767.98px) {
+    .o_jc_insp_kanban .o_gwb_toggle .o_gwb_btn { min-width: 52px; }
 }

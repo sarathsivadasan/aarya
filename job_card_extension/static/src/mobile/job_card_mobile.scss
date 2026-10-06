@@ -193,9 +193,10 @@ $jcm-radius: 12px;
 }
 .o_jc_insp_top {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
+    gap: 8px 12px;
 }
 .o_jc_insp_name {
     min-width: 0;
@@ -209,4 +210,10 @@ $jcm-radius: 12px;
     margin-top: 6px;
     color: $jcm-muted;
     font-size: 0.82rem;
+}
+
+// 50 Points list: keep the button cell from clipping and centre it vertically
+.o_jc_inspection_list td[name="condition"] {
+    overflow: visible !important;
+    vertical-align: middle;
 }

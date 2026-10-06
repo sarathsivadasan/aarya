@@ -1,7 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates xml:space="preserve">
     <t t-name="job_card_extension.GwbToggleField">
-        <div class="o_gwb_toggle oe_kanban_action" t-att-class="{'o_gwb_readonly': props.readonly}" role="radiogroup">
+        <!-- Miscellaneous items: simple on/off switch -->
+        <div t-if="isYesNo" class="o_gwb_switch_wrap oe_kanban_action">
+            <button type="button" role="switch"
+                    t-attf-class="o_gwb_switch {{ checked ? 'o_gwb_on' : '' }}"
+                    t-att-aria-checked="checked ? 'true' : 'false'"
+                    t-att-title="checked ? 'Yes' : 'No'"
+                    t-att-disabled="props.readonly"
+                    t-on-click.stop="onToggle">
+                <span class="o_gwb_knob"/>
+            </button>
+        </div>
+        <!-- All other items: G / W / B -->
+        <div t-else="" class="o_gwb_toggle oe_kanban_action" t-att-class="{'o_gwb_readonly': props.readonly}" role="radiogroup">
             <t t-foreach="options" t-as="opt" t-key="opt.key">
                 <button type="button" role="radio"
                         t-attf-class="o_gwb_btn o_gwb_{{ opt.key }} {{ value === opt.key ? 'o_gwb_active' : '' }}"

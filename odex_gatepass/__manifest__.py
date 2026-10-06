@@ -12,7 +12,6 @@
     'description': "Workshop Gate Pass Management System",
     'depends': [
         'fleet',
-        'vehicle_inspection_report',
         'sale_management',
         'account',
     ],

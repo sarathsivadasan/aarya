@@ -277,7 +277,7 @@
                 <page name="damage_mark" string="Damage Mark" invisible="not is_jobcard">
                     <widget name="jc_damage_map"/>
                 </page>
-                <page name="quality_checklist" string="Inspection"
+                <page name="quality_checklist" string="50 Points"
                       invisible="not is_jobcard">
                     <field name="is_close" invisible="1"/>
                     <field name="quality_checklist_ids" widget="section_and_note_one2many" mode="list,kanban"
@@ -298,16 +298,16 @@
                             <field name="is_yes_no" column_invisible="1"/>
                             <field name="name" widget="section_and_note_text" string="Inspection Items"
                                    readonly="1" force_save="1"/>
-                            <field name="condition" widget="gwb_toggle" string="G / W / B" nolabel="1"
-                                   invisible="display_type or is_yes_no" width="130px"/>
-                            <field name="check_mark" widget="boolean_toggle" string="Yes / No"
-                                   invisible="display_type or not is_yes_no" width="90px"/>
+                            <field name="check_mark" column_invisible="1"/>
+                            <field name="condition" widget="gwb_toggle" string="G / W / B"
+                                   invisible="display_type" width="210px"/>
                             <field name="description" string="Remarks"/>
                         </list>
                         <kanban class="o_jc_m_kanban o_jc_insp_kanban" default_order="serial_no" limit="100">
                             <field name="serial_no"/>
                             <field name="display_type"/>
                             <field name="is_yes_no"/>
+                            <field name="check_mark"/>
                             <templates>
                                 <t t-name="card">
                                     <div t-if="record.display_type.raw_value" class="o_jc_insp_section">
@@ -318,9 +318,7 @@
                                             <field name="name" class="o_jc_insp_name"/>
                                             <div class="o_jc_insp_ctrl oe_kanban_action">
                                                 <field name="condition" widget="gwb_toggle"
-                                                       invisible="is_yes_no" readonly="parent.is_close"/>
-                                                <field name="check_mark" widget="boolean_toggle"
-                                                       invisible="not is_yes_no" readonly="parent.is_close"/>
+                                                       readonly="parent.is_close"/>
                                             </div>
                                         </div>
                                         <div t-if="record.description.raw_value" class="o_jc_insp_remark">
@@ -336,10 +334,9 @@
                             <field name="serial_no" invisible="1"/>
                             <group>
                                 <field name="name" string="Inspection Item" readonly="id"/>
-                                <field name="condition" widget="gwb_toggle" string="G / W / B"
-                                       invisible="display_type or is_yes_no"/>
-                                <field name="check_mark" widget="boolean_toggle" string="Yes / No"
-                                       invisible="display_type or not is_yes_no"/>
+                                <field name="check_mark" invisible="1"/>
+                                <field name="condition" widget="gwb_toggle" string="Result"
+                                       invisible="display_type"/>
                                 <field name="description" string="Remarks" invisible="display_type"/>
                             </group>
                         </form>
