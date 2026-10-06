@@ -1,0 +1,17 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_fleet_gate_pass,access_fleet_gate_pass,model_fleet_gate_pass,base.group_user,1,0,0,0
+access_gate_pass_log_user,gate.pass.log.user,model_fleet_gate_pass_log,base.group_user,1,0,0,0
+access_gate_pass_timeline_user,gate.pass.timeline.user,model_fleet_gate_pass_timeline,base.group_user,1,0,0,0
+access_gate_pass_image_user,gate.pass.image.user,model_fleet_gate_pass_image,base.group_user,1,0,0,0
+access_gate_pass_damage_user,gate.pass.damage.user,model_fleet_gate_pass_damage,base.group_user,1,0,0,0
+access_gate_pass_technician,gate.pass.technician,model_fleet_gate_pass,group_gate_pass_technician,1,0,0,0
+access_gate_pass_reception,gate.pass.reception,model_fleet_gate_pass,group_gate_pass_reception,1,1,1,0
+access_gate_pass_manager,gate.pass.manager,model_fleet_gate_pass,group_gate_pass_manager,1,1,1,1
+access_gate_pass_log_technician,gate.pass.log.technician,model_fleet_gate_pass_log,group_gate_pass_technician,1,0,0,0
+access_gate_pass_log_reception,gate.pass.log.reception,model_fleet_gate_pass_log,group_gate_pass_reception,1,1,1,0
+access_gate_pass_timeline_technician,gate.pass.timeline.technician,model_fleet_gate_pass_timeline,group_gate_pass_technician,1,0,0,0
+access_gate_pass_timeline_reception,gate.pass.timeline.reception,model_fleet_gate_pass_timeline,group_gate_pass_reception,1,1,1,0
+access_gate_pass_image_technician,gate.pass.image.technician,model_fleet_gate_pass_image,group_gate_pass_technician,1,0,0,0
+access_gate_pass_image_reception,gate.pass.image.reception,model_fleet_gate_pass_image,group_gate_pass_reception,1,1,1,1
+access_gate_pass_damage_technician,gate.pass.damage.technician,model_fleet_gate_pass_damage,group_gate_pass_technician,1,0,0,0
+access_gate_pass_damage_reception,gate.pass.damage.reception,model_fleet_gate_pass_damage,group_gate_pass_reception,1,1,1,1
