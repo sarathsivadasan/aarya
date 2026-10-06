@@ -2,7 +2,7 @@
 <templates xml:space="preserve">
     <t t-name="job_card_extension.GwbToggleField">
         <!-- Miscellaneous items: same green toggle as QC / technician portal (Odoo boolean_toggle) -->
-        <div t-if="isYesNo" class="o_gwb_switch_wrap oe_kanban_action" t-on-click.stop="">
+        <div t-if="isYesNo" class="o_gwb_switch_wrap oe_kanban_action" t-on-click.stop="" t-on-mousedown.stop="">
             <CheckBox value="checked"
                       className="'o_field_boolean o_boolean_toggle form-switch'"
                       disabled="props.readonly"
@@ -21,6 +21,15 @@
                     <t t-esc="opt.label"/>
                 </button>
             </t>
+        </div>
+    </t>
+
+    <t t-name="job_card_extension.JcToggleField">
+        <div class="o_gwb_switch_wrap oe_kanban_action" t-on-click.stop="" t-on-mousedown.stop="">
+            <CheckBox value="checked"
+                      className="'o_field_boolean o_boolean_toggle form-switch'"
+                      disabled="props.readonly"
+                      onChange.bind="onToggle">&#8203;</CheckBox>
         </div>
     </t>
 </templates>

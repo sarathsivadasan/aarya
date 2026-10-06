@@ -3,7 +3,7 @@
 {
     'name': 'Job Card Extension',
     'category': 'Services/Project',
-    'version': '18.0.1.5.0',
+    'version': '18.0.1.6.0',
     'author': 'Sarasoft',
     'company': '',
     'maintainer': 'Sarasoft',

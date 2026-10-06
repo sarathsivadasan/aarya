@@ -2,17 +2,17 @@ from odoo import _, api, fields, models
 from odoo.exceptions import UserError, ValidationError
 
 # CRM display field -> (short key, fleet.vehicle candidates, most specific first)
-# VEHICLE_INFO = {
-#     "odex_license_plate": ("plate", ["license_plate", "registration_no", "plate_no"]),
-#     "odex_vehicle_make": ("make", ["vehicle_make_id", "brand_id", "make_id"]),
-#     "odex_vehicle_model": ("model", ["model_id", "vehicle_model_id"]),
-#     "odex_chassis_no": ("chassis", ["vin_sn", "chassis_no", "chassis_number", "vin"]),
-#     "odex_cylinder_count": ("cylinder", ["cylinder_count", "cylinders", "no_of_cylinders",
-#                                          "cylinder", "x_odex_cylinder_count"]),
-#     "odex_vehicle_colour": ("colour", ["color_id", "colour_id", "vehicle_color_id", "color", "colour"]),
-#     "odex_engine_no": ("engine", ["engine_no", "engine_number", "engine_num", "x_odex_engine_no"]),
-#     "odex_vehicle_year": ("year", ["manufacturing_year", "year", "model_year", "year_of_manufacture"]),
-# }
+VEHICLE_INFO = {
+    "odex_license_plate": ("plate", ["license_plate", "registration_no", "plate_no"]),
+    "odex_vehicle_make": ("make", ["vehicle_make_id", "brand_id", "make_id"]),
+    "odex_vehicle_model": ("model", ["model_id", "vehicle_model_id"]),
+    "odex_chassis_no": ("chassis", ["vin_sn", "chassis_no", "chassis_number", "vin"]),
+    "odex_cylinder_count": ("cylinder", ["cylinder_count", "cylinders", "no_of_cylinders",
+                                         "cylinder", "x_odex_cylinder_count"]),
+    "odex_vehicle_colour": ("colour", ["color_id", "colour_id", "vehicle_color_id", "color", "colour"]),
+    "odex_engine_no": ("engine", ["engine_no", "engine_number", "engine_num", "x_odex_engine_no"]),
+    "odex_vehicle_year": ("year", ["manufacturing_year", "year", "model_year", "year_of_manufacture"]),
+}
 WRITABLE_TYPES = ("char", "text", "integer", "float")
 
 
@@ -87,7 +87,6 @@ class CrmLead(models.Model):
             return True
         return owner.commercial_partner_id == partner.commercial_partner_id
 
-    ------------------------------------------------------------ computes
     @api.depends("partner_id")
     def _compute_odex_vehicle_partner(self):
         for lead in self:
@@ -205,7 +204,6 @@ class CrmLead(models.Model):
                 "The last recorded odometer for this vehicle is %(last)s KM. "
                 "Check the reading before saving.", last="{:,.0f}".format(last))}}
 
-    --------------------------------------------------------- constraints
     @api.constrains("partner_id", "vehicle_id")
     def _check_vehicle_customer(self):
         for lead in self.filtered(lambda r: r.vehicle_id and r.partner_id):

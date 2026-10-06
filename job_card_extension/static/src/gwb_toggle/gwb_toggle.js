@@ -53,12 +53,51 @@ export class GwbToggleField extends Component {
     }
 }
 
+/*
+ * Odoo makes every field widget readonly while its list row (or x2many kanban card)
+ * is not in edition, so a first click is spent opening the row. Returning `readonly`
+ * from extractProps keeps only the real readonly rules (field attr, closed job card,
+ * non-editable list) - the same trick core uses for the priority widget - so one
+ * click on G / W / B or on a toggle sets the value directly.
+ */
+function extractDirectEditProps(fieldInfo, dynamicInfo) {
+    return { readonly: dynamicInfo.readonly };
+}
+
 registry.category("fields").add("gwb_toggle", {
     component: GwbToggleField,
     displayName: "G / W / B Toggle",
     supportedTypes: ["selection"],
+    extractProps: extractDirectEditProps,
     fieldDependencies: [
         { name: "is_yes_no", type: "boolean" },
         { name: "check_mark", type: "boolean" },
     ],
+});
+
+/**
+ * jc_toggle: Odoo's green boolean toggle, clickable in one tap in any list row / card.
+ */
+export class JcToggleField extends Component {
+    static template = "job_card_extension.JcToggleField";
+    static components = { CheckBox };
+    static props = { ...standardFieldProps };
+
+    get checked() {
+        return !!this.props.record.data[this.props.name];
+    }
+
+    async onToggle(value) {
+        if (this.props.readonly) {
+            return;
+        }
+        await this.props.record.update({ [this.props.name]: !!value });
+    }
+}
+
+registry.category("fields").add("jc_toggle", {
+    component: JcToggleField,
+    displayName: "Job Card Toggle",
+    supportedTypes: ["boolean"],
+    extractProps: extractDirectEditProps,
 });

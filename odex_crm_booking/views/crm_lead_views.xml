@@ -58,7 +58,7 @@
                         <field name="vehicle_model_id"/>
                         <field name="vehicle_color_id"/>
                         <field name="vin"/>
-                        <field name="engine_no"/>
+                        <field name="engin_no"/>
                         <field name="year"/>
                     </group>
                 </group>
@@ -96,7 +96,7 @@
                     </group>
                 </div> -->
 
-                <div class="o_odex_section" name="odex_vehicle_details">
+                <!-- <div class="o_odex_section" name="odex_vehicle_details">
                     <div class="o_odex_section_head">
                         <i class="fa fa-car" role="img" aria-label="Vehicle" title="Vehicle"/>
                         <span>Vehicle Details</span>
@@ -132,7 +132,7 @@
                                    placeholder="Current reading in KM"/>
                         </group>
                     </group>
-                </div>
+                </div> -->
             </xpath>
 
             <!-- Standard partner/info groups stay in the DOM (onchanges, phone/email

@@ -345,7 +345,7 @@
                 <page string="Parts">
                     <field name="inspection_part_ids" mode="list,kanban">
                         <list editable="bottom">
-                            <field name="is_confirm"/>
+                            <field name="is_confirm" widget="jc_toggle"/>
                             <field name="parts_type"/>
                             <field name="part_no" readonly="1"/>
                             <field name="part"/>
@@ -364,7 +364,7 @@
                                             <span t-if="!record.product_id.raw_value" t-esc="record.part.value"/>
                                         </div>
                                         <div class="oe_kanban_action">
-                                            <field name="is_confirm" widget="boolean_toggle"/>
+                                            <field name="is_confirm" widget="jc_toggle"/>
                                         </div>
                                     </div>
                                     <div class="o_jc_m_meta">
@@ -383,7 +383,7 @@
                                 <field name="parts_type"/>
                                 <field name="part_no" readonly="1"/>
                                 <field name="quantity"/>
-                                <field name="is_confirm" widget="boolean_toggle"/>
+                                <field name="is_confirm" widget="jc_toggle"/>
                             </group>
                         </form>
                     </field>
