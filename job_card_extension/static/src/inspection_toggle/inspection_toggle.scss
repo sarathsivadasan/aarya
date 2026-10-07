@@ -1,0 +1,88 @@
+// ON/OFF switch (Pre / Final Inspection) + inspection table layout
+$jc-on: #2eaa3f;
+$jc-off-bg: #e4e6ea;
+$jc-line: #dee2e6;
+
+.o_jc_onoff {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    width: 76px;
+    height: 32px;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: $jc-off-bg;
+    cursor: pointer;
+    touch-action: manipulation;   // no 300ms tap delay / double-tap zoom on tablets
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    transition: background-color 0.18s ease;
+    vertical-align: middle;
+
+    .o_jc_onoff_label {
+        position: absolute;
+        right: 12px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #495057;
+        pointer-events: none;
+    }
+    .o_jc_onoff_knob {
+        position: absolute;
+        left: 3px;
+        top: 3px;
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        transition: left 0.18s ease;
+        pointer-events: none;
+    }
+    &.o_jc_onoff_on {
+        background: $jc-on;
+
+        .o_jc_onoff_label { right: auto; left: 13px; color: #fff; }
+        .o_jc_onoff_knob { left: calc(100% - 29px); }
+    }
+    &:focus-visible { outline: 2px solid #714b67; outline-offset: 2px; }
+    &:disabled { cursor: default; opacity: 0.65; }
+}
+
+.o_field_widget.o_jc_inspection {
+    .o_list_table {
+        border: 1px solid $jc-line;
+
+        td, th { vertical-align: middle; }
+        tbody > tr > td { border-right: 1px solid $jc-line; padding-top: 10px; padding-bottom: 10px; }
+        // Toggle column: keep the whole switch inside the cell, centred.
+        td.o_jc_onoff_cell, td[name="check_mark"] { text-align: center; min-width: 110px; }
+        tr.o_is_line_section > td {
+            background: #f1f3f5;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+            padding-top: 14px;
+            padding-bottom: 14px;
+        }
+        td[name="description"] textarea,
+        td[name="description"] input,
+        td[name="description"] .o_field_text {
+            min-height: 38px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            padding: 6px 10px;
+            background: #fff;
+        }
+        td[name="description"] { min-width: 180px; }
+        td[name="name"] { white-space: normal; min-width: 200px; }
+    }
+}
+
+@media (max-width: 767.98px) {
+    .o_jc_onoff { width: 68px; height: 30px; }
+    .o_jc_onoff .o_jc_onoff_knob { width: 24px; height: 24px; }
+    .o_jc_onoff.o_jc_onoff_on .o_jc_onoff_knob { left: calc(100% - 27px); }
+    .o_field_widget.o_jc_inspection .o_list_table td[name="name"] { min-width: 150px; }
+}
