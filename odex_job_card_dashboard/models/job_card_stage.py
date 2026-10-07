@@ -5,7 +5,8 @@ The dashboard never keeps its own copy of the status list: it reads
 ``job.card.stage`` directly and only adds the presentation attributes an
 administrator needs (colour, icon, order, visibility).
 """
-from odoo import api, fields, models
+from odoo import _, api, fields, models
+from odoo.exceptions import ValidationError
 
 # Keyword -> (hex colour, font-awesome icon).  Used only to seed sensible
 # defaults the first time a stage is displayed; administrators can override
@@ -26,6 +27,14 @@ DEFAULT_STYLE = [
     (('cancel', 'reject'), '#94A3B8', 'fa-ban'),
     (('close', 'done', 'complete'), '#64748B', 'fa-lock'),
 ]
+
+# Boolean flags the workflow module itself may define on job.card.stage to
+# mark the closing status.  Checked before any name matching.
+NATIVE_CLOSED_FLAGS = ('is_close', 'is_closed', 'closed', 'is_closing_stage')
+CLOSED_VALUES = ('closed', 'close')
+
+# Names a normal status may not take: they belong to calculated cards.
+RESERVED_STATUS_NAMES = ('total job card', 'total job cards')
 
 FALLBACK_COLOR = '#6366F1'
 FALLBACK_ICON = 'fa-tasks'
@@ -59,6 +68,69 @@ class JobCardStage(models.Model):
     show_on_dashboard = fields.Boolean(
         string='Show on Dashboard', default=True,
     )
+    dashboard_is_closed = fields.Boolean(
+        string='Closed Status',
+        help='Job cards currently in a status ticked here are treated as '
+             'closed: they are excluded from the Total Job Card figure. '
+             'Reopening a job card (moving it to any other status) makes it '
+             'count again. If no status is ticked, the closing status is '
+             'detected automatically.',
+    )
+
+    @api.constrains('name')
+    def _check_reserved_dashboard_name(self):
+        for stage in self:
+            if (stage.name or '').strip().lower() in RESERVED_STATUS_NAMES:
+                raise ValidationError(_(
+                    '"%s" is a calculated dashboard card, not a job card status. '
+                    'Configure it from Workshop Dashboard / Configuration / '
+                    'Calculated Cards.', stage.name))
+
+    @api.model
+    def _dashboard_closed_stages(self):
+        """Statuses that mean "closed", resolved without any hardcoded id.
+
+        Order of preference:
+        1. statuses an administrator ticked as *Closed Status*;
+        2. a boolean flag defined by the workflow module on the stage;
+        3. the stage technical value (``closed``);
+        4. the stage name (``ilike 'close'``) - same keyword the style
+           suggestion already uses for the Closed card.
+        """
+        flagged = self.search([('dashboard_is_closed', '=', True)])
+        if flagged:
+            return flagged
+        for candidate in NATIVE_CLOSED_FLAGS:
+            field = self._fields.get(candidate)
+            if field and field.type == 'boolean' and field.store:
+                stages = self.search([(candidate, '=', True)])
+                if stages:
+                    return stages
+        if 'value' in self._fields and self._fields['value'].store:
+            stages = self.search([('value', 'in', list(CLOSED_VALUES))])
+            if stages:
+                return stages
+        return self.search([('name', 'ilike', 'close')])
+
+    @api.model
+    def _seed_closed_stages(self):
+        """Tick *Closed Status* on the detected stage(s) once, so the
+        configuration screen shows what the dashboard is actually using.
+        Never overrides a choice an administrator already made."""
+        if self.search_count([('dashboard_is_closed', '=', True)]):
+            return True
+        detected = self._dashboard_closed_stages()
+        if detected:
+            detected.write({'dashboard_is_closed': True})
+        return True
+
+    @api.model
+    def action_open_calculated_cards(self):
+        """Header button of the Status Cards list."""
+        self.env['job.card.dashboard.card']._ensure_cards()
+        action = self.env['ir.actions.act_window']._for_xml_id(
+            'odex_job_card_dashboard.action_job_card_dashboard_card')
+        return action
 
     @api.model
     def _dashboard_stages(self):

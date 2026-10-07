@@ -1,0 +1,258 @@
+// Job Card - Pre Inspection / Final Inspection tabs
+$jci-green: #22a447;
+$jci-green-soft: #8fd19e;
+$jci-green-text: #1e7e34;
+$jci-off-bg: #e4e7ec;
+$jci-off-text: #475467;
+$jci-border: #d0d5dd;
+$jci-line: #e4e7ec;
+$jci-head-bg: #f2f4f7;
+
+// ------------------------------------------------------------------ ON / OFF switch
+.o_jc_onoff {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 2px;
+    cursor: pointer;
+    user-select: none;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    border-radius: 999px;
+    vertical-align: middle;
+
+    &:focus-visible {
+        outline: 2px solid rgba(20, 20, 156, 0.4);
+        outline-offset: 2px;
+    }
+
+    .o_jc_onoff_track {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        flex: 0 0 auto;
+        border-radius: 999px;
+        transition: background-color 0.15s ease, border-color 0.15s ease;
+    }
+    .o_jc_onoff_knob {
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0 1px 3px rgba(16, 24, 40, 0.25);
+        transition: transform 0.15s ease;
+    }
+    .o_jc_onoff_text {
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        line-height: 1;
+    }
+
+    // --- label inside the pill (Pre Inspection)
+    &.o_jc_onoff_inside {
+        .o_jc_onoff_track {
+            width: 88px;
+            height: 38px;
+            border: 1px solid transparent;
+        }
+        .o_jc_onoff_knob { width: 30px; height: 30px; }
+        .o_jc_onoff_text {
+            position: absolute;
+            font-size: 1rem;
+        }
+        &.o_jc_onoff_on {
+            .o_jc_onoff_track { background: $jci-green; }
+            .o_jc_onoff_text { left: 14px; color: #fff; }
+            .o_jc_onoff_knob { transform: translateX(50px); }
+        }
+        &.o_jc_onoff_off {
+            .o_jc_onoff_track { background: $jci-off-bg; border-color: $jci-border; }
+            .o_jc_onoff_text { right: 13px; color: $jci-off-text; }
+        }
+    }
+
+    // --- label beside the pill (Final Inspection)
+    &.o_jc_onoff_outside {
+        min-width: 112px;
+        .o_jc_onoff_track {
+            width: 58px;
+            height: 32px;
+            border: 1px solid transparent;
+        }
+        .o_jc_onoff_knob { top: 2px; left: 2px; width: 26px; height: 26px; }
+        .o_jc_onoff_text { font-size: 0.95rem; }
+        &.o_jc_onoff_on {
+            justify-content: flex-start;
+            .o_jc_onoff_track { background: $jci-green-soft; border-color: $jci-green; }
+            .o_jc_onoff_text { color: $jci-green-text; }
+            .o_jc_onoff_knob { transform: translateX(26px); }
+        }
+        &.o_jc_onoff_off {
+            .o_jc_onoff_track { background: $jci-off-bg; border-color: $jci-border; }
+            .o_jc_onoff_text { color: $jci-off-text; }
+        }
+    }
+
+    &.o_jc_onoff_readonly {
+        cursor: default;
+        opacity: 0.75;
+    }
+}
+
+// ------------------------------------------------------------------ Remark box
+.o_jc_remark {
+    display: block;
+    width: 100%;
+
+    .o_jc_remark_label {
+        display: none;                    // shown on the first row of a section (Final)
+        margin-bottom: 4px;
+        color: $jci-off-text;
+        font-size: 0.85rem;
+    }
+    .o_jc_remark_input {
+        width: 100%;
+        min-height: 40px;
+        padding: 6px 12px;
+        border: 1px solid $jci-border !important;
+        border-radius: 6px;
+        background: #fff;
+        font-size: 0.95rem;
+        &::placeholder { color: #98a2b3; }
+        &:focus {
+            border-color: #14149c !important;
+            box-shadow: 0 0 0 3px rgba(20, 20, 156, 0.12);
+        }
+    }
+    .o_jc_remark_ro {
+        display: flex;
+        align-items: center;
+        background: #f9fafb;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+// ------------------------------------------------------------------ checklist tables
+.o_jc_checklist_page {
+    .o_jc_checklist_hint {
+        color: #667085;
+        margin-bottom: 10px;
+    }
+}
+
+.o_jc_checklist .o_list_renderer {
+    border: 1px solid $jci-line;
+    border-radius: 4px;
+
+    // the reference sheets have no column header row: keep it only for widths
+    thead tr th {
+        height: 0 !important;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+        border: 0 !important;
+        font-size: 0 !important;
+        line-height: 0 !important;
+        overflow: hidden;
+        * { display: none !important; }
+    }
+
+    .o_data_row {
+        > td {
+            vertical-align: middle;
+            padding-top: 12px !important;
+            padding-bottom: 12px !important;
+            border-color: $jci-line;
+            box-shadow: none !important;
+            --bs-table-accent-bg: transparent;
+            --bs-table-bg-state: transparent;
+            --bs-table-bg-type: transparent;
+            --bs-table-striped-bg: transparent;
+            --bs-table-hover-bg: transparent;
+        }
+        > td + td { border-left: 1px solid $jci-line; }
+        &:hover > td,
+        &:focus-within > td,
+        &.o_selected_row > td { background-color: transparent !important; }
+
+        > td[name="name"] {
+            font-size: 1rem;
+            color: #1d2939;
+            white-space: normal;
+        }
+        > td[name="check_mark"] { text-align: center; }
+    }
+
+    // section header: grey band, bold uppercase title (Final Inspection sheet)
+    .o_data_row.o_is_line_section > td {
+        background-color: $jci-head-bg !important;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+        font-size: 0.98rem;
+        padding-top: 14px !important;
+        padding-bottom: 14px !important;
+    }
+    .o_data_row.o_is_line_note > td {
+        font-style: italic;
+        color: #475467;
+    }
+}
+
+// Final Inspection: "Remark" label above the first remark box of each section
+.o_jc_checklist_final .o_list_renderer {
+    .o_data_row.o_is_line_section + .o_data_row:not(.o_is_line_section):not(.o_is_line_note),
+    tbody .o_data_row:first-child:not(.o_is_line_section):not(.o_is_line_note) {
+        .o_jc_remark_label { display: block; }
+    }
+}
+
+// ------------------------------------------------------------------ phone cards
+.o_jc_check_kanban {
+    .o_kanban_record:has(.o_jc_check_section) {
+        border: 0;
+        box-shadow: none;
+        background: transparent;
+        padding: 14px 2px 4px;
+        margin-bottom: 0;
+    }
+    .o_jc_check_section {
+        font-weight: 700;
+        font-size: 0.82rem;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        color: #14149c;
+    }
+    .o_jc_check_note {
+        font-style: italic;
+        color: #475467;
+    }
+    .o_jc_check_top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+    }
+    .o_jc_check_name {
+        font-weight: 600;
+        min-width: 0;
+        overflow-wrap: anywhere;
+    }
+    .o_jc_check_remark { margin-top: 10px; }
+}
+
+// ------------------------------------------------------------------ tablets & touch
+@media (max-width: 1199.98px) {
+    .o_jc_checklist .o_list_renderer .o_data_row > td[name="name"] { font-size: 0.95rem; }
+}
+@media (pointer: coarse) {
+    .o_jc_onoff.o_jc_onoff_outside .o_jc_onoff_track { width: 62px; height: 34px; }
+    .o_jc_onoff.o_jc_onoff_outside .o_jc_onoff_knob { width: 28px; height: 28px; }
+    .o_jc_onoff.o_jc_onoff_outside.o_jc_onoff_on .o_jc_onoff_knob { transform: translateX(28px); }
+    .o_jc_remark .o_jc_remark_input { min-height: 44px; }
+}
+@media (max-width: 767.98px) {
+    .o_jc_remark .o_jc_remark_input { font-size: 16px; } // no iOS zoom on focus
+}

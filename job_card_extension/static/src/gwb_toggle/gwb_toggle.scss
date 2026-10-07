@@ -1,0 +1,131 @@
+// Job Card - 50 Points: G / W / B buttons + Yes/No switch
+$gwb-border: #d0d5dd;
+$gwb-idle-bg: #f2f4f7;
+$gwb-idle-fg: #667085;
+$gwb-good: #16a34a;
+$gwb-warn: #f59e0b;
+$gwb-bad: #dc2626;
+
+// ------------------------------------------------------------ G / W / B
+.o_gwb_toggle {
+    display: inline-flex;
+    align-items: stretch;
+    gap: 6px;
+    vertical-align: middle;
+
+    .o_gwb_btn {
+        min-width: 56px;
+        height: 38px;
+        padding: 0 12px;
+        border: 1px solid $gwb-border;
+        border-radius: 8px;
+        background: $gwb-idle-bg;
+        color: $gwb-idle-fg;
+        font-size: 0.95rem;
+        font-weight: 700;
+        line-height: 1;
+        cursor: pointer;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+        transition: background-color 0.12s ease, color 0.12s ease, border-color 0.12s ease,
+            transform 0.06s ease;
+
+        &:active:not(:disabled) { transform: scale(0.95); }
+        &:focus-visible {
+            outline: 2px solid rgba(20, 20, 156, 0.4);
+            outline-offset: 2px;
+        }
+        // hover previews the colour the button will take
+        &.o_gwb_g:hover:not(.o_gwb_active):not(:disabled) { border-color: $gwb-good; color: $gwb-good; background: #fff; }
+        &.o_gwb_w:hover:not(.o_gwb_active):not(:disabled) { border-color: $gwb-warn; color: #b45309; background: #fff; }
+        &.o_gwb_b:hover:not(.o_gwb_active):not(:disabled) { border-color: $gwb-bad; color: $gwb-bad; background: #fff; }
+
+        &.o_gwb_active {
+            color: #fff;
+            box-shadow: 0 1px 3px rgba(16, 24, 40, 0.2);
+        }
+        &.o_gwb_g.o_gwb_active { background: $gwb-good; border-color: $gwb-good; }
+        &.o_gwb_w.o_gwb_active { background: $gwb-warn; border-color: $gwb-warn; }
+        &.o_gwb_b.o_gwb_active { background: $gwb-bad; border-color: $gwb-bad; }
+
+        &:disabled { cursor: default; }
+        &:disabled:not(.o_gwb_active) { opacity: 0.6; }
+    }
+}
+
+// ------------------------------------------------------------ Yes / No toggle
+// Markup is Odoo's own boolean_toggle (CheckBox .o_boolean_toggle.form-switch),
+// so colours come from the core stylesheet; only alignment / size here.
+// The wrapper (role="switch") owns the click / tap; the input is only drawn.
+.o_gwb_switch_wrap {
+    display: inline-flex;
+    align-items: center;
+    min-height: 38px;
+    padding: 0 4px;
+    cursor: pointer;
+    user-select: none;
+    touch-action: manipulation;          // no 300ms delay / double-tap zoom on tablets
+    -webkit-tap-highlight-color: transparent;
+    border-radius: 999px;
+
+    .o-checkbox { margin: 0; }
+    .form-check-input {
+        pointer-events: none;            // the wrapper handles the event
+        cursor: pointer;
+        margin-top: 0;
+    }
+    &:focus-visible {
+        outline: 2px solid rgba(20, 20, 156, 0.4);
+        outline-offset: 2px;
+    }
+    &.o_gwb_switch_readonly {
+        cursor: default;
+        .form-check-input { cursor: default; }
+    }
+}
+
+// ------------------------------------------------------------ touch screens
+@media (pointer: coarse) {
+    .o_gwb_toggle {
+        gap: 8px;
+        .o_gwb_btn {
+            min-width: 60px;
+            height: 46px;
+            font-size: 1.05rem;
+            border-radius: 10px;
+        }
+    }
+    .o_gwb_switch_wrap {
+        min-height: 46px;
+        .form-check-input { width: 2.6em; height: 1.4em; }
+    }
+}
+
+// phones: buttons share the card width
+@media (max-width: 767.98px) {
+    .o_jc_insp_kanban .o_gwb_toggle .o_gwb_btn { min-width: 52px; }
+}
+
+// ------------------------------------------------------------ 50 Points list rows
+// No hover / focus / striped / edited-row shading: the row stays still under the cursor
+// so the buttons are easy to hit.
+.o_jc_inspection_list .o_list_renderer .o_data_row {
+    > td {
+        box-shadow: none !important;
+        --bs-table-accent-bg: transparent;
+        --bs-table-bg-state: transparent;
+        --bs-table-bg-type: transparent;
+        --bs-table-striped-bg: transparent;
+        --bs-table-hover-bg: transparent;
+    }
+    &:hover > td,
+    &:focus-within > td,
+    &.o_selected_row > td {
+        background-color: transparent !important;
+        box-shadow: none !important;
+    }
+    // section headers keep their own look
+    &.o_is_line_section > td {
+        background-color: var(--bs-gray-100, #f8f9fa) !important;
+    }
+}

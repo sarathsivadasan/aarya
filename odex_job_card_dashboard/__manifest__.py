@@ -1,6 +1,6 @@
 {
     'name': 'ODEX Job Card Dashboard',
-    'version': '18.0.1.2.0',
+    'version': '18.0.1.3.0',
     'category': 'Services/Workshop',
     'summary': 'Modern OWL command-center dashboard for Job Cards',
     'description': """
@@ -9,6 +9,7 @@ ODEX Job Card Dashboard
 A brand-new, fully interactive OWL dashboard for the Workshop Management System.
 
 * Live status cards driven by job.card.stage (colors/icons/order configurable)
+* Total Job Card: calculated card counting every open (not Closed) job card
 * Drill-down on every card and table row
 * Bay occupancy covering both job cards and vehicle inspections
 * Overdue promise-date tracking and a customer-waiting board
@@ -29,8 +30,10 @@ A brand-new, fully interactive OWL dashboard for the Workshop Management System.
         'security/dashboard_security.xml',
         'security/ir.model.access.csv',
         'data/dashboard_config_data.xml',
+        'data/dashboard_card_data.xml',
         'views/job_card_stage_views.xml',
         'views/dashboard_config_views.xml',
+        'views/dashboard_card_views.xml',
         'views/dashboard_views.xml',
     ],
     'demo': [

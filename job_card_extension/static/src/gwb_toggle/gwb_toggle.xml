@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="job_card_extension.GwbToggleField">
+        <!-- Miscellaneous items: same green toggle as QC / technician portal (Odoo boolean_toggle) -->
+        <div t-if="isYesNo" class="o_gwb_switch_wrap oe_kanban_action" role="switch"
+             t-att-aria-checked="checked ? 'true' : 'false'"
+             t-att-aria-disabled="props.readonly ? 'true' : 'false'"
+             t-att-tabindex="props.readonly ? -1 : 0"
+             t-att-class="{'o_gwb_switch_readonly': props.readonly}"
+             t-on-click.stop.prevent="onSwitchClick"
+             t-on-mousedown.stop=""
+             t-on-keydown="onSwitchKeydown">
+            <span class="o-checkbox form-check o_field_boolean o_boolean_toggle form-switch d-inline-block mb-0">
+                <input type="checkbox" class="form-check-input" tabindex="-1" aria-hidden="true"
+                       t-att-checked="checked" t-att-disabled="props.readonly"/>
+            </span>
+        </div>
+        <!-- All other items: G / W / B -->
+        <div t-else="" class="o_gwb_toggle oe_kanban_action" t-att-class="{'o_gwb_readonly': props.readonly}" role="radiogroup">
+            <t t-foreach="options" t-as="opt" t-key="opt.key">
+                <button type="button" role="radio"
+                        t-attf-class="o_gwb_btn o_gwb_{{ opt.key }} {{ value === opt.key ? 'o_gwb_active' : '' }}"
+                        t-att-aria-label="opt.aria"
+                        t-att-aria-checked="value === opt.key ? 'true' : 'false'"
+                        t-att-disabled="props.readonly"
+                        t-on-mousedown.prevent=""
+                        t-on-click.stop="() => this.onSelect(opt.key)">
+                    <t t-esc="opt.label"/>
+                </button>
+            </t>
+        </div>
+    </t>
+
+    <t t-name="job_card_extension.JcToggleField">
+        <div class="o_gwb_switch_wrap oe_kanban_action" role="switch"
+             t-att-aria-checked="checked ? 'true' : 'false'"
+             t-att-aria-disabled="props.readonly ? 'true' : 'false'"
+             t-att-tabindex="props.readonly ? -1 : 0"
+             t-att-class="{'o_gwb_switch_readonly': props.readonly}"
+             t-on-click.stop.prevent="onSwitchClick"
+             t-on-mousedown.stop=""
+             t-on-keydown="onSwitchKeydown">
+            <span class="o-checkbox form-check o_field_boolean o_boolean_toggle form-switch d-inline-block mb-0">
+                <input type="checkbox" class="form-check-input" tabindex="-1" aria-hidden="true"
+                       t-att-checked="checked" t-att-disabled="props.readonly"/>
+            </span>
+        </div>
+    </t>
+</templates>

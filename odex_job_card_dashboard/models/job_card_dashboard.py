@@ -333,11 +333,37 @@ class JobCardDashboard(models.AbstractModel):
     # Widgets
     # ------------------------------------------------------------------
     @api.model
+    def _active_domain(self):
+        """Job cards that are open *right now*: current status is not Closed.
+
+        Evaluated on the current ``cc_stage_id`` only - nothing is stored on
+        the job card, so reopening a closed job card makes it count again
+        immediately.  A job card without a status is not closed.
+        """
+        stage_field = self._f('stage')
+        if stage_field:
+            closed = self.env['job.card.stage']._dashboard_closed_stages()
+            if not closed:
+                return []
+            return ['|', (stage_field, '=', False),
+                    (stage_field, 'not in', closed.ids)]
+        closed_flag = self._f('closed')
+        return [(closed_flag, '=', False)] if closed_flag else []
+
+    @api.model
+    def _trend(self, current, before):
+        """Period-over-period change, shared by every card."""
+        if before:
+            return round((current - before) * 100.0 / before)
+        return 100 if current else 0
+
+    @api.model
     def _status_cards(self, domain, filters):
         stage_field = self._f('stage')
         stages = self.env['job.card.stage']._dashboard_stages()
+        specials = self.env['job.card.dashboard.card']._dashboard_cards()
         if not stage_field:
-            return stages
+            return self._fallback_special_cards(specials, domain) + stages
         counts = self._group_count(domain, stage_field)
 
         # Previous comparable period, for the trend badge.
@@ -358,16 +384,58 @@ class JobCardDashboard(models.AbstractModel):
         for stage in stages:
             current = counts.get(stage['id'], 0)
             before = previous.get(stage['id'], 0)
-            if before:
-                trend = round((current - before) * 100.0 / before)
-            else:
-                trend = 100 if current else 0
             stage.update({
                 'count': current,
-                'trend': trend,
+                'trend': self._trend(current, before),
                 'percentage': round(current * 100.0 / total, 1) if total else 0.0,
             })
-        return stages
+
+        if specials:
+            # The grouped counts above partition *every* job card of the
+            # period by its current status (hidden statuses included), so the
+            # open figure is the same read_group minus the Closed group(s):
+            # no extra query, and identical to
+            # search_count(domain + _active_domain()).
+            closed_ids = set(
+                self.env['job.card.stage']._dashboard_closed_stages().ids)
+            active_now = sum(c for key, c in counts.items() if key not in closed_ids)
+            active_before = sum(
+                c for key, c in previous.items() if key not in closed_ids)
+            for card in specials:
+                if card['card_type'] == 'total_job_card':
+                    card.update({
+                        'count': active_now,
+                        'trend': self._trend(active_now, active_before),
+                        'percentage': round(active_now * 100.0 / total, 1) if total else 0.0,
+                    })
+
+        # Calculated cards are ordered with the statuses; on a tie they go
+        # first (Total Job Card leads the grid by default).
+        cards = specials + stages
+        cards.sort(key=lambda card: (card.get('sequence') or 0,
+                                     0 if card.get('is_special') else 1))
+        return cards
+
+    @api.model
+    def _fallback_special_cards(self, specials, domain):
+        """Schema without a status field: count with the closed flag."""
+        Task = self.env['project.task']
+        total = Task.search_count(domain)
+        current = Task.search_count(
+            expression.AND([domain, self._active_domain()])) if specials else 0
+        for card in specials:
+            card.update({
+                'count': current, 'trend': 0,
+                'percentage': round(current * 100.0 / total, 1) if total else 0.0,
+            })
+        return specials
+
+    @api.model
+    def _special_card_domain(self, key):
+        """Extra domain + label for a calculated card id, or ``None``."""
+        if key == 'total_job_card':
+            return self._active_domain(), 'Total Job Cards (Open)'
+        return None
 
     @api.model
     def _occupancy_domain(self):
@@ -718,7 +786,10 @@ class JobCardDashboard(models.AbstractModel):
         """Last N job cards of a status + its vehicle inspection breakdown."""
         stage_field = self._f('stage')
         domain = self._filter_domain(filters or {})
-        if stage_field and stage_id:
+        special = self._special_card_domain(stage_id)
+        if special is not None:
+            domain = expression.AND([domain, special[0]])
+        elif stage_field and stage_id:
             domain = expression.AND([domain, [(stage_field, '=', int(stage_id))]])
         return {
             'rows': self._job_rows(domain, limit),
@@ -806,7 +877,11 @@ class JobCardDashboard(models.AbstractModel):
         domain = self._filter_domain(filters or {})
         stage_field = self._f('stage')
         name = 'Job Cards'
-        if stage_field and stage_id:
+        special = self._special_card_domain(stage_id)
+        if special is not None:
+            domain = expression.AND([domain, special[0]])
+            name = special[1]
+        elif stage_field and stage_id:
             stage = self.env['job.card.stage'].browse(int(stage_id))
             domain = expression.AND([domain, [(stage_field, '=', stage.id)]])
             name = stage.display_name

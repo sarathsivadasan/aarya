@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Same columns as the Status Cards list so both screens read alike.
+         No create / delete: there is exactly one record per calculated card. -->
+    <record id="view_job_card_dashboard_card_list" model="ir.ui.view">
+        <field name="name">job.card.dashboard.card.list</field>
+        <field name="model">job.card.dashboard.card</field>
+        <field name="arch" type="xml">
+            <list string="Calculated Cards" editable="bottom" create="0" delete="0">
+                <field name="dashboard_sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="card_type" string="Type" readonly="1"/>
+                <field name="dashboard_color" string="Colour"/>
+                <field name="dashboard_icon" string="Icon"/>
+                <field name="show_on_dashboard" string="On Dashboard"/>
+                <field name="is_total_job_card" column_invisible="1"/>
+                <button name="action_apply_default_style" type="object"
+                        string="Suggest style" icon="fa-magic"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_job_card_dashboard_card_form" model="ir.ui.view">
+        <field name="name">job.card.dashboard.card.form</field>
+        <field name="model">job.card.dashboard.card</field>
+        <field name="arch" type="xml">
+            <form string="Calculated Card" create="0" delete="0">
+                <sheet>
+                    <group>
+                        <group string="Card">
+                            <field name="name"/>
+                            <field name="card_type" readonly="1"/>
+                            <field name="is_total_job_card" readonly="1"/>
+                            <field name="description"/>
+                            <field name="dashboard_sequence"/>
+                        </group>
+                        <group string="Dashboard">
+                            <field name="dashboard_color" placeholder="#4F46E5"/>
+                            <field name="dashboard_icon" placeholder="fa-clipboard"/>
+                            <field name="show_on_dashboard"/>
+                        </group>
+                    </group>
+                    <div class="text-muted" invisible="not is_total_job_card">
+                        <p>
+                            <strong>Total Job Card</strong> counts every job card of the
+                            selected period whose <em>current</em> status is not a
+                            Closed status. Moving a job card to Closed lowers it by one;
+                            reopening it raises it again. Which statuses count as Closed
+                            is set with the <em>Closed Status</em> column of the Status
+                            Cards list.
+                        </p>
+                        <p>
+                            Icons use Font Awesome 4 class names, for example
+                            <code>fa-clipboard</code>, <code>fa-list-alt</code>,
+                            <code>fa-th-list</code>.
+                        </p>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_job_card_dashboard_card" model="ir.actions.act_window">
+        <field name="name">Calculated Cards</field>
+        <field name="res_model">job.card.dashboard.card</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_job_card_dashboard_card_list"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No calculated cards</p>
+            <p>Upgrade the module to create the Total Job Card.</p>
+        </field>
+    </record>
+
+</odoo>

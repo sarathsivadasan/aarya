@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Calculated cards. noupdate: colour / icon / visibility edited by an
+         administrator survive every module upgrade. -->
+    <data noupdate="1">
+        <record id="dashboard_card_total_job_card" model="job.card.dashboard.card">
+            <field name="name">Total Job Card</field>
+            <field name="card_type">total_job_card</field>
+            <field name="description">All open job cards - every status except Closed</field>
+            <field name="dashboard_color">#4F46E5</field>
+            <field name="dashboard_icon">fa-clipboard</field>
+            <field name="dashboard_sequence">0</field>
+            <field name="show_on_dashboard" eval="True"/>
+        </record>
+    </data>
+</odoo>

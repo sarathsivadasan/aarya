@@ -39,7 +39,8 @@ const DAMAGE_BY_KEY = Object.fromEntries(DAMAGE_TYPES.map((d) => [d.key, d]));
 /* Gate pass artwork is used when that module is installed so imported
    coordinates land on the same picture; otherwise our own diagram. */
 const GATEPASS_MAP = "/odex_vehicle_gate_pass/static/src/img/vehicle/damage_map.jpg";
-const OWN_MAP = "/job_card_extension/static/src/img/damage_map.svg";
+const OWN_MAP = "/job_card_extension/static/src/img/damage_map.jpg";
+const FALLBACK_MAP = "/job_card_extension/static/src/img/damage_map.svg";
 
 function uniq(d) {
     return (d || "").replace(/\D/g, "");
@@ -292,7 +293,7 @@ export class JcDamageMap extends Component {
             active: "dent",
             severity: "minor",
             selected: null,
-            src: GATEPASS_MAP,
+            src: OWN_MAP,
         });
         this.drag = null;
         this.onMove = this.onMove.bind(this);
@@ -334,7 +335,7 @@ export class JcDamageMap extends Component {
     }
 
     onImgError() {
-        if (this.state.src !== OWN_MAP) this.state.src = OWN_MAP;
+        if (this.state.src !== FALLBACK_MAP) this.state.src = FALLBACK_MAP;
     }
 
     info(m) {

@@ -126,6 +126,15 @@
         }
     }
 
+    // Calculated card (Total Job Card): same tile, same size - only a firmer
+    // border so it reads as the headline figure. Colour still comes from
+    // the configured value via the inline tint.
+    .o_jcd_card.o_jcd_card_special {
+        border-width: 2px;
+        padding: 13px; // keep the outer size identical to the 1px cards
+        .o_jcd_card_count { font-weight: 900; }
+    }
+
     .o_jcd_card_head { display: flex; align-items: flex-start; gap: 12px; }
 
     .o_jcd_card_icon {

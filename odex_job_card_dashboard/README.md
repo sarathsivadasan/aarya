@@ -1,4 +1,4 @@
-# ODEX Job Card Dashboard (v18.0.1.2.0)
+# ODEX Job Card Dashboard (v18.0.1.3.0)
 
 A brand-new OWL dashboard for the Workshop Management System. It does not touch
 the existing `job_card_dashboard` module — install both side by side and retire
@@ -18,7 +18,7 @@ Then clear the asset cache and hard-refresh the browser:
 DELETE FROM ir_attachment WHERE url LIKE '/web/assets/%';
 ```
 
-The footer prints `Job Card Dashboard build 1.2.0`. If you don't see it, the
+The footer prints `Job Card Dashboard build 1.3.0`. If you don't see it, the
 browser is still serving an old bundle.
 
 Menu: **Workshop Dashboard → Dashboard**.
@@ -120,3 +120,27 @@ Changed:
   technician overview module. Both are resolved at runtime by client-action tag
   or by model prefix, so no hard dependency and no hardcoded XML id - if the
   module is absent the tile falls back to its generic action.
+
+## Total Job Card (18.0.1.3.0)
+
+A calculated card, shown first by default: **every job card of the selected
+period whose *current* status is not a Closed status**.
+
+* **Where it is configured** — Workshop Dashboard → Configuration → Calculated
+  Cards, or the **Total Job Card** button above the Status Cards list. Name,
+  colour, icon, order and *On Dashboard* work exactly like a status card. It is
+  a separate model (`job.card.dashboard.card`, `is_total_job_card = True`), so
+  it never appears as a selectable status on a job card. It cannot be deleted
+  or duplicated, and a normal status cannot be named "Total Job Card".
+* **What counts as Closed** — the statuses ticked in the new *Closed Status*
+  column of the Status Cards list (seeded automatically on upgrade). If none is
+  ticked: a closed flag on the stage, then stage value `closed`, then a name
+  containing "close".
+* **How it is counted** — from the same `read_group` on `cc_stage_id` that
+  feeds the status cards, minus the Closed group(s). No extra query; same
+  date filter, toolbar filters, record rules and companies as every other card.
+* **Percentage / trend** — same formulas as the status cards: share of all job
+  cards in the period, and change versus the previous period of equal length.
+
+Upgrade: `-u odex_job_card_dashboard`, clear assets, footer shows build 1.3.0.
+Tests: `--test-tags /odex_job_card_dashboard`.

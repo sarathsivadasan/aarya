@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<odoo>
+
+        <record model="ir.ui.view" id="ins_quality_checklist_form_view">
+            <field name="name">Ins quality checklist form view</field>
+            <field name="model">ins.qc.checklist</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="description"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        
+        <record id="view_ins_quality_checklist_list" model="ir.ui.view">
+            <field name="name">Ins Quality Checklist List</field>
+            <field name="model">ins.qc.checklist</field>
+            <field name="priority">2</field>
+            <field name="arch" type="xml">
+                <list string="Ins Quality Checklist">
+                    <field name="name"/>
+                    <field name="description"/>
+                </list>
+            </field>
+        </record>
+        
+        <record id="action_view_ins_quality_checklist" model="ir.actions.act_window">
+            <field name="name">Ins Quality Checklist</field>
+            <field name="res_model">ins.qc.checklist</field>
+            <field name="view_mode">list,form</field>
+            <field name="help" type="html">
+                <p>Job Card management allows you to manage the Ins quality checklist.
+                    <!-- Odoo's project management allows you to manage the pipeline of your tasks efficiently. You can track progress, discuss on tasks, attach documents, etc -->.
+                </p>
+            </field>
+        </record>
+        <!-- Menu removed: the Inspection tab on the Job Card form is the only entry point. -->
+</odoo>

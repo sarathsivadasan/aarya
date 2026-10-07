@@ -27,6 +27,16 @@ export class StatusCard extends Component {
         return `background:${color}1A;border-color:${color}33;`;
     }
 
+    /** Calculated cards (Total Job Card) reuse this tile with one modifier class. */
+    get cardClass() {
+        return this.props.status.is_special ? "o_jcd_card_special" : "";
+    }
+
+    get cardTitle() {
+        const status = this.props.status;
+        return status.tooltip || `Open all ${status.name} job cards`;
+    }
+
     get iconStyle() {
         return `color:${this.props.status.color || "#6366F1"};`;
     }

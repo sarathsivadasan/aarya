@@ -25,4 +25,3 @@ from . import purchase_order
 from . import hr_expense
 # from . import res_company
 from . import job_card_vehicle_condition
-from . import job_card_inspection

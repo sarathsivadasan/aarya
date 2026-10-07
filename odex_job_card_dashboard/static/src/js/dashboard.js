@@ -11,7 +11,7 @@ import { QuickActions } from "./components/quick_actions";
 import { StatusCard } from "./components/status_card";
 
 const MODEL = "job.card.dashboard";
-const BUILD = "1.2.0";
+const BUILD = "1.3.0";
 
 /** Shortcut tiles. Keys are resolved to real actions server side. */
 const QUICK_ACTIONS = [

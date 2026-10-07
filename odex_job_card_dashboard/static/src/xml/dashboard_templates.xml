@@ -5,8 +5,8 @@
 <!-- Status card                                                       -->
 <!-- ================================================================= -->
 <t t-name="odex_job_card_dashboard.StatusCard">
-    <div class="o_jcd_card" t-att-style="tint" t-on-click="onCardClick"
-         t-att-title="'Open all ' + props.status.name + ' job cards'">
+    <div class="o_jcd_card" t-att-class="cardClass" t-att-style="tint" t-on-click="onCardClick"
+         t-att-title="cardTitle">
         <div class="o_jcd_card_head">
             <div class="o_jcd_card_icon">
                 <i class="fa" t-att-class="props.status.icon" t-att-style="iconStyle"/>

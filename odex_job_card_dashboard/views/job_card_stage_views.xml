@@ -7,11 +7,17 @@
         <field name="model">job.card.stage</field>
         <field name="arch" type="xml">
             <list string="Status Cards" editable="bottom">
+                <header>
+                    <button name="action_open_calculated_cards" type="object"
+                            string="Total Job Card" icon="fa-clipboard"
+                            class="btn-secondary" display="always"/>
+                </header>
                 <field name="dashboard_sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="dashboard_color" string="Colour"/>
                 <field name="dashboard_icon" string="Icon"/>
                 <field name="show_on_dashboard" string="On Dashboard"/>
+                <field name="dashboard_is_closed" string="Closed Status"/>
                 <button name="action_apply_default_style" type="object"
                         string="Suggest style" icon="fa-magic"/>
             </list>
@@ -35,6 +41,7 @@
                             <field name="dashboard_icon"
                                    placeholder="fa-car"/>
                             <field name="show_on_dashboard"/>
+                            <field name="dashboard_is_closed"/>
                         </group>
                     </group>
                     <div class="text-muted">
@@ -56,7 +63,9 @@
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">Configure your status cards</p>
             <p>Colour, icon and order of every status card come from this list.
-               Drag a row to change the order shown on the dashboard.</p>
+               Drag a row to change the order shown on the dashboard.
+               The Total Job Card is a calculated card: open it with the
+               "Total Job Card" button above the list.</p>
         </field>
     </record>
 

@@ -36,4 +36,10 @@
               action="action_job_card_stage_dashboard"
               sequence="20"/>
 
+    <menuitem id="menu_job_card_dashboard_cards"
+              name="Calculated Cards"
+              parent="menu_job_card_dashboard_config"
+              action="action_job_card_dashboard_card"
+              sequence="25"/>
+
 </odoo>

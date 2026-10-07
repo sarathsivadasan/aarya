@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="job_card_extension.JcOnOffField">
+        <div t-attf-class="o_jc_onoff oe_kanban_action o_jc_onoff_{{ props.labelPosition }} {{ checked ? 'o_jc_onoff_on' : 'o_jc_onoff_off' }} {{ props.readonly ? 'o_jc_onoff_readonly' : '' }}"
+             role="switch"
+             t-att-aria-checked="checked ? 'true' : 'false'"
+             t-att-aria-disabled="props.readonly ? 'true' : 'false'"
+             t-att-tabindex="props.readonly ? -1 : 0"
+             t-on-click.stop.prevent="toggle"
+             t-on-mousedown.stop=""
+             t-on-keydown="onKeydown">
+            <span t-if="props.labelPosition === 'outside' and checked" class="o_jc_onoff_text">ON</span>
+            <span class="o_jc_onoff_track">
+                <span t-if="props.labelPosition === 'inside'" class="o_jc_onoff_text" t-esc="checked ? 'ON' : 'OFF'"/>
+                <span class="o_jc_onoff_knob"/>
+            </span>
+            <span t-if="props.labelPosition === 'outside' and !checked" class="o_jc_onoff_text">OFF</span>
+        </div>
+    </t>
+
+    <t t-name="job_card_extension.JcRemarkField">
+        <div class="o_jc_remark oe_kanban_action" t-on-click.stop="" t-on-mousedown.stop="" t-on-keydown.stop="">
+            <span class="o_jc_remark_label">Remark</span>
+            <span t-if="props.readonly" class="o_jc_remark_input o_jc_remark_ro form-control" t-esc="value or ''"/>
+            <input t-else="" type="text" t-ref="input" class="o_jc_remark_input o_input form-control"
+                   t-att-id="props.id" t-att-placeholder="props.placeholder" autocomplete="off"/>
+        </div>
+    </t>
+
+</templates>

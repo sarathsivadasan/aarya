@@ -22,6 +22,9 @@
         <field name="inherit_id" ref="project.view_task_form2"/>
         <field name="priority" eval="101"/>
         <field name="arch" type="xml">
+            <xpath expr="//form" position="attributes">
+                <attribute name="class" add="o_jc_form" separator=" "/>
+            </xpath>
             <xpath expr="//header" position="inside">
                 <field name="po_count" invisible="1"/>
                 <button name="action_open_advance_payment" string="Advance Payment" type="object" class="oe_highlight"/>
@@ -122,7 +125,7 @@
                         <field name="claim_no"/>
                         <field name="policy_no"/>
                     </group>
-                    <group string="_">
+                    <group string="_" class="o_jc_spacer">
                         <field name="lpo_date"/>
                     </group>
                 </group>
@@ -140,7 +143,7 @@
                     <field name="used_service_count" readonly="1"/>
 <field name="remaining_service_count" readonly="1"/>
                     </group>
-                    <group string="_">
+                    <group string="_" class="o_jc_spacer">
                         <field name="remaining_amount"
                                readonly="1"/>
                         <field name="utilized_amount"
@@ -179,7 +182,7 @@
                         <!-- <field name="gate_pass_id"  /> -->
                         <field name="cc_stage_id" option="{'no_quick_create': True, 'no_create_edit': True}"/>
                     </group>
-                    <group string="_">
+                    <group string="_" class="o_jc_spacer">
                         <field name="user_ids" class="o_task_user_field"
                                options="{'no_open': True, 'no_quick_create': True}" widget="many2many_avatar_user"/>
                         <field name="create_date" string="Jobcard Date"/>
@@ -223,7 +226,7 @@
             </xpath>
             <xpath expr="//page[@name='description_page']/field[@name='description']" position="before">
                 <field name="is_close" invisible="1"/>
-                <field name="requested_services_ids" readonly="is_close">
+                <field name="requested_services_ids" readonly="is_close" mode="list,kanban">
                     <list editable="bottom">
                         <field name="product_id"/>
                         <field name="remark"/>
@@ -234,34 +237,107 @@
                                 type="object" invisible="is_added_in_timesheet"
                                 string="Add To Timesheet" class="oe_link"/>
                     </list>
+                    <kanban class="o_jc_m_kanban">
+                        <field name="is_added_in_timesheet"/>
+                        <templates>
+                            <t t-name="card">
+                                <div class="o_jc_m_head">
+                                    <field name="product_id" class="o_jc_m_title"/>
+                                    <field name="assign_hours" widget="float_time" class="o_jc_m_chip"/>
+                                </div>
+                                <field name="remark" class="o_jc_m_sub"/>
+                                <div class="o_jc_m_actions">
+                                    <span t-if="record.is_added_in_timesheet.raw_value" class="o_jc_m_done">
+                                        <i class="fa fa-check me-1"/>In timesheet
+                                    </span>
+                                    <button name="add_service_to_timesheet_ext" type="object"
+                                            class="btn btn-outline-primary"
+                                            invisible="is_added_in_timesheet">
+                                        <i class="fa fa-plus me-1"/>Add To Timesheet
+                                    </button>
+                                </div>
+                            </t>
+                        </templates>
+                    </kanban>
+                    <form string="Requested Service">
+                        <group>
+                            <field name="product_id"/>
+                            <field name="remark"/>
+                            <field name="assign_hours" widget="float_time"/>
+                        </group>
+                    </form>
                 </field>
             </xpath>
             <xpath expr="//page[@name='description_page']/field[@name='description']" position="replace"/>
 
             <xpath expr="//page[@name='description_page']" position="after">
-                <page name="pre_inspection" string="Pre Inspection" invisible="not is_jobcard">
-                    <div class="mb-2" invisible="pre_inspection_ids">
-                        <button name="action_load_inspection_points" type="object" class="btn btn-secondary btn-sm"
-                                icon="fa-list-ul" string="Load Pre Inspection Points" invisible="is_close"/>
+                <page name="pre_inspection_page" string="Pre Inspection" invisible="not is_jobcard">
+                    <div class="o_jc_checklist_page">
+                        <button name="action_load_pre_inspection" type="object"
+                                string="Load Pre Inspection Checklist" icon="fa-list-ul"
+                                class="btn btn-secondary mb-2"
+                                invisible="pre_inspection_ids or is_close or not id"/>
                     </div>
-                    <field name="pre_inspection_ids" widget="section_and_note_one2many" mode="list" nolabel="1"
-                           class="o_jc_inspection" readonly="is_close"
+                    <field name="pre_inspection_ids" widget="section_and_note_one2many" mode="list,kanban"
+                           readonly="is_close" nolabel="1"
+                           class="o_jc_checklist o_jc_checklist_pre"
                            context="{'default_inspection_type': 'pre', 'default_check_mark': False}">
                         <list editable="bottom" default_order="serial_no, id" limit="200">
                             <control>
-                                <create name="add_line_control" string="Add an item"/>
+                                <create name="add_product_control" string="Add an item"/>
                                 <create name="add_section_control" string="Add a section"
                                         context="{'default_display_type': 'line_section'}"/>
                                 <create name="add_note_control" string="Add a note"
                                         context="{'default_display_type': 'line_note'}"/>
                             </control>
                             <field name="serial_no" column_invisible="1"/>
-                            <field name="inspection_type" column_invisible="1"/>
                             <field name="display_type" column_invisible="1"/>
-                            <field name="name" widget="section_and_note_text" string="Inspection Point"/>
-                            <field name="check_mark" string="Status" widget="odex_onoff_toggle"/>
-                            <field name="description" string="Remark" placeholder="Remark"/>
+                            <field name="inspection_type" column_invisible="1"/>
+                            <field name="name" widget="section_and_note_text" string="Inspection Item"
+                                   readonly="id"/>
+                            <field name="check_mark" widget="jc_onoff" string="Status"
+                                   invisible="display_type" width="150px"/>
+                            <field name="description" widget="jc_remark" string="Remark"
+                                   invisible="display_type" width="300px"/>
                         </list>
+                        <kanban class="o_jc_m_kanban o_jc_check_kanban" default_order="serial_no, id" limit="200">
+                            <field name="serial_no"/>
+                            <field name="display_type"/>
+                            <templates>
+                                <t t-name="card">
+                                    <div t-if="record.display_type.raw_value === 'line_section'" class="o_jc_check_section">
+                                        <field name="name"/>
+                                    </div>
+                                    <div t-elif="record.display_type.raw_value === 'line_note'" class="o_jc_check_note">
+                                        <field name="name"/>
+                                    </div>
+                                    <div t-else="">
+                                        <div class="o_jc_check_top">
+                                            <field name="name" class="o_jc_check_name"/>
+                                            <div class="oe_kanban_action">
+                                                <field name="check_mark" widget="jc_onoff"
+                                                       readonly="parent.is_close"/>
+                                            </div>
+                                        </div>
+                                        <div class="o_jc_check_remark oe_kanban_action">
+                                            <field name="description" widget="jc_remark"
+                                                   readonly="parent.is_close"/>
+                                        </div>
+                                    </div>
+                                </t>
+                            </templates>
+                        </kanban>
+                        <form string="Inspection Item">
+                            <field name="display_type" invisible="1"/>
+                            <field name="inspection_type" invisible="1"/>
+                            <field name="serial_no" invisible="1"/>
+                            <group>
+                                <field name="name" string="Inspection Item"/>
+                                <field name="check_mark" widget="jc_onoff" string="Status"
+                                       invisible="display_type"/>
+                                <field name="description" string="Remark" invisible="display_type"/>
+                            </group>
+                        </form>
                     </field>
                 </page>
                 <page name="vehicle_photos" string="Vehicle Photos" invisible="not is_jobcard">
@@ -270,13 +346,15 @@
                 <page name="damage_mark" string="Damage Mark" invisible="not is_jobcard">
                     <widget name="jc_damage_map"/>
                 </page>
-                <page name="quality_checklist" string="QC"
+                <page name="quality_checklist" string="50 Points"
                       invisible="not is_jobcard">
                     <field name="is_close" invisible="1"/>
-                    <field name="quality_checklist_ids" widget="section_and_note_one2many" mode="list">
-                        <list editable="bottom" default_order="serial_no" limit="100">
+                    <field name="quality_checklist_ids" widget="section_and_note_one2many" mode="list,kanban"
+                           readonly="is_close">
+                        <list editable="bottom" default_order="serial_no" limit="100"
+                              class="o_jc_inspection_list">
                             <control>
-                                <create name="add_product_control" string="Add a product"/>
+                                <create name="add_product_control" string="Add an item"/>
                                 <create name="add_section_control" string="Add a section"
                                         context="{'default_display_type': 'line_section'}"/>
                                 <create name="add_note_control" string="Add a note"
@@ -284,20 +362,59 @@
                             </control>
 
                             <field name="serial_no" column_invisible="1"/>
-                            <field name="name" widget="section_and_note_text" optional="show" string="Checklist"
-                                   readonly="1" force_save="1"/>
                             <field name="display_type" column_invisible="1"/>
                             <field name="checklist_name_ids" column_invisible="1"/>
-                            <field name="description"/>
-                            <field name="check_mark"
-                                   options='{"bg_color": "red: check_mark == False; green: check_mark == True", "fg_color": "red: check_mark == False"}'/>
+                            <field name="is_yes_no" column_invisible="1"/>
+                            <field name="name" widget="section_and_note_text" string="Inspection Items"
+                                   readonly="1" force_save="1"/>
+                            <field name="check_mark" column_invisible="1"/>
+                            <field name="condition" widget="gwb_toggle" string="G / W / B"
+                                   invisible="display_type" width="210px"/>
+                            <field name="description" string="Remarks"/>
                         </list>
+                        <kanban class="o_jc_m_kanban o_jc_insp_kanban" default_order="serial_no" limit="100">
+                            <field name="serial_no"/>
+                            <field name="display_type"/>
+                            <field name="is_yes_no"/>
+                            <field name="check_mark"/>
+                            <templates>
+                                <t t-name="card">
+                                    <div t-if="record.display_type.raw_value" class="o_jc_insp_section">
+                                        <field name="name"/>
+                                    </div>
+                                    <div t-else="" class="o_jc_insp_row">
+                                        <div class="o_jc_insp_top">
+                                            <field name="name" class="o_jc_insp_name"/>
+                                            <div class="o_jc_insp_ctrl oe_kanban_action">
+                                                <field name="condition" widget="gwb_toggle"
+                                                       readonly="parent.is_close"/>
+                                            </div>
+                                        </div>
+                                        <div t-if="record.description.raw_value" class="o_jc_insp_remark">
+                                            <i class="fa fa-comment-o me-1"/><field name="description"/>
+                                        </div>
+                                    </div>
+                                </t>
+                            </templates>
+                        </kanban>
+                        <form string="Inspection Item">
+                            <field name="display_type" invisible="1"/>
+                            <field name="is_yes_no" invisible="1"/>
+                            <field name="serial_no" invisible="1"/>
+                            <group>
+                                <field name="name" string="Inspection Item" readonly="id"/>
+                                <field name="check_mark" invisible="1"/>
+                                <field name="condition" widget="gwb_toggle" string="Result"
+                                       invisible="display_type"/>
+                                <field name="description" string="Remarks" invisible="display_type"/>
+                            </group>
+                        </form>
                     </field>
                 </page>
-                <page name="parts" string="Parts">
-                    <field name="inspection_part_ids">
+                <page name="inspection_parts" string="Parts">
+                    <field name="inspection_part_ids" mode="list,kanban">
                         <list editable="bottom">
-                            <field name="is_confirm"/>
+                            <field name="is_confirm" widget="jc_toggle"/>
                             <field name="parts_type"/>
                             <field name="part_no" readonly="1"/>
                             <field name="part"/>
@@ -305,31 +422,108 @@
                             <field name="quantity"/>
                             <field name="from_inspection"/>
                         </list>
+                        <kanban class="o_jc_m_kanban">
+                            <field name="part"/>
+                            <field name="from_inspection"/>
+                            <templates>
+                                <t t-name="card">
+                                    <div class="o_jc_m_head">
+                                        <div class="o_jc_m_title">
+                                            <field name="product_id"/>
+                                            <span t-if="!record.product_id.raw_value" t-esc="record.part.value"/>
+                                        </div>
+                                        <div class="oe_kanban_action">
+                                            <field name="is_confirm" widget="jc_toggle"/>
+                                        </div>
+                                    </div>
+                                    <div class="o_jc_m_meta">
+                                        <field name="parts_type" class="o_jc_m_chip"/>
+                                        <span>Qty <field name="quantity"/></span>
+                                        <span t-if="record.part_no.raw_value">#<field name="part_no"/></span>
+                                        <span t-if="record.from_inspection.raw_value" class="o_jc_m_chip">VNS</span>
+                                    </div>
+                                </t>
+                            </templates>
+                        </kanban>
+                        <form string="Part">
+                            <group>
+                                <field name="product_id"/>
+                                <field name="part"/>
+                                <field name="parts_type"/>
+                                <field name="part_no" readonly="1"/>
+                                <field name="quantity"/>
+                                <field name="is_confirm" widget="jc_toggle"/>
+                            </group>
+                        </form>
                     </field>
                 </page>
-                <page name="final_inspection" string="Final Inspection" invisible="not is_jobcard">
-                    <div class="mb-2" invisible="final_inspection_ids">
-                        <button name="action_load_inspection_points" type="object" class="btn btn-secondary btn-sm"
-                                icon="fa-list-ul" string="Load Final Inspection Points" invisible="is_close"/>
+                <page name="final_inspection_page" string="Final Inspection" invisible="not is_jobcard">
+                    <div class="o_jc_checklist_page">
+                        <button name="action_load_final_inspection" type="object"
+                                string="Load Final Inspection Checklist" icon="fa-list-ul"
+                                class="btn btn-secondary mb-2"
+                                invisible="final_inspection_ids or is_close or not id"/>
                     </div>
-                    <field name="final_inspection_ids" widget="section_and_note_one2many" mode="list" nolabel="1"
-                           class="o_jc_inspection" readonly="is_close"
+                    <field name="final_inspection_ids" widget="section_and_note_one2many" mode="list,kanban"
+                           readonly="is_close" nolabel="1"
+                           class="o_jc_checklist o_jc_checklist_final"
                            context="{'default_inspection_type': 'final', 'default_check_mark': False}">
                         <list editable="bottom" default_order="serial_no, id" limit="200">
                             <control>
-                                <create name="add_line_control" string="Add an item"/>
+                                <create name="add_product_control" string="Add an item"/>
                                 <create name="add_section_control" string="Add a section"
                                         context="{'default_display_type': 'line_section'}"/>
                                 <create name="add_note_control" string="Add a note"
                                         context="{'default_display_type': 'line_note'}"/>
                             </control>
                             <field name="serial_no" column_invisible="1"/>
-                            <field name="inspection_type" column_invisible="1"/>
                             <field name="display_type" column_invisible="1"/>
-                            <field name="name" widget="section_and_note_text" string="Inspection Point"/>
-                            <field name="check_mark" string="Status" widget="odex_onoff_toggle"/>
-                            <field name="description" string="Remark" placeholder="Remark"/>
+                            <field name="inspection_type" column_invisible="1"/>
+                            <field name="name" widget="section_and_note_text" string="Inspection Item"
+                                   readonly="id"/>
+                            <field name="check_mark" widget="jc_onoff" string="Status" options="{'label_position': 'outside'}"
+                                   invisible="display_type" width="150px"/>
+                            <field name="description" widget="jc_remark" string="Remark"
+                                   invisible="display_type" width="300px"/>
                         </list>
+                        <kanban class="o_jc_m_kanban o_jc_check_kanban" default_order="serial_no, id" limit="200">
+                            <field name="serial_no"/>
+                            <field name="display_type"/>
+                            <templates>
+                                <t t-name="card">
+                                    <div t-if="record.display_type.raw_value === 'line_section'" class="o_jc_check_section">
+                                        <field name="name"/>
+                                    </div>
+                                    <div t-elif="record.display_type.raw_value === 'line_note'" class="o_jc_check_note">
+                                        <field name="name"/>
+                                    </div>
+                                    <div t-else="">
+                                        <div class="o_jc_check_top">
+                                            <field name="name" class="o_jc_check_name"/>
+                                            <div class="oe_kanban_action">
+                                                <field name="check_mark" widget="jc_onoff" options="{'label_position': 'outside'}"
+                                                       readonly="parent.is_close"/>
+                                            </div>
+                                        </div>
+                                        <div class="o_jc_check_remark oe_kanban_action">
+                                            <field name="description" widget="jc_remark"
+                                                   readonly="parent.is_close"/>
+                                        </div>
+                                    </div>
+                                </t>
+                            </templates>
+                        </kanban>
+                        <form string="Inspection Item">
+                            <field name="display_type" invisible="1"/>
+                            <field name="inspection_type" invisible="1"/>
+                            <field name="serial_no" invisible="1"/>
+                            <group>
+                                <field name="name" string="Inspection Item"/>
+                                <field name="check_mark" widget="jc_onoff" string="Status" options="{'label_position': 'outside'}"
+                                       invisible="display_type"/>
+                                <field name="description" string="Remark" invisible="display_type"/>
+                            </group>
+                        </form>
                     </field>
                 </page>
             </xpath>
@@ -374,6 +568,58 @@
                     <field name="date"/>
                     <field name="company_id" invisible="1"/>
                 </list>
+            </xpath>
+            <xpath expr="//page[@name='daily_report']/field[@name='job_card_daily_report_ids']" position="attributes">
+                <attribute name="mode">list,kanban</attribute>
+            </xpath>
+            <xpath expr="//page[@name='daily_report']/field[@name='job_card_daily_report_ids']" position="inside">
+                <kanban class="o_jc_m_kanban">
+                    <field name="is_start_time"/>
+                    <field name="is_pause_time"/>
+                    <field name="is_resume_time"/>
+                    <field name="is_end_time"/>
+                    <field name="start_time"/>
+                    <field name="end_time"/>
+                    <templates>
+                        <t t-name="card">
+                            <div class="o_jc_m_head">
+                                <field name="product_id" class="o_jc_m_title"/>
+                                <field name="total_hours" widget="float_time" class="o_jc_m_chip"/>
+                            </div>
+                            <field name="name" class="o_jc_m_sub"/>
+                            <div class="o_jc_m_meta">
+                                <span><i class="fa fa-user me-1"/><field name="employees_id"/></span>
+                                <span><i class="fa fa-sitemap me-1"/><field name="departments_id"/></span>
+                                <span><i class="fa fa-calendar me-1"/><field name="date"/></span>
+                            </div>
+                            <div class="o_jc_m_meta" t-if="record.start_time.raw_value">
+                                <span>Start <t t-esc="record.start_time.value"/></span>
+                                <span t-if="record.end_time.raw_value">End <t t-esc="record.end_time.value"/></span>
+                            </div>
+                            <div class="o_jc_m_actions">
+                                <button name="action_start_time" type="object" class="btn btn-success"
+                                        invisible="is_start_time">
+                                    <i class="fa fa-play me-1"/>Start
+                                </button>
+                                <button name="action_pause_time" type="object" class="btn btn-warning"
+                                        invisible="not is_start_time or is_pause_time or is_end_time">
+                                    <i class="fa fa-pause me-1"/>Pause
+                                </button>
+                                <button name="action_resume_time" type="object" class="btn btn-primary"
+                                        invisible="not is_start_time or not is_pause_time or is_resume_time or is_end_time">
+                                    <i class="fa fa-play me-1"/>Resume
+                                </button>
+                                <button name="action_end_time" type="object" class="btn btn-danger"
+                                        invisible="is_end_time">
+                                    <i class="fa fa-stop me-1"/>End
+                                </button>
+                                <span t-if="record.is_end_time.raw_value" class="o_jc_m_done">
+                                    <i class="fa fa-check me-1"/>Completed
+                                </span>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
             </xpath>
             <xpath expr="//page[@name='daily_report']" position="after">
                 <page string="Bay History" name="bay_history">
