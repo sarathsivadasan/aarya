@@ -8,17 +8,8 @@
     "depends": ["crm", "fleet", "sales_team", "mail", "odex_workshop_booking"],
     "data": [
         "security/ir.model.access.csv",
-        "data/crm_config_data.xml",
-        "views/crm_config_views.xml",
         "views/crm_lead_views.xml",
-        "views/menus.xml",
     ],
-    "assets": {
-        "web.assets_backend": [
-            "odex_crm_booking/static/src/scss/crm_lead_form.scss",
-        ],
-    },
-    "post_init_hook": "post_init_hook",
     "installable": True,
     "application": False,
 }

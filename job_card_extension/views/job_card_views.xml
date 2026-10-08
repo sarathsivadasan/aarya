@@ -243,7 +243,7 @@
                             <t t-name="card">
                                 <div class="o_jc_m_head">
                                     <field name="product_id" class="o_jc_m_title"/>
-                                    <field name="assign_hours" widget="float_time" class="o_jc_m_chip"/>
+                                    <field name="assign_hours" widget="Timesheet_uom" class="o_jc_m_chip"/>
                                 </div>
                                 <field name="remark" class="o_jc_m_sub"/>
                                 <div class="o_jc_m_actions">
@@ -263,7 +263,7 @@
                         <group>
                             <field name="product_id"/>
                             <field name="remark"/>
-                            <field name="assign_hours" widget="float_time"/>
+                            <field name="assign_hours" widget="Timesheet_uom"/>
                         </group>
                     </form>
                 </field>
@@ -534,7 +534,7 @@
                     <field name="name" string="Instruction"/>
                     <field name="user_id"/>
                     <!-- <field name="job_card_payment_id"/> -->
-                    <field name="assign_hours"/>
+                    <field name="assign_hours" widget="Timesheet_uom"/>
                     <field name="departments_id" readonly="0"/>
                     <field name="employees_id"/>
                     <field name="start_time" optional="show"/>
