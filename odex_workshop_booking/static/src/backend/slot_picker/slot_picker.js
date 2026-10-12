@@ -1,9 +1,10 @@
 /** @odoo-module **/
 import { registry } from "@web/core/registry";
-import { Component, onWillStart, onWillUpdateProps, useState } from "@odoo/owl";
+import { Component, useState } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
 import { serializeDate } from "@web/core/l10n/dates";
 import { standardFieldProps } from "@web/views/fields/standard_field_props";
+import { useRecordObserver } from "@web/model/relational_model/utils";
 
 /**
  * Time-slot picker for the booking form.
@@ -21,8 +22,9 @@ export class BookingSlotPicker extends Component {
         this.orm = useService("orm");
         this.state = useState({ slots: [], message: "", loading: false });
         this._key = null;
-        onWillStart(() => this.load(this.props));
-        onWillUpdateProps((next) => this.load(next));
+        // The field itself (pick_hour) does not change when the date does, so
+        // OWL would never re-render us: observe the record's other fields.
+        useRecordObserver((record) => this.load(record));
     }
 
     get current() {
@@ -33,11 +35,11 @@ export class BookingSlotPicker extends Component {
         return this.current > 0 && Math.abs(slot.hour_from - this.current) < 0.0001;
     }
 
-    async load(props) {
-        const data = props.record.data;
+    async load(record) {
+        const data = record.data;
         const date = data.pick_date ? serializeDate(data.pick_date) : false;
         const company = data.company_id ? data.company_id[0] : false;
-        const key = `${company}|${date}|${props.record.resId}`;
+        const key = `${company}|${date}|${record.resId}`;
         if (key === this._key) {
             return;
         }
@@ -52,23 +54,28 @@ export class BookingSlotPicker extends Component {
             const res = await this.orm.call("odex.workshop.booking", "get_free_times", [
                 company,
                 date,
-                props.record.resId || false,
+                record.resId || false,
             ]);
+            if (key !== this._key) {
+                return; // the date changed again while we were waiting
+            }
             this.state.slots = res.slots;
             this.state.message = res.message;
         } finally {
-            this.state.loading = false;
+            if (key === this._key) {
+                this.state.loading = false;
+            }
         }
         // A time that does not exist on the newly chosen date must not linger.
-        const hour = data[props.name] || 0;
+        const hour = data[this.props.name] || 0;
         if (
-            !props.readonly &&
+            !this.props.readonly &&
             hour > 0 &&
             !this.state.slots.some(
                 (s) => s.bookable && Math.abs(s.hour_from - hour) < 0.0001
             )
         ) {
-            await props.record.update({ [props.name]: 0 });
+            await record.update({ [this.props.name]: 0 });
         }
     }
 
