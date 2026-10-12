@@ -1,3 +1,14 @@
+# Change Log — Booking form: date → live time slots
+
+- `views/booking_views.xml`: form re-laid out — left column Booking Information (Company, Booking Date, Time Slot picker, …) + Service Information; right column Customer Information with Vehicle Information below it. Removed the duplicate `readonly` attribute on `company_id` that made the file invalid XML.
+- `models/booking_booking.py`: `get_free_times()` (live availability for a date); `slot_id` no longer column-required — `create()` materialises it from Booking Date + chosen time and refuses to save without one; `_check_capacity` skips slot-less records.
+- `static/src/backend/slot_picker/*`: new `booking_slot_picker` field widget (time buttons for the chosen date, shows seats left / full / blocked).
+- `__manifest__.py`: registers the widget assets.
+
+Upgrade: `-u odex_workshop_booking` (the NOT NULL on `slot_id` is dropped automatically).
+
+---
+
 # Change Log — Portal & Booking Rework
 
 ## Modified Python files

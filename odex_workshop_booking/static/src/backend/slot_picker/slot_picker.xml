@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="odex_workshop_booking.BookingSlotPicker">
+        <div class="o_booking_slot_picker">
+            <div t-if="state.loading" class="text-muted small">Loading available times…</div>
+            <div t-elif="!props.record.data.pick_date" class="text-muted small">
+                Select a date to see the available time slots.
+            </div>
+            <div t-elif="!state.slots.length" class="text-warning small" t-esc="state.message"/>
+            <div t-else="" class="o_booking_slot_grid">
+                <button t-foreach="state.slots" t-as="slot" t-key="slot.hour_from"
+                        type="button" class="o_booking_slot_btn"
+                        t-att-class="{
+                            'o_selected': isSelected(slot),
+                            'o_unavailable': !slot.bookable,
+                        }"
+                        t-att-disabled="!slot.bookable or props.readonly"
+                        t-att-title="slot.label"
+                        t-on-click="() => this.select(slot)">
+                    <span class="o_booking_slot_time" t-esc="slot.start"/>
+                    <span class="o_booking_slot_note" t-esc="slot.note"/>
+                </button>
+            </div>
+        </div>
+    </t>
+</templates>

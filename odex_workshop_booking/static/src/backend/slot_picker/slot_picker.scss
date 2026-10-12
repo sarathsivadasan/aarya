@@ -1,0 +1,42 @@
+.o_booking_slot_picker {
+    width: 100%;
+
+    .o_booking_slot_grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .o_booking_slot_btn {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-width: 78px;
+        padding: 4px 8px;
+        border: 1px solid var(--border-color, #d8dadd);
+        border-radius: 6px;
+        background: var(--o-view-background-color, #fff);
+        line-height: 1.2;
+        cursor: pointer;
+
+        &:hover:not(:disabled) {
+            border-color: var(--o-brand-primary, #714b67);
+        }
+
+        .o_booking_slot_time { font-weight: 600; }
+        .o_booking_slot_note { font-size: 0.72rem; color: #6c757d; }
+
+        &.o_selected {
+            background: var(--o-brand-primary, #714b67);
+            border-color: var(--o-brand-primary, #714b67);
+            color: #fff;
+            .o_booking_slot_note { color: rgba(255, 255, 255, 0.85); }
+        }
+
+        &.o_unavailable {
+            opacity: 0.5;
+            cursor: not-allowed;
+            text-decoration: line-through;
+        }
+    }
+}

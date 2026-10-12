@@ -99,8 +99,12 @@ class WorkshopBooking(models.Model):
     company_id = fields.Many2one(
         'res.company', string='Company', required=True, tracking=True,
         index=True, default=lambda self: self.env.company)
+    # Not ``required`` at column level: slot rows are materialised lazily, so
+    # on a new booking the slot does not exist until staff pick a date + time.
+    # ``create`` resolves it from pick_date/pick_hour and refuses to save a
+    # booking that still has none.
     slot_id = fields.Many2one(
-        'odex.booking.slot', string='Time Slot', required=True,
+        'odex.booking.slot', string='Time Slot',
         tracking=True, index=True, ondelete='restrict')
     pick_date = fields.Date(
         string='Date', compute='_compute_pick', inverse='_inverse_pick',
@@ -181,6 +185,8 @@ class WorkshopBooking(models.Model):
             if rec.state in ('cancelled', 'no_show'):
                 continue
             slot = rec.slot_id
+            if not slot:
+                continue
             active = slot.booking_ids.filtered(lambda b: b.id != rec.id)
             if not slot.allow_overbooking and len(active) >= slot.capacity:
                 raise ValidationError(_(
@@ -223,10 +229,23 @@ class WorkshopBooking(models.Model):
     # ------------------------------------------------------------------
     @api.model_create_multi
     def create(self, vals_list):
+        Availability = self.env['odex.booking.availability']
         for vals in vals_list:
             if vals.get('name', _('New')) == _('New'):
                 vals['name'] = self.env['ir.sequence'].next_by_code(
                     'odex.workshop.booking') or _('New')
+            if not vals.get('slot_id'):
+                # Staff form: Date + a time picked from the live free times.
+                pick_date = vals.get('pick_date')
+                pick_hour = vals.get('pick_hour')
+                if not pick_date or not pick_hour:
+                    raise ValidationError(_(
+                        'Choose the booking date and one of the available '
+                        'time slots.'))
+                company = self.env['res.company'].browse(
+                    vals.get('company_id') or self.env.company.id)
+                vals['slot_id'] = Availability.materialise(
+                    company, fields.Date.to_date(pick_date), pick_hour).id
         return super().create(vals_list)
 
     def unlink(self):
@@ -456,6 +475,49 @@ class WorkshopBooking(models.Model):
                     and rec.state == 'arrived':
                 continue  # a job card is driving it; leave it alone
             rec.service_status = mapping.get(rec.state, 'pending')
+
+    @api.model
+    def get_free_times(self, company_id=None, date=None, booking_id=False):
+        """Times staff can pick for a date, straight from the live schedule.
+
+        Feeds the time-slot picker on the booking form. The booking's own
+        current time stays selectable even when it is already counted
+        against capacity.
+        """
+        company = self.env['res.company'].browse(
+            int(company_id)) if company_id else self.env.company
+        if not date:
+            return {'slots': [], 'message': ''}
+        day = fields.Date.to_date(date)
+        own = self.browse(int(booking_id)).slot_id if booking_id \
+            else self.env['odex.booking.slot']
+        rows = self.env['odex.booking.availability'].day_slots(
+            company, day, admin=True)
+        slots = []
+        for row in rows:
+            mine = bool(own) and own.date == day \
+                and abs(own.hour_from - row['hour_from']) < 0.0001
+            remaining = row['remaining']
+            bookable = mine or (
+                remaining > 0 and row['reason'] not in ('blocked', 'passed'))
+            if mine:
+                note = _('Current')
+            elif row['reason'] in ('blocked', 'passed', 'full'):
+                note = row['reason_label']
+            else:
+                note = _('%(n)s left', n=remaining)
+            slots.append({
+                'hour_from': row['hour_from'],
+                'label': '%s - %s' % (row['label'], row['label_to']),
+                'start': row['label'],
+                'remaining': remaining,
+                'bookable': bookable,
+                'mine': mine,
+                'note': note,
+            })
+        message = '' if slots else _(
+            'The workshop is closed on this date. Please pick another date.')
+        return {'slots': slots, 'message': message}
 
     @api.model
     def _dashboard_base(self, company_id=None):

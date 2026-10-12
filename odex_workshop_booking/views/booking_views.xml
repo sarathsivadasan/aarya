@@ -156,54 +156,51 @@
                         <h1><field name="name" readonly="1"/></h1>
                     </div>
                     <group>
-                        <group string="Booking Information">
-                            <field name="pick_date" string="Date"
-                                   readonly="state in ('done', 'cancelled', 'no_show')"/>
-                            <field name="slot_id"
-                                   domain="[('company_id', '=', company_id),
-                                            ('state', 'in', ('available', 'limited'))]"
-                                   options="{'no_create': True}"
-                                   readonly="state not in ('draft', 'requested')"/>
-                            <label for="pick_hour" string="Time"/>
-                            <div class="d-flex align-items-center gap-2">
-                                <field name="pick_hour" nolabel="1" widget="float_time"
+                        <!-- Left column: when + what -->
+                        <group>
+                            <group string="Booking Information" colspan="2">
+                                <field name="company_id" options="{'no_create': True}"
+                                       readonly="state not in ('draft', 'requested')"/>
+                                <field name="pick_date" string="Booking Date"
+                                       required="state in ('draft', 'requested')"
                                        readonly="state in ('done', 'cancelled', 'no_show')"/>
-                                <button name="action_open_reschedule" type="object"
-                                        class="btn btn-link btn-sm p-0"
-                                        string="Pick from free times"
-                                        invisible="state in ('done', 'cancelled', 'no_show')"/>
-                            </div>
-                            <field name="source"/>
-                            <field name="referral_source"/>
-                            <field name="service_status"/>
-                            <field name="payment_status"/>
-                            <field name="pickup_location_id" options="{'no_create': True}"/>
-                            <field name="drop_location_id" options="{'no_create': True}"/>
-                            <field name="advisor_id" widget="many2one_avatar_user"/>
-                            <field name="calendar_event_id" invisible="1"/>
+                                <field name="pick_hour" string="Time Slot"
+                                       widget="booking_slot_picker"
+                                       readonly="state in ('done', 'cancelled', 'no_show')"/>
+                                <field name="slot_id" invisible="1"/>
+                                <field name="source"/>
+                                <field name="referral_source"/>
+                                <field name="service_status"/>
+                                <field name="payment_status"/>
+                                <field name="pickup_location_id" options="{'no_create': True}"/>
+                                <field name="drop_location_id" options="{'no_create': True}"/>
+                                <field name="advisor_id" widget="many2one_avatar_user"/>
+                                <field name="calendar_event_id" invisible="1"/>
+                            </group>
+                            <group string="Service Information" colspan="2">
+                                <field name="service_type_id" options="{'no_create': True}"/>
+                                <field name="complaint" placeholder="e.g. Brake noise, AC not cooling..."/>
+                                <field name="customer_note"/>
+                            </group>
                         </group>
-                        <group string="Customer Information">
-                            <field name="partner_id"
-                                   readonly="state not in ('draft', 'requested')"/>
-                            <field name="mobile" widget="phone"/>
-                            <field name="phone" widget="phone"/>
-                            <field name="email" widget="email"/>
-                            <field name="country_id" options="{'no_create': True}"/>
-                            <field name="company_id" options="{'no_create': True}"
-                                   readonly="state not in ('draft', 'requested')" readonly="1"/>
-                        </group>
-                        <group string="Vehicle Information">
-                            <field name="vehicle_id"
-                                   context="{'default_driver_id': partner_id}"
-                                   readonly="state not in ('draft', 'requested')"/>
-                            <field name="vehicle_plate_label" string="Plate (Emirate / Code / No.)"/>
-                            <field name="vehicle_plate" string="Plate Number"/>
-                            <field name="vehicle_vin"/>
-                        </group>
-                        <group string="Service Information">
-                            <field name="service_type_id" options="{'no_create': True}"/>
-                            <field name="complaint" placeholder="e.g. Brake noise, AC not cooling..."/>
-                            <field name="customer_note"/>
+                        <!-- Right column: customer, then vehicle below it -->
+                        <group>
+                            <group string="Customer Information" colspan="2">
+                                <field name="partner_id"
+                                       readonly="state not in ('draft', 'requested')"/>
+                                <field name="mobile" widget="phone"/>
+                                <field name="phone" widget="phone"/>
+                                <field name="email" widget="email"/>
+                                <field name="country_id" options="{'no_create': True}"/>
+                            </group>
+                            <group string="Vehicle Information" colspan="2">
+                                <field name="vehicle_id"
+                                       context="{'default_driver_id': partner_id}"
+                                       readonly="state not in ('draft', 'requested')"/>
+                                <field name="vehicle_plate_label" string="Plate (Emirate / Code / No.)"/>
+                                <field name="vehicle_plate" string="Plate Number"/>
+                                <field name="vehicle_vin"/>
+                            </group>
                         </group>
                     </group>
                     <notebook>

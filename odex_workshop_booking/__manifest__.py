@@ -51,6 +51,7 @@ No CRM / Job Card / Sales / Invoicing integration by design.
         'web.assets_backend': [
             'odex_workshop_booking/static/src/dashboard/**/*',
             'odex_workshop_booking/static/src/backend/schedule.scss',
+            'odex_workshop_booking/static/src/backend/slot_picker/**/*',
         ],
         'web.assets_frontend': [
             'odex_workshop_booking/static/src/website/booking_wizard.scss',

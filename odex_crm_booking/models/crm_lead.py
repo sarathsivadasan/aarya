@@ -40,13 +40,13 @@ class CrmLead(models.Model):
         if mobile and not self.alternate_phone and mobile != (self.phone or partner.phone):
             self.alternate_phone = mobile
 
-    @api.constrains("vehicle_id", "odometer_reading")
-    def _check_odometer_reading(self):
-        for lead in self:
-            if lead.vehicle_id and lead.odometer_reading <= 0:
-                raise ValidationError(_("Odometer Reading (KM) is required once a vehicle is selected."))
-            if lead.odometer_reading < 0:
-                raise ValidationError(_("Odometer Reading (KM) cannot be negative."))
+    # @api.constrains("vehicle_id", "odometer_reading")
+    # def _check_odometer_reading(self):
+    #     for lead in self:
+    #         if lead.vehicle_id:
+    #             raise ValidationError(_("Odometer Reading (KM) is required once a vehicle is selected."))
+    #         if lead.odometer_reading < 0:
+    #             raise ValidationError(_("Odometer Reading (KM) cannot be negative."))
 
     def action_create_booking(self):
         self.ensure_one()
