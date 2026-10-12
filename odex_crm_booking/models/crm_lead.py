@@ -64,7 +64,7 @@ class CrmLead(models.Model):
             "view_mode": "form",
             "views": [(False, "form")],
             "target": "current",
-            "context": {'default_partner_id': self.partner_id,
+            "context": {'default_partner_id': self.partner_id.id,
                         'default_phone': self.phone,
                         'default_vehicle_id': self.vehicle_id.id,
                         'default_vehicle_vin': self.vin,}

@@ -211,13 +211,38 @@ class WorkshopBooking(models.Model):
                     'Vehicle %s already has an active booking on %s.',
                     rec.vehicle_id.display_name, rec.booking_date))
 
+    @api.model
+    def default_get(self, fields_list):
+        """Pre-fill the customer when the form is opened from a CRM lead."""
+        res = super().default_get(fields_list)
+        ctx = self.env.context
+        if not res.get('partner_id') and ctx.get('active_model') == 'crm.lead' \
+                and ctx.get('active_id') and 'crm.lead' in self.env:
+            partner = self.env['crm.lead'].browse(
+                ctx['active_id']).exists().partner_id
+            if partner:
+                res['partner_id'] = partner.id
+        return res
+
+    def _fill_contact_from_partner(self):
+        partner = self.partner_id
+        if partner:
+            # keep what is already typed / passed in (e.g. from a CRM lead)
+            self.mobile = partner.mobile or self.mobile
+            self.phone = partner.phone or self.phone
+            self.email = partner.email or self.email
+            self.country_id = partner.country_id or self.country_id
+
     @api.onchange('partner_id')
     def _onchange_partner_id(self):
-        if self.partner_id:
-            self.mobile = self.partner_id.mobile
-            self.phone = self.partner_id.phone
-            self.email = self.partner_id.email
-            self.country_id = self.partner_id.country_id
+        self._fill_contact_from_partner()
+
+    @api.onchange('vehicle_id')
+    def _onchange_vehicle_id(self):
+        """Pick the vehicle first and the customer follows."""
+        if self.vehicle_id and not self.partner_id and self.vehicle_id.driver_id:
+            self.partner_id = self.vehicle_id.driver_id
+            self._fill_contact_from_partner()
 
     @api.onchange('company_id')
     def _onchange_company_id(self):
@@ -431,7 +456,9 @@ class WorkshopBooking(models.Model):
     @api.depends('slot_id')
     def _compute_pick(self):
         for rec in self:
-            rec.pick_date = rec.slot_id.date or rec.booking_date
+            # New booking: start on today so the free times show straight away.
+            rec.pick_date = rec.slot_id.date or rec.booking_date \
+                or fields.Date.context_today(rec)
             rec.pick_hour = rec.slot_id.hour_from or 0.0
             rec.available_time_ids = rec.slot_id
 
