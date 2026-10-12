@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import datetime
+import re
+
+from markupsafe import Markup
+
 from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError, UserError
 
@@ -50,6 +54,28 @@ class GatePass(models.Model):
     #     copy=False,
     # )
     note = fields.Html(string="Note")
+
+    # ------------------------------------------------------------------
+    # Booking integration (odex_workshop_booking)
+    # ------------------------------------------------------------------
+    booking_id = fields.Many2one(
+        'odex.workshop.booking', string="Booking", readonly=True,
+        copy=False, index=True, ondelete='set null', tracking=True)
+    booking_date = fields.Date(
+        string="Booking Date", related='booking_id.booking_date')
+    booking_time = fields.Char(
+        string="Booking Time", related='booking_id.time_label')
+    service_type_id = fields.Many2one(
+        'odex.booking.service.type', string="Service Type", copy=False)
+    complaint = fields.Text(string="Vehicle Complaint")
+    advisor_id = fields.Many2one(
+        'res.users', string="Service Advisor", copy=False)
+    vehicle_plate = fields.Char(
+        string="Plate Number", related='vehicle_id.license_plate')
+    vehicle_vin = fields.Char(
+        string="VIN / Chassis", related='vehicle_id.vin_sn')
+    company_id = fields.Many2one(
+        'res.company', string="Company", default=lambda self: self.env.company)
 
     # def _compute_inspection_count(self):
     #     Task = self.env['project.task']
@@ -115,14 +141,53 @@ class GatePass(models.Model):
     #     return action
 
 
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            vals['name'] = self.env['ir.sequence'].next_by_code('gate.pass.seq')
+        return super().create(vals_list)
+
     @api.model
-    def create(self, vals):
-        name = self.env['ir.sequence'].next_by_code('gate.pass.seq')
-        vals.update({
-            'name': name
-        })
-        res = super(GatePass, self).create(vals)
-        return res
+    def _prepare_vals_from_booking(self, booking):
+        """Gate pass values copied from an ``odex.workshop.booking``."""
+        vals = {
+            'booking_id': booking.id,
+            'partner_id': booking.partner_id.id,
+            'vehicle_id': booking.vehicle_id.id,
+            'service_type_id': booking.service_type_id.id,
+            'complaint': booking.complaint,
+            'advisor_id': booking.advisor_id.id,
+            'company_id': booking.company_id.id or self.env.company.id,
+            'date_in': fields.Datetime.now(),
+            'state': 'in',
+        }
+        # A contact number given on the booking that differs from the one on
+        # the customer record is kept as the alternate mobile.
+        def digits(number):
+            return re.sub(r'\D', '', number or '')
+        mobile = booking.mobile or booking.phone
+        known = {digits(booking.partner_id.phone), digits(booking.partner_id.mobile)}
+        if mobile and digits(mobile) not in known:
+            vals['alternate_mobile'] = mobile
+        notes = []
+        if booking.customer_note:
+            notes.append(Markup('<p><b>%s:</b> %s</p>') % (
+                _("Customer Notes"), booking.customer_note))
+        if booking.note:
+            notes.append(booking.note)
+        if notes:
+            vals['note'] = Markup('').join(notes)
+        return vals
+
+    def action_view_booking(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Booking'),
+            'res_model': 'odex.workshop.booking',
+            'view_mode': 'form',
+            'res_id': self.booking_id.id,
+        }
 
     @api.onchange('vehicle_id')
     def onchange_vehicle_id(self):

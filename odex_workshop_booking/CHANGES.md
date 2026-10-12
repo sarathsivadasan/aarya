@@ -1,3 +1,12 @@
+# Change Log - Mark as Arrived / Gate Pass
+
+- `static/src/dashboard/dashboard.js`: `canArrive` now true only for **Confirmed** bookings. It previously also showed "Mark as Arrived" for Requested ones, which the server rejects.
+- `__manifest__.py`: version 18.0.3.0.1; description notes the optional `gate_pass` module (it creates a Gate Pass IN when a booking is marked arrived; no dependency from this module).
+
+Upgrade: `-u odex_workshop_booking`, then clear assets / restart.
+
+---
+
 # Change Log — Booking form: date → live time slots
 
 - `views/booking_views.xml`: form re-laid out — left column Booking Information (Company, Booking Date, Time Slot picker, …) + Service Information; right column Customer Information with Vehicle Information below it. Removed the duplicate `readonly` attribute on `company_id` that made the file invalid XML.

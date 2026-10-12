@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <!-- Booking dashboard details panel: show the gate pass once created -->
+    <t t-inherit="odex_workshop_booking.Dashboard" t-inherit-mode="extension">
+        <xpath expr="//b[@t-esc='state.detail.create_date']/.." position="after">
+            <div t-if="state.detail.gate_pass">
+                <span>Gate Pass</span><b t-esc="state.detail.gate_pass"/></div>
+        </xpath>
+    </t>
+</templates>

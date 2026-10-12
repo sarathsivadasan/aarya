@@ -392,7 +392,7 @@ export class OdexBookingDashboard extends Component {
 
     get canArrive() {
         const state = this.state.detail && this.state.detail.state;
-        return state === "confirmed" || state === "requested";
+        return state === "confirmed";
     }
 
     get canReschedule() {

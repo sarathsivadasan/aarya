@@ -2,4 +2,4 @@
 
 from . import gate_pass
 from . import job_card
-
+from . import booking

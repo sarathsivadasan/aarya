@@ -8,8 +8,10 @@ Public website booking wizard, customer portal, internal booking app with
 dashboard, slot management, calendar integration, rescheduling and reports.
 Integrates with Contacts (res.partner), Fleet (fleet.vehicle) and Calendar.
 No CRM / Job Card / Sales / Invoicing integration by design.
+The optional gate_pass module extends this one: marking a booking as arrived
+creates a Gate Pass IN automatically (this module does not depend on it).
     """,
-    'version': '18.0.3.0.0',
+    'version': '18.0.3.0.1',
     'category': 'Services/Booking',
     'author': 'ODEX',
     'website': 'https://odex.in',
