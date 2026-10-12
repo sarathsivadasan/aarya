@@ -200,7 +200,7 @@ class WebsiteBooking(http.Controller):
                     'model_year': vehicle_data.get('year') or False,
                     'color': vehicle_data.get('color') or False,
 
-                    'engine_number': vehicle_data.get('engine_number') or False,
+                    'engin_no': vehicle_data.get('engin_no') or False,
                     'cylinder_count': int(vehicle_data.get('cylinders') or 0),
                 }
                 # fleet.vehicle._set_odometer raises when the value is 0, so

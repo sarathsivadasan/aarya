@@ -9,8 +9,8 @@ class FleetVehicle(models.Model):
     # fleet_emirate_id (fleet.emirates) and fleet_code_id (fleet.characters)
     # from the Odex fleet extension, so they were removed — always read the
     # native fleet fields instead.
-    engine_number = fields.Char(string='Engine Number')
-    cylinder_count = fields.Integer(string='Cylinders')
+    # engine_number = fields.Char(string='Engine Number')
+    # cylinder_count = fields.Integer(string='Cylinders')
     booking_ids = fields.One2many(
         'odex.workshop.booking', 'vehicle_id', string='Bookings')
     booking_count = fields.Integer(compute='_compute_booking_count')

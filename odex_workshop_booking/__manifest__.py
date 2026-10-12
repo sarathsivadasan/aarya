@@ -22,6 +22,7 @@ No CRM / Job Card / Sales / Invoicing integration by design.
         'calendar',
         'website',
         'portal',
+        'garage_management_odoo',
         # Required by the customer portal: the quotation page reuses Odoo's
         # own sale portal implementation (route, access token, Accept & Sign,
         # message thread) instead of reimplementing it, and Service History /

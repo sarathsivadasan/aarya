@@ -71,7 +71,7 @@ class BookingPortal(CustomerPortal):
         return result
 
     VEHICLE_OPTIONAL_FIELDS = [
-        'fleet_emirate_id', 'fleet_code_id', 'engine_number', 'cylinder_count',
+        'fleet_emirate_id', 'fleet_code_id', 'engin_no', 'cylinder_count',
         'variant', 'variant_id', 'trim_id', 'fuel_type', 'transmission',
         'odometer', 'warranty_expiry', 'warranty_end_date',
         'registration_expiry', 'mulkiya_expiry', 'insurance_expiry',

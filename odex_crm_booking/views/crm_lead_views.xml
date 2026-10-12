@@ -20,12 +20,6 @@
                 <field name="booking_count" widget="statinfo" string="Bookings"/>
             </button>
         </xpath>
-        <xpath expr="//div[@name='button_box']" position="inside">
-            <button name="action_view_odex_activities" type="object" class="oe_stat_button"
-                    icon="fa-clock-o" invisible="not id">
-                <field name="odex_activity_count" widget="statinfo" string="Activities"/>
-            </button>
-        </xpath>
 
         <!-- Customer Details modifications -->
         <xpath expr="//group[@name='opportunity_partner']" position="attributes">

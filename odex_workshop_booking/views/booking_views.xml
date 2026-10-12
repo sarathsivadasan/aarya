@@ -157,15 +157,13 @@
                     </div>
                     <group>
                         <group string="Booking Information">
-                            <field name="company_id" options="{'no_create': True}"
-                                   readonly="state not in ('draft', 'requested')"/>
+                            <field name="pick_date" string="Date"
+                                   readonly="state in ('done', 'cancelled', 'no_show')"/>
                             <field name="slot_id"
                                    domain="[('company_id', '=', company_id),
                                             ('state', 'in', ('available', 'limited'))]"
                                    options="{'no_create': True}"
                                    readonly="state not in ('draft', 'requested')"/>
-                            <field name="pick_date" string="Date"
-                                   readonly="state in ('done', 'cancelled', 'no_show')"/>
                             <label for="pick_hour" string="Time"/>
                             <div class="d-flex align-items-center gap-2">
                                 <field name="pick_hour" nolabel="1" widget="float_time"
@@ -191,6 +189,8 @@
                             <field name="phone" widget="phone"/>
                             <field name="email" widget="email"/>
                             <field name="country_id" options="{'no_create': True}"/>
+                            <field name="company_id" options="{'no_create': True}"
+                                   readonly="state not in ('draft', 'requested')" readonly="1"/>
                         </group>
                         <group string="Vehicle Information">
                             <field name="vehicle_id"

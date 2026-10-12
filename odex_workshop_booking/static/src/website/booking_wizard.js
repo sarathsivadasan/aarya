@@ -524,7 +524,7 @@ publicWidget.registry.OdexBookingWizard = publicWidget.Widget.extend({
                     code_id: val("#owb_plate_code"),
                     emirate_id: val("#owb_emirate"),
                     vin: val("#owb_vin"),
-                    engine_number: val("#owb_engine"),
+                    engin_no: val("#owb_engine"),
                     year: val("#owb_year"),
                     color: val("#owb_color"),
                     cylinders: val("#owb_cylinders"),

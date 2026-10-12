@@ -20,22 +20,16 @@ class CrmLead(models.Model):
     vin = fields.Char(string="Chassis No.", related="vehicle_id.vin_sn")
     engin_no = fields.Char(string="Engin No.", related="vehicle_id.engin_no")
     year = fields.Selection(string="Year", related="vehicle_id.model_year")
-    odometer_reading = fields.Char(string="Odometer")
+    odometer_reading = fields.Integer(string="Odometer")
 
     # ---- smart buttons ---------------------------------------------------
     booking_count = fields.Integer("Bookings", compute="_compute_booking_count")
-    odex_activity_count = fields.Integer("Activity Count", compute="_compute_odex_activity_count")
-
+    
     def _compute_booking_count(self):
         self.booking_count = 0
         # counts = self._bridge()._booking_counts(self)
         # for lead in self:
         #     lead.booking_count = counts.get(lead.id, 0)
-
-    @api.depends("activity_ids")
-    def _compute_odex_activity_count(self):
-        for lead in self:
-            lead.odex_activity_count = len(lead.activity_ids)
 
     @api.onchange("partner_id")
     def _onchange_partner_odex(self):
@@ -60,7 +54,6 @@ class CrmLead(models.Model):
             (_("Customer Name"), self.partner_id),
             (_("Contact Number"), self.phone or self.mobile),
             (_("Vehicle"), self.vehicle_id),
-            (_("Odometer Reading (KM)"), self.odometer_reading > 0),
         ) if not ok]
         if missing:
             raise UserError(_("Fill these before creating a booking:\n- %s", "\n- ".join(missing)))
@@ -92,17 +85,4 @@ class CrmLead(models.Model):
             action.update(view_mode="list,form", views=[(False, "list"), (False, "form")])
         return action
 
-    def action_view_odex_activities(self):
-        self.ensure_one()
-        return {
-            "type": "ir.actions.act_window",
-            "name": _("Activities"),
-            "res_model": "mail.activity",
-            "view_mode": "list,form",
-            "views": [(False, "list"), (False, "form")],
-            "domain": [("res_model", "=", self._name), ("res_id", "=", self.id)],
-            "context": {
-                "default_res_model_id": self.env["ir.model"]._get_id(self._name),
-                "default_res_id": self.id,
-            },
-        }
+
