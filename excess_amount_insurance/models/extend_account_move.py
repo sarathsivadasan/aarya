@@ -20,59 +20,74 @@ class AccountMove(models.Model):
     # cc_total_amount = fields.Monetary(string="Total Amount", compute="depends_invoice_line_ids", store=True)
     insurance_invoice_created =fields.Boolean(default=False)
 
+    def _get_excess_product(self):
+        """Return the single 'Excess Amount' product (xml-id first, then fallback search)."""
+        tmpl = self.env.ref('excess_amount_insurance.product_excess_amount', raise_if_not_found=False)
+        product = tmpl.product_variant_id if tmpl else self.env['product.product']
+        if not product:
+            product = self.env['product.product'].search(
+                [('active', '=', True), '|', ('default_code', '=', 'EA'), ('name', '=', 'Excess Amount')],
+                limit=1)
+        return product
+
+    def _get_excess_lines(self):
+        """All invoice lines that carry an Excess Amount product, whichever
+        product record (xml-id one, or another named 'Excess Amount' / code EA)."""
+        self.ensure_one()
+        return self.invoice_line_ids.filtered(
+            lambda l: l.product_id and (
+                l.product_id.default_code == 'EA' or l.product_id.name == 'Excess Amount'
+            )
+        )
+
     @api.onchange('excess_amount')
     def _onchange_excess_amount(self):
         for move in self:
-            excess_product = self.env['product.product'].search(
-                [('name', '=', 'Excess Amount')], limit=1
-            )
+            excess_product = move._get_excess_product()
             if not excess_product:
-                raise ValidationError("Excess Amount Product does not exist!")
+                raise ValidationError(_("Excess Amount Product does not exist!"))
 
-            # Search both saved lines and in-memory lines
-            excess_lines = move.invoice_line_ids.filtered(lambda l: l.product_id == excess_product)
+            # Every excess line already on the invoice (saved or in-memory), regardless of
+            # which product record it uses -> guarantees we never add a second one.
+            excess_lines = move._get_excess_lines()
 
-            # Case 1: Cleared or zero amount -> remove existing lines
+            # Case 1: cleared / zero amount -> remove all excess lines
             if not move.excess_amount or move.excess_amount <= 0:
-                commands = [Command.delete(line.id) for line in excess_lines]
-                if commands:
-                    move.invoice_line_ids = commands
+                if excess_lines:
+                    move.invoice_line_ids = [Command.delete(line.id) for line in excess_lines]
                 continue
 
-            # Case 2: Line already present -> update it using Command.update
+            # Case 2: line(s) already present -> keep the first one, fix it, delete the rest
             if excess_lines:
-                target_line = excess_lines[0]
-                # Use Command.update so the web client modifies the existing row instead of making a copy
-                commands = [
-                    Command.update(target_line.id, {
-                        'price_unit': move.excess_amount * -1,
-                        'quantity': 1.0,
-                    })
-                ]
-                # If duplicates exist in the UI draft, delete them
-                for dup in excess_lines[1:]:
-                    commands.append(Command.delete(dup.id))
-                
-                move.invoice_line_ids = commands
-
-            # Case 3: Line does not exist -> add it once
-            else:
-                accounts = excess_product.product_tmpl_id.get_product_accounts(
-                    fiscal_pos=move.fiscal_position_id
-                )
-                account = accounts['expense'] if move.is_purchase_document() else accounts['income']
-
-                line_vals = {
+                keep = excess_lines[0]
+                commands = [Command.update(keep.id, {
                     'product_id': excess_product.id,
-                    'name': excess_product.display_name,
-                    'quantity': 1.0,
                     'price_unit': move.excess_amount * -1,
+                    'quantity': 1.0,
                     'cost_type': 'labour',
-                }
-                if account:
-                    line_vals['account_id'] = account.id
+                    'discount': 0.0,
+                    'discount_fixed': 0.0,
+                })]
+                commands += [Command.delete(dup.id) for dup in excess_lines[1:]]
+                move.invoice_line_ids = commands
+                continue
 
-                move.invoice_line_ids = [Command.create(line_vals)]
+            # Case 3: no line yet -> add it once
+            accounts = excess_product.product_tmpl_id.get_product_accounts(
+                fiscal_pos=move.fiscal_position_id
+            )
+            account = accounts['expense'] if move.is_purchase_document() else accounts['income']
+            line_vals = {
+                'product_id': excess_product.id,
+                'name': excess_product.display_name,
+                'quantity': 1.0,
+                'price_unit': move.excess_amount * -1,
+                'cost_type': 'labour',
+            }
+            if account:
+                line_vals['account_id'] = account.id
+            move.invoice_line_ids = [Command.create(line_vals)]
+
     # def _post(self, soft=True):
     #     """Post/Validate the documents.
 
@@ -257,8 +272,12 @@ class AccountMove(models.Model):
         if self.excess_amount and self.partner_excess_amount:
             excess_amount_move_id = self.excess_amount_move_id
             invoice = None
-            product_id = self.env['product.product'].search(
-                [('active', '=', True), ('name', '=', 'Excess Amount'), ('default_code', '=', 'EA')])
+            product_id = self._get_excess_product()
+            # Remove duplicated excess lines left on the source invoice (draft only)
+            if self.state == 'draft':
+                extra = self._get_excess_lines()[1:]
+                if extra:
+                    self.invoice_line_ids = [Command.delete(l.id) for l in extra]
             lines = []
             vals = {
                 'cost_type': "labour",
