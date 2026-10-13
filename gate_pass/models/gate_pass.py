@@ -2,10 +2,11 @@
 
 import datetime
 import re
-
+import ast
+from odoo.osv.expression import AND
 from markupsafe import Markup
 
-from odoo import api, fields, models, _
+from odoo import api, fields, models, _, exceptions
 from odoo.exceptions import ValidationError, UserError
 
 class GatePass(models.Model):
@@ -90,7 +91,7 @@ class GatePass(models.Model):
         self.ensure_one()
         missing = [label for label, ok in (
             (_("Customer Name"), self.partner_id),
-            (_("Contact Number"), self.partner_phone or self.alternate_mobile),
+            # (_("Contact Number"), self.partner_phone or self.alternate_mobile),
             (_("Vehicle"), self.vehicle_id),
         ) if not ok]
         if missing:
@@ -102,9 +103,6 @@ class GatePass(models.Model):
 
         # Load the exact action definition used by the smart button
         action = self.env['ir.actions.actions']._for_xml_id('job_card.action_view_job_card')
-        
-        # Force the action to open a new record form view using the module's specific views
-        action['res_id'] = False
         action['view_mode'] = 'form'
         action['views'] = [(False, 'form')]
         action['target'] = 'current'
@@ -114,9 +112,11 @@ class GatePass(models.Model):
             'default_vehicle_id': self.vehicle_id.id if self.vehicle_id else False,
             'default_odometer': odometer_val,
             'default_gate_pass_id': self.id,
+            'default_is_jobcard': True,
         }
+        action['context']['search_default_gate_pass_id'] = self.id
         return action
-        
+
     # def action_view_vehicle_inspection(self):
     #     self.ensure_one()
 
@@ -236,4 +236,6 @@ class GatePass(models.Model):
             'default_vehicle_id': self.vehicle_id.id if self.vehicle_id else False,
             'default_odometer': odometer_val,
             'default_gate_pass_id': self.id,
+            'default_is_jobcard': True,
         }
+        return action
