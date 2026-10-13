@@ -86,37 +86,27 @@ class GatePass(models.Model):
     #             ('gate_pass_id', '=', rec.id),
     #         ]) if rec.vehicle_id else 0
 
-    # def action_create_vehicle_inspection(self):
-    #     self.ensure_one()
-
-    #     if self.inspection_id:
-    #         inspection = self.inspection_id
-    #     else:
-    #         inspection = self.env['project.task'].with_context(
-    #             default_is_vc=True
-    #         ).create({
-    #             'is_vc': True,
-    #             'partner_id': self.partner_id.id,
-    #             'vehicle_id': self.vehicle_id.id,
-    #             'gate_pass_id': self.id,
-    #         })
-    #         self.inspection_id = inspection.id
-
-    #     action = self.env["ir.actions.actions"]._for_xml_id(
-    #         "vehicle_inspection_report.action_vehicle_inspection"
-    #     )
-
-    #     action.update({
-    #         "res_id": inspection.id,
-    #         "view_mode": "form",
-    #         "views": [
-    #             (self.env.ref(
-    #                 "vehicle_inspection_report.view_form_v_job_card_extension"
-    #             ).id, "form")
-    #         ],
-    #     })
-
-    #     return action
+    def action_create_job_card(self):
+        self.ensure_one()
+        missing = [label for label, ok in (
+            (_("Customer Name"), self.partner_id),
+            (_("Contact Number"), self.cc_partner_phone or self.cc_partner_mobile),
+            (_("Vehicle"), self.vehicle_id),
+        ) if not ok]
+        if missing:
+            raise UserError(_("Fill these before creating a JobCard:\n- %s", "\n- ".join(missing)))
+        return {
+            "type": "ir.actions.act_window",
+            "name": _("Job Card"),
+            "res_model": "project.task",
+            "view_mode": "form",
+            "views": [(False, "form")],
+            "target": "current",
+            "context": {'default_partner_id': self.partner_id.id,
+                        'default_cc_partner_phone': self.phone,
+                        'default_vehicle_id': self.vehicle_id.id,
+                        'default_odometer': self.booking_id.crm_id.odometer_reading,}
+        }
 
     # def action_view_vehicle_inspection(self):
     #     self.ensure_one()
@@ -214,6 +204,7 @@ class GatePass(models.Model):
                      ('vehicle_id', '=', rec.vehicle_id.id)
                 ])
             rec.job_card_count = job_card_count
+
     def action_view_job_card(self):
         if self.vehicle_id:
             Task = self.env['project.task']
@@ -228,4 +219,8 @@ class GatePass(models.Model):
                 'view_mode': 'list,form',
                 'domain': [
                     ('id', 'in', job_card.ids)],
+                "context": {'default_partner_id': self.partner_id.id,
+                        'default_cc_partner_phone': self.phone,
+                        'default_vehicle_id': self.vehicle_id.id,
+                        'default_odometer': self.booking_id.crm_id.odometer_reading,}
             }

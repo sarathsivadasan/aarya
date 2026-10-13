@@ -8,14 +8,13 @@
             <field name="arch" type="xml">
                 <form>
                     <header>
-                        <button name="vehicle_out" type="object" string="Out" invisible="state not in ('in', 'revisit')"
-                                class="btn-primary"/>
+                        <button name="vehicle_out" type="object" string="Out" invisible="state not in ('in', 'revisit')" class="btn-primary"/>
                         <button name="vehicle_revisit" type="object" string="Revisit"   invisible="state != 'in'" class="btn-primary"/>
-                        <!-- <button name="action_create_vehicle_inspection"
+                        <button name="action_create_job_card"
                                 type="object"
-                                string="Create Vehicle Inspection"
-                                class="btn-primary" invisible="inspection_count >= 1"/> -->
-                        <!-- <button name="user_reject" type="object" string="Reject" invisible="state != 'draft'" class="btn-primary"/> -->
+                                string="Create Job Card"
+                                class="btn-primary" invisible="job_card_count >= 1"/> -->
+                        <!-- <button name="user_reject" type="object" string="Reject" invisible="state != 'draft'" class="btn-primary"/> --> --> -->
                         <field name="state" widget="statusbar" string="Status"
                                statusbar_visible="in, revisit, out"/>
                     </header>
@@ -31,8 +30,7 @@
                                     <field name="booking_id" invisible="1"/>
                                 </div>
                             </button>
-                            <button name="action_view_job_card" type="object" class="oe_stat_button"
-                                    icon="fa-file-text-o" invisible="job_card_count == 0">
+                            <button name="action_view_job_card" type="object" class="oe_stat_button" icon="fa-file-text-o">
                                 <field name="job_card_count" widget="statinfo" string="Job Cards"/>
                             </button>
                             <!-- <button name="action_view_vehicle_inspection"
