@@ -94,20 +94,29 @@ class GatePass(models.Model):
             (_("Vehicle"), self.vehicle_id),
         ) if not ok]
         if missing:
-            raise UserError(_("Fill these before creating a JobCard:\n- %s", "\n- ".join(missing)))
-        return {
-            "type": "ir.actions.act_window",
-            "name": _("Job Card"),
-            "res_model": "project.task",
-            "view_mode": "form",
-            "views": [(False, "form")],
-            "target": "current",
-            "context": {'default_partner_id': self.partner_id.id,
-                        'default_cc_partner_phone': self.partner_phone,
-                        'default_vehicle_id': self.vehicle_id.id,
-                        'default_odometer': self.booking_id.crm_id.odometer_reading,}
-        }
+            raise exceptions.UserError(_("Fill these before creating a JobCard:\n- %s", "\n- ".join(missing)))
+        
+        odometer_val = 0.0
+        if self.booking_id and self.booking_id.crm_id:
+            odometer_val = self.booking_id.crm_id.odometer_reading
 
+        # Load the exact action definition used by the smart button
+        action = self.env['ir.actions.actions']._for_xml_id('job_card.action_view_job_card')
+        
+        # Force the action to open a new record form view using the module's specific views
+        action['res_id'] = False
+        action['view_mode'] = 'form'
+        action['views'] = [(False, 'form')]
+        action['target'] = 'current'
+        action['context'] = {
+            'default_partner_id': self.partner_id.id if self.partner_id else False,
+            'default_cc_partner_phone': self.partner_phone if hasattr(self, 'partner_phone') else False,
+            'default_vehicle_id': self.vehicle_id.id if self.vehicle_id else False,
+            'default_odometer': odometer_val,
+            'default_gate_pass_id': self.id,
+        }
+        return action
+        
     # def action_view_vehicle_inspection(self):
     #     self.ensure_one()
 
@@ -201,26 +210,30 @@ class GatePass(models.Model):
             if rec.vehicle_id:
                  job_card_count = Task.search_count([
                      ('is_jobcard', '=', True),
-                     ('vehicle_id', '=', rec.vehicle_id.id)
+                     ('gate_pass_id', '=', self.id)
                 ])
             rec.job_card_count = job_card_count
 
     def action_view_job_card(self):
-        if self.vehicle_id:
-            Task = self.env['project.task']
-            job_card  = Task.search([
-                ('is_jobcard', '=', True), ('vehicle_id', '=', self.vehicle_id.id)
-            ])
-            print("job_cardjob_cardjob_card",job_card)
-            return {
-                'type': 'ir.actions.act_window',
-                'name': _('Job Card'),
-                'res_model': 'project.task',
-                'view_mode': 'list,form',
-                'domain': [
-                    ('id', 'in', job_card.ids)],
-                "context": {'default_partner_id': self.partner_id.id,
-                        'default_cc_partner_phone': self.partner_phone,
-                        'default_vehicle_id': self.vehicle_id.id,
-                        'default_odometer': self.booking_id.crm_id.odometer_reading,}
-            }
+        self.ensure_one()
+        
+        # Load the action from XML ID
+        action = self.env['ir.actions.actions']._for_xml_id('job_card.action_view_job_card')
+        
+        # Safely handle and combine the domain
+        base_domain = ast.literal_eval(action.get('domain', '[]')) if action.get('domain') else []
+        action['domain'] = AND([base_domain, [('gate_pass_id', '=', self.id)]])
+        
+        # Safely extract odometer reading to prevent NoneType attribute errors
+        odometer_val = 0.0
+        if self.booking_id and self.booking_id.crm_id:
+            odometer_val = self.booking_id.crm_id.odometer_reading
+
+        # Set default values for when a new job card is created from this view
+        action['context'] = {
+            'default_partner_id': self.partner_id.id if self.partner_id else False,
+            'default_cc_partner_phone': self.partner_phone if hasattr(self, 'partner_phone') else False,
+            'default_vehicle_id': self.vehicle_id.id if self.vehicle_id else False,
+            'default_odometer': odometer_val,
+            'default_gate_pass_id': self.id,
+        }
