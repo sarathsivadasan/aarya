@@ -128,7 +128,7 @@
             <field name="view_mode">list,form</field>
         </record>
 
-        <menuitem id="menu_gate_pass_parent" name="Gate Pass" groups="base.group_user"/>
+        <menuitem id="menu_gate_pass_parent" name="Gate Pass" groups="base.group_user" sequence="3"/>
         <!-- web_icon="parts_request,static/description/icon.png"/> -->
         <menuitem id="menu_item_gate_pass" name="Gate Pass" parent="menu_gate_pass_parent"/>
         <menuitem id="menu_action_gate_pass" name="Gate Pass" parent="menu_item_gate_pass" action="action_gate_pass"/>

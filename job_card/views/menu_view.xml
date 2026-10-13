@@ -6,7 +6,7 @@
         <menuitem
             id="menu_job_card"
             name="Job Card"
-            sequence="4" 
+            sequence="5" 
             web_icon="job_card,static/description/jobcard.png"/>
         
         <menuitem

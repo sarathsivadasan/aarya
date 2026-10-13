@@ -9,7 +9,7 @@
     <menuitem id="menu_job_card_dashboard_root"
               name="Workshop Dashboard"
               web_icon="odex_job_card_dashboard,static/description/icon.png"
-              sequence="1"
+              sequence="4"
               groups="group_job_card_dashboard_user"/>
 
     <menuitem id="menu_job_card_dashboard"

@@ -7,7 +7,7 @@
 
     <menuitem id="menu_booking_root" name="Booking"
               web_icon="odex_workshop_booking,static/description/icon.png"
-              sequence="35"
+              sequence="2"
               groups="odex_workshop_booking.group_booking_user"/>
 
     <menuitem id="menu_booking_dashboard" name="Dashboard"

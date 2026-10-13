@@ -152,7 +152,7 @@
 
     <!-- Root menu -->
     <menuitem id="menu_technician_portal_root" name="Technician Portal"
-              sequence="45" groups="group_garage_technician"
+              sequence="6" groups="group_garage_technician"
               action="action_technician_portal_client"/>
 
     <menuitem id="menu_technician_dashboard" name="Dashboard"

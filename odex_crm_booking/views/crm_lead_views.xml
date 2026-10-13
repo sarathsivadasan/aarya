@@ -36,7 +36,7 @@
         <xpath expr="//group[@name='lead_info']" position="after">
             <group>
                 <group name="vehicle_info" string="Vehicle Details">
-                    <field name="vehicle_id"/>
+                    <field name="vehicle_id" context="{'default_partner_id': partner_id}"/>/>
                     <field name="vehicle_make_id"/>
                     <field name="vehicle_model_id"/>
                     <field name="vehicle_color_id"/>

@@ -91,7 +91,7 @@
             <field name="view_mode">list,form</field>
         </record>
         
-        <menuitem id="menu_jobcard_part_requisition" name="Part Request" groups="base.group_user" web_icon="parts_request,static/description/icon.png" sequence="5"/>
+        <menuitem id="menu_jobcard_part_requisition" name="Part Request" groups="base.group_user" web_icon="parts_request,static/description/icon.png" sequence="10"/>
         <menuitem id="menu_item_jobcard_part_requisition" name="Part Request" parent="menu_jobcard_part_requisition"/>
         <menuitem id="menu_action_jobcard_part_requisition" name="Part Request" parent="menu_item_jobcard_part_requisition" action="action_jobcard_part_requisition"/>
         <menuitem id="menu_item_purchase_order" name="Purchase Order" parent="menu_jobcard_part_requisition"          action="purchase.purchase_form_action"/>

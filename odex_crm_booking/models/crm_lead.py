@@ -40,6 +40,11 @@ class CrmLead(models.Model):
         if mobile and not self.alternate_phone and mobile != (self.phone or partner.phone):
             self.alternate_phone = mobile
 
+    @api.onchange('vehicle_id', 'partner_id')
+    def _onchange_vehicle_partner(self):
+        if self.vehicle_id and self.partner_id and not self.vehicle_id.partner_id:
+            self.vehicle_id.partner_id = self.partner_id.id
+
     # @api.constrains("vehicle_id", "odometer_reading")
     # def _check_odometer_reading(self):
     #     for lead in self:
@@ -77,6 +82,10 @@ class CrmLead(models.Model):
             "name": _("Bookings"),
             "res_model": "odex.workshop.booking",
             "domain": [('crm_id', "=", self.id)],
+            "context": {'default_partner_id': self.partner_id.id,
+                        'default_phone': self.phone,
+                        'default_vehicle_id': self.vehicle_id.id,
+                        'default_vehicle_vin': self.vin,}
         }
         bookings = self.env['odex.workshop.booking'].search([('crm_id', "=", self.id)])
         if len(bookings) == 1:
@@ -84,5 +93,12 @@ class CrmLead(models.Model):
         else:
             action.update(view_mode="list,form", views=[(False, "list"), (False, "form")])
         return action
+
+    def _prepare_opportunity_quotation_context(self):
+        quotation_context = super(CrmLead, self)._prepare_opportunity_quotation_context()
+        if self.vehicle_id:
+            quotation_context.update({'default_vehicle_id': self.vehicle_id.id,
+                                      'default_odometer': self.odometer_reading,})
+        return quotation_context
 
 

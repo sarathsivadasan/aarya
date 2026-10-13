@@ -29,11 +29,11 @@
     </record>
 
     <record model="ir.ui.menu" id="hr_expense.menu_hr_expense_root">
-        <field name="sequence">10</field>
+        <field name="sequence">14</field>
     </record>
 
     <record model="ir.ui.menu" id="hr.menu_hr_root">
-        <field name="sequence">12</field>
+        <field name="sequence">17</field>
     </record>
 
 </odoo>

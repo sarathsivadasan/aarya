@@ -3,7 +3,7 @@
     <!-- Fallback container: reparented under the existing Workshop root by
          the post_init_hook when that menu exists. -->
     <menuitem id="menu_overview_root" name="Technician Overview"
-              sequence="60" groups="group_overview_technician"/>
+              sequence="7" groups="group_overview_technician"/>
 
     <menuitem id="menu_technician_overview" name="Technician Overview"
               parent="menu_overview_root" sequence="10"

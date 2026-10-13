@@ -105,7 +105,7 @@
               action="action_invoice_bill_lines"/>
 
     <record model="ir.ui.menu" id="crm.crm_menu_root">
-        <field name="sequence">7</field>
+        <field name="sequence">1</field>
     </record>
 
 </odoo>

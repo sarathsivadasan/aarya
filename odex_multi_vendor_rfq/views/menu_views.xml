@@ -4,7 +4,7 @@
     <menuitem id="menu_odex_multi_vendor_rfq_root" 
               name="MVRFQ"
               web_icon="odex_multi_vendor_rfq,static/description/icon.png" 
-              sequence="5"/>
+              sequence="11"/>
     <menuitem id="menu_odex_multi_vendor_rfq_main" 
               name="MVRFQ" 
               parent="menu_odex_multi_vendor_rfq_root"/>

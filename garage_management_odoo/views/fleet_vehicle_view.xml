@@ -136,7 +136,7 @@
     </record>
 
     <record model="ir.ui.menu" id="fleet.menu_root">
-        <field name="sequence">8</field>
+        <field name="sequence">9</field>
     </record>
 
 
