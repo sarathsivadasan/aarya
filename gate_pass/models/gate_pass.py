@@ -103,7 +103,7 @@ class GatePass(models.Model):
             "views": [(False, "form")],
             "target": "current",
             "context": {'default_partner_id': self.partner_id.id,
-                        'default_cc_partner_phone': self.phone,
+                        'default_cc_partner_phone': self.partner_phone,
                         'default_vehicle_id': self.vehicle_id.id,
                         'default_odometer': self.booking_id.crm_id.odometer_reading,}
         }
@@ -220,7 +220,7 @@ class GatePass(models.Model):
                 'domain': [
                     ('id', 'in', job_card.ids)],
                 "context": {'default_partner_id': self.partner_id.id,
-                        'default_cc_partner_phone': self.phone,
+                        'default_cc_partner_phone': self.partner_phone,
                         'default_vehicle_id': self.vehicle_id.id,
                         'default_odometer': self.booking_id.crm_id.odometer_reading,}
             }
