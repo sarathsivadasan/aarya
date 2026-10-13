@@ -90,7 +90,7 @@ class GatePass(models.Model):
         self.ensure_one()
         missing = [label for label, ok in (
             (_("Customer Name"), self.partner_id),
-            (_("Contact Number"), self.cc_partner_phone or self.cc_partner_mobile),
+            (_("Contact Number"), self.partner_phone or self.alternate_mobile),
             (_("Vehicle"), self.vehicle_id),
         ) if not ok]
         if missing:
