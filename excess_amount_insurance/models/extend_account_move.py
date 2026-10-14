@@ -40,53 +40,75 @@ class AccountMove(models.Model):
             )
         )
 
-    @api.onchange('excess_amount')
-    def _onchange_excess_amount(self):
-        for move in self:
-            excess_product = move._get_excess_product()
-            if not excess_product:
-                raise ValidationError(_("Excess Amount Product does not exist!"))
+    # ------------------------------------------------------------------
+    # Excess line is maintained SERVER-SIDE (create / write), not through an
+    # onchange. Pushing a Command.create from an onchange into invoice_line_ids
+    # (which is mirrored by line_ids on the form) is what produced the second,
+    # zero-price "Spare Parts" Excess Amount row.
+    # ------------------------------------------------------------------
+    def _sync_excess_line(self, full=True):
+        """Guarantee exactly ONE excess line on draft invoices.
 
-            # Every excess line already on the invoice (saved or in-memory), regardless of
-            # which product record it uses -> guarantees we never add a second one.
-            excess_lines = move._get_excess_lines()
-
-            # Case 1: cleared / zero amount -> remove all excess lines
-            if not move.excess_amount or move.excess_amount <= 0:
-                if excess_lines:
-                    move.invoice_line_ids = [Command.delete(line.id) for line in excess_lines]
+        full=True : line follows excess_amount (create / update / delete).
+        full=False: only de-duplicate (and drop zero-price excess lines when
+                    no excess amount is set); never removes a priced line.
+        """
+        for move in self.with_context(skip_excess_sync=True):
+            if move.state != 'draft' or not move.is_invoice(include_receipts=True):
                 continue
-
-            # Case 2: line(s) already present -> keep the first one, fix it, delete the rest
-            if excess_lines:
-                keep = excess_lines[0]
-                commands = [Command.update(keep.id, {
-                    'product_id': excess_product.id,
-                    'price_unit': move.excess_amount * -1,
+            lines = move._get_excess_lines()
+            amount = move.excess_amount if move.excess_amount and move.excess_amount > 0 else 0.0
+            cmds = []
+            if not amount:
+                victims = lines if full else lines.filtered(lambda l: not l.price_unit)
+                cmds = [Command.delete(l.id) for l in victims]
+            else:
+                product = move._get_excess_product()
+                if not product:
+                    raise ValidationError(_("Excess Amount Product does not exist!"))
+                # keep the priced line (if any), drop every other one
+                ordered = lines.sorted(key=lambda l: (not l.price_unit, l.id))
+                keep, extra = ordered[:1], ordered[1:]
+                cmds = [Command.delete(l.id) for l in extra]
+                vals = {
+                    'product_id': product.id,
                     'quantity': 1.0,
+                    'price_unit': -amount,
                     'cost_type': 'labour',
                     'discount': 0.0,
                     'discount_fixed': 0.0,
-                })]
-                commands += [Command.delete(dup.id) for dup in excess_lines[1:]]
-                move.invoice_line_ids = commands
-                continue
+                }
+                if keep:
+                    line = keep[0]
+                    if (line.product_id != product or line.price_unit != -amount
+                            or line.quantity != 1.0 or line.cost_type != 'labour'):
+                        cmds.append(Command.update(line.id, vals))
+                else:
+                    accounts = product.product_tmpl_id.get_product_accounts(
+                        fiscal_pos=move.fiscal_position_id)
+                    account = accounts['expense'] if move.is_purchase_document() else accounts['income']
+                    vals['name'] = product.display_name
+                    if account:
+                        vals['account_id'] = account.id
+                    cmds.append(Command.create(vals))
+            if cmds:
+                move.write({'invoice_line_ids': cmds})
 
-            # Case 3: no line yet -> add it once
-            accounts = excess_product.product_tmpl_id.get_product_accounts(
-                fiscal_pos=move.fiscal_position_id
-            )
-            account = accounts['expense'] if move.is_purchase_document() else accounts['income']
-            line_vals = {
-                'product_id': excess_product.id,
-                'name': excess_product.display_name,
-                'quantity': 1.0,
-                'price_unit': move.excess_amount * -1,
-                'cost_type': 'labour',
-            }
-            if account:
-                line_vals['account_id'] = account.id
-            move.invoice_line_ids = [Command.create(line_vals)]
+    @api.model_create_multi
+    def create(self, vals_list):
+        moves = super().create(vals_list)
+        if not self.env.context.get('skip_excess_sync'):
+            moves.filtered('excess_amount')._sync_excess_line(full=True)
+        return moves
+
+    def write(self, vals):
+        res = super().write(vals)
+        if not self.env.context.get('skip_excess_sync'):
+            if 'excess_amount' in vals:
+                self._sync_excess_line(full=True)
+            elif 'invoice_line_ids' in vals:
+                self._sync_excess_line(full=False)
+        return res
 
     # def _post(self, soft=True):
     #     """Post/Validate the documents.
@@ -274,10 +296,7 @@ class AccountMove(models.Model):
             invoice = None
             product_id = self._get_excess_product()
             # Remove duplicated excess lines left on the source invoice (draft only)
-            if self.state == 'draft':
-                extra = self._get_excess_lines()[1:]
-                if extra:
-                    self.invoice_line_ids = [Command.delete(l.id) for l in extra]
+            self._sync_excess_line(full=True)
             lines = []
             vals = {
                 'cost_type': "labour",
